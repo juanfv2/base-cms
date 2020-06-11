@@ -1,0 +1,26 @@
+{
+    "name": "juanfv2/base-cms",
+    "description": "Code base for a cms",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Juan Villalta",
+            "email": "juanfv2@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Juanfv2\\BaseCms\\BaseCmsServiceProvider"
+            ]
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Juanfv2\\BaseCms\\": "src/"
+        }
+    }
+}
