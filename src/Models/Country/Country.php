@@ -30,11 +30,10 @@ use Juanfv2\BaseCms\Models\Auth\XFile;
  */
 class Country extends Model
 {
-    // use SoftDeletes;
-    public $timestamps = false;
-
     public $table = 'countries';
 
+    // use SoftDeletes;
+    public $timestamps = false;
     // const CREATED_AT = 'created_at';
     // const UPDATED_AT = 'updated_at';
     // protected $dates = ['deleted_at'];
