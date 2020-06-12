@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * @SWG\Definition(
  *      definition="Role",
- *      required={""},
+ *      required={"name", "description"},
  *      @SWG\Property(
  *          property="id",
  *          description="id",
@@ -36,6 +36,24 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *          description="updatedBy",
  *          type="integer",
  *          format="int32"
+ *      ),
+ *      @SWG\Property(
+ *          property="created_at",
+ *          description="created_at",
+ *          type="string",
+ *          format="date-time"
+ *      ),
+ *      @SWG\Property(
+ *          property="updated_at",
+ *          description="updated_at",
+ *          type="string",
+ *          format="date-time"
+ *      ),
+ *      @SWG\Property(
+ *          property="deleted_at",
+ *          description="deleted_at",
+ *          type="string",
+ *          format="date-time"
  *      )
  * )
  */
@@ -48,31 +66,14 @@ class Role extends Model
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
-    protected $dateFormat = 'Y-m-d H:i:s';
 
-    /**
-     * for "sqlserver":
-     *
-     * in unix server
-     *      - protected $dateFormat = 'Y-m-d H:i:s';
-     * in window server
-     *      - protected $dateFormat = 'Y-m-d H:i:s.z';
-     *
-     * The attributes that should be mutated to dates.
-     *
-     * @var array
-     */
-    protected $dates = [
-        'created_at',
-        'updated_at',
-        'deleted_at',
-    ];
+    protected $dates = ['deleted_at'];
 
     public $fillable = [
         'name',
         'description',
         'createdBy',
-        'updatedBy',
+        'updatedBy'
     ];
 
     /**
@@ -85,15 +86,8 @@ class Role extends Model
         'name' => 'string',
         'description' => 'string',
         'createdBy' => 'integer',
-        'updatedBy' => 'integer',
+        'updatedBy' => 'integer'
     ];
-
-    /**
-     * The attributes that should be visible in arrays.
-     *
-     * @var array
-     */
-    protected $visible = ['id', 'name', 'description'];
 
     /**
      * Validation rules
@@ -101,7 +95,8 @@ class Role extends Model
      * @var array
      */
     public static $rules = [
-
+        'name' => 'required',
+        'description' => 'required'
     ];
 
     /**
@@ -166,7 +161,7 @@ class Role extends Model
      */
     public function inRoleSubMenus($id)
     {
-        logger(__FILE__ . ':' . __LINE__ . ' subMenus ', [$id]);
+        // logger(__FILE__ . ':' . __LINE__ . ' subMenus ', [$id]);
         return $this->belongsToMany(Permission::class, 'auth_roles_has_permissions')
             ->where('isVisible', 1)
             ->where('auth_permissions.permission_id', $id)

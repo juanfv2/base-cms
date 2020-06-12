@@ -4,26 +4,27 @@ namespace Juanfv2\BaseCms\Controllers\Auth;
 
 use Illuminate\Http\Request;
 use Juanfv2\BaseCms\Resources\GenericResource;
-use Juanfv2\BaseCms\Criteria\RequestGenericCriteria;
-use Juanfv2\BaseCms\Repositories\Auth\RoleRepository;
-use Juanfv2\BaseCms\Controllers\BaseCmsController;
 use InfyOm\Generator\Criteria\LimitOffsetCriteria;
+use Juanfv2\BaseCms\Controllers\BaseCmsController;
+use Juanfv2\BaseCms\Criteria\RequestGenericCriteria;
+
+use Juanfv2\BaseCms\Repositories\Auth\RoleRepository;
 use Juanfv2\BaseCms\Requests\Auth\CreateRoleAPIRequest;
 use Juanfv2\BaseCms\Requests\Auth\UpdateRoleAPIRequest;
 
 /**
  * Class RoleController
- * @package Juanfv2\BaseCms\Controllers\API
+ * @package App\Http\Controllers\API
  */
 
 class RoleAPIController extends BaseCmsController
 {
     /** @var  RoleRepository */
-    private $roleRepository;
+    private $modelRepository;
 
-    public function __construct(RoleRepository $roleRepo)
+    public function __construct(RoleRepository $modelRepo)
     {
-        $this->roleRepository = $roleRepo;
+        $this->modelRepository = $modelRepo;
     }
 
     /**
@@ -63,22 +64,24 @@ class RoleAPIController extends BaseCmsController
         $action = $request->get('action', '-');
         $criteria = new RequestGenericCriteria($request);
 
-        $this->roleRepository->pushCriteria($criteria);
-        $itemCount = $this->roleRepository->count();
-        $this->roleRepository->pushCriteria(new LimitOffsetCriteria($request));
+        $this->modelRepository->pushCriteria($criteria);
+        $itemCount = $this->modelRepository->count();
 
-        $roles = $this->roleRepository->all();
+        if ($action != 'export') {
+            $this->modelRepository->pushCriteria(new LimitOffsetCriteria($request));
+        }
+
+        $items = $this->modelRepository->all();
 
         /* */
-        $items = GenericResource::collection($roles);
+        $items = GenericResource::collection($items);
         /* */
 
-        switch ($request->get('action', '-')) {
+        switch ($action) {
             case 'export':
                 $headers = json_decode($request->get('fields'), true);
                 $zname = $request->get('title', '-');
                 return $this->export($zname, $headers, $items->collection->toArray());
-
             default:
                 return $this->response2Api($items, $itemCount, $request->get('limit', -1));
         }
@@ -126,11 +129,11 @@ class RoleAPIController extends BaseCmsController
     {
         $input = $request->all();
 
-        $role = $this->roleRepository->create($input);
+        $model = $this->modelRepository->create($input);
 
-        // $role = new GenericResource($role);
+        // $model = new GenericResource($model);
 
-        return ['id' => $role->id];
+        return ['id' => $model->id];
     }
 
     /**
@@ -171,17 +174,17 @@ class RoleAPIController extends BaseCmsController
      *      )
      * )
      */
-    public function show($id, Request $request)
+    public function show($id)
     {
-        /** @var \Juanfv2\BaseCms\Models\Role $role */
-        $role = $this->roleRepository->findWithoutFail($id);
+        /** @var \App\Models\Role $model */
+        $model = $this->modelRepository->findWithoutFail($id);
 
-        if (empty($role)) {
-            return $this->sendError(__('validation.model.not.found', ['model' => 'Role']));
+        if (empty($model)) {
+            return $this->sendError(__('validation.model.not.found', ['model' => __('models.role.name')]));
         }
-        $role = new GenericResource($role);
+        $model = new GenericResource($model);
 
-        return $role;
+        return $model;
     }
 
     /**
@@ -234,18 +237,18 @@ class RoleAPIController extends BaseCmsController
     {
         $input = $request->all();
 
-        /** @var \Juanfv2\BaseCms\Models\Role $role */
-        $role = $this->roleRepository->findWithoutFail($id);
+        /** @var \App\Models\Role $model */
+        $model = $this->modelRepository->findWithoutFail($id);
 
-        if (empty($role)) {
-            return $this->sendError(__('validation.model.not.found', ['model' => 'Role']));
+        if (empty($model)) {
+            return $this->sendError(__('validation.model.not.found', ['model' => __('models.role.name')]));
         }
 
-        $role = $this->roleRepository->update($input, $id);
+        $model = $this->modelRepository->update($input, $id);
 
-        // $role = new GenericResource($role);
+        // $model = new GenericResource(role);
 
-        return ['id' => $role->id];
+        return ['id' => $model->id];
     }
 
     /**
@@ -288,15 +291,15 @@ class RoleAPIController extends BaseCmsController
      */
     public function destroy($id)
     {
-        /** @var \Juanfv2\BaseCms\Models\Role $role */
-        $role = $this->roleRepository->findWithoutFail($id);
+        /** @var \App\Models\Role $model */
+        $model = $this->modelRepository->findWithoutFail($id);
 
-        if (empty($role)) {
-            return $this->sendError(__('validation.model.not.found', ['model' => 'Role']));
+        if (empty($model)) {
+            return $this->sendError(__('validation.model.not.found', ['model' => __('models.role.name')]));
         }
 
-        $role->delete();
+        $model->delete();
 
-        return $this->sendResponse($id, __('validation.model.deleted', ['model' => 'Role']));
+        return $this->sendResponse($id, __('validation.model.deleted', ['model' => __('models.role.name')]));
     }
 }
