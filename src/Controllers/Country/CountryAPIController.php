@@ -3,7 +3,7 @@
 namespace Juanfv2\BaseCms\Controllers\Country;
 
 use Illuminate\Http\Request;
-use App\Criteria\RequestGenericCriteria;
+use Juanfv2\BaseCms\Criteria\RequestGenericCriteria;
 use Juanfv2\BaseCms\Controllers\BaseCmsController;
 use Juanfv2\BaseCms\Resources\GenericResource;
 use Juanfv2\BaseCms\Repositories\Country\CountryRepository;

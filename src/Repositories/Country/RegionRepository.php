@@ -2,7 +2,7 @@
 
 namespace Juanfv2\BaseCms\Repositories\Country;
 
-use App\Models\Country\Region;
+use Juanfv2\BaseCms\Models\Country\Region;
 use Juanfv2\BaseCms\Repositories\MyBaseRepository;
 
 /**

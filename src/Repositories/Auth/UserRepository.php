@@ -2,7 +2,7 @@
 
 namespace Juanfv2\BaseCms\Repositories\Auth;
 
-use App\Models\Auth\User;
+use Juanfv2\BaseCms\Models\Auth\User;
 use Juanfv2\BaseCms\Repositories\MyBaseRepository;
 
 /**

@@ -3,7 +3,7 @@
 namespace Juanfv2\BaseCms\Controllers\Auth;
 
 use Illuminate\Http\Request;
-use App\Criteria\RequestGenericCriteria;
+use Juanfv2\BaseCms\Criteria\RequestGenericCriteria;
 use Juanfv2\BaseCms\Models\Auth\Permission;
 use Juanfv2\BaseCms\Resources\GenericResource;
 use Juanfv2\BaseCms\Repositories\Auth\PermissionRepository;

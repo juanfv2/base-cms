@@ -2,7 +2,7 @@
 
 namespace Juanfv2\BaseCms\Controllers\Auth;
 
-use App\Criteria\RequestGenericCriteria;
+use Juanfv2\BaseCms\Criteria\RequestGenericCriteria;
 use Juanfv2\BaseCms\Controllers\BaseCmsController;
 use Juanfv2\BaseCms\Requests\Auth\CreateUserAPIRequest;
 use Juanfv2\BaseCms\Requests\Auth\UpdateUserAPIRequest;

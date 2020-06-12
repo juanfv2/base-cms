@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
-use App\Criteria\RequestGenericCriteria;
+use Juanfv2\BaseCms\Criteria\RequestGenericCriteria;
 use InfyOm\Generator\Utils\ResponseUtil;
 use Juanfv2\BaseCms\Repositories\Auth\MyBaseRepository;
 

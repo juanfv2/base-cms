@@ -8,7 +8,7 @@
 
 namespace Juanfv2\BaseCms\Repositories;
 
-use App\Models\Auth\GenericModel;
+use Juanfv2\BaseCms\Models\Auth\GenericModel;
 use Illuminate\Database\Eloquent\Model;
 use InfyOm\Generator\Common\BaseRepository;
 use Prettus\Repository\Exceptions\RepositoryException;

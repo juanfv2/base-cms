@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Juanfv2\BaseCms\Resources\GenericResource;
-use App\Criteria\RequestGenericCriteria;
+use Juanfv2\BaseCms\Criteria\RequestGenericCriteria;
 use Juanfv2\BaseCms\Repositories\Auth\UserRepository;
 use Juanfv2\BaseCms\Controllers\BaseCmsController;
 use Juanfv2\BaseCms\Repositories\Auth\PersonRepository;

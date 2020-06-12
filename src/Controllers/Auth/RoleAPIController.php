@@ -4,7 +4,7 @@ namespace Juanfv2\BaseCms\Controllers\Auth;
 
 use Illuminate\Http\Request;
 use Juanfv2\BaseCms\Resources\GenericResource;
-use App\Criteria\RequestGenericCriteria;
+use Juanfv2\BaseCms\Criteria\RequestGenericCriteria;
 use Juanfv2\BaseCms\Repositories\Auth\RoleRepository;
 use Juanfv2\BaseCms\Controllers\BaseCmsController;
 use InfyOm\Generator\Criteria\LimitOffsetCriteria;
