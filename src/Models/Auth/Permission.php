@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * @SWG\Definition(
  *      definition="Permission",
- *      required={""},
+ *      required={"icon", "name", "urlBackEnd", "urlFrontEnd", "isSection", "isVisible", "permission_id", "orderInMenu"},
  *      @SWG\Property(
  *          property="id",
  *          description="id",
@@ -36,13 +36,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *          type="string"
  *      ),
  *      @SWG\Property(
- *          property="section",
- *          description="section",
+ *          property="isSection",
+ *          description="isSection",
  *          type="boolean"
  *      ),
  *      @SWG\Property(
- *          property="show2user",
- *          description="show2user",
+ *          property="isVisible",
+ *          description="isVisible",
  *          type="boolean"
  *      ),
  *      @SWG\Property(
@@ -68,6 +68,24 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *          description="updatedBy",
  *          type="integer",
  *          format="int32"
+ *      ),
+ *      @SWG\Property(
+ *          property="created_at",
+ *          description="created_at",
+ *          type="string",
+ *          format="date-time"
+ *      ),
+ *      @SWG\Property(
+ *          property="updated_at",
+ *          description="updated_at",
+ *          type="string",
+ *          format="date-time"
+ *      ),
+ *      @SWG\Property(
+ *          property="deleted_at",
+ *          description="deleted_at",
+ *          type="string",
+ *          format="date-time"
  *      )
  * )
  */
@@ -105,12 +123,12 @@ class Permission extends Model
         'name',
         'urlBackEnd',
         'urlFrontEnd',
-        'section',
-        'show2user',
+        'isSection',
+        'isVisible',
         'permission_id',
         'orderInMenu',
         'createdBy',
-        'updatedBy',
+        'updatedBy'
     ];
 
     /**
@@ -124,12 +142,28 @@ class Permission extends Model
         'name' => 'string',
         'urlBackEnd' => 'string',
         'urlFrontEnd' => 'string',
-        'section' => 'boolean',
-        'show2user' => 'boolean',
+        'isSection' => 'boolean',
+        'isVisible' => 'boolean',
         'permission_id' => 'integer',
         'orderInMenu' => 'integer',
         'createdBy' => 'integer',
-        'updatedBy' => 'integer',
+        'updatedBy' => 'integer'
+    ];
+
+    /**
+     * Validation rules
+     *
+     * @var array
+     */
+    public static $rules = [
+        'icon' => 'required',
+        'name' => 'required',
+        'urlBackEnd' => 'required',
+        'urlFrontEnd' => 'required',
+        'isSection' => 'required',
+        'isVisible' => 'required',
+        'permission_id' => 'required',
+        'orderInMenu' => 'required'
     ];
 
     /**
@@ -138,15 +172,6 @@ class Permission extends Model
      * @var array
      */
     protected $visible = ['id', 'icon', 'name', 'urlFrontEnd'];
-
-    /**
-     * Validation rules
-     *
-     * @var array
-     */
-    public static $rules = [
-
-    ];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
@@ -178,7 +203,8 @@ class Permission extends Model
             ->where('isSection', 0)
             ->where('isVisible', 0)
             ->orderBy('orderInMenu')
-            ->orderBy('name') //->orderBy('permission_id')
+            ->orderBy('name')
+            //->orderBy('permission_id')
         ;
     }
 }

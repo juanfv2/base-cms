@@ -3,13 +3,14 @@
 namespace Juanfv2\BaseCms\Controllers\Auth;
 
 use Illuminate\Http\Request;
-use Juanfv2\BaseCms\Criteria\RequestGenericCriteria;
 use Juanfv2\BaseCms\Models\Auth\Permission;
 use Juanfv2\BaseCms\Resources\GenericResource;
-use Juanfv2\BaseCms\Repositories\Auth\PermissionRepository;
 use Prettus\Repository\Criteria\RequestCriteria;
 use InfyOm\Generator\Criteria\LimitOffsetCriteria;
 use Juanfv2\BaseCms\Controllers\BaseCmsController;
+use Juanfv2\BaseCms\Criteria\RequestGenericCriteria;
+
+use Juanfv2\BaseCms\Repositories\Auth\PermissionRepository;
 use Juanfv2\BaseCms\Requests\Auth\CreatePermissionAPIRequest;
 use Juanfv2\BaseCms\Requests\Auth\UpdatePermissionAPIRequest;
 
@@ -21,11 +22,11 @@ use Juanfv2\BaseCms\Requests\Auth\UpdatePermissionAPIRequest;
 class PermissionAPIController extends BaseCmsController
 {
     /** @var  PermissionRepository */
-    private $permissionRepository;
+    private $modelRepository;
 
-    public function __construct(PermissionRepository $permissionRepo)
+    public function __construct(PermissionRepository $modelRepo)
     {
-        $this->permissionRepository = $permissionRepo;
+        $this->modelRepository = $modelRepo;
     }
 
     /**
@@ -62,23 +63,27 @@ class PermissionAPIController extends BaseCmsController
      */
     public function index(Request $request)
     {
+        $action = $request->get('action', '-');
         $criteria = new RequestGenericCriteria($request);
 
-        $this->permissionRepository->pushCriteria($criteria);
-        $itemCount = $this->permissionRepository->count();
-        $this->permissionRepository->pushCriteria(new LimitOffsetCriteria($request));
+        $this->modelRepository->pushCriteria($criteria);
+        $itemCount = $this->modelRepository->count();
 
-        $permissions = $this->permissionRepository->all();
+        if ($action != 'export') {
+            $this->modelRepository->pushCriteria(new LimitOffsetCriteria($request));
+        }
+
+        $items = $this->modelRepository->all();
+
         /* */
-        $items = GenericResource::collection($permissions);
+        $items = GenericResource::collection($items);
         /* */
 
-        switch ($request->get('action', '-')) {
+        switch ($action) {
             case 'export':
                 $headers = json_decode($request->get('fields'), true);
                 $zname = $request->get('title', '-');
                 return $this->export($zname, $headers, $items->collection->toArray());
-
             default:
                 return $this->response2Api($items, $itemCount, $request->get('limit', -1));
         }
@@ -137,11 +142,11 @@ class PermissionAPIController extends BaseCmsController
             return $results;
         }
 
-        $permission = $this->permissionRepository->create($input);
+        $model = $this->modelRepository->create($input);
 
-        // $permission = new GenericResource($permission);
+        // $model = new GenericResource($model);
 
-        return ['id' => $permission->id];
+        return ['id' => $model->id];
     }
 
     /**
@@ -182,17 +187,17 @@ class PermissionAPIController extends BaseCmsController
      *      )
      * )
      */
-    public function show($id, Request $request)
+    public function show($id)
     {
-        /** @var \Juanfv2\BaseCms\Models\Permission $permission */
-        $permission = $this->permissionRepository->findWithoutFail($id);
+        /** @var \App\Models\Permission $model */
+        $model = $this->modelRepository->findWithoutFail($id);
 
-        if (empty($permission)) {
-            return $this->sendError(__('validation.model.not.found', ['model' => 'Permission']));
+        if (empty($model)) {
+            return $this->sendError(__('validation.model.not.found', ['model' => __('models.permission.name')]));
         }
-        $permission = new GenericResource($permission);
+        $model = new GenericResource($model);
 
-        return $permission;
+        return $model;
     }
 
     /**
@@ -245,18 +250,18 @@ class PermissionAPIController extends BaseCmsController
     {
         $input = $request->all();
 
-        /** @var \Juanfv2\BaseCms\Models\Permission $permission */
-        $permission = $this->permissionRepository->findWithoutFail($id);
+        /** @var \App\Models\Permission $model */
+        $model = $this->modelRepository->findWithoutFail($id);
 
-        if (empty($permission)) {
-            return $this->sendError(__('validation.model.not.found', ['model' => 'Permission']));
+        if (empty($model)) {
+            return $this->sendError(__('validation.model.not.found', ['model' => __('models.permission.name')]));
         }
 
-        $permission = $this->permissionRepository->update($input, $id);
+        $model = $this->modelRepository->update($input, $id);
 
-        // $permission = new GenericResource($permission);
+        // $model = new GenericResource(permission);
 
-        return ['id' => $permission->id];
+        return ['id' => $model->id];
     }
 
     /**
@@ -299,16 +304,16 @@ class PermissionAPIController extends BaseCmsController
      */
     public function destroy($id)
     {
-        /** @var \Juanfv2\BaseCms\Models\Permission $permission */
-        $permission = $this->permissionRepository->findWithoutFail($id);
+        /** @var \App\Models\Permission $model */
+        $model = $this->modelRepository->findWithoutFail($id);
 
-        if (empty($permission)) {
-            return $this->sendError(__('validation.model.not.found', ['model' => 'Permission']));
+        if (empty($model)) {
+            return $this->sendError(__('validation.model.not.found', ['model' => __('models.permission.name')]));
         }
 
-        $permission->delete();
+        $model->delete();
 
-        return $this->sendResponse($id, __('validation.model.deleted', ['model' => 'Permission']));
+        return $this->sendResponse($id, __('validation.model.deleted', ['model' => __('models.permission.name')]));
     }
 
     /**
@@ -347,8 +352,8 @@ class PermissionAPIController extends BaseCmsController
     {
         $criteria = new RequestCriteria($request);
 
-        $this->permissionRepository->pushCriteria($criteria);
-        $permissions = $this->permissionRepository->all();
+        $this->modelRepository->pushCriteria($criteria);
+        $permissions = $this->modelRepository->all();
 
         /* */
         $permissions = GenericResource::collection($permissions);
