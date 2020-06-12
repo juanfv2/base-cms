@@ -3,20 +3,67 @@
 namespace Juanfv2\BaseCms\Models\Auth;
 
 use Eloquent as Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+
 
 /**
- * Class XFile
- * @package Juanfv2\BaseCms\Models
- * @version July 28, 2019, 5:51 am UTC
- *
- * @property \Illuminate\Database\Eloquent\Collection 
- * @property \Illuminate\Database\Eloquent\Collection 
- * @property \Illuminate\Database\Eloquent\Collection 
- * @property string entity
- * @property integer entity_id
- * @property string name
- * @property string data
+ * @SWG\Definition(
+ *      definition="XFile",
+ *      required={"entity", "entity_id", "field", "name", "nameOriginal", "extension"},
+ *      @SWG\Property(
+ *          property="id",
+ *          description="id",
+ *          type="integer",
+ *          format="int32"
+ *      ),
+ *      @SWG\Property(
+ *          property="entity",
+ *          description="entity",
+ *          type="string"
+ *      ),
+ *      @SWG\Property(
+ *          property="entity_id",
+ *          description="entity_id",
+ *          type="integer",
+ *          format="int32"
+ *      ),
+ *      @SWG\Property(
+ *          property="field",
+ *          description="field",
+ *          type="string"
+ *      ),
+ *      @SWG\Property(
+ *          property="name",
+ *          description="name",
+ *          type="string"
+ *      ),
+ *      @SWG\Property(
+ *          property="nameOriginal",
+ *          description="nameOriginal",
+ *          type="string"
+ *      ),
+ *      @SWG\Property(
+ *          property="extension",
+ *          description="extension",
+ *          type="string"
+ *      ),
+ *      @SWG\Property(
+ *          property="data",
+ *          description="data",
+ *          type="string"
+ *      ),
+ *      @SWG\Property(
+ *          property="created_at",
+ *          description="created_at",
+ *          type="string",
+ *          format="date-time"
+ *      ),
+ *      @SWG\Property(
+ *          property="updated_at",
+ *          description="updated_at",
+ *          type="string",
+ *          format="date-time"
+ *      )
+ * )
  */
 class XFile extends Model
 {
@@ -72,6 +119,6 @@ class XFile extends Model
     ];
 
     protected $hidden = [
-         'createdBy', 'updatedBy', 'created_at', 'updated_at', 'deleted_at'
+        'createdBy', 'updatedBy', 'created_at', 'updated_at', 'deleted_at'
     ];
 }
