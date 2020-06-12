@@ -6,11 +6,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Juanfv2\BaseCms\Resources\GenericResource;
-use Juanfv2\BaseCms\Criteria\RequestGenericCriteria;
-use Juanfv2\BaseCms\Repositories\Auth\UserRepository;
-use Juanfv2\BaseCms\Controllers\BaseCmsController;
-use Juanfv2\BaseCms\Repositories\Auth\PersonRepository;
 use InfyOm\Generator\Criteria\LimitOffsetCriteria;
+use Juanfv2\BaseCms\Controllers\BaseCmsController;
+use Juanfv2\BaseCms\Criteria\RequestGenericCriteria;
+
+use Juanfv2\BaseCms\Repositories\Auth\UserRepository;
+use Juanfv2\BaseCms\Repositories\Auth\PersonRepository;
 use Juanfv2\BaseCms\Requests\Auth\CreatePersonAPIRequest;
 use Juanfv2\BaseCms\Requests\Auth\UpdatePersonAPIRequest;
 
@@ -22,59 +23,113 @@ use Juanfv2\BaseCms\Requests\Auth\UpdatePersonAPIRequest;
 class PersonAPIController extends BaseCmsController
 {
     /** @var  PersonRepository */
-    private $personRepository;
+    private $modelRepository;
     /** @var  UserRepository */
     private $userRepository;
 
-    public function __construct(PersonRepository $personRepo, UserRepository $userRepo)
+    public function __construct(PersonRepository $modelRepo, UserRepository $userRepo)
     {
-        $this->personRepository = $personRepo;
+        $this->modelRepository = $modelRepo;
         $this->userRepository = $userRepo;
     }
 
     /**
-     * Display a listing of the Person.
-     * GET|HEAD /people
-     *
      * @param Request $request
      * @return Response
+     *
+     * @SWG\Get(
+     *      path="/people",
+     *      summary="Get a listing of the People.",
+     *      tags={"Person"},
+     *      description="Get all People",
+     *      produces={"application/json"},
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="data",
+     *                  type="array",
+     *                  @SWG\Items(ref="#/definitions/Person")
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
      */
     public function index(Request $request)
     {
         $action = $request->get('action', '-');
         $criteria = new RequestGenericCriteria($request);
 
-        $this->personRepository->pushCriteria($criteria);
-        $itemCount = $this->personRepository->count();
+        $this->modelRepository->pushCriteria($criteria);
+        $itemCount = $this->modelRepository->count();
 
         if ($action != 'export') {
-            $this->personRepository->pushCriteria(new LimitOffsetCriteria($request));
+            $this->modelRepository->pushCriteria(new LimitOffsetCriteria($request));
         }
 
-        $people = $this->personRepository->all();
+        $items = $this->modelRepository->all();
 
         /* */
-        $items = GenericResource::collection($people);
+        $items = GenericResource::collection($items);
         /* */
 
-        switch ($request->get('action', '-')) {
+        switch ($action) {
             case 'export':
                 $headers = json_decode($request->get('fields'), true);
                 $zname = $request->get('title', '-');
                 return $this->export($zname, $headers, $items->collection->toArray());
-
             default:
                 return $this->response2Api($items, $itemCount, $request->get('limit', -1));
         }
     }
 
     /**
-     * Store a newly created Person in storage.
-     * POST /people
-     *
      * @param CreatePersonAPIRequest $request
-     *
      * @return Response
+     *
+     * @SWG\Post(
+     *      path="/people",
+     *      summary="Store a newly created Person in storage",
+     *      tags={"Person"},
+     *      description="Store Person",
+     *      produces={"application/json"},
+     *      @SWG\Parameter(
+     *          name="body",
+     *          in="body",
+     *          description="Person that should be stored",
+     *          required=false,
+     *          @SWG\Schema(ref="#/definitions/Person")
+     *      ),
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="data",
+     *                  ref="#/definitions/Person"
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
      */
     public function store(CreatePersonAPIRequest $request)
     {
@@ -87,59 +142,126 @@ class PersonAPIController extends BaseCmsController
             DB::beginTransaction();
 
             $this->userRepository->create($input);
-            $person = $this->personRepository->create($input);
+            $person = $this->modelRepository->create($input);
             // $person = new GenericResource($person);
 
             DB::commit();
 
             return ['id' => $person->id];
         } catch (\PDOException $e) {
-            logger(__FILE__ . ':' . __LINE__ . ' $e ', [$e->getMessage()]);
+            // logger(__FILE__ . ':' . __LINE__ . ' $e ', [$e->getMessage()]);
             // Woopsy
             DB::rollBack();
-            return $this->sendError(__('validation.model.error', ['model' => 'Persona']));
+            return $this->sendError(__('validation.model.error', ['model' => __('models.person.name')]));
         }
     }
 
     /**
-     * Display the specified Person.
-     * GET|HEAD /people/{id}
-     *
-     * @param  int $id
-     *
+     * @param int $id
      * @return Response
+     *
+     * @SWG\Get(
+     *      path="/people/{id}",
+     *      summary="Display the specified Person",
+     *      tags={"Person"},
+     *      description="Get Person",
+     *      produces={"application/json"},
+     *      @SWG\Parameter(
+     *          name="id",
+     *          description="id of Person",
+     *          type="integer",
+     *          required=true,
+     *          in="path"
+     *      ),
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="data",
+     *                  ref="#/definitions/Person"
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
      */
     public function show($id)
     {
-        /** @var \Juanfv2\BaseCms\Models\Person $person */
-        $person = $this->personRepository->findWithoutFail($id);
+        /** @var \App\Models\Person $model */
+        $model = $this->modelRepository->findWithoutFail($id);
 
-        if (empty($person)) {
-            return $this->sendError(__('validation.model.not.found', ['model' => 'Person']));
+        if (empty($model)) {
+            return $this->sendError(__('validation.model.not.found', ['model' => __('models.person.name')]));
         }
-        $person = new GenericResource($person);
+        $model = new GenericResource($model);
 
-        return $person;
+        return $model;
     }
 
     /**
-     * Update the specified Person in storage.
-     * PUT/PATCH /people/{id}
-     *
-     * @param  int $id
+     * @param int $id
      * @param UpdatePersonAPIRequest $request
-     *
      * @return Response
+     *
+     * @SWG\Put(
+     *      path="/people/{id}",
+     *      summary="Update the specified Person in storage",
+     *      tags={"Person"},
+     *      description="Update Person",
+     *      produces={"application/json"},
+     *      @SWG\Parameter(
+     *          name="id",
+     *          description="id of Person",
+     *          type="integer",
+     *          required=true,
+     *          in="path"
+     *      ),
+     *      @SWG\Parameter(
+     *          name="body",
+     *          in="body",
+     *          description="Person that should be updated",
+     *          required=false,
+     *          @SWG\Schema(ref="#/definitions/Person")
+     *      ),
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="data",
+     *                  ref="#/definitions/Person"
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
      */
     public function update($id, UpdatePersonAPIRequest $request)
     {
         $input = $request->all();
 
         /** @var \Juanfv2\BaseCms\Models\Person $person */
-        $person = $this->personRepository->findWithoutFail($id);
+        $person = $this->modelRepository->findWithoutFail($id);
 
         if (empty($person)) {
-            return $this->sendError(__('validation.model.not.found', ['model' => 'Persona']));
+            return $this->sendError(__('validation.model.not.found', ['model' => __('models.person.name')]));
         }
 
         try {
@@ -153,7 +275,7 @@ class PersonAPIController extends BaseCmsController
             }
 
             $this->userRepository->update($input, $userId);
-            $person = $this->personRepository->update($input, $id);
+            $person = $this->modelRepository->update($input, $id);
 
             // $person = new GenericResource(person);
 
@@ -162,30 +284,59 @@ class PersonAPIController extends BaseCmsController
 
             return ['id' => $person->id];
         } catch (\PDOException $e) {
-            logger(__FILE__ . ':' . __LINE__ . ' $e ', [$e->getMessage()]);
+            // logger(__FILE__ . ':' . __LINE__ . ' $e ', [$e->getMessage()]);
             // Woopsy
             DB::rollBack();
             Schema::enableForeignKeyConstraints();
-            return $this->sendError(__('validation.model.error', ['model' => 'Persona']));
+            return $this->sendError(__('validation.model.error', ['model' => __('models.person.name')]));
         }
     }
 
     /**
-     * Remove the specified Person from storage.
-     * DELETE /people/{id}
-     *
-     * @param  int $id
-     *
+     * @param int $id
      * @return Response
+     *
+     * @SWG\Delete(
+     *      path="/people/{id}",
+     *      summary="Remove the specified Person from storage",
+     *      tags={"Person"},
+     *      description="Delete Person",
+     *      produces={"application/json"},
+     *      @SWG\Parameter(
+     *          name="id",
+     *          description="id of Person",
+     *          type="integer",
+     *          required=true,
+     *          in="path"
+     *      ),
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="data",
+     *                  type="string"
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
      */
     public function destroy($id)
     {
+        /** @var \App\Models\Person $model */
+        $model = $this->modelRepository->findWithoutFail($id);
 
-        /** @var \Juanfv2\BaseCms\Models\Person $person */
-        $person = $this->personRepository->findWithoutFail($id);
-
-        if (empty($person)) {
-            return $this->sendError(__('validation.model.not.found', ['model' => 'Persona']));
+        if (empty($model)) {
+            return $this->sendError(__('validation.model.not.found', ['model' => __('models.person.name')]));
         }
         try {
 
@@ -196,12 +347,12 @@ class PersonAPIController extends BaseCmsController
 
             DB::commit();
 
-            return $this->sendResponse($id, __('validation.model.deleted', ['model' => 'Persona']));
+            return $this->sendResponse($id, __('validation.model.deleted', ['model' => __('models.person.name')]));
         } catch (\PDOException $e) {
             // Woopsy
             DB::rollBack();
 
-            return $this->sendError(__('validation.model.not.found', ['model' => 'Persona']));
+            return $this->sendError(__('validation.model.not.found', ['model' => __('models.person.name')]));
         }
     }
 }
