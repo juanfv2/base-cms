@@ -13,7 +13,8 @@ class BaseCmsServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->make('Juanfv2\BaseCms\CalculatorController');
+        // $this->app->make('Juanfv2\BaseCms\CalculatorController');
+        // $this->app->make('Juanfv2\BaseCms\Controllers\Country\CountryAPIController');
     }
 
     /**
@@ -24,6 +25,5 @@ class BaseCmsServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
-        $this->loadViewsFrom(__DIR__ . '/views', 'calculator');
     }
 }
