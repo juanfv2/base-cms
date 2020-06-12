@@ -25,24 +25,6 @@ class CreateRolesTable extends Migration
         });
     }
 
-    /*
-    id int NOT NULL IDENTITY(1,1),
-    name varchar(255) NOT NULL,
-    email varchar(255) NULL,
-    password varchar(255) NOT NULL,
-    photoUrl varchar(255) NULL DEFAULT (NULL),
-    disabled int NOT NULL DEFAULT ('1'),
-    group_id varchar(100) NULL DEFAULT (NULL),
-    rememberToken varchar(100) NULL DEFAULT (NULL),
-    phoneNumber varchar(45) NULL DEFAULT (NULL),
-    company_id int NULL,
-    role_id int NULL DEFAULT (NULL),
-    createdBy int NULL DEFAULT (NULL),
-    updatedBy int NULL DEFAULT (NULL),
-    created_at datetime NULL DEFAULT (NULL),
-    updated_at datetime NULL DEFAULT (NULL),
-    deleted_at datetime NULL DEFAULT (NULL) */
-
     /**
      * Reverse the migrations.
      *
