@@ -2,14 +2,15 @@
 
 namespace Juanfv2\BaseCms\Controllers\Auth;
 
-use Juanfv2\BaseCms\Criteria\RequestGenericCriteria;
+use Illuminate\Http\Request;
+use Juanfv2\BaseCms\Resources\GenericResource;
+use InfyOm\Generator\Criteria\LimitOffsetCriteria;
 use Juanfv2\BaseCms\Controllers\BaseCmsController;
+use Juanfv2\BaseCms\Criteria\RequestGenericCriteria;
+
+use Juanfv2\BaseCms\Repositories\Auth\UserRepository;
 use Juanfv2\BaseCms\Requests\Auth\CreateUserAPIRequest;
 use Juanfv2\BaseCms\Requests\Auth\UpdateUserAPIRequest;
-use Juanfv2\BaseCms\Resources\GenericResource;
-use Juanfv2\BaseCms\Repositories\Auth\UserRepository;
-use Illuminate\Http\Request;
-use InfyOm\Generator\Criteria\LimitOffsetCriteria;
 
 /**
  * Class UserController
@@ -19,11 +20,11 @@ use InfyOm\Generator\Criteria\LimitOffsetCriteria;
 class UserAPIController extends BaseCmsController
 {
     /** @var  UserRepository */
-    private $userRepository;
+    private $modelRepository;
 
-    public function __construct(UserRepository $userRepo)
+    public function __construct(UserRepository $modelRepo)
     {
-        $this->userRepository = $userRepo;
+        $this->modelRepository = $modelRepo;
     }
 
     /**
@@ -60,19 +61,30 @@ class UserAPIController extends BaseCmsController
      */
     public function index(Request $request)
     {
+        $action = $request->get('action', '-');
         $criteria = new RequestGenericCriteria($request);
 
-        $this->userRepository->pushCriteria($criteria);
-        $userCount = $this->userRepository->count();
-        $this->userRepository->pushCriteria(new LimitOffsetCriteria($request));
+        $this->modelRepository->pushCriteria($criteria);
+        $itemCount = $this->modelRepository->count();
 
-        $users = $this->userRepository->all();
+        if ($action != 'export') {
+            $this->modelRepository->pushCriteria(new LimitOffsetCriteria($request));
+        }
+
+        $items = $this->modelRepository->all();
 
         /* */
-        $users = GenericResource::collection($users);
+        $items = GenericResource::collection($items);
         /* */
 
-        return $this->response2Api($users, $userCount, $request->get('limit', -1));
+        switch ($action) {
+            case 'export':
+                $headers = json_decode($request->get('fields'), true);
+                $zname = $request->get('title', '-');
+                return $this->export($zname, $headers, $items->collection->toArray());
+            default:
+                return $this->response2Api($items, $itemCount, $request->get('limit', -1));
+        }
     }
 
     /**
@@ -119,9 +131,11 @@ class UserAPIController extends BaseCmsController
 
         $input['password'] = password_hash($input['password'], PASSWORD_BCRYPT);
 
-        $user = $this->userRepository->create($input);
+        $model = $this->modelRepository->create($input);
 
-        return ['id' => $user->id];
+        // $model = new GenericResource($model);
+
+        return ['id' => $model->id];
     }
 
     /**
@@ -162,18 +176,17 @@ class UserAPIController extends BaseCmsController
      *      )
      * )
      */
-    public function show($id, Request $request)
+    public function show($id)
     {
-        /** @var \Juanfv2\BaseCms\Models\User $user */
-        $user = $this->userRepository->findWithoutFail($id);
+        /** @var \App\Models\User $model */
+        $model = $this->modelRepository->findWithoutFail($id);
 
-        if (empty($user)) {
-            return $this->sendError(__('validation.model.not.found', ['model' => 'User']));
+        if (empty($model)) {
+            return $this->sendError(__('validation.model.not.found', ['model' => __('models.user.name')]));
         }
+        $model = new GenericResource($model);
 
-        $user = new GenericResource($user);
-
-        return $user;
+        return $model;
     }
 
     /**
@@ -226,21 +239,22 @@ class UserAPIController extends BaseCmsController
     {
         $input = $request->all();
 
-        /** @var \Juanfv2\BaseCms\Models\Auth\User $user */
-        $user = $this->userRepository->findWithoutFail($id);
+        /** @var \App\Models\User $model */
+        $model = $this->modelRepository->findWithoutFail($id);
 
-        if (empty($user)) {
-            return $this->sendError('User not found');
+        if (empty($model)) {
+            return $this->sendError(__('validation.model.not.found', ['model' => __('models.user.name')]));
         }
-        // dd($user);
 
         if (request()->has('password')) {
             $input['password'] = password_hash($input['password'], PASSWORD_BCRYPT);
         }
 
-        $user = $this->userRepository->update($input, $id);
+        $model = $this->modelRepository->update($input, $id);
 
-        return ['id' => $user->id];
+        // $model = new GenericResource(user);
+
+        return ['id' => $model->id];
     }
 
     /**
@@ -283,15 +297,15 @@ class UserAPIController extends BaseCmsController
      */
     public function destroy($id)
     {
-        /** @var \Juanfv2\BaseCms\Models\User $user */
-        $user = $this->userRepository->findWithoutFail($id);
+        /** @var \App\Models\User $model */
+        $model = $this->modelRepository->findWithoutFail($id);
 
-        if (empty($user)) {
-            return $this->sendError(__('validation.model.not.found', ['model' => 'User']));
+        if (empty($model)) {
+            return $this->sendError(__('validation.model.not.found', ['model' => __('models.user.name')]));
         }
 
-        $user->delete();
+        $model->delete();
 
-        return $this->sendResponse($id, __('validation.model.deleted', ['model' => 'User']));
+        return $this->sendResponse($id, __('validation.model.deleted', ['model' => __('models.user.name')]));
     }
 }

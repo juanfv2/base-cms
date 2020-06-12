@@ -14,7 +14,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 /**
  * @SWG\Definition(
  *      definition="User",
- *      required={""},
+ *      required={"name", "email", "password", "disabled"},
  *      @SWG\Property(
  *          property="id",
  *          description="id",
@@ -32,11 +32,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  *          type="string"
  *      ),
  *      @SWG\Property(
- *          property="emailVerified",
- *          description="emailVerified",
- *          type="boolean"
- *      ),
- *      @SWG\Property(
  *          property="password",
  *          description="password",
  *          type="string"
@@ -47,13 +42,14 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  *          type="boolean"
  *      ),
  *      @SWG\Property(
- *          property="group",
- *          description="group",
- *          type="string"
+ *          property="role_id",
+ *          description="role_id",
+ *          type="integer",
+ *          format="int32"
  *      ),
  *      @SWG\Property(
- *          property="rememberToken",
- *          description="rememberToken",
+ *          property="uid",
+ *          description="uid",
  *          type="string"
  *      ),
  *      @SWG\Property(
@@ -69,20 +65,27 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  *          format="int32"
  *      ),
  *      @SWG\Property(
- *          property="phoneNumber",
- *          description="phoneNumber",
+ *          property="remember_token",
+ *          description="remember_token",
  *          type="string"
  *      ),
  *      @SWG\Property(
- *          property="photoUrl",
- *          description="photoUrl",
- *          type="string"
+ *          property="created_at",
+ *          description="created_at",
+ *          type="string",
+ *          format="date-time"
  *      ),
  *      @SWG\Property(
- *          property="company_id",
- *          description="company_id",
- *          type="integer",
- *          format="int32"
+ *          property="updated_at",
+ *          description="updated_at",
+ *          type="string",
+ *          format="date-time"
+ *      ),
+ *      @SWG\Property(
+ *          property="deleted_at",
+ *          description="deleted_at",
+ *          type="string",
+ *          format="date-time"
  *      )
  * )
  */
@@ -94,8 +97,6 @@ class User extends Authenticatable
 
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
-
-    protected $dateFormat = 'Y-m-d H:i:s';
 
     /**
      * for "sqlserver":
@@ -110,11 +111,7 @@ class User extends Authenticatable
      *
      * @var array
      */
-    protected $dates = [
-        'created_at',
-        'updated_at',
-        'deleted_at',
-    ];
+    protected $dates = ['deleted_at'];
 
     public $fillable = [
         'name',
@@ -122,11 +119,10 @@ class User extends Authenticatable
         'password',
         'disabled',
         'role_id',
-
-        'remember_token',
         'uid',
         'createdBy',
         'updatedBy',
+        'remember_token'
     ];
 
     /**
@@ -141,12 +137,10 @@ class User extends Authenticatable
         'password' => 'string',
         'disabled' => 'boolean',
         'role_id' => 'integer',
-
-        'remember_token' => 'string',
         'uid' => 'string',
-
         'createdBy' => 'integer',
         'updatedBy' => 'integer',
+        'remember_token' => 'string'
     ];
 
     // /**
@@ -162,7 +156,7 @@ class User extends Authenticatable
      *
      * @var array
      */
-    protected $visible = ['id', 'name', 'email', 'disabled', 'role_id'];
+    protected $visible = ['id', 'name', 'email', 'disabled', 'uid', 'role_id'];
 
     /**
      * Validation rules
@@ -230,7 +224,7 @@ class User extends Authenticatable
     {
         $cRoute = Route::getCurrentRoute()->action['as'];
 
-        logger(__FILE__ . ':' . __LINE__ . ' $cRoute ', [$cRoute]);
+        // logger(__FILE__ . ':' . __LINE__ . ' $cRoute ', [$cRoute]);
 
         if ($cRoute == 'api.login.logout') {
             return true;
@@ -251,7 +245,7 @@ class User extends Authenticatable
 
         // sqlserver $menu = DB::select('execute sp_has_permission ?, ?;', [$this->id, $cRoute]);
 
-        logger(__FILE__ . ':' . __LINE__ . ' $this->id ', [' . ' . $this->id . ' . ' . $cRoute . ' . ' . $hasPermission]);
+        // logger(__FILE__ . ':' . __LINE__ . ' $this->id ', [' . ' . $this->id . ' . ' . $cRoute . ' . ' . $hasPermission]);
 
         return $hasPermission;
     }
