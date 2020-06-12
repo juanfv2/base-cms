@@ -3,15 +3,15 @@
 namespace Juanfv2\BaseCms\Controllers;
 
 use Exception;
-use Juanfv2\BaseCms\Models\Auth\XFile;
 use Illuminate\Http\Request;
-use Juanfv2\BaseCms\Helpers\ExportDataCSV;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
-use Juanfv2\BaseCms\Criteria\RequestGenericCriteria;
+use Juanfv2\BaseCms\Models\Auth\XFile;
 use InfyOm\Generator\Utils\ResponseUtil;
+use Juanfv2\BaseCms\Helpers\ExportDataCSV;
+use App\Http\Controllers\AppBaseController;
+use Juanfv2\BaseCms\Criteria\RequestGenericCriteria;
 use Juanfv2\BaseCms\Repositories\Auth\MyBaseRepository;
 
 /**
