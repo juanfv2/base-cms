@@ -6,34 +6,42 @@ use Eloquent as Model;
 // use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * Class Region
- * @package Juanfv2\BaseCms\Models
- * @version July 13, 2019, 2:43 pm CST
- *
- * @property \Juanfv2\BaseCms\Models\Country country
- * @property \Illuminate\Database\Eloquent\Collection authPeople
- * @property \Illuminate\Database\Eloquent\Collection 
- * @property \Illuminate\Database\Eloquent\Collection 
- * @property \Illuminate\Database\Eloquent\Collection cities
- * @property \Illuminate\Database\Eloquent\Collection hosts
- * @property \Illuminate\Database\Eloquent\Collection 
- * @property string name
- * @property string code
- * @property integer country_id
+ * @SWG\Definition(
+ *      definition="Region",
+ *      required={"name", "code", "country_id"},
+ *      @SWG\Property(
+ *          property="id",
+ *          description="id",
+ *          type="integer",
+ *          format="int32"
+ *      ),
+ *      @SWG\Property(
+ *          property="name",
+ *          description="name",
+ *          type="string"
+ *      ),
+ *      @SWG\Property(
+ *          property="code",
+ *          description="code",
+ *          type="string"
+ *      ),
+ *      @SWG\Property(
+ *          property="country_id",
+ *          description="country_id",
+ *          type="integer",
+ *          format="int32"
+ *      )
+ * )
  */
 class Region extends Model
 {
-    // use SoftDeletes;
-    public $timestamps = false;
-
     public $table = 'regions';
 
-    const CREATED_AT = 'created_at';
-    const UPDATED_AT = 'updated_at';
-
-
-    protected $dates = ['deleted_at'];
-
+    public $timestamps = false;
+    // use SoftDeletes;
+    // const CREATED_AT = 'created_at';
+    // const UPDATED_AT = 'updated_at';
+    // protected $dates = ['deleted_at'];
 
     public $fillable = [
         'name',

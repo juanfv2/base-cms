@@ -4,10 +4,11 @@ namespace Juanfv2\BaseCms\Controllers\Country;
 
 use Illuminate\Http\Request;
 use Juanfv2\BaseCms\Resources\GenericResource;
-use Juanfv2\BaseCms\Criteria\RequestGenericCriteria;
-use Juanfv2\BaseCms\Controllers\BaseCmsController;
-use Juanfv2\BaseCms\Repositories\Country\RegionRepository;
 use InfyOm\Generator\Criteria\LimitOffsetCriteria;
+use Juanfv2\BaseCms\Controllers\BaseCmsController;
+use Juanfv2\BaseCms\Criteria\RequestGenericCriteria;
+
+use Juanfv2\BaseCms\Repositories\Country\RegionRepository;
 use Juanfv2\BaseCms\Requests\Country\CreateRegionAPIRequest;
 use Juanfv2\BaseCms\Requests\Country\UpdateRegionAPIRequest;
 
@@ -19,135 +20,286 @@ use Juanfv2\BaseCms\Requests\Country\UpdateRegionAPIRequest;
 class RegionAPIController extends BaseCmsController
 {
     /** @var  RegionRepository */
-    private $regionRepository;
+    private $modelRepository;
 
-    public function __construct(RegionRepository $regionRepo)
+    public function __construct(RegionRepository $modelRepo)
     {
-        $this->regionRepository = $regionRepo;
+        $this->modelRepository = $modelRepo;
     }
 
     /**
-     * Display a listing of the Region.
-     * GET|HEAD /regions
-     *
      * @param Request $request
      * @return Response
+     *
+     * @SWG\Get(
+     *      path="/regions",
+     *      summary="Get a listing of the Regions.",
+     *      tags={"Region"},
+     *      description="Get all Regions",
+     *      produces={"application/json"},
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="data",
+     *                  type="array",
+     *                  @SWG\Items(ref="#/definitions/Region")
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
      */
     public function index(Request $request)
     {
         $action = $request->get('action', '-');
         $criteria = new RequestGenericCriteria($request);
 
-        $this->regionRepository->pushCriteria($criteria);
-        $itemCount = $this->regionRepository->count();
+        $this->modelRepository->pushCriteria($criteria);
+        $itemCount = $this->modelRepository->count();
 
         if ($action != 'export') {
-            $this->regionRepository->pushCriteria(new LimitOffsetCriteria($request));
+            $this->modelRepository->pushCriteria(new LimitOffsetCriteria($request));
         }
 
-        $regions = $this->regionRepository->all();
+        $items = $this->modelRepository->all();
 
         /* */
-        $items = GenericResource::collection($regions);
+        $items = GenericResource::collection($items);
         /* */
 
-        switch ($request->get('action', '-')) {
+        switch ($action) {
             case 'export':
                 $headers = json_decode($request->get('fields'), true);
                 $zname = $request->get('title', '-');
                 return $this->export($zname, $headers, $items->collection->toArray());
-
             default:
                 return $this->response2Api($items, $itemCount, $request->get('limit', -1));
         }
     }
 
     /**
-     * Store a newly created Region in storage.
-     * POST /regions
-     *
      * @param CreateRegionAPIRequest $request
-     *
      * @return Response
+     *
+     * @SWG\Post(
+     *      path="/regions",
+     *      summary="Store a newly created Region in storage",
+     *      tags={"Region"},
+     *      description="Store Region",
+     *      produces={"application/json"},
+     *      @SWG\Parameter(
+     *          name="body",
+     *          in="body",
+     *          description="Region that should be stored",
+     *          required=false,
+     *          @SWG\Schema(ref="#/definitions/Region")
+     *      ),
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="data",
+     *                  ref="#/definitions/Region"
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
      */
     public function store(CreateRegionAPIRequest $request)
     {
         $input = $request->all();
 
-        $region = $this->regionRepository->create($input);
+        $model = $this->modelRepository->create($input);
 
-        // $region = new GenericResource($region);
+        // $model = new GenericResource($model);
 
-        return ['id' => $region->id];
+        return ['id' => $model->id];
     }
 
     /**
-     * Display the specified Region.
-     * GET|HEAD /regions/{id}
-     *
-     * @param  int $id
-     *
+     * @param int $id
      * @return Response
+     *
+     * @SWG\Get(
+     *      path="/regions/{id}",
+     *      summary="Display the specified Region",
+     *      tags={"Region"},
+     *      description="Get Region",
+     *      produces={"application/json"},
+     *      @SWG\Parameter(
+     *          name="id",
+     *          description="id of Region",
+     *          type="integer",
+     *          required=true,
+     *          in="path"
+     *      ),
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="data",
+     *                  ref="#/definitions/Region"
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
      */
     public function show($id)
     {
-        /** @var \Juanfv2\BaseCms\Models\Region $region */
-        $region = $this->regionRepository->findWithoutFail($id);
+        /** @var \App\Models\Region $model */
+        $model = $this->modelRepository->findWithoutFail($id);
 
-        if (empty($region)) {
-            return $this->sendError(__('validation.model.not.found', ['model' => 'Region']));
+        if (empty($model)) {
+            return $this->sendError(__('validation.model.not.found', ['model' => __('models.region.name')]));
         }
-        $region = new GenericResource($region);
+        $model = new GenericResource($model);
 
-        return $region;
+        return $model;
     }
 
     /**
-     * Update the specified Region in storage.
-     * PUT/PATCH /regions/{id}
-     *
-     * @param  int $id
+     * @param int $id
      * @param UpdateRegionAPIRequest $request
-     *
      * @return Response
+     *
+     * @SWG\Put(
+     *      path="/regions/{id}",
+     *      summary="Update the specified Region in storage",
+     *      tags={"Region"},
+     *      description="Update Region",
+     *      produces={"application/json"},
+     *      @SWG\Parameter(
+     *          name="id",
+     *          description="id of Region",
+     *          type="integer",
+     *          required=true,
+     *          in="path"
+     *      ),
+     *      @SWG\Parameter(
+     *          name="body",
+     *          in="body",
+     *          description="Region that should be updated",
+     *          required=false,
+     *          @SWG\Schema(ref="#/definitions/Region")
+     *      ),
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="data",
+     *                  ref="#/definitions/Region"
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
      */
     public function update($id, UpdateRegionAPIRequest $request)
     {
         $input = $request->all();
 
-        /** @var \Juanfv2\BaseCms\Models\Region $region */
-        $region = $this->regionRepository->findWithoutFail($id);
+        /** @var \App\Models\Region $model */
+        $model = $this->modelRepository->findWithoutFail($id);
 
-        if (empty($region)) {
-            return $this->sendError(__('validation.model.not.found', ['model' => 'Region']));
+        if (empty($model)) {
+            return $this->sendError(__('validation.model.not.found', ['model' => __('models.region.name')]));
         }
 
-        $region = $this->regionRepository->update($input, $id);
+        $model = $this->modelRepository->update($input, $id);
 
-        // $region = new GenericResource(region);
+        // $model = new GenericResource(region);
 
-        return ['id' => $region->id];
+        return ['id' => $model->id];
     }
 
     /**
-     * Remove the specified Region from storage.
-     * DELETE /regions/{id}
-     *
-     * @param  int $id
-     *
+     * @param int $id
      * @return Response
+     *
+     * @SWG\Delete(
+     *      path="/regions/{id}",
+     *      summary="Remove the specified Region from storage",
+     *      tags={"Region"},
+     *      description="Delete Region",
+     *      produces={"application/json"},
+     *      @SWG\Parameter(
+     *          name="id",
+     *          description="id of Region",
+     *          type="integer",
+     *          required=true,
+     *          in="path"
+     *      ),
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="data",
+     *                  type="string"
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
      */
     public function destroy($id)
     {
-        /** @var \Juanfv2\BaseCms\Models\Region $region */
-        $region = $this->regionRepository->findWithoutFail($id);
+        /** @var \App\Models\Region $model */
+        $model = $this->modelRepository->findWithoutFail($id);
 
-        if (empty($region)) {
-            return $this->sendError(__('validation.model.not.found', ['model' => 'Region']));
+        if (empty($model)) {
+            return $this->sendError(__('validation.model.not.found', ['model' => __('models.region.name')]));
         }
 
-        $region->delete();
+        $model->delete();
 
-        return $this->sendResponse($id, __('validation.model.deleted', ['model' => 'Region']));
+        return $this->sendResponse($id, __('validation.model.deleted', ['model' => __('models.region.name')]));
     }
 }
