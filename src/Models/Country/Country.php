@@ -7,20 +7,26 @@ use Juanfv2\BaseCms\Models\Auth\XFile;
 // use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * Class Country
- * @package Juanfv2\BaseCms\Models
- * @version July 13, 2019, 1:54 pm CST
- *
- * @property \Illuminate\Database\Eloquent\Collection authPeople
- * @property \Illuminate\Database\Eloquent\Collection 
- * @property \Illuminate\Database\Eloquent\Collection 
- * @property \Illuminate\Database\Eloquent\Collection cities
- * @property \Illuminate\Database\Eloquent\Collection hosts
- * @property \Illuminate\Database\Eloquent\Collection regions
- * @property \Illuminate\Database\Eloquent\Collection 
- * @property string name
- * @property string code
- * @property string flag
+ * @SWG\Definition(
+ *      definition="Country",
+ *      required={"name", "code"},
+ *      @SWG\Property(
+ *          property="id",
+ *          description="id",
+ *          type="integer",
+ *          format="int32"
+ *      ),
+ *      @SWG\Property(
+ *          property="name",
+ *          description="name",
+ *          type="string"
+ *      ),
+ *      @SWG\Property(
+ *          property="code",
+ *          description="code",
+ *          type="string"
+ *      )
+ * )
  */
 class Country extends Model
 {
@@ -32,7 +38,6 @@ class Country extends Model
     // const CREATED_AT = 'created_at';
     // const UPDATED_AT = 'updated_at';
     // protected $dates = ['deleted_at'];
-
 
     public $fillable = [
         'name',
