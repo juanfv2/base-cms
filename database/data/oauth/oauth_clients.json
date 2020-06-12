@@ -1,0 +1,26 @@
+[
+	{
+		"id" : 1,
+		"user_id" : null,
+		"name" : "Laravel Personal Access Client",
+		"secret" : "DqPFAdCm3rNaz51dZKbNa3HZZpfMLeH8TJlFUZxj",
+		"redirect" : "http://localhost",
+		"personal_access_client" : 1,
+		"password_client" : 0,
+		"revoked" : 0,
+		"created_at" : null,
+		"updated_at" : null
+	},
+	{
+		"id" : 2,
+		"user_id" : null,
+		"name" : "Laravel Password Grant Client",
+		"secret" : "lotxzk5U5Pz04m2egycgF7IXgl9dXIwVRfuXZZbf",
+		"redirect" : "http://localhost",
+		"personal_access_client" : 0,
+		"password_client" : 1,
+		"revoked" : 0,
+		"created_at" : null,
+		"updated_at" : null
+	}
+]

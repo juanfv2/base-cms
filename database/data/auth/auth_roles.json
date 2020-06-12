@@ -1,0 +1,22 @@
+[
+	{
+		"id" : 1,
+		"name" : "Administrador",
+		"description" : "Administrador",
+		"createdBy" : null,
+		"updatedBy" : 1,
+		"created_at" : null,
+		"updated_at" : "2019-08-15 14:57:40",
+		"deleted_at" : null
+	},
+	{
+		"id" : 2,
+		"name" : "Sub Administrador",
+		"description" : "Sub Administrador",
+		"createdBy" : null,
+		"updatedBy" : null,
+		"created_at" : null,
+		"updated_at" : null,
+		"deleted_at" : null
+	}
+]

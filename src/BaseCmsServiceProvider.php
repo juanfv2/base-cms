@@ -24,6 +24,11 @@ class BaseCmsServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->loadRoutesFrom(__DIR__ . '/routes.php');
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        $this->publishes([
+            __DIR__ . '/../database/migrations' => database_path('migrations'),
+            __DIR__ . '/../database/data' => database_path('data'),
+            __DIR__ . '/../database/seeds' => database_path('seeds'),
+        ], 'base-cms-migrations');
     }
 }
