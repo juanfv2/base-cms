@@ -300,6 +300,6 @@ class CountryAPIController extends BaseCmsController
 
         $model->delete();
 
-        return $this->sendResponse($id, __('validation.model.deleted', ['model' => __('models.country.name')]));
+        return $this->sendResponse(__('validation.model.deleted', ['model' => __('models.country.name')]), $id);
     }
 }

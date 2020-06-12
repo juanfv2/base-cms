@@ -347,7 +347,7 @@ class PersonAPIController extends BaseCmsController
 
             DB::commit();
 
-            return $this->sendResponse($id, __('validation.model.deleted', ['model' => __('models.person.name')]));
+            return $this->sendResponse(__('validation.model.deleted', ['model' => __('models.person.name')]), $id);
         } catch (\PDOException $e) {
             // Woopsy
             DB::rollBack();

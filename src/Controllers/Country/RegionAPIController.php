@@ -300,6 +300,6 @@ class RegionAPIController extends BaseCmsController
 
         $model->delete();
 
-        return $this->sendResponse($id, __('validation.model.deleted', ['model' => __('models.region.name')]));
+        return $this->sendResponse(__('validation.model.deleted', ['model' => __('models.region.name')]), $id);
     }
 }

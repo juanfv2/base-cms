@@ -21,14 +21,14 @@ use Juanfv2\BaseCms\Repositories\Auth\MyBaseRepository;
 class BaseCmsController extends AppBaseController
 {
 
-    public function sendResponse($result, $message)
+    public function sendResponse($message, $result)
     {
         return response()->json(ResponseUtil::makeResponse($message, $result));
     }
 
-    public function sendError($error, $code = 404)
+    public function sendError($error, $code = 404, $data = null)
     {
-        return response()->json(ResponseUtil::makeError($error), $code);
+        return response()->json(ResponseUtil::makeError($error, $data), $code);
     }
 
     /**
@@ -143,7 +143,15 @@ class BaseCmsController extends AppBaseController
 
             File::deleteDirectory($massiveQueryFileNameDataPath);
 
-            return $this->reportBug($e->getMessage(), $created);
+            return $this->sendError(
+                'Error en la linea ' . $created,
+                500,
+                [
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                    'updated' => $created,
+                ]
+            );
         } catch (Exception $e) {
             // logger(__FILE__ . ':' . __LINE__ . ' $errors // exception.: ' . $created);
             DB::rollBack();
@@ -152,7 +160,16 @@ class BaseCmsController extends AppBaseController
 
             File::deleteDirectory($massiveQueryFileNameDataPath);
 
-            return $this->reportBug($e->getMessage(), $created);
+            // return $this->reportBug($e->getMessage(), $created);
+            return $this->sendError(
+                'Error en la linea ' . $created,
+                500,
+                [
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                    'updated' => $created,
+                ]
+            );
         }
     }
 
@@ -203,17 +220,18 @@ class BaseCmsController extends AppBaseController
                 ];
             }
         } catch (Exception $e) {
+
             DB::rollBack();
 
-            $errors = [
-                'code' => $e->getCode(),
-                'message' => 'Error en la linea ' . $updated++ . ' **********************\n',
-                'labelError' => 'Error en la linea ' . $updated++,
-                'labelDescr' => $e->getMessage(),
-                'updated' => $updated,
-            ];
-            Log::error(__METHOD__ . '.' . __LINE__, $errors);
-            return response()->json($errors, 500);
+            return $this->sendError(
+                'Error en la linea ' . $updated,
+                500,
+                [
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                    'updated' => $updated,
+                ]
+            );
         }
     }
 
@@ -288,7 +306,7 @@ class BaseCmsController extends AppBaseController
                 $item->delete();
             }
 
-            logger(__FILE__ . ':' . __LINE__ . ' $deleted ', [$deleted]);
+            // logger(__FILE__ . ':' . __LINE__ . ' $deleted ', [$deleted]);
             if ($deleted) {
                 DB::commit();
             }
@@ -297,23 +315,19 @@ class BaseCmsController extends AppBaseController
                 'message' => $deleted . ' ' . $model . ' eliminados',
             ];
         } catch (Exception $e) {
-            logger(__FILE__ . ':' . __LINE__ . ' $errors // exception.: ' . $deleted);
+            // logger(__FILE__ . ':' . __LINE__ . ' $errors // exception.: ' . $deleted);
             DB::rollBack();
-            return $this->reportBug($e->getMessage(), $deleted);
+            return $this->sendError(
+                'Error en la linea ' . $deleted,
+                500,
+                [
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                    'updated' => $deleted,
+                ]
+            );
+            // return $this->reportBug($e->getMessage(), $deleted);
         }
-    }
-
-    protected function reportBug($msg, $line = '')
-    {
-        $errors = [
-            'code' => 0,
-            'message' => 'Error en la linea ' . $line,
-            'labelDescr' => $msg,
-            'updated' => 0,
-        ];
-        // logger(__FILE__ . ':' . __LINE__ . ' $errors ', [$errors]);
-        // return $this->sendError($errors, 500);
-        return response()->json($errors, 500);
     }
 
     protected function toUtf8($in)
@@ -503,19 +517,19 @@ class BaseCmsController extends AppBaseController
             if ($color) {
                 $colors = $this->getColor($strLocation . '/' . $newNameWithExtension);
                 $_colors = json_encode($colors);
-                logger(__FILE__ . ':' . __LINE__ . ' $colors ', [$colors]);
-                logger(__FILE__ . ':' . __LINE__ . ' $colors ', [$_colors]);
+                // logger(__FILE__ . ':' . __LINE__ . ' $colors ', [$colors]);
+                // logger(__FILE__ . ':' . __LINE__ . ' $colors ', [$_colors]);
                 $affectedColors = DB::update("update {$tableName} set {$fieldName}Colors = ? where id = ?", [$_colors, $id]);
             }
         }
 
         return $this->sendResponse(
+            __('validation.model.image.added', ['model' => $tableName]),
             [
                 'success' => $affected,
                 $fieldName => $f,
                 'columns' => $columns,
-            ],
-            __('validation.model.image.added', ['model' => $tableName])
+            ]
         );
     }
 

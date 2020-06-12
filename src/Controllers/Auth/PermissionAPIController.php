@@ -313,7 +313,7 @@ class PermissionAPIController extends BaseCmsController
 
         $model->delete();
 
-        return $this->sendResponse($id, __('validation.model.deleted', ['model' => __('models.permission.name')]));
+        return $this->sendResponse(__('validation.model.deleted', ['model' => __('models.permission.name')]), $id);
     }
 
     /**

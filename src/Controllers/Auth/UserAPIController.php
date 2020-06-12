@@ -306,6 +306,6 @@ class UserAPIController extends BaseCmsController
 
         $model->delete();
 
-        return $this->sendResponse($id, __('validation.model.deleted', ['model' => __('models.user.name')]));
+        return $this->sendResponse(__('validation.model.deleted', ['model' => __('models.user.name')]), $id);
     }
 }

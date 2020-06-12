@@ -305,6 +305,6 @@ class CityAPIController extends BaseCmsController
 
         $model->delete();
 
-        return $this->sendResponse($id, __('validation.model.deleted', ['model' => __('models.city.name')]));
+        return $this->sendResponse(__('validation.model.deleted', ['model' => __('models.city.name')]), $id);
     }
 }

@@ -300,6 +300,6 @@ class RoleAPIController extends BaseCmsController
 
         $model->delete();
 
-        return $this->sendResponse($id, __('validation.model.deleted', ['model' => __('models.role.name')]));
+        return $this->sendResponse(__('validation.model.deleted', ['model' => __('models.role.name')]), $id);
     }
 }
