@@ -6,36 +6,55 @@ use Eloquent as Model;
 // use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * Class City
- * @package Juanfv2\BaseCms\Models
- * @version July 13, 2019, 2:46 pm CST
- *
- * @property \Juanfv2\BaseCms\Models\Country country
- * @property \Juanfv2\BaseCms\Models\Region region
- * @property \Illuminate\Database\Eloquent\Collection authPeople
- * @property \Illuminate\Database\Eloquent\Collection 
- * @property \Illuminate\Database\Eloquent\Collection 
- * @property \Illuminate\Database\Eloquent\Collection hosts
- * @property \Illuminate\Database\Eloquent\Collection 
- * @property integer region_id
- * @property integer country_id
- * @property float latitude
- * @property float longitude
- * @property string name
+ * @SWG\Definition(
+ *      definition="City",
+ *      required={"region_id", "country_id", "latitude", "longitude", "name"},
+ *      @SWG\Property(
+ *          property="id",
+ *          description="id",
+ *          type="integer",
+ *          format="int32"
+ *      ),
+ *      @SWG\Property(
+ *          property="region_id",
+ *          description="region_id",
+ *          type="integer",
+ *          format="int32"
+ *      ),
+ *      @SWG\Property(
+ *          property="country_id",
+ *          description="country_id",
+ *          type="integer",
+ *          format="int32"
+ *      ),
+ *      @SWG\Property(
+ *          property="latitude",
+ *          description="latitude",
+ *          type="number",
+ *          format="number"
+ *      ),
+ *      @SWG\Property(
+ *          property="longitude",
+ *          description="longitude",
+ *          type="number",
+ *          format="number"
+ *      ),
+ *      @SWG\Property(
+ *          property="name",
+ *          description="name",
+ *          type="string"
+ *      )
+ * )
  */
 class City extends Model
 {
+    public $table = 'cities';
+
     // use SoftDeletes;
     public $timestamps = false;
-
-    public $table = 'cities';
-    
-    const CREATED_AT = 'created_at';
-    const UPDATED_AT = 'updated_at';
-
-
-    protected $dates = ['deleted_at'];
-
+    // const CREATED_AT = 'created_at';
+    // const UPDATED_AT = 'updated_at';
+    // protected $dates = ['deleted_at'];
 
     public $fillable = [
         'region_id',
@@ -54,8 +73,8 @@ class City extends Model
         'id' => 'integer',
         'region_id' => 'integer',
         'country_id' => 'integer',
-        'latitude' => 'float',
-        'longitude' => 'float',
+        'latitude' => 'decimal:8',
+        'longitude' => 'decimal:8',
         'name' => 'string'
     ];
 
