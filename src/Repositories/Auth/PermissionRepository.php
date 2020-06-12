@@ -7,7 +7,7 @@ use Juanfv2\BaseCms\Repositories\MyBaseRepository;
 
 /**
  * Class PermissionRepository
- * @package App\Repositories
+ * @package Juanfv2\BaseCms\Repositories
  * @version May 28, 2018, 4:36 am UTC
  *
  * @method Permission findWithoutFail($id, $columns = ['*'])

@@ -7,7 +7,7 @@ use Eloquent as Model;
 
 /**
  * Class City
- * @package App\Models
+ * @package Juanfv2\BaseCms\Models
  * @version July 13, 2019, 2:46 pm CST
  *
  * @property \Juanfv2\BaseCms\Models\Country country

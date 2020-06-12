@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class Auth/Person
- * @package App\Models
+ * @package Juanfv2\BaseCms\Models
  * @version August 15, 2019, 2:51 pm CST
  *
  * @property \Juanfv2\BaseCms\Models\City city

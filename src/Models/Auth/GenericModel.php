@@ -6,7 +6,7 @@ use Eloquent as Model;
 
 /**
  * Class GenericModel
- * @package App\Models
+ * @package Juanfv2\BaseCms\Models
  * @version January 14, 2019, 8:34 am UTC
  *
  */

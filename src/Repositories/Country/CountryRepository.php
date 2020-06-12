@@ -7,7 +7,7 @@ use Juanfv2\BaseCms\Repositories\MyBaseRepository;
 
 /**
  * Class CountryRepository
- * @package App\Repositories
+ * @package Juanfv2\BaseCms\Repositories
  * @version July 13, 2019, 1:54 pm CST
  *
  * @method Country findWithoutFail($id, $columns = ['*'])

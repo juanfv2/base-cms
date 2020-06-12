@@ -6,7 +6,7 @@ use Eloquent as Model;
 
 /**
  * Class UserVerified
- * @package App\Models
+ * @package Juanfv2\BaseCms\Models
  * @version February 7, 2019, 12:50 am UTC
  *
  * @property \Illuminate\Database\Eloquent\Collection authRolesHasPermissions

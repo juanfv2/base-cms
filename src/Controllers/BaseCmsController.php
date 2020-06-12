@@ -5,7 +5,7 @@ namespace Juanfv2\BaseCms\Controllers;
 use Exception;
 use Juanfv2\BaseCms\Models\Auth\XFile;
 use Illuminate\Http\Request;
-use App\Helpers\ExportDataCSV;
+use Juanfv2\BaseCms\Helpers\ExportDataCSV;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\File;

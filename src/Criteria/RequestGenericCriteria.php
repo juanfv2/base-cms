@@ -8,7 +8,7 @@ use Prettus\Repository\Contracts\RepositoryInterface;
 
 /**
  * Class RequestGenericCriteria
- * @package namespace App\Criteria;
+ * @package namespace Juanfv2\BaseCms\Criteria;
  */
 class RequestGenericCriteria implements CriteriaInterface
 {

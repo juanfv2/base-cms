@@ -8,7 +8,7 @@ use Juanfv2\BaseCms\Models\Auth\XFile;
 
 /**
  * Class Country
- * @package App\Models
+ * @package Juanfv2\BaseCms\Models
  * @version July 13, 2019, 1:54 pm CST
  *
  * @property \Illuminate\Database\Eloquent\Collection authPeople

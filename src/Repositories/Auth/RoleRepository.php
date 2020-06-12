@@ -7,7 +7,7 @@ use Juanfv2\BaseCms\Repositories\MyBaseRepository;
 
 /**
  * Class RoleRepository
- * @package App\Repositories
+ * @package Juanfv2\BaseCms\Repositories
  * @version May 28, 2018, 4:35 am UTC
  *
  * @method Role findWithoutFail($id, $columns = ['*'])

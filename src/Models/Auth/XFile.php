@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class XFile
- * @package App\Models
+ * @package Juanfv2\BaseCms\Models
  * @version July 28, 2019, 5:51 am UTC
  *
  * @property \Illuminate\Database\Eloquent\Collection 

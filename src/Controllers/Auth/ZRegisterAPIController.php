@@ -66,12 +66,8 @@ class ZRegisterAPIController extends BaseCmsController
      */
     function registerUser(Request $request)
     {
-        // '4','Cliente Empresa','Usuario del sistema'
-        // '5','Cliente Credito Fiscal','Usuario del sistema'
-        // '6','Cliente Consumidor Final','Usuario del sistema'
-
         $info = $request->all();
-        logger(__FILE__ . ':' . __LINE__ . ' $info ', [$info]);
+        // logger(__FILE__ . ':' . __LINE__ . ' $info ', [$info]);
         $this->validate($request, User::$rulesCreate);
 
         $roleId = $info['address'] == '' ? 6 : 5;

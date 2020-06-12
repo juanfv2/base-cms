@@ -7,7 +7,7 @@ use Juanfv2\BaseCms\Repositories\MyBaseRepository;
 
 /**
  * Class PersonRepository
- * @package App\Repositories
+ * @package Juanfv2\BaseCms\Repositories
  * @version January 14, 2019, 8:34 am UTC
  *
  * @method Person findWithoutFail($id, $columns = ['*'])

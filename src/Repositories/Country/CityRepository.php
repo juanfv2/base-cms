@@ -7,7 +7,7 @@ use Juanfv2\BaseCms\Repositories\MyBaseRepository;
 
 /**
  * Class CityRepository
- * @package App\Repositories
+ * @package Juanfv2\BaseCms\Repositories
  * @version July 13, 2019, 2:46 pm CST
  *
  * @method City findWithoutFail($id, $columns = ['*'])
