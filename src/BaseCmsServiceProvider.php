@@ -31,11 +31,11 @@ class BaseCmsServiceProvider extends ServiceProvider
             __DIR__ . '/../database/seeds' => database_path('seeds'),
         ], 'base-cms-migrations');
 
-        $this->loadViewsFrom(__DIR__ . '/../resources', 'base-cms-views');
+        $this->loadViewsFrom(__DIR__ . '/../resources', 'base_cms_views');
 
         $this->publishes([
             __DIR__ . '/../resources/infyom' => resource_path('infyom'),
             __DIR__ . '/../resources/lang' => resource_path('lang'),
-        ]);
+        ], 'base-cms-views');
     }
 }
