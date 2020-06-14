@@ -31,7 +31,7 @@ class BaseCmsServiceProvider extends ServiceProvider
             __DIR__ . '/../database/seeds' => database_path('seeds'),
         ], 'base-cms-migrations');
 
-        $this->loadViewsFrom(__DIR__ . '/../resources', 'base_cms_views');
+        $this->loadViewsFrom(__DIR__ . '/../resources', 'base-cms-views');
 
         $this->publishes([
             __DIR__ . '/../resources/infyom' => resource_path('infyom'),
