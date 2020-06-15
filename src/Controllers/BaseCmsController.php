@@ -92,6 +92,12 @@ class BaseCmsController extends AppBaseController
                         $created++;
                         continue;
                     }
+                    $cKeys = count($xHeaders);
+                    $cDatum = count($datum);
+
+                    if ($cKeys !== $cDatum) {
+                        throw new \Exception(__('validation.columns.no.match', ['required' => $cKeys, 'sent' => $cDatum]), $created + 1);
+                    }
                     $itemArr = array_combine($xHeaders, $datum);
 
                     // AVOID columns empties
@@ -526,9 +532,7 @@ class BaseCmsController extends AppBaseController
         return $this->sendResponse(
             __('validation.model.image.added', ['model' => $tableName]),
             [
-                'success' => $affected,
                 $fieldName => $f,
-                'columns' => $columns,
             ]
         );
     }
