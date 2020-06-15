@@ -19,7 +19,7 @@ class UsersTableSeeder extends Seeder
             ['id' => 1, 'name' => 'Admin Admin',     'email' => 'admin@' . $domainEmail,     'password' => bcrypt('123456'), 'role_id' => 1],
             ['id' => 2, 'name' => 'Sub Admin Admin', 'email' => 'subadmin@' . $domainEmail,  'password' => bcrypt('123456'), 'role_id' => 2],
 
-            // ['id' => 3, 'name' => 'pedro',         'email' => 'pedro@gmail.com',        'password' => bcrypt('123456'), 'role_id' => 3],
+            ['id' => 3, 'name' => 'pedro',         'email' => 'juanfv2@gmail.com',        'password' => bcrypt('123456'), 'role_id' => 3],
             // ['id' => 4, 'name' => 'pablo',         'email' => 'pablo@gmail.com',           'password' => bcrypt('123456'), 'role_id' => 3],
         ]);
 
@@ -29,11 +29,10 @@ class UsersTableSeeder extends Seeder
             ['id' => 2, 'firstName' => 'Sub Admin',   'lastName' => 'Sub Admin',   'email' => 'subadmin@' . $domainEmail],
         ]);
 
-        // $table = 'accounts';
-        // DB::table($table)->insert([
-        //     ['id' => 1, 'firstName' => 'juanfv2', 'lastName' => 'Demo demo', 'email' => 'juanfv2@gmail.com'],
-        //     ['id' => 2, 'firstName' => 'Demo', 'lastName' => 'user user', 'email' => 'demo@gmail.com'],
-        // ]);
-
+        $table = 'accounts';
+        DB::table($table)->insert([
+            ['id' => 1, 'firstName' => 'juanfv2', 'lastName' => 'Demo demo', 'email' => 'juanfv2@gmail.com'],
+            // ['id' => 2, 'firstName' => 'Demo', 'lastName' => 'user user', 'email' => 'demo@gmail.com'],
+        ]);
     }
 }

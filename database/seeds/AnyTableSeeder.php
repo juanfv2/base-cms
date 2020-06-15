@@ -18,6 +18,7 @@ class AnyTableSeeder extends Seeder
             'auth/auth_permissions',
             'auth/auth_roles_has_permissions',
             'auth/auth_users_has_roles',
+            'auth/auth_x_files',
 
             'oauth/oauth_clients',
             'oauth/oauth_personal_access_clients',
