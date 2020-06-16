@@ -150,21 +150,27 @@ class Permission extends Model
         'updatedBy' => 'integer'
     ];
 
+// /**
+    //  * Validation rules
+    //  *
+    //  * @var array
+    //  */
+    // public static $rules = [
+    //     'icon' => 'required',
+    //     'name' => 'required',
+    //     'urlBackEnd' => 'required',
+    //     'urlFrontEnd' => 'required',
+    //     'isSection' => 'required',
+    //     'isVisible' => 'required',
+    //     'permission_id' => 'required',
+    //     'orderInMenu' => 'required'
+    // ];
     /**
      * Validation rules
      *
      * @var array
      */
-    public static $rules = [
-        'icon' => 'required',
-        'name' => 'required',
-        'urlBackEnd' => 'required',
-        'urlFrontEnd' => 'required',
-        'isSection' => 'required',
-        'isVisible' => 'required',
-        'permission_id' => 'required',
-        'orderInMenu' => 'required'
-    ];
+    public static $rules = [];
 
     /**
      * The attributes that should be visible in arrays.
