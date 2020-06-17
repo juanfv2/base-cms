@@ -14,7 +14,7 @@ use Juanfv2\BaseCms\Requests\Auth\UpdateUserAPIRequest;
 
 /**
  * Class UserController
- * @package Juanfv2\BaseCms\Controllers\API
+ * @package Juanfv2\BaseCms\Controllers\Auth
  */
 
 class UserAPIController extends BaseCmsController

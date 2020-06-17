@@ -2,19 +2,20 @@
 
 namespace Juanfv2\BaseCms\Controllers\Auth;
 
-use Juanfv2\BaseCms\Models\Auth\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Juanfv2\BaseCms\Models\Auth\User;
 use Juanfv2\BaseCms\Resources\GenericResource;
-use Juanfv2\BaseCms\Repositories\Auth\UserRepository;
-use Juanfv2\BaseCms\Controllers\BaseCmsController;
+
 use Juanfv2\BaseCms\Requests\Auth\LoginRequest;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Juanfv2\BaseCms\Controllers\BaseCmsController;
+use Juanfv2\BaseCms\Repositories\Auth\UserRepository;
 
 /**
  * Class LoginAPIController
- * @package Juanfv2\BaseCms\Controllers\API
+ * @package Juanfv2\BaseCms\Controllers\Auth
  */
 class ZLoginAPIController extends BaseCmsController
 {

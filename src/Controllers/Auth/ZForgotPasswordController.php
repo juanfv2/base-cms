@@ -2,11 +2,15 @@
 
 namespace Juanfv2\BaseCms\Controllers\Auth;
 
-use Juanfv2\BaseCms\Controllers\Controller;
-use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 
+/**
+ * Class ZRegisterAPIController
+ * @package Juanfv2\BaseCms\Controllers\Auth
+ */
 class ZForgotPasswordController extends Controller
 {
     /*
@@ -24,7 +28,43 @@ class ZForgotPasswordController extends Controller
 
     /**
      * @param Request $request
-     * @return array
+     * @return Response
+     *
+     * @SWG\Post(
+     *      path="/password/email",
+     *      summary="Store a newly created Account in storage",
+     *      tags={"Password"},
+     *      description="Store Account",
+     *      produces={"application/json"},
+     *      @SWG\Parameter(
+     *          name="body",
+     *          in="body",
+     *          description="Account that should be stored",
+     *          required=false,
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="email",
+     *                  type="string"
+     *              ),
+     *          )
+     *      ),
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
      */
     public function sendResetLinkEmail(Request $request)
     {
@@ -46,7 +86,8 @@ class ZForgotPasswordController extends Controller
 
         return response()->json([
             'success' => $isValid,
-            'message' => __($response)], $isValid ? 200 : 500);
+            'message' => __($response)
+        ], $isValid ? 200 : 500);
     }
 
     /**

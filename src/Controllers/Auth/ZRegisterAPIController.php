@@ -2,19 +2,26 @@
 
 namespace Juanfv2\BaseCms\Controllers\Auth;
 
-use Juanfv2\BaseCms\Models\Auth\User;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Juanfv2\BaseCms\Models\Auth\UserVerified;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use Juanfv2\BaseCms\Resources\GenericResource;
-use Juanfv2\BaseCms\Repositories\AccountRepository;
-use Juanfv2\BaseCms\Repositories\Auth\UserRepository;
-use Juanfv2\BaseCms\Controllers\BaseCmsController;
-use Illuminate\Foundation\Auth\RegistersUsers;
-use App\Notifications\UserRegisteredNotification;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Juanfv2\BaseCms\Models\Auth\User;
+use Illuminate\Support\Facades\Schema;
+use Juanfv2\BaseCms\Models\Auth\UserVerified;
 
+use Illuminate\Foundation\Auth\RegistersUsers;
+use Juanfv2\BaseCms\Resources\GenericResource;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Juanfv2\BaseCms\Controllers\BaseCmsController;
+use Juanfv2\BaseCms\Repositories\Auth\UserRepository;
+use Juanfv2\BaseCms\Repositories\Auth\AccountRepository;
+use Juanfv2\BaseCms\Notifications\UserRegisteredNotification;
+
+/**
+ * Class ZRegisterAPIController
+ * @package Juanfv2\BaseCms\Controllers\Auth
+ */
 class ZRegisterAPIController extends BaseCmsController
 {
     /*
@@ -46,10 +53,78 @@ class ZRegisterAPIController extends BaseCmsController
         $this->accountRepository = $customerRepo;
     }
 
+
     /**
      * @param Request $request
-     * @return array|mixed
-     * @throws \Prettus\Validator\Exceptions\ValidatorException
+     * @return Response
+     *
+     * @SWG\Post(
+     *      path="/register",
+     *      summary="Store a newly created Account in storage",
+     *      tags={"Register"},
+     *      description="Store Account",
+     *      produces={"application/json"},
+     *      @SWG\Parameter(
+     *          name="body",
+     *          in="body",
+     *          description="Account that should be stored",
+     *          required=false,
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="name",
+     *                  type="string"
+     *              ),
+     *              @SWG\Property(
+     *                  property="password",
+     *                  type="string"
+     *              ),
+     *              @SWG\Property(
+     *                  property="password_confirmation",
+     *                  type="string"
+     *              ),
+     *              @SWG\Property(
+     *                  property="firstName",
+     *                  type="string"
+     *              ),
+     *              @SWG\Property(
+     *                  property="lastName",
+     *                  type="string"
+     *              ),
+     *              @SWG\Property(
+     *                  property="email",
+     *                  type="string"
+     *              ),
+     *              @SWG\Property(
+     *                  property="uid",
+     *                  type="string"
+     *              ),
+     *              @SWG\Property(
+     *                  property="role_id",
+     *                  type="integer"
+     *              ),
+     *          )
+     *      ),
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="data",
+     *                  ref="#/definitions/Account"
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
      */
     function register(Request $request)
     {
@@ -70,40 +145,37 @@ class ZRegisterAPIController extends BaseCmsController
         // logger(__FILE__ . ':' . __LINE__ . ' $info ', [$info]);
         $this->validate($request, User::$rulesCreate);
 
-        $roleId = $info['address'] == '' ? 6 : 5;
+        $roleId = $info['role_id'];
 
         // user
         $info['password'] = password_hash($info['password'], PASSWORD_BCRYPT);
         $info['roles'] = [$roleId];
         $info['role_id'] = $roleId;
-        $info['disabled'] = true; // !$request->get('uid', false);
+        $info['disabled'] = !$request->get('uid', false);
 
-        // $customer
-        // $info['email'] = $info['email'];
-        // $info['firstName'] = $info['name'];
-        // $info['lastName'] = '';
+        // $info['country_id'] = 194;
+        // $info['region_id'] = 3224;
+        // $info['city_id'] = 2317133;
 
-        $info['country_id'] = 194;
-        $info['region_id'] = 3224;
-        $info['city_id'] = 2317133;
-
-        // -- // 194
-        // -- // 3224 
-        // -- // 2317133
+        // -- // 194        sv
+        // -- // 3224       ss
+        // -- // 2317133    ss
 
         try {
 
+            Schema::disableForeignKeyConstraints();
             DB::beginTransaction();
 
             $this->user = $this->userRepository->create($info);
             $newAccount = $this->accountRepository->create($info);
 
             if (!$request->has('uid')) {
-                UserVerified::create(['user_id' => $this->user->id, 'token' => str_random(40)]);
+                UserVerified::create(['user_id' => $this->user->id, 'token' => Str::random(40)]);
                 $this->user->notify(new UserRegisteredNotification($this->user));
             }
 
             DB::commit();
+            Schema::enableForeignKeyConstraints();
 
             return [
                 'success' => true,
@@ -112,10 +184,18 @@ class ZRegisterAPIController extends BaseCmsController
                 'errors' => [__('messages.mail.verifyTitle', ['email' => $this->user->email])],
             ];
         } catch (\PDOException $e) {
-            logger(__FILE__ . ':' . __LINE__ . ' $e ', [$e]);
+            // logger(__FILE__ . ':' . __LINE__ . ' $e ', [$e]);
             // Woopsy
             DB::rollBack();
-            return $this->sendError(__('validation.model.error', ['model' => '']));
+            return $this->sendError(
+                __('validation.model.error', ['model' => __('models.account.name')]),
+                500,
+                [
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                    // 'updated' => $created,
+                ]
+            );
         }
     }
 

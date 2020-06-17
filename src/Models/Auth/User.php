@@ -2,14 +2,14 @@
 
 namespace Juanfv2\BaseCms\Models\Auth;
 
-use Juanfv2\BaseCms\Models\Account;
 use Illuminate\Support\Facades\DB;
 use Laravel\Passport\HasApiTokens;
+use Juanfv2\BaseCms\Models\Account;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Notifications\ResetPasswordNotification;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Juanfv2\BaseCms\Notifications\ResetPasswordNotification;
 
 /**
  * @SWG\Definition(

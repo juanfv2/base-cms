@@ -16,7 +16,7 @@ use Juanfv2\BaseCms\Requests\Auth\UpdatePermissionAPIRequest;
 
 /**
  * Class PermissionController
- * @package Juanfv2\BaseCms\Controllers\API
+ * @package Juanfv2\BaseCms\Controllers\Auth
  */
 
 class PermissionAPIController extends BaseCmsController

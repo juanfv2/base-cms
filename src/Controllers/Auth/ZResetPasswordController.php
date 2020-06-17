@@ -3,7 +3,7 @@
 namespace Juanfv2\BaseCms\Controllers\Auth;
 
 use Illuminate\Http\Request;
-use Juanfv2\BaseCms\Controllers\Controller;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 
@@ -47,15 +47,15 @@ class ZResetPasswordController extends Controller
      */
     public function reset(Request $request)
     {
-        logger(__FILE__ . ':' . __LINE__ . ' $request 1: ', [$request]);
+        // logger(__FILE__ . ':' . __LINE__ . ' $request 1: ', [$request->all()]);
         // $this->validate($request, $this->rules(), $this->validationErrorMessages());
-        logger(__FILE__ . ':' . __LINE__ . ' $request 2: ', [$request]);
 
         // Here we will attempt to reset the user's password. If it is successful we
         // will update the password on an actual user model and persist it to the
         // database. Otherwise we will parse the error and return the response.
         $response = $this->broker()->reset(
-            $this->credentials($request), function ($user, $password) {
+            $this->credentials($request),
+            function ($user, $password) {
                 $this->resetPassword($user, $password);
             }
         );
@@ -68,6 +68,21 @@ class ZResetPasswordController extends Controller
 
         return response()->json([
             'success' => $isValid,
-            'message' => __($response)], $isValid ? 200 : 500);
+            'message' => __($response)
+        ], $isValid ? 200 : 500);
+    }
+
+    /**
+     * Get the password reset validation rules.
+     *
+     * @return array
+     */
+    protected function rules()
+    {
+        return [
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|confirmed|min:6',
+        ];
     }
 }

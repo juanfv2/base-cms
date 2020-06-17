@@ -8,7 +8,28 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * @SWG\Definition(
  *      definition="Account",
- *      required={"firstName", "lastName", "email"},
+ *      required={"firstName", "lastName", "email", "name", "password", "role_id"},
+ *      @SWG\Property(
+ *          property="name",
+ *          description="name",
+ *          type="string"
+ *      ),
+ *      @SWG\Property(
+ *          property="password",
+ *          description="password",
+ *          type="string"
+ *      ),
+ *      @SWG\Property(
+ *          property="role_id",
+ *          description="role_id",
+ *          type="integer",
+ *          format="int32"
+ *      ),
+ *      @SWG\Property(
+ *          property="uid",
+ *          description="uid",
+ *          type="string"
+ *      ),
  *      @SWG\Property(
  *          property="id",
  *          description="id",
@@ -110,8 +131,8 @@ class Account extends Model
 {
     use SoftDeletes;
 
-    public $table = 'accounts';
-    
+    public $table = 'auth_accounts';
+
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
@@ -166,7 +187,7 @@ class Account extends Model
     public static $rules = [
         'firstName' => 'required',
         'lastName' => 'required',
-        'email' => 'required|string|email|max:255|unique:accounts',
+        'email' => 'required|string|email|max:255|unique:auth_accounts',
     ];
 
     /**

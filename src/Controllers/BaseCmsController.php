@@ -10,13 +10,21 @@ use Intervention\Image\Facades\Image;
 use Juanfv2\BaseCms\Models\Auth\XFile;
 use InfyOm\Generator\Utils\ResponseUtil;
 use Juanfv2\BaseCms\Helpers\ExportDataCSV;
+
 use App\Http\Controllers\AppBaseController;
 use Juanfv2\BaseCms\Criteria\RequestGenericCriteria;
 use Juanfv2\BaseCms\Repositories\Auth\MyBaseRepository;
 
 /**
+ * @SWG\Swagger(
+ *   basePath="/api",
+ *   @SWG\Info(
+ *     title="Base CMS APIs",
+ *     version="1.0.0",
+ *   )
+ * )
  * This class should be parent class for other API controllers
- * Class AppBaseController
+ * Class BaseCmsController
  */
 class BaseCmsController extends AppBaseController
 {
@@ -26,7 +34,7 @@ class BaseCmsController extends AppBaseController
         return response()->json(ResponseUtil::makeResponse($message, $result));
     }
 
-    public function sendError($error, $code = 404, $data = null)
+    public function sendError($error, $code = 404, $data = [])
     {
         return response()->json(ResponseUtil::makeError($error, $data), $code);
     }

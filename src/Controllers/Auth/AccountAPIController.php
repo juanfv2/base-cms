@@ -3,28 +3,34 @@
 namespace Juanfv2\BaseCms\Controllers\Auth;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Juanfv2\BaseCms\Resources\GenericResource;
 use InfyOm\Generator\Criteria\LimitOffsetCriteria;
+
 use Juanfv2\BaseCms\Controllers\BaseCmsController;
 use Juanfv2\BaseCms\Criteria\RequestGenericCriteria;
-
-use Juanfv2\BaseCms\Repositories\AccountRepository;
-use Juanfv2\BaseCms\Http\Requests\API\CreateAccountAPIRequest;
-use Juanfv2\BaseCms\Http\Requests\API\UpdateAccountAPIRequest;
+use Juanfv2\BaseCms\Repositories\Auth\UserRepository;
+use Juanfv2\BaseCms\Repositories\Auth\AccountRepository;
+use Juanfv2\BaseCms\Requests\Auth\CreateAccountAPIRequest;
+use Juanfv2\BaseCms\Requests\Auth\UpdateAccountAPIRequest;
 
 /**
  * Class AccountController
- * @package Juanfv2\BaseCms\Http\Controllers\API
+ * @package Juanfv2\BaseCms\Controllers\Auth
  */
 
 class AccountAPIController extends BaseCmsController
 {
     /** @var  AccountRepository */
     private $modelRepository;
+    /** @var  UserRepository */
+    private $userRepository;
 
-    public function __construct(AccountRepository $modelRepo)
+    public function __construct(AccountRepository $modelRepo, UserRepository $userRepo)
     {
         $this->modelRepository = $modelRepo;
+        $this->userRepository = $userRepo;
     }
 
     /**
@@ -129,11 +135,35 @@ class AccountAPIController extends BaseCmsController
     {
         $input = $request->all();
 
-        $model = $this->modelRepository->create($input);
+        $input['password'] = password_hash($input['password'], PASSWORD_BCRYPT);
 
-        // $model = new GenericResource($model);
+        try {
+            Schema::disableForeignKeyConstraints();
+            DB::beginTransaction();
 
-        return ['id' => $model->id];
+            $this->userRepository->create($input);
+            $model = $this->modelRepository->create($input);
+
+            // $model = new GenericResource($model);
+
+            DB::commit();
+            Schema::enableForeignKeyConstraints();
+
+            return ['id' => $model->id];
+        } catch (\PDOException $e) {
+            // logger(__FILE__ . ':' . __LINE__ . ' $e ', [$e]);
+            // Woopsy
+            DB::rollBack();
+            return $this->sendError(
+                __('validation.model.error', ['model' => __('models.account.name')]),
+                500,
+                [
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                    // 'updated' => $created,
+                ]
+            );
+        }
     }
 
     /**
@@ -244,11 +274,40 @@ class AccountAPIController extends BaseCmsController
             return $this->sendError(__('validation.model.not.found', ['model' => __('models.account.name')]));
         }
 
-        $model = $this->modelRepository->update($input, $id);
+        try {
 
-        // $model = new GenericResource(account);
+            Schema::disableForeignKeyConstraints();
+            DB::beginTransaction();
 
-        return ['id' => $model->id];
+            $userId = $input['user_id'];
+            if ($request->has('password')) {
+                $input['password'] = password_hash($input['password'], PASSWORD_BCRYPT);
+            }
+
+            $this->userRepository->update($input, $userId);
+            $model = $this->modelRepository->update($input, $id);
+
+            // $model = new GenericResource(account);
+
+            DB::commit();
+            Schema::enableForeignKeyConstraints();
+
+            return ['id' => $model->id];
+        } catch (\PDOException $e) {
+            // logger(__FILE__ . ':' . __LINE__ . ' $e ', [$e->getMessage()]);
+            // Woopsy
+            DB::rollBack();
+            Schema::enableForeignKeyConstraints();
+            return $this->sendError(
+                __('validation.model.error', ['model' => __('models.account.name')]),
+                500,
+                [
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                    // 'updated' => $created,
+                ]
+            );
+        }
     }
 
     /**
@@ -298,8 +357,29 @@ class AccountAPIController extends BaseCmsController
             return $this->sendError(__('validation.model.not.found', ['model' => __('models.account.name')]));
         }
 
-        $model->delete();
+        try {
 
-        return $this->sendResponse(__('validation.model.deleted', ['model' => __('models.account.name')]), $id);
+            DB::beginTransaction();
+
+            $model->user->delete();
+            $model->delete();
+
+            DB::commit();
+
+            return $this->sendResponse(__('validation.model.deleted', ['model' => __('models.account.name')]), $id);
+        } catch (\PDOException $e) {
+            // Woopsy
+            DB::rollBack();
+
+            return $this->sendError(
+                __('validation.model.error', ['model' => __('models.account.name')]),
+                500,
+                [
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                    // 'updated' => $created,
+                ]
+            );
+        }
     }
 }

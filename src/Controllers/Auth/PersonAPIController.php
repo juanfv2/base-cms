@@ -17,7 +17,7 @@ use Juanfv2\BaseCms\Requests\Auth\UpdatePersonAPIRequest;
 
 /**
  * Class PersonController
- * @package Juanfv2\BaseCms\Controllers\API
+ * @package Juanfv2\BaseCms\Controllers\Auth
  */
 
 class PersonAPIController extends BaseCmsController

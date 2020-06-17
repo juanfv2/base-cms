@@ -14,7 +14,7 @@ use Juanfv2\BaseCms\Requests\Auth\UpdateRoleAPIRequest;
 
 /**
  * Class RoleController
- * @package App\Http\Controllers\API
+ * @package Juanfv2\BaseCms\Controllers\Auth
  */
 
 class RoleAPIController extends BaseCmsController
