@@ -28,7 +28,7 @@ class BaseCmsServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/../resources', 'base-cms-views');
 
         $this->publishes([
-            __DIR__ . '/../database/base-cms.php' => config_path('base-cms.php'),
+            __DIR__ . '/../config/base-cms.php' => config_path('base-cms.php'),
         ]);
 
         $this->publishes([
