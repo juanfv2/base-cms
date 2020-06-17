@@ -36,7 +36,9 @@ class BaseCmsServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../resources/infyom' => resource_path('infyom'),
             __DIR__ . '/../resources/lang' => resource_path('lang'),
-            __DIR__ . '/../resources/assets' => resource_path('assets'),
+
+            __DIR__ . '/../resources/assets' => public_path('assets'),
+            __DIR__ . '/../resources/base' => public_path('base'),
         ], 'base-cms-views');
     }
 }
