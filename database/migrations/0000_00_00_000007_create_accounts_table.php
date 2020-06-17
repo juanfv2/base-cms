@@ -13,7 +13,7 @@ class CreateAccountsTable extends Migration
      */
     public function up()
     {
-        Schema::create('accounts', function (Blueprint $table) {
+        Schema::create('auth_accounts', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('firstName');
             $table->string('lastName');
@@ -59,6 +59,6 @@ class CreateAccountsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('accounts');
+        Schema::dropIfExists('auth_accounts');
     }
 }
