@@ -15,7 +15,9 @@ return [
 
     'appName' => '---',
     'mail' => [
-        'welcome' => 'Bienvenido a ',
+        'welcome' => 'Bienvenido a [App]',
+        'change' => 'Cambio de contraseña',
+        'salutation' => 'Saludos',
         'verifyTitle' => 'Verificar el correo electrónico',
         'verify' => 'Se envió un correo a :email, verifique su correo',
         'check' => 'Le enviamos un código de activación. Verifique su correo electrónico y haga clic en el enlace para verificar.',

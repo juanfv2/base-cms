@@ -144,6 +144,6 @@ return [
     'model.deleted' => ':model borrado',
     'model.error' => 'Error inesperado, :model',
 
-    'columns.no.match' => 'El número de columnas no coincide requeridas: :required columnas enviadas: :sent',
+    'columns.no.match' => 'El número de columnas no coincide <br/>requeridas: <b>:required</b> <br/>enviadas: <b>:sent</b>',
 
 ];

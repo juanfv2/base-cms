@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'password' => 'La contraseña debe tener al menos 6 caracteres y coincidir con la confirmación.',
+    'password' => 'La contraseña debe tener al menos 8 caracteres y coincidir con la confirmación.',
     'reset' => '¡Su contraseña ha sido reestablecida!',
     'sent' => '¡Recordatorio de contraseña enviado!',
     'token' => 'Este token de reestablecimiento de contraseña es inválido.',
