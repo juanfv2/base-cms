@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description"
+        content="">
+  <meta name="author"
+        content="">
+  <link rel="icon"
+        href="/base/favicon.ico">
+
+  <title>COMO · Bienvenido</title>
+
+  <link rel="canonical"
+        href="https://getbootstrap.com/docs/4.0/examples/cover/">
+
+  <!-- Bootstrap core CSS -->
+  <link href="https://getbootstrap.com/docs/4.0/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <style>
+    /*
+      * Base structure
+      */
+
+    html,
+    body {
+      height: 100%;
+      background-color: #fff;
+    }
+
+    body {
+      display: -ms-flexbox;
+      display: -webkit-box;
+      display: flex;
+      -ms-flex-pack: center;
+      -webkit-box-pack: center;
+      justify-content: center;
+      color: #484646;
+      text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5);
+      line-height: 1;
+    }
+
+    .cover-container {
+      max-width: 1366px;
+    }
+
+    .cover-heading {
+      color: #252323;
+    }
+  </style>
+</head>
+
+<body class="text-center">
+
+  <div class="cover-container d-flex h-100 w-100 mx-auto flex-column">
+
+    <header class="masthead mb-auto">
+      <div class="inner">
+        <img src="/base/assets/images/bg-header.jpg"
+             alt="."
+             class="img-fluid p-0">
+      </div>
+    </header>
+
+    <main role="main"
+          class="inner cover">
+
+      <img src="/base/assets/images/logo.png"
+           alt="logo COMO"
+           class="m-3">
+      <!-- descriptions -->
+      <div class="descriptions">
+        <h1 class="cover-heading text-uppercase r-title">{{ title }}</h1>
+        <p class="lead m-3 r-description"> {{ description }}</p>
+      </div>
+      <!-- descriptions -->
+
+    </main>
+
+    <footer class="mastfoot mt-auto">
+      <div class="inner">
+        <img src="/base/assets/images/bg-footer.jpg"
+             alt="."
+             class="img-fluid p-0">
+      </div>
+    </footer>
+  </div>
+
+
+  <!-- Bootstrap core JavaScript
+    ================================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src="/base/assets/init.js"></script>
+  <script>
+
+    var token = findGetParameter('t');
+    var urlStr = verify + token;
+    console.log('urlStr', urlStr);
+
+    $
+      .post(urlStr, function (data) {
+        $('.r-title').html(data.title);
+        $('.r-description').html(data.description);
+      })
+      .fail(function (data) {
+        console.log('data', data);
+        $('.r-title').html(data.responseJSON.title);
+        $('.r-description').html(data.responseJSON.description);
+      });
+
+
+  </script>
+
+</body>
+
+</html>
