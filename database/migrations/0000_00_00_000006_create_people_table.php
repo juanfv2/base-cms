@@ -14,7 +14,7 @@ class CreatePeopleTable extends Migration
     public function up()
     {
         Schema::create('auth_people', function (Blueprint $table) {
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->string('firstName');
             $table->string('lastName');
             $table->string('phone')->nullable();
@@ -25,12 +25,12 @@ class CreatePeopleTable extends Migration
             $table->string('address')->nullable();
             $table->string('neighborhood')->nullable();
 
-            $table->integer('country_id')->unsigned()->nullable();
-            $table->integer('region_id')->unsigned()->nullable();
-            $table->integer('city_id')->unsigned()->nullable();
+            $table->bigInteger('country_id')->unsigned()->nullable();
+            $table->bigInteger('region_id')->unsigned()->nullable();
+            $table->bigInteger('city_id')->unsigned()->nullable();
 
-            $table->integer('createdBy')->nullable();
-            $table->integer('updatedBy')->nullable();
+            $table->bigInteger('createdBy')->nullable();
+            $table->bigInteger('updatedBy')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

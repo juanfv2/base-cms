@@ -14,18 +14,18 @@ class CreatePermissionsTable extends Migration
     public function up()
     {
         Schema::create('auth_permissions', function (Blueprint $table) {
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->string('icon')->default('');
             $table->string('name');
             $table->string('urlBackEnd');
             $table->string('urlFrontEnd');
             $table->boolean('isSection')->default(0);
             $table->boolean('isVisible')->default(0);
-            $table->integer('permission_id')->default(0);
+            $table->bigInteger('permission_id')->default(0);
             $table->integer('orderInMenu')->default(0);
 
-            $table->integer('createdBy')->nullable();
-            $table->integer('updatedBy')->nullable();
+            $table->bigInteger('createdBy')->nullable();
+            $table->bigInteger('updatedBy')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
