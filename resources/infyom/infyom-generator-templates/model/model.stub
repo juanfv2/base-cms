@@ -1,0 +1,67 @@
+<?php
+
+namespace $NAMESPACE_MODEL$;
+
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
+use $NAMESPACE_MODEL_EXTEND$ as Model;
+$SOFT_DELETE_IMPORT$
+$DOCS$
+class $MODEL_NAME$ extends Model
+{
+$SOFT_DELETE$
+    public $table = '$TABLE_NAME$';
+    $TIMESTAMPS$
+$SOFT_DELETE_DATES$
+$CONNECTION$
+$PRIMARY$
+    public $fillable = [
+        $FIELDS$
+    ];
+
+    /**
+     * The attributes that should be casted to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        $CAST$
+    ];
+
+    /**
+     * Validation rules
+     *
+     * @var array
+     */
+    public static $rules = [
+        $RULES$
+    ];
+
+    protected $hidden = [
+        'createdBy', 'updatedBy', 'created_at', 'updated_at', 'deleted_at'
+    ];
+
+    $RELATIONS$
+
+    public function getCreatedByPersonAttribute()
+    {
+        $value = Cache::remember("createdBy-{$this->createdBy}", 120, function () {
+            return DB::table('auth_people')
+                ->select(DB::raw("concat(firstName, ' ', lastName) as fullName"))
+                ->where('id', $this->createdBy)
+                ->value('fullName');
+        });
+        return $value;
+    }
+
+    public function getUpdatedByPersonAttribute()
+    {
+        $value = Cache::remember("updatedBy-{$this->updatedBy}", 120, function () {
+           return DB::table('auth_people')
+                ->select(DB::raw("concat(firstName, ' ', lastName) as fullName"))
+                ->where('id', $this->updatedBy)
+                ->value('fullName');
+        });
+        return $value;
+    }
+}
