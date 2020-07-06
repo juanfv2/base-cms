@@ -45,11 +45,11 @@ class CreateMenus extends Command
 
         $jsonString = file_get_contents(base_path($path));
 
-        $input = json_decode($jsonString, true);
+        $permissions = json_decode($jsonString, true);
 
         // echo $path;
 
-        foreach ($input['permissions'] as $value) {
+        foreach ($permissions as $value) {
             $results[] = $this->createMenus($value);
         }
 

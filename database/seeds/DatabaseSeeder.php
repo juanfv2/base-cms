@@ -21,7 +21,8 @@ class DatabaseSeeder extends Seeder
             'auth_roles_has_permissions',
 
             'auth_users',
-            'auth_people',
+            'auth_people', 
+            'auth_accounts',
             'auth_roles',
             'auth_permissions',
 
