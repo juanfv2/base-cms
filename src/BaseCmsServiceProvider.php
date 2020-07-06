@@ -3,6 +3,7 @@
 namespace Juanfv2\BaseCms;
 
 use Illuminate\Support\ServiceProvider;
+use Juanfv2\BaseCms\Commands\CreateMenus;
 
 class BaseCmsServiceProvider extends ServiceProvider
 {
@@ -18,12 +19,18 @@ class BaseCmsServiceProvider extends ServiceProvider
     }
 
     /**
-     * Bootstrap services.
+     * Bootstrap the application services.
      *
      * @return void
      */
     public function boot()
     {
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                CreateMenus::class,
+            ]);
+        }
+
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         $this->loadViewsFrom(__DIR__ . '/../resources', 'base-cms-views');
 
