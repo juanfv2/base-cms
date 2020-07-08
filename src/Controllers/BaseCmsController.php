@@ -464,7 +464,7 @@ class BaseCmsController extends AppBaseController
         $newName        = uniqid($fileNamePrefix . '-');
         $newNameWithExtension = $newName . '.' . $fileExtension;
 
-        $f = new XFile();
+        $xFile = new XFile();
 
         /**
          * Si el nombre del archivo trae la palabra "massive"
@@ -478,7 +478,7 @@ class BaseCmsController extends AppBaseController
 
             $location = $strLocation . '/' . $newNameWithExtension;
 
-            $f->name         = $newNameWithExtension;
+            $xFile->name         = $newNameWithExtension;
 
             if ($fileExtension == 'csv' && ($handle = fopen($location, "r")) !== false) {
                 while (($data = fgetcsv($handle, 1000, ",")) !== false) {
@@ -503,44 +503,58 @@ class BaseCmsController extends AppBaseController
         // logger(__FILE__ . ':' . __LINE__ . ' $file ', [$file]);
 
         if ($id) {
-            // $affected = DB::update("update {$tableName} set {$fieldName} = ? where id = ?", [$fileName, $id]);
 
             if ($isMulti) {
-                $f->entity_id    = $id;
-                $f->entity       = $tableName;
-                $f->field        = $fieldName;
-                $f->name         = $newNameWithExtension;
-                $f->nameOriginal = $originalName;
-                $f->extension    = $fileExtension;
-                $f->save();
-            } else {
-                $f = XFile::updateOrCreate(
-                    [
-                        'entity_id' => $id,
-                        'entity'    => $tableName,
-                        'field'     => $fieldName,
-                    ],
-                    [
-                        'name'         => $newNameWithExtension,
-                        'nameOriginal' => $originalName,
-                        'extension'    => $fileExtension
-                    ]
-                );
-            }
+                $xFile->entity_id    = $id;
+                $xFile->entity       = $tableName;
+                $xFile->field        = $fieldName;
+                $xFile->name         = $newNameWithExtension;
+                $xFile->nameOriginal = $originalName;
+                $xFile->extension    = $fileExtension;
 
-            if ($color) {
-                $colors = $this->getColor($strLocation . '/' . $newNameWithExtension);
-                $_colors = json_encode($colors);
-                // logger(__FILE__ . ':' . __LINE__ . ' $colors ', [$colors]);
-                // logger(__FILE__ . ':' . __LINE__ . ' $colors ', [$_colors]);
-                $affectedColors = DB::update("update {$tableName} set {$fieldName}Colors = ? where id = ?", [$_colors, $id]);
+                if ($color && class_exists('\ColorPalette')) {
+
+                    $colors = $this->getColor($strLocation . '/' . $newNameWithExtension);
+
+                    $data['colors'] = $colors;
+
+                    $xFile->data = $data;
+                }
+
+                $xFile->save();
+            } else {
+
+                $xFile = XFile::where([
+                    'entity_id' => $id,
+                    'entity'    => $tableName,
+                    'field'     => $fieldName,
+                ])->first();
+
+                $xFile->name = $newNameWithExtension;
+                $xFile->nameOriginal = $originalName;
+                $xFile->extension = $fileExtension;
+
+                // logger(__FILE__ . ':' . __LINE__ . ' $xFile 1 ', [$xFile]);
+
+                if ($color && class_exists('\ColorPalette')) {
+
+                    $colors = $this->getColor($strLocation . '/' . $newNameWithExtension);
+
+                    $data['colors'] = $colors;
+
+                    $xFile->data = $data; // json_encode($data);
+
+                    // logger(__FILE__ . ':' . __LINE__ . ' $xFile 2 ', [$xFile]);
+                }
+
+                $xFile->save();
             }
         }
 
         return $this->sendResponse(
             __('validation.model.image.added', ['model' => $tableName]),
             [
-                $fieldName => $f,
+                $fieldName => $xFile,
             ]
         );
     }
@@ -567,7 +581,7 @@ class BaseCmsController extends AppBaseController
                 ->where('field', $fieldName)
                 ->where('entity_id', $id)
                 ->first();
-            logger(__FILE__ . ':' . __LINE__ . ' $f ', [$f]);
+            // logger(__FILE__ . ':' . __LINE__ . ' $f ', [$f]);
 
             if ($f) {
                 $imageNameSaved    = $f->name;
