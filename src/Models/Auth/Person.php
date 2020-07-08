@@ -164,9 +164,9 @@ class Person extends Model
      */
     public static $rulesCreate = [
         'firstName' => 'required',
-        'lastName' => 'required',
-        'email' => 'required|string|email|max:255|unique:auth_people',
-        'password' => 'required|string|min:6', // |confirmed // <== for auth_user
+        'lastName'  => 'required',
+        'email'     => 'required|string|email|max:255|unique:auth_people',
+        'password'  => 'required|string|min:6', // |confirmed // <== for auth_user
     ];
 
     /**
@@ -176,9 +176,9 @@ class Person extends Model
      */
     public static $rulesUpdate = [
         'firstName' => 'required',
-        'lastName' => 'required',
-        'email' => 'required',
-        'password' => 'min:6', // |confirmed // <== for auth_user
+        'lastName'  => 'required',
+        'email'     => 'required',
+        'password'  => 'min:6', // |confirmed // <== for auth_user
     ];
 
     /**

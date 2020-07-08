@@ -11,6 +11,7 @@ use Juanfv2\BaseCms\Criteria\RequestGenericCriteria;
 use Juanfv2\BaseCms\Repositories\Auth\RoleRepository;
 use Juanfv2\BaseCms\Requests\Auth\CreateRoleAPIRequest;
 use Juanfv2\BaseCms\Requests\Auth\UpdateRoleAPIRequest;
+use Juanfv2\BaseCms\Repositories\Auth\PermissionRepository;
 
 /**
  * Class RoleController
@@ -21,10 +22,13 @@ class RoleAPIController extends BaseCmsController
 {
     /** @var  RoleRepository */
     private $modelRepository;
+    /** @var  PermissionRepository */
+    private $permissionRepository;
 
-    public function __construct(RoleRepository $modelRepo)
+    public function __construct(RoleRepository $modelRepo, PermissionRepository $pRepo)
     {
         $this->modelRepository = $modelRepo;
+        $this->permissionRepository = $pRepo;
     }
 
     /**
@@ -301,5 +305,33 @@ class RoleAPIController extends BaseCmsController
         $model->delete();
 
         return $this->sendResponse(__('validation.model.deleted', ['model' => __('models.role.name')]), $id);
+    }
+
+    public function permissions(Request $request)
+    {
+        $action = $request->get('action', '-');
+        $criteria = new RequestGenericCriteria($request);
+
+        $this->permissionRepository->pushCriteria($criteria);
+        $itemCount = $this->permissionRepository->count();
+
+        if ($action != 'export') {
+            $this->permissionRepository->pushCriteria(new LimitOffsetCriteria($request));
+        }
+
+        $items = $this->permissionRepository->all();
+
+        /* */
+        $items = GenericResource::collection($items);
+        /* */
+
+        switch ($action) {
+            case 'export':
+                $headers = json_decode($request->get('fields'), true);
+                $zname = $request->get('title', '-');
+                return $this->export($zname, $headers, $items->collection->toArray());
+            default:
+                return $this->response2Api($items, $itemCount, $request->get('limit', -1));
+        }
     }
 }
