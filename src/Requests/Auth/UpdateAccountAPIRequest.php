@@ -24,7 +24,7 @@ class UpdateAccountAPIRequest extends APIRequest
      */
     public function rules()
     {
-        $rules = Account::$rules;
+        $rules = Account::$rulesUpdate;
 
         return $rules;
     }

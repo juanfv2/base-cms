@@ -3,6 +3,7 @@
 namespace Juanfv2\BaseCms\Models\Auth;
 
 use Eloquent as Model;
+use Juanfv2\BaseCms\Models\Auth\XFile;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -184,18 +185,62 @@ class Account extends Model
      *
      * @var array
      */
-    public static $rules = [
+    public static $rulesCreate = [
         'firstName' => 'required',
-        'lastName' => 'required',
-        'email' => 'required|string|email|max:255|unique:auth_accounts',
+        'lastName'  => 'required',
+        'email'     => 'required|string|email|max:255|unique:auth_accounts',
+        'password'  => 'required|string|min:6', // |confirmed // <== for auth_user
     ];
+
+    /**
+     * Validation rules
+     *
+     * @var array
+     */
+    public static $rulesUpdate = [
+        'firstName' => 'required',
+        'lastName'  => 'required',
+        'email'     => 'required',
+        'password'  => 'min:6', // |confirmed // <== for auth_user
+    ];
+
+    /**
+     * @return array
+     */
+    public function getPhotoUrlAttribute()
+    {
+        $f = XFile::where('entity', $this->table)
+            ->where('field', 'photoUrl')
+            ->where('entity_id', $this->id)
+            ->first();
+        // logger(__FILE__ . ':' . __LINE__ . ' $f ', [$f]);
+        return $f;
+    }
+
+    /**
+     * @return array
+     */
+    public function getImagesAttribute()
+    {
+        $f = XFile::where('entity', $this->table)
+            ->where('field', 'images')
+            ->where('entity_id', $this->id)
+            ->get();
+        // logger(__FILE__ . ':' . __LINE__ . ' $f ', [$f]);
+        return $f;
+    }
+
+    public function user()
+    {
+        return $this->hasOne(\Juanfv2\BaseCms\Models\Auth\User::class, 'email', 'email');
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      **/
     public function city()
     {
-        return $this->belongsTo(\App\Models\City::class, 'city_id');
+        return $this->belongsTo(\Juanfv2\BaseCms\Models\Country\City::class);
     }
 
     /**
@@ -203,7 +248,7 @@ class Account extends Model
      **/
     public function country()
     {
-        return $this->belongsTo(\App\Models\Country::class, 'country_id');
+        return $this->belongsTo(\Juanfv2\BaseCms\Models\Country\Country::class);
     }
 
     /**
@@ -211,6 +256,6 @@ class Account extends Model
      **/
     public function region()
     {
-        return $this->belongsTo(\App\Models\Region::class, 'region_id');
+        return $this->belongsTo(\Juanfv2\BaseCms\Models\Country\Region::class);
     }
 }

@@ -24,6 +24,6 @@ class CreateAccountAPIRequest extends APIRequest
      */
     public function rules()
     {
-        return Account::$rules;
+        return Account::$rulesCreate;
     }
 }
