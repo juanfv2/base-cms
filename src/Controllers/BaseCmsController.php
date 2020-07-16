@@ -149,23 +149,6 @@ class BaseCmsController extends AppBaseController
                     'updated' => $created - 1,
                 ];
             } // end ($handle = fopen($massiveQueryFile, 'r')) !== false
-        } catch (\PDOException $e) {
-            // logger(__FILE__ . ':' . __LINE__ . ' $errors // exception.: ' . $created);
-            DB::rollBack();
-            ini_set('auto_detect_line_endings', $original);
-            if ($handle) fclose($handle);
-
-            File::deleteDirectory($massiveQueryFileNameDataPath);
-
-            return $this->sendError(
-                'Error en la linea ' . $created,
-                500,
-                [
-                    'code' => $e->getCode(),
-                    'message' => $e->getMessage(),
-                    'updated' => $created,
-                ]
-            );
         } catch (Exception $e) {
             // logger(__FILE__ . ':' . __LINE__ . ' $errors // exception.: ' . $created);
             DB::rollBack();
@@ -268,15 +251,16 @@ class BaseCmsController extends AppBaseController
         $fnames = array_keys($headers);
 
         $exporter->addRow($labels);
-        foreach ($items as $itemR) {
+        foreach ($items as $item) {
 
-            $item = $itemR->resource->toArray();
+            // $item = $itemR;
 
             // logger(__FILE__ . ':' . __LINE__ . ' $items   ', [$labels, $fnames, $item]);
 
             $i = array();
             foreach ($fnames as $key) {
-                $i[$key] = isset($item[$key]) ? $item[$key] : '';
+                // logger(__FILE__ . ':' . __LINE__ . ' $item->{$key} ', [$key, $item->{$key}]);
+                $i[$key] = $item->{$key};
             }
             $exporter->addRow($i);
         }
