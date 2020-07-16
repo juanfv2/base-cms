@@ -17,6 +17,7 @@ class CreateRegionsTable extends Migration
             $table->bigIncrements('id');
             $table->string('name');
             $table->string('code', 10);
+
             $table->bigInteger('country_id')->unsigned();
 
             $table->foreign('country_id')
@@ -37,4 +38,3 @@ class CreateRegionsTable extends Migration
         Schema::enableForeignKeyConstraints();
     }
 }
-

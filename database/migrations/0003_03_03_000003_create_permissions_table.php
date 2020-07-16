@@ -21,8 +21,9 @@ class CreatePermissionsTable extends Migration
             $table->string('urlFrontEnd');
             $table->boolean('isSection')->default(0);
             $table->boolean('isVisible')->default(0);
-            $table->bigInteger('permission_id')->default(0);
             $table->integer('orderInMenu')->default(0);
+
+            $table->bigInteger('permission_id')->default(0);
 
             $table->bigInteger('createdBy')->nullable();
             $table->bigInteger('updatedBy')->nullable();

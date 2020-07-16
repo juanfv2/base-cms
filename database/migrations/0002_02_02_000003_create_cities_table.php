@@ -15,11 +15,12 @@ class CreateCitiesTable extends Migration
     {
         Schema::create('cities', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('region_id')->unsigned();
-            $table->bigInteger('country_id')->unsigned();
+            $table->string('name');
             $table->decimal('latitude', 10, 8);
             $table->decimal('longitude', 11, 8);
-            $table->string('name');
+
+            $table->bigInteger('region_id')->unsigned();
+            $table->bigInteger('country_id')->unsigned();
 
             $table->index(['country_id', 'region_id', 'name']);
 
