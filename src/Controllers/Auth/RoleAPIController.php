@@ -85,7 +85,7 @@ class RoleAPIController extends BaseCmsController
             case 'export':
                 $headers = json_decode($request->get('fields'), true);
                 $zname = $request->get('title', '-');
-                return $this->export($zname, $headers, $items->collection->toArray());
+                return $this->export($zname, $headers, $items);
             default:
                 return $this->response2Api($items, $itemCount, $request->get('limit', -1));
         }
@@ -329,7 +329,7 @@ class RoleAPIController extends BaseCmsController
             case 'export':
                 $headers = json_decode($request->get('fields'), true);
                 $zname = $request->get('title', '-');
-                return $this->export($zname, $headers, $items->collection->toArray());
+                return $this->export($zname, $headers, $items);
             default:
                 return $this->response2Api($items, $itemCount, $request->get('limit', -1));
         }
