@@ -4,7 +4,7 @@ return [
 
     'country' => [
         'name' => 'País',
-        'plural' => 'Paises',
+        'plural' => 'Países',
     ],
 
 ];

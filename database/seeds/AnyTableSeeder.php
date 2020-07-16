@@ -25,11 +25,13 @@ class AnyTableSeeder extends Seeder
 
             'country/countries',
             'country/regions',
-            'country/cities-194-el-salvador',
+            'country/cities-194',
+            // 'carpeta-a/carpeta-b/country/cities-1', // (mysql insert multiple rows maximum) ej. 5000
+            // 'carpeta-a/carpeta-b/country/cities-2', // (mysql insert multiple rows maximum) ej. 5000
 
             // entities
 
-            // 'accounts',
+            // '/entities/accounts',
 
             // entities
         ];
@@ -42,14 +44,16 @@ class AnyTableSeeder extends Seeder
     {
         logger(__FILE__ . ':' . __LINE__ . ' "database/data/{$table}.json" ', ["database/data/{$table}.json"]);
         // Allowed memory size of 134217728 bytes exhausted (tried to allocate
-
-        $tableN = explode('/', $table)[1];
-        $tableN = explode('-', $tableN)[0];
+        $table1 = explode('/', $table);
+        $table2 = end($table1);
+        $table3 = explode('-', $table2);
+        $tableN = reset($table3);
 
         ini_set('memory_limit', '-1');
 
         $json = File::get("database/data/{$table}.json");
         $data = json_decode($json, true);
+
         DB::table($tableN)->insert($data);
     }
 }
