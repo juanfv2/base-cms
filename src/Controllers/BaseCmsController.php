@@ -508,11 +508,11 @@ class BaseCmsController extends AppBaseController
                 $xFile->save();
             } else {
 
-                $xFile = XFile::where([
+                $xFile = XFile::firstOrNew([
                     'entity_id' => $id,
                     'entity'    => $tableName,
                     'field'     => $fieldName,
-                ])->first();
+                ]);
 
                 $xFile->name = $newNameWithExtension;
                 $xFile->nameOriginal = $originalName;
