@@ -495,7 +495,6 @@ class BaseCmsController extends AppBaseController
 
                     $colors = $this->getColor($strLocation . '/' . $newNameWithExtension);
 
-                    $data = $xFile->data ?? [];
                     $data['colors'] = $colors;
 
                     $xFile->data = $data;
@@ -520,6 +519,7 @@ class BaseCmsController extends AppBaseController
 
                     $colors = $this->getColor($strLocation . '/' . $newNameWithExtension);
 
+                    $data = $xFile->data ?? [];
                     $data['colors'] = $colors;
 
                     $xFile->data = $data; // json_encode($data);
