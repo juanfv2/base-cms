@@ -258,4 +258,16 @@ class Account extends Model
     {
         return $this->belongsTo(\Juanfv2\BaseCms\Models\Country\Region::class);
     }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($account) {
+
+            $account->images->each->delete();
+
+            $account->photoUrl->delete();
+        });
+    }
 }

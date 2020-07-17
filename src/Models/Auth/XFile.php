@@ -3,6 +3,7 @@
 namespace Juanfv2\BaseCms\Models\Auth;
 
 use Eloquent as Model;
+use Illuminate\Support\Facades\File;
 
 
 /**
@@ -121,4 +122,18 @@ class XFile extends Model
     protected $hidden = [
         'createdBy', 'updatedBy', 'created_at', 'updated_at', 'deleted_at'
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($file) {
+            // Do some stuff before delete
+
+            $baseAssets = '/assets/adm';
+            $strLocation = public_path("$baseAssets/$file->entity/$file->field/$file->name");
+
+            File::delete($strLocation);
+        });
+    }
 }

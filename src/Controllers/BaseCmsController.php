@@ -354,7 +354,7 @@ class BaseCmsController extends AppBaseController
     {
         $input = $request->all();
 
-        logger(__FILE__ . ':' . __LINE__ . ' $input ', [$input]);
+        // logger(__FILE__ . ':' . __LINE__ . ' $input ', [$input]);
 
         $f = XFile::find($id);
 
@@ -377,11 +377,6 @@ class BaseCmsController extends AppBaseController
         if (!$f) {
             return $this->sendError(__('validation.model.not.found', ['model' => 'Archivo']));
         }
-
-        $baseAssets = '/assets/adm/';
-        $strLocation = public_path($baseAssets . $f->entity . '/' . $f->field);
-
-        File::delete("{$strLocation}/{$f->name}");
 
         $f->delete();
     }
@@ -500,6 +495,7 @@ class BaseCmsController extends AppBaseController
 
                     $colors = $this->getColor($strLocation . '/' . $newNameWithExtension);
 
+                    $data = $xFile->data ?? [];
                     $data['colors'] = $colors;
 
                     $xFile->data = $data;
