@@ -25,7 +25,7 @@ class AnyTableSeeder extends Seeder
 
             'country/countries',
             'country/regions',
-            'country/cities-194',
+            'country/cities-194-3224',
             // 'carpeta-a/carpeta-b/country/cities-1', // (mysql insert multiple rows maximum) ej. 5000
             // 'carpeta-a/carpeta-b/country/cities-2', // (mysql insert multiple rows maximum) ej. 5000
 
