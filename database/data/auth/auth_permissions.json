@@ -104,7 +104,7 @@
 		"isSection" : 0,
 		"isVisible" : 1,
 		"permission_id" : 1,
-		"orderInMenu" : 1,
+		"orderInMenu" : 0,
 		"createdBy" : null,
 		"updatedBy" : null,
 		"created_at" : null,
