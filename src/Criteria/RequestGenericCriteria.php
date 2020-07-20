@@ -39,21 +39,21 @@ class RequestGenericCriteria implements CriteriaInterface
      */
     public function apply($model, RepositoryInterface $repository)
     {
-        $queries = $this->request->get('queries');
-        $joins = $this->request->get('joins');
-        $sorts = $this->request->get('sorts');
-        $select = $this->request->get('select');
+        $queries = $this->request->get('queries', '');
+        $joins = $this->request->get('joins', '');
+        $select = $this->request->get('select', '');
+        $sorts = $this->request->get('sorts', '');
 
         $this->model = $model;
 
         $table = $this->model->getModel()->getTable();
 
-        $queries    = isset($queries) && !empty($queries) ? json_decode(urldecode($queries)) : null;
-        $joins      = isset($joins) && !empty($joins) ? json_decode(urldecode($joins)) : null;
-        $select     = isset($select) && !empty($select) ? json_decode(urldecode($select)) : null;
-        $sorts      = isset($sorts) && !empty($sorts) ? json_decode(urldecode($sorts)) : null;
+        $queries    = json_decode(urldecode($queries));
+        $joins      = json_decode(urldecode($joins));
+        $select     = $select ? explode(',', urldecode($select)) : null;
+        $sorts      = json_decode(urldecode($sorts));
 
-        // dd($queries, $conditions);
+        logger(__FILE__ . ':' . __LINE__ . '  $select ', [$queries, $joins, $select, $sorts]);
 
         if (is_array($queries)) {
 
