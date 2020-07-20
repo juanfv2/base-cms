@@ -4,7 +4,6 @@ namespace Juanfv2\BaseCms\Models\Auth;
 
 use Illuminate\Support\Facades\DB;
 use Laravel\Passport\HasApiTokens;
-use Juanfv2\BaseCms\Models\Account;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;

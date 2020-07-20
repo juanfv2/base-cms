@@ -151,7 +151,7 @@ class ZRegisterAPIController extends BaseCmsController
         $info['password'] = password_hash($info['password'], PASSWORD_BCRYPT);
         $info['roles'] = [$roleId];
         $info['role_id'] = $roleId;
-        $info['disabled'] = !$request->get('uid', false);
+        $info['disabled'] = $request->get('uid', true);
 
         // $info['country_id'] = 194;
         // $info['region_id'] = 3224;
