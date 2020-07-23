@@ -53,7 +53,7 @@ class RequestGenericCriteria implements CriteriaInterface
         $select     = $select ? explode(',', urldecode($select)) : null;
         $sorts      = json_decode(urldecode($sorts));
 
-        logger(__FILE__ . ':' . __LINE__ . '  $select ', [$queries, $joins, $select, $sorts]);
+        // logger(__FILE__ . ':' . __LINE__ . '  $select ', [$queries, $joins, $select, $sorts]);
 
         if (is_array($queries)) {
 

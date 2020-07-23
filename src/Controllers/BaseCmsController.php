@@ -535,6 +535,7 @@ class BaseCmsController extends AppBaseController
             __('validation.model.image.added', ['model' => $tableName]),
             [
                 $fieldName => $xFile,
+                'columns' => $columns,
             ]
         );
     }
