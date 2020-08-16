@@ -85,10 +85,10 @@ class BaseCmsController extends AppBaseController
         $handle         = null;
 
         try {
-            $original = ini_get('auto_detect_line_endings');
-            ini_set('auto_detect_line_endings', true);
 
             if (($handle = fopen($massiveQueryFile, 'r')) !== false) {
+
+                ini_set('auto_detect_line_endings', true);
                 DB::beginTransaction();
 
                 $xHeaders = [];
