@@ -14,7 +14,8 @@
         "php": "^7.2.5",
         "doctrine/dbal": "~2.3",
         "infyomlabs/laravel-generator": "7.0.x-dev",
-        "intervention/imagecache": "^2.4"
+        "intervention/imagecache": "^2.4",
+        "prettus/l5-repository": "^2.6"
     },
     "extra": {
         "laravel": {
