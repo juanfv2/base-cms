@@ -1,5 +1,7 @@
 <?php
 
+namespace Juanfv2\BaseCms\Traits;
+
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

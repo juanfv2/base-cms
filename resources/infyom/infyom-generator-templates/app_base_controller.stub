@@ -2,7 +2,9 @@
 
 namespace $NAMESPACE_APP$\Http\Controllers;
 
+use Juanfv2\BaseCms\Traits\ControllerFiles;
 use Juanfv2\BaseCms\Traits\ControllerResponses;
+use Juanfv2\BaseCms\Traits\ControllerImportableExportable;
 
 /**
  * @SWG\Swagger(

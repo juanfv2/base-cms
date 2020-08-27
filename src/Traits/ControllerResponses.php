@@ -1,5 +1,7 @@
 <?php
 
+namespace Juanfv2\BaseCms\Traits;
+
 use InfyOm\Generator\Utils\ResponseUtil;
 
 trait ControllerResponses

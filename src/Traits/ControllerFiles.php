@@ -1,5 +1,7 @@
 <?php
 
+namespace Juanfv2\BaseCms\Traits;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
