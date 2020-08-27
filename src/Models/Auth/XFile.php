@@ -2,9 +2,8 @@
 
 namespace Juanfv2\BaseCms\Models\Auth;
 
-use Eloquent as Model;
 use Illuminate\Support\Facades\File;
-
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * @SWG\Definition(

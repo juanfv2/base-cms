@@ -2,7 +2,7 @@
 
 namespace Juanfv2\BaseCms\Models\Auth;
 
-use Eloquent as Model;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -186,7 +186,7 @@ class Person extends Model
      */
     public function getPhotoUrlAttribute()
     {
-        $f = XFile::where('entity', $this->table)
+        $f = \Juanfv2\BaseCms\Models\Auth\XFile::where('entity', $this->table)
             ->where('field', 'photoUrl')
             ->where('entity_id', $this->id)
             ->first();

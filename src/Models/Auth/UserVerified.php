@@ -2,7 +2,7 @@
 
 namespace Juanfv2\BaseCms\Models\Auth;
 
-use Eloquent as Model;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class UserVerified

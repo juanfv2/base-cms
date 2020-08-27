@@ -2,8 +2,7 @@
 
 namespace Juanfv2\BaseCms\Models\Country;
 
-use Eloquent as Model;
-// use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * @SWG\Definition(

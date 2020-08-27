@@ -2,9 +2,7 @@
 
 namespace Juanfv2\BaseCms\Models\Country;
 
-use Eloquent as Model;
-use Juanfv2\BaseCms\Models\Auth\XFile;
-// use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * @SWG\Definition(
@@ -69,7 +67,7 @@ class Country extends Model
      */
     public function getFlagAttribute()
     {
-        $f = XFile::where('entity', $this->table)
+        $f = \Juanfv2\BaseCms\Models\Auth\XFile::where('entity', $this->table)
             ->where('field', 'flag')
             ->where('entity_id', $this->id)
             ->first();
