@@ -3,14 +3,14 @@
 namespace $NAMESPACE_API_CONTROLLER$;
 
 use Illuminate\Http\Request;
-use Juanfv2\BaseCms\Resources\GenericResource;
-use InfyOm\Generator\Criteria\LimitOffsetCriteria;
-use Juanfv2\BaseCms\Controllers\AppBaseController;
-use Juanfv2\BaseCms\Criteria\RequestGenericCriteria;
-
+use App\Http\Controllers\AppBaseController;
 use $NAMESPACE_REPOSITORY$\$MODEL_NAME$Repository;
 use $NAMESPACE_API_REQUEST$\Create$MODEL_NAME$APIRequest;
 use $NAMESPACE_API_REQUEST$\Update$MODEL_NAME$APIRequest;
+use InfyOm\Generator\Criteria\LimitOffsetCriteria;
+
+use Juanfv2\BaseCms\Resources\GenericResource;
+use Juanfv2\BaseCms\Criteria\RequestGenericCriteria;
 
 $DOC_CONTROLLER$
 class $MODEL_NAME$APIController extends AppBaseController
@@ -27,9 +27,9 @@ class $MODEL_NAME$APIController extends AppBaseController
     public function index(Request $request)
     {
         $action = $request->get('action', '-');
-        $criteria = new RequestGenericCriteria($request);
+        $limit  = $request->get('limit', -1);
 
-        $this->modelRepository->pushCriteria($criteria);
+        $this->modelRepository->pushCriteria(new RequestGenericCriteria($request));
         $itemCount = $this->modelRepository->count();
 
         if ($action != 'export') {
@@ -48,7 +48,7 @@ class $MODEL_NAME$APIController extends AppBaseController
                 $zname = $request->get('title', '-');
                 return $this->export($zname, $headers, $items);
             default:
-                return $this->response2Api($items, $itemCount, $request->get('limit', -1));
+                return $this->response2Api($items, $itemCount, $limit);
         }
     }
 
