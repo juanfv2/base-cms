@@ -290,6 +290,24 @@ class BaseCmsController extends AppBaseController
         return $this->export($zname, $headers, $results);
     }
 
+    protected function toUtf8($in)
+    {
+        if (is_array($in)) {
+            foreach ($in as $key => $value) {
+                $out[$this->toUtf8($key)] = $this->toUtf8($value);
+            }
+        } elseif (is_string($in)) {
+            if (mb_detect_encoding($in) != 'UTF-8') {
+                return trim(utf8_encode($in));
+            } else {
+                return trim($in);
+            }
+        } else {
+            return trim($in);
+        }
+        return $out;
+    }
+
     /**
      * Delete items from any table
      */
@@ -328,24 +346,6 @@ class BaseCmsController extends AppBaseController
         }
     }
 
-    protected function toUtf8($in)
-    {
-        if (is_array($in)) {
-            foreach ($in as $key => $value) {
-                $out[$this->toUtf8($key)] = $this->toUtf8($value);
-            }
-        } elseif (is_string($in)) {
-            if (mb_detect_encoding($in) != 'UTF-8') {
-                return trim(utf8_encode($in));
-            } else {
-                return trim($in);
-            }
-        } else {
-            return trim($in);
-        }
-        return $out;
-    }
-
     // </editor-fold> import export end
 
     // <editor-fold desc='upload files'>
@@ -382,7 +382,7 @@ class BaseCmsController extends AppBaseController
     }
 
     /**
-     * param $strLocationAndFileNamePrefix: 
+     * param $strLocationAndFileNamePrefix:
      *   like this "{$strLocation}/{$fileNamePrefix}*"
      */
     private function deleteFileWithGlob($strLocationAndFileNamePrefix)

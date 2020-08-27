@@ -5,7 +5,7 @@ namespace $NAMESPACE_API_CONTROLLER$;
 use Illuminate\Http\Request;
 use Juanfv2\BaseCms\Resources\GenericResource;
 use InfyOm\Generator\Criteria\LimitOffsetCriteria;
-use Juanfv2\BaseCms\Controllers\BaseCmsController;
+use Juanfv2\BaseCms\Controllers\AppBaseController;
 use Juanfv2\BaseCms\Criteria\RequestGenericCriteria;
 
 use $NAMESPACE_REPOSITORY$\$MODEL_NAME$Repository;
@@ -13,7 +13,7 @@ use $NAMESPACE_API_REQUEST$\Create$MODEL_NAME$APIRequest;
 use $NAMESPACE_API_REQUEST$\Update$MODEL_NAME$APIRequest;
 
 $DOC_CONTROLLER$
-class $MODEL_NAME$APIController extends BaseCmsController
+class $MODEL_NAME$APIController extends AppBaseController
 {
     /** @var  $MODEL_NAME$Repository */
     private $modelRepository;
