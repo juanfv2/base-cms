@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 class CreatePeopleTable extends Migration
 {
@@ -20,13 +20,13 @@ class CreatePeopleTable extends Migration
             $table->string('phone')->nullable();
             $table->string('cellPhone')->nullable();
             $table->date('birthDate')->nullable();
-            $table->string('email')->unique();
             $table->string('address')->nullable();
             $table->string('neighborhood')->nullable();
 
-            $table->foreignId('email')->constrained('auth_users')->onDelete('cascade');
+            $table->string('email')->unique();
+            $table->foreign('email')->references('email')->on('auth_users')->onDelete('cascade');
             $table->foreignId('country_id')->nullable()->constrained();
-            $table->foreignId('region_d')->nullable()->constrained();
+            $table->foreignId('region_id')->nullable()->constrained();
             $table->foreignId('city_id')->nullable()->constrained();
 
             $table->bigInteger('createdBy')->nullable();
