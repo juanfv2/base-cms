@@ -14,23 +14,15 @@ class CreateCitiesTable extends Migration
     public function up()
     {
         Schema::create('cities', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->id();
             $table->string('name');
             $table->decimal('latitude', 10, 8);
             $table->decimal('longitude', 11, 8);
 
-            $table->bigInteger('region_id')->unsigned();
-            $table->bigInteger('country_id')->unsigned();
+            $table->foreignId('country_id')->constrained();
+            $table->foreignId('region_id')->constrained();
 
-            $table->index(['country_id', 'region_id', 'name']);
-
-            $table->foreign('country_id')
-                ->references('id')
-                ->on('countries');
-
-            $table->foreign('region_id')
-                ->references('id')
-                ->on('regions');
+            $table->index(['name']);
         });
     }
 
@@ -41,8 +33,6 @@ class CreateCitiesTable extends Migration
      */
     public function down()
     {
-        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('cities');
-        Schema::enableForeignKeyConstraints();
     }
 }

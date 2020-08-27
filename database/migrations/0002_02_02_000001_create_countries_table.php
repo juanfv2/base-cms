@@ -14,7 +14,7 @@ class CreateCountriesTable extends Migration
     public function up()
     {
         Schema::create('countries', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->id();
             $table->string('name');
             $table->string('code', 10);
         });
@@ -27,8 +27,6 @@ class CreateCountriesTable extends Migration
      */
     public function down()
     {
-        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('countries');
-        Schema::enableForeignKeyConstraints();
     }
 }

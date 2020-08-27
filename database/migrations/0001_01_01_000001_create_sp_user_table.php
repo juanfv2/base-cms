@@ -30,8 +30,7 @@ WHERE `auth_permissions`.`urlBackEnd` = `_urlBackEnd`
 AND `auth_users`.`id` = `_user_id`
 AND `auth_users`.`deleted_at` IS NULL;
 -- . --
-END
-        ";
+END";
 
         DB::unprepared("DROP procedure IF EXISTS `sp_has_permission`;");
         DB::unprepared($procedure);
