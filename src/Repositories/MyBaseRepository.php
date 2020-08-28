@@ -1,74 +1,109 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: Juan
- * Date: 7/6/17
- * Time: 4:46 PM
- */
 
 namespace Juanfv2\BaseCms\Repositories;
 
-use Juanfv2\BaseCms\Models\Auth\GenericModel;
-use Illuminate\Database\Eloquent\Model;
-use InfyOm\Generator\Common\BaseRepository;
-use Prettus\Repository\Exceptions\RepositoryException;
+use Exception;
+use Illuminate\Support\Arr;
+use Prettus\Repository\Eloquent\BaseRepository;
 
-class MyBaseRepository extends BaseRepository
+abstract class MyBaseRepository extends BaseRepository
 {
-
-    public $table = '';
-    public $primaryKey = 'id';
-
-    /**
-     * Configure the Model
-     **/
-    public function model()
+    public function findWithoutFail($id, $columns = ['*'])
     {
-        return GenericModel::class;
+        try {
+            return $this->find($id, $columns);
+        } catch (Exception $e) {
+            return;
+        }
     }
 
-    public function count(array $where = [], $columns = '*')
+    public function create(array $attributes)
     {
-        $this->applyCriteria();
-        $this->applyScope();
+        // Have to skip presenter to get a model not some data
+        $temporarySkipPresenter = $this->skipPresenter;
+        $this->skipPresenter(true);
+        $model = parent::create($attributes);
+        $this->skipPresenter($temporarySkipPresenter);
 
-        $result = $this->model->count();
+        $model = $this->updateRelations($model, $attributes);
+        $model->withoutEvents(function () use ($model) {
+            $model->save();
+        });
 
-        $this->resetModel();
-        $this->resetScope();
-
-        return $result;
+        return $this->parserResult($model);
     }
 
-    public function distinct($field)
+    public function update(array $attributes, $id)
     {
-        $this->applyCriteria();
-        $this->applyScope();
+        // Have to skip presenter to get a model not some data
+        $temporarySkipPresenter = $this->skipPresenter;
+        $this->skipPresenter(true);
+        $model = parent::update($attributes, $id);
+        $this->skipPresenter($temporarySkipPresenter);
 
-        $result = $this->model->distinct($field)->get();
+        $model = $this->updateRelations($model, $attributes);
+        $model->withoutEvents(function () use ($model) {
+            $model->save();
+        });
 
-        $this->resetModel();
-        $this->resetScope();
-
-        return $result;
+        return $this->parserResult($model);
     }
 
-    /**
-     * @return Model
-     * @throws RepositoryException
-     */
-    public function reMakeModel()
+    public function updateRelations($model, $attributes)
     {
-        $model = $this->app->make($this->model());
-        $model->table = $this->table;
-        $model->primaryKey = $this->primaryKey;
+        foreach ($attributes as $key => $val) {
+            if (isset($model) &&
+                method_exists($model, $key) &&
+                is_a(@$model->$key(), 'Illuminate\Database\Eloquent\Relations\Relation')
+            ) {
+                $methodClass = get_class($model->$key($key));
+                switch ($methodClass) {
+                    case 'Illuminate\Database\Eloquent\Relations\BelongsToMany':
+                        $new_values = Arr::get($attributes, $key, []);
+                        if (array_search('', $new_values) !== false) {
+                            unset($new_values[array_search('', $new_values)]);
+                        }
+                        $model->$key()->sync(array_values($new_values));
+                        break;
+                    case 'Illuminate\Database\Eloquent\Relations\BelongsTo':
+                        $model_key = $model->$key()->getQualifiedForeignKeyName();
+                        $new_value = Arr::get($attributes, $key, null);
+                        $new_value = $new_value == '' ? null : $new_value;
+                        $model->$model_key = $new_value;
+                        break;
+                    case 'Illuminate\Database\Eloquent\Relations\HasOne':
+                        break;
+                    case 'Illuminate\Database\Eloquent\Relations\HasOneOrMany':
+                        break;
+                    case 'Illuminate\Database\Eloquent\Relations\HasMany':
+                        $new_values = Arr::get($attributes, $key, []);
+                        if (array_search('', $new_values) !== false) {
+                            unset($new_values[array_search('', $new_values)]);
+                        }
 
-        logger(__FILE__ . ':' . __LINE__ . ' $model ', [$model]);
+                        list($temp, $model_key) = explode('.', $model->$key($key)->getQualifiedForeignKeyName());
 
-        if (!$model instanceof Model) {
-            throw new RepositoryException("Class {$this->model()} must be an instance of Illuminate\\Database\\Eloquent\\Model");
+                        foreach ($model->$key as $rel) {
+                            if (!in_array($rel->id, $new_values)) {
+                                $rel->$model_key = null;
+                                $rel->save();
+                            }
+                            unset($new_values[array_search($rel->id, $new_values)]);
+                        }
+
+                        if (count($new_values) > 0) {
+                            $related = get_class($model->$key()->getRelated());
+                            foreach ($new_values as $val) {
+                                $rel = $related::find($val);
+                                $rel->$model_key = $model->id;
+                                $rel->save();
+                            }
+                        }
+                        break;
+                }
+            }
         }
 
-        return $this->model = $model;
+        return $model;
     }
 }

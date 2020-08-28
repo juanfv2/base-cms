@@ -67,9 +67,7 @@ class CityAPIController extends BaseCmsController
         //     return $this->sendError('set - limit - please', 500);
         // }
 
-        $criteria = new RequestGenericCriteria($request);
-
-        $this->modelRepository->pushCriteria($criteria);
+        $this->modelRepository->pushCriteria(new RequestGenericCriteria($request));
         $itemCount = $this->modelRepository->count();
 
         if ($action != 'export') {

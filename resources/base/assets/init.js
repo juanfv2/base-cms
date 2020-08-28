@@ -1,26 +1,24 @@
 
-/**
- * Para assets cambiar "/s+/"
- *
- * # saldo - 1
- */
+// document.title = '{{appName}} · Bienvenido';
 
-// var host = 'http://l.splus.net';
-var host = 'http://192.168.1.3:8000';
+document.title = 'Infrasal · Bienvenido';
 
-var api = host + '/api';
-var verify = api + '/user/verify/';
-var reset = api + '/password/reset';
+// const host = 'http://l.splus.net/';
+// const host = 'http://127.0.0.1:8000/';
+const host = '/';
+const api = host + 'api/';
+const _verify = api + 'user/verify/';
+const _reset = api + 'password/reset';
 
 function findGetParameter(parameterName) {
-  var result = null,
-    tmp = [];
-  location.search
-    .substr(1)
-    .split("&")
-    .forEach(function (item) {
-      tmp = item.split("=");
-      if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
-    });
-  return result;
+    var result = null,
+        tmp = [];
+    location.search
+        .substr(1)
+        .split("&")
+        .forEach(function (item) {
+            tmp = item.split("=");
+            if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+        });
+    return result;
 }
