@@ -13,9 +13,8 @@ return [
     |
      */
 
-    'appName' => '---',
     'mail' => [
-        'welcome' => 'Bienvenido a [App]',
+        'welcome' => 'Bienvenido a :app_name',
         'change' => 'Cambio de contraseña',
         'salutation' => 'Saludos',
         'verifyTitle' => 'Verificar el correo electrónico',
