@@ -17,88 +17,87 @@ use Juanfv2\BaseCms\Controllers\BaseCmsController;
 class ZLoginAPIController extends BaseCmsController
 {
 
-  protected function getIp()
-  {
-    $arr = [
-      'HTTP_CLIENT_IP',
-      'HTTP_X_FORWARDED_FOR',
-      'HTTP_X_FORWARDED',
-      'HTTP_X_CLUSTER_CLIENT_IP',
-      'HTTP_FORWARDED_FOR',
-      'HTTP_FORWARDED',
-      'REMOTE_ADDR'
-    ];
-    $server = $_SERVER ? $_SERVER : [];
-    foreach ($arr as $key) {
-      if (array_key_exists($key, $server) === true) {
-        foreach (explode(',', $server[$key]) as $ip) {
-          $ip = trim($ip); // just to be safe
-          if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) !== false) {
-            return $ip;
-          }
+    protected function getIp()
+    {
+        $arr = [
+            'HTTP_CLIENT_IP',
+            'HTTP_X_FORWARDED_FOR',
+            'HTTP_X_FORWARDED',
+            'HTTP_X_CLUSTER_CLIENT_IP',
+            'HTTP_FORWARDED_FOR',
+            'HTTP_FORWARDED',
+            'REMOTE_ADDR'
+        ];
+        $server = $_SERVER ? $_SERVER : [];
+        foreach ($arr as $key) {
+            if (array_key_exists($key, $server) === true) {
+                foreach (explode(',', $server[$key]) as $ip) {
+                    $ip = trim($ip); // just to be safe
+                    if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) !== false) {
+                        return $ip;
+                    }
+                }
+            }
         }
-      }
-    }
-  }
-
-  public function authenticate(LoginRequest $request)
-  {
-
-    $user = $this->attemptLogin($request);
-
-    if ($user instanceof User) {
-      $user = new GenericResource($user);
     }
 
-    return $user;
-  }
+    public function authenticate(LoginRequest $request)
+    {
 
-  public function logout()
-  {
-    $this->attemptLogout();
-    return response()->json('bye', 204);
-  }
+        $user = $this->attemptLogin($request);
 
-  // Utilities
+        if ($user instanceof User) {
+            $user = new GenericResource($user);
+        }
 
-  /**
-   * Attempt to create an access token using user credentials
-   * @param $request
-   * @return User | \Illuminate\Http\Request  $request
-   */
-  public function attemptLogin($request)
-  {
-    $credentials = request(['email', 'password']);
-
-    $errors = ['message' => __('auth.failed')];
-
-    if (!Auth::attempt($credentials)) {
-      return response()->json(['message' => __('passwords.user')], 404);
+        return $user;
     }
 
-    $user = $request->user();
-
-    if ($user->disabled) {
-      return response()->json(['message' => __('auth.no.active')], 422);
+    public function logout()
+    {
+        $r = $this->attemptLogout();
+        return response()->json(['bye' => $r], 204);
     }
 
-    $token = $user->createToken($user->id . '-token')->accessToken;
+    // Utilities
 
-    if ($token) {
-      $user->remember_token = $token;
-      return $user;
+    /**
+     * Attempt to create an access token using user credentials
+     * @param $request
+     * @return User | \Illuminate\Http\Request  $request
+     */
+    public function attemptLogin($request)
+    {
+        $credentials = request(['email', 'password']);
+
+        $errors = ['message' => __('auth.failed')];
+
+        if (!Auth::attempt($credentials)) {
+            return response()->json(['message' => __('passwords.user')], 404);
+        }
+
+        $user = $request->user();
+
+        if ($user->disabled) {
+            return response()->json(['message' => __('auth.no.active')], 422);
+        }
+
+        $token = $user->createToken($user->id . '-token')->accessToken;
+
+        if ($token) {
+            $user->remember_token = $token;
+            return $user;
+        }
+
+        return response()->json($errors, 422);
     }
 
-    return response()->json($errors, 422);
-  }
-
-  /**
-   * Logs out the user. We revoke access token and refresh token.
-   * Also instruct the client to forget the refresh cookie.
-   */
-  public function attemptLogout()
-  {
-    $accessToken = Auth::user()->token()->revoke();
-    return response()->json(['message' => 'Successfully logged out']);
-  }
+    /**
+     * Logs out the user. We revoke access token and refresh token.
+     * Also instruct the client to forget the refresh cookie.
+     */
+    public function attemptLogout()
+    {
+        return Auth::user()->token()->revoke();
+    }
 }
