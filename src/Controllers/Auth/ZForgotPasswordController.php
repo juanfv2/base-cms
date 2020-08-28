@@ -5,7 +5,7 @@ namespace Juanfv2\BaseCms\Controllers\Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
+use Juanfv2\BaseCms\Traits\SendsPasswordResetEmails;
 
 /**
  * Class ZRegisterAPIController
@@ -32,14 +32,14 @@ class ZForgotPasswordController extends Controller
      *
      * @SWG\Post(
      *      path="/password/email",
-     *      summary="Store a newly created Account in storage",
+     *      summary=" Account forgot email",
      *      tags={"Password"},
-     *      description="Store Account",
+     *      description="forgot email",
      *      produces={"application/json"},
      *      @SWG\Parameter(
      *          name="body",
      *          in="body",
-     *          description="Account that should be stored",
+     *          description="Email",
      *          required=false,
      *          @SWG\Schema(
      *              type="object",
@@ -77,26 +77,11 @@ class ZForgotPasswordController extends Controller
             $request->only('email')
         );
 
-        // return [
-        //     'success' => $response == Password::RESET_LINK_SENT,
-        //     'message' => __($response),
-        //     'errors' => [__($response)],
-        // ];
         $isValid = $response == Password::RESET_LINK_SENT;
 
         return response()->json([
             'success' => $isValid,
             'message' => __($response)
         ], $isValid ? 200 : 500);
-    }
-
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('guest');
     }
 }

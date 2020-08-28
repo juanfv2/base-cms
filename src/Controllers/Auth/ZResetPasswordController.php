@@ -5,7 +5,7 @@ namespace Juanfv2\BaseCms\Controllers\Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Foundation\Auth\ResetsPasswords;
+use Juanfv2\BaseCms\Traits\ResetsPasswords;
 
 class ZResetPasswordController extends Controller
 {

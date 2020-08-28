@@ -5,17 +5,16 @@ namespace Juanfv2\BaseCms\Controllers\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Juanfv2\BaseCms\Models\Auth\User;
 use Illuminate\Support\Facades\Schema;
 use Juanfv2\BaseCms\Models\Auth\UserVerified;
 
-use Illuminate\Foundation\Auth\RegistersUsers;
 use Juanfv2\BaseCms\Resources\GenericResource;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Juanfv2\BaseCms\Controllers\BaseCmsController;
 use Juanfv2\BaseCms\Repositories\Auth\UserRepository;
 use Juanfv2\BaseCms\Repositories\Auth\AccountRepository;
+use Juanfv2\BaseCms\Requests\Auth\CreateAccountAPIRequest;
 use Juanfv2\BaseCms\Notifications\UserRegisteredNotification;
 
 /**
@@ -24,21 +23,6 @@ use Juanfv2\BaseCms\Notifications\UserRegisteredNotification;
  */
 class ZRegisterAPIController extends BaseCmsController
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Register Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles the registration of new users as well as their
-    | validation and creation. By default this controller uses a trait to
-    | provide this functionality without requiring any additional code.
-    |
-     */
-
-    use RegistersUsers, AuthenticatesUsers {
-        AuthenticatesUsers::redirectPath insteadof RegistersUsers;
-        AuthenticatesUsers::guard insteadof RegistersUsers;
-    }
 
     /** @var  UserRepository */
     private $userRepository;
@@ -126,10 +110,10 @@ class ZRegisterAPIController extends BaseCmsController
      *      )
      * )
      */
-    function register(Request $request)
+    function register(CreateAccountAPIRequest $request)
     {
         if ($request->has('uid')) {
-            return $this->registerUserByFb($request);
+            return $this->registerUserByUid($request);
         }
         return $this->registerUser($request);
     }
@@ -139,16 +123,14 @@ class ZRegisterAPIController extends BaseCmsController
      * @return array
      * @throws \Prettus\Validator\Exceptions\ValidatorException
      */
-    function registerUser(Request $request)
+    function registerUser(CreateAccountAPIRequest $request)
     {
         $info = $request->all();
-        // logger(__FILE__ . ':' . __LINE__ . ' $info ', [$info]);
-        $this->validate($request, User::$rulesCreate);
 
         $roleId = $info['role_id'];
 
         // user
-        $info['password'] = password_hash($info['password'], PASSWORD_BCRYPT);
+        $info['password'] = Hash::make($info['password']);
         $info['roles'] = [$roleId];
         $info['role_id'] = $roleId;
         $info['disabled'] = $request->get('uid', true);
@@ -177,23 +159,22 @@ class ZRegisterAPIController extends BaseCmsController
             DB::commit();
             Schema::enableForeignKeyConstraints();
 
-            return [
-                'success' => true,
+            return $this->sendResponse(__('messages.mail.verify', ['email' => $this->user->email]), [
                 'id' => $newAccount->id,
-                'message' => __('messages.mail.verify', ['email' => $this->user->email]),
-                'errors' => [__('messages.mail.verifyTitle', ['email' => $this->user->email])],
-            ];
+                'detail' => __('messages.mail.verifyTitle', ['email' => $this->user->email])
+            ]);
         } catch (\PDOException $e) {
             // logger(__FILE__ . ':' . __LINE__ . ' $e ', [$e]);
             // Woopsy
             DB::rollBack();
+            Schema::enableForeignKeyConstraints();
+
             return $this->sendError(
                 __('validation.model.error', ['model' => __('models.account.name')]),
                 500,
                 [
                     'code' => $e->getCode(),
                     'message' => $e->getMessage(),
-                    // 'updated' => $created,
                 ]
             );
         }
@@ -204,16 +185,16 @@ class ZRegisterAPIController extends BaseCmsController
      * @return $this|\Illuminate\Database\Eloquent\Model|null|static
      * @throws \Prettus\Validator\Exceptions\ValidatorException
      */
-    function registerUserByFb(Request $request)
+    function registerUserByUid(Request $request)
     {
         $this->user = User::where('uid', $request->get('uid'))->first();
-        // logger('this user', [$this->user]);
+
         if (!$this->user) {
             $this->registerUser($request);
         }
 
         if ($this->user instanceof User) {
-            $this->user->remember_token = $this->user->createToken($this->user->id)->accessToken;
+            $this->user->remember_token = $this->user->createToken($this->user->id . '-token')->accessToken;
 
             $user = new GenericResource($this->user);
 
@@ -244,16 +225,11 @@ class ZRegisterAPIController extends BaseCmsController
             $isValid = false;
         }
 
-        // return [
-        //     'success' => true,
-        //     'message' => $response,
-        // ];
-
         return response()->json(
             [
                 'success' => $isValid,
-                'title' => __('messages.mail.welcome'),
-                'description' => __($response)
+                'title' => __('messages.mail.welcome', ['app_name' => config('app.name')]),
+                'description' => $response
             ],
             $isValid ? 200 : 500
         );
