@@ -12,10 +12,7 @@ trait ControllerFiles
     public function updateXfile($id, Request $request)
     {
         $input = $request->all();
-
-        // logger(__FILE__ . ':' . __LINE__ . ' $input ', [$input]);
-
-        $f = XFile::find($id);
+        $f     = XFile::find($id);
 
         if (!$f) {
             return $this->sendError(__('validation.model.not.found', ['model' => 'Archivo']));
@@ -23,8 +20,6 @@ trait ControllerFiles
 
         $f->fill($input);
         $f->save();
-
-        // $f = new GenericResource(banner);
 
         return ['id' => $f->id];
     }
@@ -64,6 +59,12 @@ trait ControllerFiles
     }
 
     /**
+     *
+     * Header: isMulti = true
+     * If the file being uploaded is part of several uploads always saved
+     * Header: isMulti = false
+     * If not, The field is deleted the previous ones and update the name in the "x_file" table
+     *
      * /api/file/{tableName}/{fieldName}/{id?}/{color?}
      *
      * @param $tableName
@@ -77,32 +78,18 @@ trait ControllerFiles
         ini_set('upload_max_filesize', '-1');
         ini_set('memory_limit', '-1');
 
-        // logger(__FILE__ . ':' . __LINE__ . '- ', [$tableName, $fieldName, $id, $color]);
-
-        $affected = true;
-        $columns = 0;
-
-        /**
-         * If the file being uploaded is part of several uploads
-         * always saved
-         * If not, I delete the previous ones and update the name in the "x_file" table
-         */
-        $isMulti      = request()->header('isMulti', 0);
-        $isTemporal    = strpos($fieldName, 'massive') !== false;
-
-        $uploadedFile = request()->file($fieldName);
-
-        $baseAssets   = '/assets/adm';
-        $strLocation = public_path("$baseAssets/$tableName/$fieldName");
-
-        $originalName  = $uploadedFile->getClientOriginalName();
-        $fileExtension = $uploadedFile->getClientOriginalExtension();
-
-        $fileNamePrefix = $tableName . '-' . $id;
-        $newName        = uniqid($fileNamePrefix . '-');
+        $columns              = 0;
+        $isMulti              = request()->header('isMulti', 0);
+        $isTemporal           = strpos($fieldName, 'massive') !== false;
+        $uploadedFile         = request()->file($fieldName);
+        $baseAssets           = '/assets/adm';
+        $strLocation          = public_path("$baseAssets/$tableName/$fieldName");
+        $originalName         = $uploadedFile->getClientOriginalName();
+        $fileExtension        = $uploadedFile->getClientOriginalExtension();
+        $fileNamePrefix       = $tableName . '-' . $id;
+        $newName              = uniqid($fileNamePrefix . '-');
         $newNameWithExtension = $newName . '.' . $fileExtension;
-
-        $xFile = new XFile();
+        $xFile                = new XFile();
 
         /**
          * Si el nombre del archivo trae la palabra "massive"
@@ -114,9 +101,8 @@ trait ControllerFiles
 
             $uploadedFile->move($strLocation, $newNameWithExtension);
 
-            $location = $strLocation . '/' . $newNameWithExtension;
-
-            $xFile->name         = $newNameWithExtension;
+            $location    = $strLocation . '/' . $newNameWithExtension;
+            $xFile->name = $newNameWithExtension;
 
             if ($fileExtension == 'csv' && ($handle = fopen($location, "r")) !== false) {
                 while (($data = fgetcsv($handle, 1000, ",")) !== false) {
@@ -223,37 +209,32 @@ trait ControllerFiles
             }
         }
 
-        $baseAssets = '/assets/adm/';
-        $w = (int) $w;
-        $h = (int) $h;
-
+        $baseAssets               = '/assets/adm/';
+        $w                        = (int) $w;
+        $h                        = (int) $h;
         $strLocationImageNotFound = public_path('/assets/images/image-not-found.png');
         $strLocationImageSaved    = public_path($baseAssets . $tableName . '/' . $fieldName . '/' . $imageName);
         $strLocationImage2show    = File::exists($strLocationImageSaved) ? $strLocationImageSaved : $strLocationImageNotFound;
-
-        // logger(__FILE__ . ':' . __LINE__ . ' $strLocationImageOriginal ', [$tableName, $fieldName, $id, $w, $h, $imageNameOriginal]);
-        // logger(__FILE__ . ':' . __LINE__ . ' $strLocationImageOriginal "' . $strLocationImageSaved . '"');
-        // logger(__FILE__ . ':' . __LINE__ . ' $strLocationImage2show    "' . $strLocationImage2show . '"');
-
-        $lifeTime = 60 * 24 * 365;
+        $lifeTime                 = 60 * 24 * 365;
 
         ini_set('memory_limit', '-1');
 
         if ($strLocationImage2show && ($w || $h)) {
             // create a cached image and set a lifetime and return as object instead of string
             return Image::cache(function ($image) use ($strLocationImage2show, $w, $h) {
-                $image->make($strLocationImage2show)->resize($w > 0 ? $w : null, $h > 0 ? $h : null, function ($constraint) use ($w, $h) {
-                    if (!($w > 0 && $h > 0)) {
-                        $constraint->aspectRatio();
-                    }
-                });
+                $image->make($strLocationImage2show)
+                    ->resize(
+                        $w > 0 ? $w : null,
+                        $h > 0 ? $h : null,
+                        function ($constraint) use ($w, $h) {
+                            if (!($w > 0 && $h > 0)) {
+                                $constraint->aspectRatio();
+                            }
+                        }
+                    );
             }, $lifeTime, true)->response();
         } else {
-            // open an image file
-            // $img = Image::make($strLocationImage2show);
             return response()->file($strLocationImage2show);
-            //return Response::download($strLocationImage2show, $imageNameOriginal);
-            // return File::get($strLocationImage2show, $imageNameOriginal);
         }
     }
 

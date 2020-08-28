@@ -17,7 +17,7 @@ trait ControllerResponses
     }
 
     /**
-     * @param $elements
+     * @param $elements array|anything
      * @param int $totalElements
      * @param int $limit
      * @return \Illuminate\Http\JsonResponse

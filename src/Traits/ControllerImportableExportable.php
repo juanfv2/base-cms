@@ -6,6 +6,9 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Juanfv2\BaseCms\Helpers\ExportDataCSV;
+use Juanfv2\BaseCms\Repositories\MyBaseRepository;
+use Juanfv2\BaseCms\Criteria\RequestGenericCriteria;
 
 trait ControllerImportableExportable
 {
@@ -19,23 +22,18 @@ trait ControllerImportableExportable
      */
     public function importCsv(Request $request)
     {
-        $table                      = $request->get('table');
-        $massiveQueryFieldName      = $request->get('massiveQueryFieldName');
-        $massiveQueryFileName       = $request->get('massiveQueryFileName');
-
-        $fileTemp     = explode('.', $massiveQueryFileName);
-        $fileTempName = $fileTemp[0];
-        // $fileTempExt  = $fileTemp[1];
-
-        $massiveQueryFileNameDataPath   = 'assets/adm/temporals/' . $fileTempName;
-        $massiveQueryFile               = public_path($massiveQueryFileNameDataPath . '/' . $table . '/' . $massiveQueryFieldName . '/' . $massiveQueryFileName);
-
-        $keys           = $request->get('keys');
-        $primaryKeyName = $request->get('primaryKeyName');
-
-        $original       = ini_get('auto_detect_line_endings');
-        $created        = 0;
-        $handle         = null;
+        $table                        = $request->get('table');
+        $massiveQueryFieldName        = $request->get('massiveQueryFieldName');
+        $massiveQueryFileName         = $request->get('massiveQueryFileName');
+        $fileTemp                     = explode('.', $massiveQueryFileName);
+        $fileTempName                 = $fileTemp[0];
+        $massiveQueryFileNameDataPath = 'assets/adm/temporals/' . $fileTempName;
+        $massiveQueryFile             = public_path($massiveQueryFileNameDataPath . '/' . $table . '/' . $massiveQueryFieldName . '/' . $massiveQueryFileName);
+        $keys                         = $request->get('keys');
+        $primaryKeyName               = $request->get('primaryKeyName');
+        $original                     = ini_get('auto_detect_line_endings');
+        $created                      = 0;
+        $handle                       = null;
 
         try {
 
@@ -43,8 +41,8 @@ trait ControllerImportableExportable
 
                 ini_set('auto_detect_line_endings', true);
                 DB::beginTransaction();
-
                 $xHeaders = [];
+
                 while (($datum = fgetcsv($handle, 10000, ',')) !== false) {
                     $datum = $this->toUtf8($datum);
 
@@ -110,16 +108,7 @@ trait ControllerImportableExportable
 
             File::deleteDirectory($massiveQueryFileNameDataPath);
 
-            // return $this->reportBug($e->getMessage(), $created);
-            return $this->sendError(
-                'Error en la linea ' . $created,
-                500,
-                [
-                    'code' => $e->getCode(),
-                    'message' => $e->getMessage(),
-                    'updated' => $created,
-                ]
-            );
+            return $this->sendError('Error en la linea ' . $created, 500, ['code' => $e->getCode(), 'message' => $e->getMessage(), 'updated' => $created,]);
         }
     }
 
@@ -187,32 +176,17 @@ trait ControllerImportableExportable
 
     protected function export($table, $headers, $items)
     {
+        $labels   = array_values($headers);
+        $fnames   = array_keys($headers);
         $exporter = new ExportDataCSV('browser', $table . '.csv');
 
-        // logger(__FILE__ . ':' . __LINE__ . ' $table   ', [$table]);
-        // logger(__FILE__ . ':' . __LINE__ . ' $headers ', [$headers]);
-        // logger(__FILE__ . ':' . __LINE__ . ' $items   ', [$items]);
-
         $exporter->initialize(); // starts streaming data to web browser
-
-        // doesn't care how many columns you give it
-        //    $exporter->addRow(array(''));
-
-        // pass addRow() an array and it converts it to Excel XML format and sends
-        // it to the browser
-        $labels = array_values($headers);
-        $fnames = array_keys($headers);
-
         $exporter->addRow($labels);
+
         foreach ($items as $item) {
-
-            // $item = $itemR;
-
-            // logger(__FILE__ . ':' . __LINE__ . ' $items   ', [$labels, $fnames, $item]);
 
             $i = array();
             foreach ($fnames as $key) {
-                // logger(__FILE__ . ':' . __LINE__ . ' $item->{$key} ', [$key, $item->{$key}]);
                 $i[$key] = $item->{$key};
             }
             $exporter->addRow($i);
@@ -226,13 +200,12 @@ trait ControllerImportableExportable
     public function exportCsv(Request $request)
     {
         $criteria = new RequestGenericCriteria($request);
+        $zname    = $request->get('zname');
+        $repo     = new MyBaseRepository(app());
 
-        $zname = $request->get('zname');
-
-        $repo = new MyBaseRepository(app());
         $repo->table = $zname;
         $repo->primaryKey = $request->get('zid', null);
-        $repo->reMakeModel();
+        $repo->resetModel();
         $repo->pushCriteria($criteria);
 
         $items = $repo->all();
