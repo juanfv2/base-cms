@@ -62,9 +62,9 @@ class CountryAPIController extends BaseCmsController
     public function index(Request $request)
     {
         $action = $request->get('action', '-');
-        $criteria = new RequestGenericCriteria($request);
+        $limit  = $request->get('limit', -1);
 
-        $this->modelRepository->pushCriteria($criteria);
+        $this->modelRepository->pushCriteria(new RequestGenericCriteria($request));
         $itemCount = $this->modelRepository->count();
 
         if ($action != 'export') {
@@ -83,7 +83,7 @@ class CountryAPIController extends BaseCmsController
                 $zname = $request->get('title', '-');
                 return $this->export($zname, $headers, $items);
             default:
-                return $this->response2Api($items, $itemCount, $request->get('limit', -1));
+                return $this->response2Api($items, $itemCount, $limit);
         }
     }
 
