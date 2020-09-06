@@ -52,7 +52,8 @@ abstract class MyBaseRepository extends BaseRepository
     public function updateRelations($model, $attributes)
     {
         foreach ($attributes as $key => $val) {
-            if (isset($model) &&
+            if (
+                isset($model) &&
                 method_exists($model, $key) &&
                 is_a(@$model->$key(), 'Illuminate\Database\Eloquent\Relations\Relation')
             ) {

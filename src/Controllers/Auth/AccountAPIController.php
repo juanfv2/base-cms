@@ -7,11 +7,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
+use App\Http\Controllers\AppBaseController;
 use Juanfv2\BaseCms\Resources\GenericResource;
-
 use InfyOm\Generator\Criteria\LimitOffsetCriteria;
-use Juanfv2\BaseCms\Controllers\BaseCmsController;
 use Juanfv2\BaseCms\Criteria\RequestGenericCriteria;
+
 use Juanfv2\BaseCms\Repositories\Auth\UserRepository;
 use Juanfv2\BaseCms\Repositories\Auth\AccountRepository;
 use Juanfv2\BaseCms\Requests\Auth\CreateAccountAPIRequest;
@@ -22,7 +22,7 @@ use Juanfv2\BaseCms\Requests\Auth\UpdateAccountAPIRequest;
  * @package Juanfv2\BaseCms\Controllers\Auth
  */
 
-class AccountAPIController extends BaseCmsController
+class AccountAPIController extends AppBaseController
 {
     /** @var  AccountRepository */
     private $modelRepository;

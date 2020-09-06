@@ -7,11 +7,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Juanfv2\BaseCms\Models\Auth\User;
-use Illuminate\Support\Facades\Schema;
-use Juanfv2\BaseCms\Models\Auth\UserVerified;
 
+use Illuminate\Support\Facades\Schema;
+use App\Http\Controllers\AppBaseController;
+use Juanfv2\BaseCms\Models\Auth\UserVerified;
 use Juanfv2\BaseCms\Resources\GenericResource;
-use Juanfv2\BaseCms\Controllers\BaseCmsController;
 use Juanfv2\BaseCms\Repositories\Auth\UserRepository;
 use Juanfv2\BaseCms\Repositories\Auth\AccountRepository;
 use Juanfv2\BaseCms\Requests\Auth\CreateAccountAPIRequest;
@@ -21,7 +21,7 @@ use Juanfv2\BaseCms\Notifications\UserRegisteredNotification;
  * Class ZRegisterAPIController
  * @package Juanfv2\BaseCms\Controllers\Auth
  */
-class ZRegisterAPIController extends BaseCmsController
+class ZRegisterAPIController extends AppBaseController
 {
 
     /** @var  UserRepository */
@@ -36,7 +36,6 @@ class ZRegisterAPIController extends BaseCmsController
         $this->userRepository = $userRepo;
         $this->accountRepository = $customerRepo;
     }
-
 
     /**
      * @param Request $request

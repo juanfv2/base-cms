@@ -3,9 +3,9 @@
 namespace Juanfv2\BaseCms\Controllers\Auth;
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\AppBaseController;
 use Juanfv2\BaseCms\Resources\GenericResource;
 use InfyOm\Generator\Criteria\LimitOffsetCriteria;
-use Juanfv2\BaseCms\Controllers\BaseCmsController;
 use Juanfv2\BaseCms\Criteria\RequestGenericCriteria;
 
 use Juanfv2\BaseCms\Repositories\Auth\RoleRepository;
@@ -18,7 +18,7 @@ use Juanfv2\BaseCms\Repositories\Auth\PermissionRepository;
  * @package Juanfv2\BaseCms\Controllers\Auth
  */
 
-class RoleAPIController extends BaseCmsController
+class RoleAPIController extends AppBaseController
 {
   /** @var  RoleRepository */
   private $modelRepository;

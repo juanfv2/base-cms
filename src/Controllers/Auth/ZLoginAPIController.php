@@ -2,19 +2,18 @@
 
 namespace Juanfv2\BaseCms\Controllers\Auth;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Juanfv2\BaseCms\Models\Auth\User;
 use Juanfv2\BaseCms\Resources\GenericResource;
-
 use Juanfv2\BaseCms\Requests\Auth\LoginRequest;
-use Juanfv2\BaseCms\Controllers\BaseCmsController;
+
 
 /**
  * Class LoginAPIController
  * @package Juanfv2\BaseCms\Controllers\Auth
  */
-class ZLoginAPIController extends BaseCmsController
+class ZLoginAPIController extends Controller
 {
 
     protected function getIp()

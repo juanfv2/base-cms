@@ -219,6 +219,22 @@ class User extends Authenticatable
         return $this->belongsToMany(Role::class, 'auth_users_has_roles');
     }
 
+    /**
+     * Send the password reset notification.
+     *
+     * @param  string  $token
+     * @return void
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ResetPasswordNotification($token));
+    }
+
+    public function verifyUser()
+    {
+        return $this->hasOne(\Juanfv2\BaseCms\Models\Auth\UserVerified::class);
+    }
+
     public function hasPermission()
     {
         $cRoute = Route::getCurrentRoute()->action['as'];
@@ -242,26 +258,10 @@ class User extends Authenticatable
 
         $hasPermission = $menu[0]->aggregate > 0;
 
-        // sqlserver $menu = DB::select('execute sp_has_permission ?, ?;', [$this->id, $cRoute]);
+        // -- sqlserver $menu = DB::select('execute sp_has_permission ?, ?;', [$this->id, $cRoute]);
 
-        // logger(__FILE__ . ':' . __LINE__ . ' $this->id ', [' . ' . $this->id . ' . ' . $cRoute . ' . ' . $hasPermission]);
+        // logger(__FILE__ . ':' . __LINE__ . ' $this->id ', [' . ' . $this->id . ' . ' . $cRoute . ' . \'' . $hasPermission . '\'']);
 
         return $hasPermission;
-    }
-
-    /**
-     * Send the password reset notification.
-     *
-     * @param  string  $token
-     * @return void
-     */
-    public function sendPasswordResetNotification($token)
-    {
-        $this->notify(new ResetPasswordNotification($token));
-    }
-
-    public function verifyUser()
-    {
-        return $this->hasOne(\Juanfv2\BaseCms\Models\Auth\UserVerified::class);
     }
 }

@@ -48,7 +48,7 @@ class ZResetPasswordController extends Controller
     public function reset(Request $request)
     {
         // logger(__FILE__ . ':' . __LINE__ . ' $request 1: ', [$request->all()]);
-        // $this->validate($request, $this->rules(), $this->validationErrorMessages());
+        $this->validate($request, $this->rules(), $this->validationErrorMessages());
 
         // Here we will attempt to reset the user's password. If it is successful we
         // will update the password on an actual user model and persist it to the
