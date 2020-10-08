@@ -1,6 +1,6 @@
 <?php
 
-namespace Juanfv2\BaseCms\Traits;
+namespace App\Traits;
 
 trait RedirectsUsers
 {

@@ -3,12 +3,12 @@
 namespace Juanfv2\BaseCms\Criteria;
 
 use Illuminate\Http\Request;
-use Prettus\Repository\Contracts\CriteriaInterface;
-use Prettus\Repository\Contracts\RepositoryInterface;
+use App\Contracts\CriteriaInterface;
+use App\Contracts\RepositoryInterface;
 
 /**
- * Class DocumentApiIndexCriteria
- * @package namespace Juanfv2\BaseCms\Criteria;
+ * Class LimitOffsetCriteria
+ * @package namespace Juanfv2\BaseCms\Criteria
  */
 class DocumentApiIndexCriteria implements CriteriaInterface
 {
@@ -33,13 +33,12 @@ class DocumentApiIndexCriteria implements CriteriaInterface
      */
     public function apply($model, RepositoryInterface $repository)
     {
-        $massiveQ = $this->request->get('mq');
-        $queries = isset($massiveQ['queries']) ? $massiveQ['queries'] : null;
+        $massiveQ             = $this->request->get('mq');
+        $queries              = isset($massiveQ['queries']) ? $massiveQ['queries'] : null;
         $massiveQueryFileName = isset($massiveQ['massiveQuery']) ? $massiveQ['massiveQuery'] : '';
-        $massiveQueryModel = isset($massiveQ['model']) ? $massiveQ['model'] : '';
-        $massiveQueryFile = public_path('assets/adm/files/' . $massiveQueryModel . '/massiveQuery/' . $massiveQueryFileName);
-
-        $columns = array();
+        $massiveQueryModel    = isset($massiveQ['model']) ? $massiveQ['model'] : '';
+        $massiveQueryFile     = 'pulic/assets/adm/files/' . $massiveQueryModel . '/massiveQuery/' . $massiveQueryFileName;
+        $columns              = array();
 
         try {
             ini_set('auto_detect_line_endings', true);
@@ -136,5 +135,4 @@ class DocumentApiIndexCriteria implements CriteriaInterface
 
         return $model;
     }
-
 }

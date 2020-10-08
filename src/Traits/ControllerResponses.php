@@ -1,19 +1,33 @@
 <?php
 
-namespace Juanfv2\BaseCms\Traits;
+namespace App\Traits;
 
-use InfyOm\Generator\Utils\ResponseUtil;
+use App\Utils\ResponseUtil;
 
 trait ControllerResponses
 {
-    public function sendResponse($message, $result)
+    /**
+     * @param mixed  $data
+     * @param string $message
+     * @param boolean $isSuccess
+     * @param integer $responseCode
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function sendResponse($data, $message = '', $isSuccess = true, $responseCode = 200)
     {
-        return response()->json(ResponseUtil::makeResponse($message, $result));
+        return response()->json($this->makeResponse($data, $message, $isSuccess), $responseCode);
     }
-
-    public function sendError($error, $code = 404, $data = [])
+    /**
+     * @param array|string  $data
+     * @param string        $message
+     * @param integer       $responseCode
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function sendError($data, $message = '', $responseCode = 404)
     {
-        return response()->json(ResponseUtil::makeError($error, $data), $code);
+        return response()->json($this->makeResponse($data, $message, false), $responseCode);
     }
 
     /**
@@ -30,5 +44,33 @@ trait ControllerResponses
             'totalElements' => $totalElements,
             'content' => $elements,
         ]);
+    }
+
+    /**
+     * @param string $message
+     * @param mixed  $data
+     *
+     * @return array
+     */
+    private function makeResponse($data, $message, $isSuccess = true)
+    {
+
+        $d = $data;
+        $m = $message;
+
+        if (is_string($data)) {
+            $m = $data;
+            $d = [];
+        }
+
+        $r = [
+            'success' => $isSuccess,
+            'message' => $m,
+        ];
+
+        if ($d) {
+            $r['data']    = $d;
+        }
+        return $r;
     }
 }
