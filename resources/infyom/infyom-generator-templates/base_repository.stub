@@ -1,0 +1,353 @@
+<?php
+
+namespace App\Repositories;
+
+use Exception;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
+use App\Contracts\RepositoryInterface;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Container\Container as Application;
+
+/**
+ *
+ * MyBaseRepository
+ *
+ * @package namespace App\Repositories;
+ */
+abstract class BaseRepository implements RepositoryInterface
+{
+    /**
+     * Collection of Criteria
+     *
+     * @var Collection
+     */
+    protected $criteria;
+
+    /**
+     * @var bool
+     */
+    protected $skipCriteria = false;
+
+
+    /**
+     * @param Application $app
+     */
+    public function __construct(Application $app)
+    {
+        $this->app = $app;
+        $this->criteria = new Collection();
+        $this->makeModel();
+        $this->makePresenter();
+        $this->boot();
+    }
+
+    /**
+     * @param null $presenter
+     *
+     * @return PresenterInterface
+     * @throws RepositoryException
+     */
+    public function makePresenter($presenter = null)
+    {
+        $presenter = !is_null($presenter) ? $presenter : $this->presenter();
+
+        if (!is_null($presenter)) {
+            $this->presenter = is_string($presenter) ? $this->app->make($presenter) : $presenter;
+
+            //    if (!$this->presenter instanceof PresenterInterface) {
+            //        throw new RepositoryException("Class {$presenter} must be an instance of Prettus\\Repository\\Contracts\\PresenterInterface");
+            //    }
+
+            return $this->presenter;
+        }
+
+        return null;
+    }
+
+    /**
+     * Specify Presenter class name
+     *
+     * @return string
+     */
+    public function presenter()
+    {
+        return null;
+    }
+
+    /**
+     *
+     */
+    public function boot()
+    {
+        //
+    }
+
+    /**
+     * @return Model
+     * @throws Exception
+     */
+    public function makeModel()
+    {
+        $model = $this->app->make($this->model());
+
+        if (!$model instanceof Model) {
+            throw new \Exception("Class {$this->model()} must be an instance of Illuminate\\Database\\Eloquent\\Model");
+        }
+
+        return $this->model = $model;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function resetModel()
+    {
+        $this->makeModel();
+    }
+
+    /**
+     * Get Searchable Fields
+     *
+     * @return array
+     */
+    public function getFieldsSearchable()
+    {
+        return $this->model->hidden ?? [];
+    }
+
+    /**
+     * Specify Model class name
+     *
+     * @return string
+     */
+    abstract public function model();
+
+    /**
+     * Push Criteria for filter the query
+     *
+     * @param $criteria
+     *
+     * @return $this
+     * @throws \Prettus\Repository\Exceptions\RepositoryException
+     */
+    public function pushCriteria($criteria)
+    {
+        $this->criteria->push($criteria);
+
+        return $this;
+    }
+
+    /**
+     * Applies the given where conditions to the model.
+     *
+     * @param array $where
+     * @return void
+     */
+    protected function applyConditions(array $where)
+    {
+        foreach ($where as $field => $value) {
+            if (is_array($value)) {
+                list($field, $condition, $val) = $value;
+                $this->model = $this->model->where($field, $condition, $val);
+            } else {
+                $this->model = $this->model->where($field, '=', $value);
+            }
+        }
+    }
+
+    /**
+     * Get Collection of Criteria
+     *
+     * @return Collection
+     */
+    public function getCriteria()
+    {
+        return $this->criteria;
+    }
+
+    /**
+     * Apply criteria in current Query
+     *
+     * @return $this
+     */
+    protected function applyCriteria()
+    {
+        if ($this->skipCriteria === true) {
+            return $this;
+        }
+
+        $criteria = $this->getCriteria();
+
+        if ($criteria) {
+            foreach ($criteria as $c) {
+                $this->model = $c->apply($this->model, $this);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Retrieve all data of repository
+     *
+     * @param array $columns
+     *
+     * @return mixed
+     */
+    public function all($columns = ['*'])
+    {
+        $this->applyCriteria();
+        // $this->applyScope();
+
+        if ($this->model instanceof Builder) {
+            $results = $this->model->get($columns);
+        } else {
+            $results = $this->model->all($columns);
+        }
+
+        $this->resetModel();
+        // $this->resetScope();
+
+        return $results;
+    }
+
+    /**
+     * Count results of repository
+     *
+     * @param array $where
+     * @param string $columns
+     *
+     * @return int
+     */
+    public function count(array $where = [], $columns = '*')
+    {
+        $this->applyCriteria();
+        // $this->applyScope();
+
+        if ($where) {
+            $this->applyConditions($where);
+        }
+
+        $result = $this->model->count($columns);
+
+        $this->resetModel();
+        // $this->resetScope();
+
+        return $result;
+    }
+
+    /**
+     * Find data by id
+     *
+     * @param       $id
+     * @param array $columns
+     *
+     * @return mixed
+     */
+    public function find($id, $columns = ['*'])
+    {
+        $this->applyCriteria();
+        // $this->applyScope();
+        $model = $this->model->findOrFail($id, $columns);
+        $this->resetModel();
+
+        return $model;
+    }
+    public function findWithoutFail($id, $columns = ['*'])
+    {
+        try {
+            return $this->find($id, $columns);
+        } catch (Exception $e) {
+            return;
+        }
+    }
+
+    public function create(array $attributes)
+    {
+        $model = $this->model->newInstance($attributes);
+        $model->save();
+        $this->resetModel();
+
+        $model = $this->updateRelations($model, $attributes);
+        $model->withoutEvents(function () use ($model) {
+            $model->save();
+        });
+
+        return $model;
+    }
+
+    public function update($model, array $attributes)
+    {
+        $model->fill($attributes);
+        $model->save();
+        $this->resetModel();
+
+        $model = $this->updateRelations($model, $attributes);
+        $model->withoutEvents(function () use ($model) {
+            $model->save();
+        });
+
+        return $model;
+    }
+
+    public function updateRelations($model, $attributes)
+    {
+        foreach ($attributes as $key => $val) {
+            if (
+                isset($model) &&
+                method_exists($model, $key) &&
+                is_a(@$model->$key(), 'Illuminate\Database\Eloquent\Relations\Relation')
+            ) {
+                $methodClass = get_class($model->$key($key));
+                switch ($methodClass) {
+                    case 'Illuminate\Database\Eloquent\Relations\BelongsToMany':
+                        $new_values = Arr::get($attributes, $key, []);
+                        if (array_search('', $new_values) !== false) {
+                            unset($new_values[array_search('', $new_values)]);
+                        }
+                        $model->$key()->sync(array_values($new_values));
+                        break;
+                    case 'Illuminate\Database\Eloquent\Relations\BelongsTo':
+                        $model_key = $model->$key()->getQualifiedForeignKeyName();
+                        $new_value = Arr::get($attributes, $key, null);
+                        $new_value = $new_value == '' ? null : $new_value;
+                        $model->$model_key = $new_value;
+                        break;
+                    case 'Illuminate\Database\Eloquent\Relations\HasOne':
+                        break;
+                    case 'Illuminate\Database\Eloquent\Relations\HasOneOrMany':
+                        break;
+                    case 'Illuminate\Database\Eloquent\Relations\HasMany':
+                        $new_values = Arr::get($attributes, $key, []);
+                        if (array_search('', $new_values) !== false) {
+                            unset($new_values[array_search('', $new_values)]);
+                        }
+
+                        list($temp, $model_key) = explode('.', $model->$key($key)->getQualifiedForeignKeyName());
+
+                        foreach ($model->$key as $rel) {
+                            if (!in_array($rel->id, $new_values)) {
+                                $rel->$model_key = null;
+                                $rel->save();
+                            }
+                            unset($new_values[array_search($rel->id, $new_values)]);
+                        }
+
+                        if (count($new_values) > 0) {
+                            $related = get_class($model->$key()->getRelated());
+                            foreach ($new_values as $val) {
+                                $rel = $related::find($val);
+                                $rel->$model_key = $model->id;
+                                $rel->save();
+                            }
+                        }
+                        break;
+                }
+            }
+        }
+
+        return $model;
+    }
+}

@@ -21,7 +21,7 @@ return [
         'verify' => 'Se envió un correo a :email, verifique su correo',
         'check' => 'Le enviamos un código de activación. Verifique su correo electrónico y haga clic en el enlace para verificar.',
         'confirm' => 'Debes confirmar tu cuenta Le hemos enviado un código de activación, verifique su correo electrónico.',
-        'verified' => 'Su correo electrónico está verificado Ahora puede iniciar sesión.',
+        'verified' => 'Su correo electrónico está verificado. Ahora puede iniciar sesión.',
         'verifiedAlready' => 'Su correo electrónico ya está verificado. Puede iniciar sesión.',
         'verifiedFailed' => 'Lo siento, su correo electrónico no puede ser identificado.',
     ],

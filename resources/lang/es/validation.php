@@ -140,9 +140,15 @@ return [
         'password' => 'Contraseña',
     ],
 
-    'model.not.found' => ':model no encontrado',
-    'model.deleted' => ':model borrado',
-    'model.error' => 'Error inesperado, :model',
+    'model' => [
+        'list'      => 'Lista de [:model]',
+        'showed'   => ':model',
+        'stored'   => ':model guardado',
+        'updated'   => ':model actualizado',
+        'deleted'   => ':model borrado',
+        'not.found' => ':model no encontrado',
+        'error'     => 'Error inesperado, :model',
+    ],
 
     'columns.no.match' => 'El número de columnas no coincide <br/>requeridas: <b>:required</b> <br/>enviadas: <b>:sent</b>',
 
