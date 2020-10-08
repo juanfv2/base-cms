@@ -1,5 +1,7 @@
 <?php
 
+namespace Database\Seeders;
+
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -14,14 +16,12 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->truncateTables([
-            'oauth_clients',
-            'oauth_personal_access_clients',
 
             'auth_users_has_roles',
             'auth_roles_has_permissions',
 
             'auth_users',
-            'auth_people', 
+            'auth_people',
             'auth_accounts',
             'auth_roles',
             'auth_permissions',
@@ -33,7 +33,6 @@ class DatabaseSeeder extends Seeder
             // entities
         ]);
         $this->call([
-            UsersTableSeeder::class,
             AnyTableSeeder::class,
         ]);
     }

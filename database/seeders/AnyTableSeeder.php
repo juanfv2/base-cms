@@ -1,5 +1,7 @@
 <?php
 
+namespace Database\Seeders;
+
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -15,13 +17,10 @@ class AnyTableSeeder extends Seeder
     {
         $tables = [
             'auth/auth_roles',
-            'auth/auth_permissions',
-            'auth/auth_roles_has_permissions',
+            'auth/auth_users',
+            'auth/auth_people',
+            'auth/auth_accounts',
             'auth/auth_users_has_roles',
-            'auth/auth_x_files',
-
-            'oauth/oauth_clients',
-            'oauth/oauth_personal_access_clients',
 
             'country/countries',
             'country/regions',

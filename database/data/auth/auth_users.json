@@ -1,0 +1,53 @@
+[
+    {
+        "id": 1,
+        "name": "Admin Admin",
+        "email": "admin@demo.com",
+        "password": "$2y$10$Hh8ASBG2oQFWTJb.uNTKeex8Z2WjYigFfPJf5uBh0IAAgBujZWg3i",
+        "email_verified_at": null,
+        "api_token": "OA8zE4NaIGtNrRQ2zKY7PX5RgIyMYecMGOxSErJuNyVNdoze62GZoQ18O8ATIRc4kUJ01GMrfRHOpjWZ",
+        "disabled": 0,
+        "uid": null,
+        "role_id": 1,
+        "createdBy": null,
+        "updatedBy": null,
+        "remember_token": null,
+        "created_at": null,
+        "updated_at": null,
+        "deleted_at": null
+    },
+    {
+        "id": 2,
+        "name": "Sub Admin Admin",
+        "email": "subadmin@demo.com",
+        "password": "$2y$10$URwGcvMU7Y13rWEYwzlX/uK46PLFpyqnoz3kvMxKhN4IhDc7u7DNW",
+        "email_verified_at": null,
+        "api_token": null,
+        "disabled": 0,
+        "uid": null,
+        "role_id": 2,
+        "createdBy": null,
+        "updatedBy": null,
+        "remember_token": null,
+        "created_at": null,
+        "updated_at": null,
+        "deleted_at": null
+    },
+    {
+        "id": 3,
+        "name": "juanfv2",
+        "email": "juanfv1@gmail.com",
+        "password": "$2y$10$zi/vE0oGHlAB/hAI.jUrTOXHtpjuR.0IsA2/jbeN6LZeZFU7w87O6",
+        "email_verified_at": null,
+        "api_token": null,
+        "disabled": 0,
+        "uid": null,
+        "role_id": 3,
+        "createdBy": null,
+        "updatedBy": null,
+        "remember_token": null,
+        "created_at": null,
+        "updated_at": null,
+        "deleted_at": null
+    }
+]

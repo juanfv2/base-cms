@@ -1,0 +1,40 @@
+[
+    {
+        "id": 1,
+        "firstName": "Admin Admin",
+        "lastName": "Admin Admin",
+        "phone": null,
+        "cellPhone": null,
+        "birthDate": null,
+        "address": null,
+        "neighborhood": null,
+        "email": "admin@demo.com",
+        "country_id": null,
+        "region_id": null,
+        "city_id": null,
+        "createdBy": null,
+        "updatedBy": null,
+        "created_at": null,
+        "updated_at": null,
+        "deleted_at": null
+    },
+    {
+        "id": 2,
+        "firstName": "Sub Admin",
+        "lastName": "Sub Admin",
+        "phone": null,
+        "cellPhone": null,
+        "birthDate": null,
+        "address": null,
+        "neighborhood": null,
+        "email": "subadmin@demo.com",
+        "country_id": null,
+        "region_id": null,
+        "city_id": null,
+        "createdBy": null,
+        "updatedBy": null,
+        "created_at": null,
+        "updated_at": null,
+        "deleted_at": null
+    }
+]
