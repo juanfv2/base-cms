@@ -1,14 +1,13 @@
 <?php
 
-namespace App\Traits;
+namespace  Juanfv2\BaseCms\Traits;
 
 use Exception;
-use App\Utils\ExportDataCSV;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
-// use Juanfv2\BaseCms\Repositories\MyBaseRepository;
-// use Juanfv2\BaseCms\Criteria\RequestGenericCriteria;
+
+use Juanfv2\BaseCms\Utils\ExportDataCSV;
 
 trait ControllerImportableExportable
 {

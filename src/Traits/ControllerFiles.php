@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Traits;
+namespace  Juanfv2\BaseCms\Traits;
 
 use App\Models\Auth\XFile;
 use Illuminate\Support\Arr;
