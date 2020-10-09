@@ -3,8 +3,8 @@
 namespace Juanfv2\BaseCms\Criteria;
 
 use Illuminate\Http\Request;
-use App\Contracts\CriteriaInterface;
-use App\Contracts\RepositoryInterface;
+use Juanfv2\BaseCms\Contracts\CriteriaInterface;
+use Juanfv2\BaseCms\Contracts\RepositoryInterface;
 
 /**
  * Class RequestGenericCriteria
@@ -43,18 +43,22 @@ class RequestGenericCriteria implements CriteriaInterface
         $this->model      = $model;
         $table            = $this->model->getModel()->getTable();
         $fieldsSearchable = $repository->getFieldsSearchable();
-        $limit            = $this->request->get('limit', null);
-        $offset           = $this->request->get('offset', null);
         $conditions       = $this->request->get('conditions', '');
         $joins            = $this->request->get('joins', '');
         $select           = $this->request->get('select', '');
         $sorts            = $this->request->get('sorts', '');
+        $withCount        = $this->request->get('withCount', '');
+        $with             = $this->request->get('with', '');
         $conditions       = json_decode(urldecode($conditions));
         $joins            = json_decode(urldecode($joins));
         $select           = $select ? explode(',', urldecode($select)) : null;
         $sorts            = json_decode(urldecode($sorts));
+        $withCount        = json_decode(urldecode($withCount));
+        $with             = json_decode(urldecode($with));
 
-        if (is_array($conditions) && is_array($fieldsSearchable) && count($fieldsSearchable)) {
+        // logger(__FILE__ . ':' . __LINE__ . ' $this->request ', [$this->request]);
+
+        if (is_array($conditions)) {
 
             $_kOperatorStrNested = null; // $kOperator AND, OR ...
 
@@ -88,9 +92,9 @@ class RequestGenericCriteria implements CriteriaInterface
                     $_kOperatorStrNested = 'OR';
                     continue; // next
                 }
-                // todo: is too difficult
-                // dump($kFieldStr, $fieldsSearchable, in_array($kFieldStr, $fieldsSearchable));
-                if (in_array($kFieldStr, $fieldsSearchable)) {
+                $kFieldStrK = str_replace("$table.", '', $kFieldStr);
+                // logger(__FILE__ . ':' . __LINE__ . ' in_array($kFieldStrK, $fieldsSearchable) ', [$kFieldStrK, $fieldsSearchable, in_array($kFieldStrK, $fieldsSearchable)]);
+                if (in_array($kFieldStrK, $fieldsSearchable)) {
                     continue; // next
                 }
 
@@ -132,16 +136,46 @@ class RequestGenericCriteria implements CriteriaInterface
                 if (count($split) < 3) {
                     continue;
                 }
-                $joinTable = $split[0];
-                $foreignKey = $split[1];
-                $ownerKey = $split[2];
 
-                $this->model = $this->model->leftJoin($joinTable, $joinTable . '.' . $foreignKey, '=', $table . '.' . $ownerKey);
+                $joinType = '';
+                $joinTable  = $split[0];
+                $foreignKey = $split[1];
+
+                switch (count($split)) {
+                    case 5:
+                        $ownTable   = $split[2];
+                        $ownerKey   = $split[3];
+                        $joinType   = $split[4];
+                        break;
+                    case 4:
+                        $ownTable   = $split[2];
+                        $ownerKey   = $split[3];
+                        if (strlen($split[3]) == 1) {
+                            $joinType   = $split[3];
+                        }
+                        break;
+                    default:
+                        $ownTable   = $table;
+                        $ownerKey   = $split[2];
+
+                        break;
+                }
+
+                switch ($joinType) {
+                    case '<':
+                        $this->model = $this->model->leftJoin($joinTable, $joinTable . '.' . $foreignKey, '=', $ownTable . '.' . $ownerKey);
+                        break;
+                    case '>':
+                        $this->model = $this->model->leftJoin($joinTable, $joinTable . '.' . $foreignKey, '=', $ownTable . '.' . $ownerKey);
+                        break;
+
+                    default:
+                        $this->model = $this->model->join($joinTable, $joinTable . '.' . $foreignKey, '=', $ownTable . '.' . $ownerKey);
+                        break;
+                }
+
                 if (isset($k->v)) {
-                    $joinSelect = $k->v;
-                    foreach ($joinSelect as $joinK) {
-                        $this->model = $this->model->addSelect($joinTable . '.' . $joinK);
-                    }
+                    $this->model = $this->model->addSelect($k->v);
                 }
             } // end for ...
         }
@@ -164,12 +198,12 @@ class RequestGenericCriteria implements CriteriaInterface
             }
         }
 
-        if ($limit) {
-            $model = $model->limit($limit);
+        if ($withCount) {
+            $this->model->withCount($withCount);
         }
 
-        if ($offset && $limit) {
-            $model = $model->skip($offset);
+        if ($with) {
+            $this->model->with($with);
         }
 
         return $this->model;
@@ -191,7 +225,6 @@ class RequestGenericCriteria implements CriteriaInterface
             $_kOperatorStrNested = null; // $kOperator AND, OR ..
 
             foreach ($kParent as $k) {
-
                 // logger(__FILE__ . ':' . __LINE__ . ' inner $k ', [$k]);
 
                 $mQuery = $q;
@@ -231,8 +264,9 @@ class RequestGenericCriteria implements CriteriaInterface
                 $_kOperatorStrNested = null;
 
                 $noValue = '--false--';
-                $_kValue = property_exists($k, 'value') ? $k->v : $noValue;
+                $_kValue = property_exists($k, 'v') ? $k->v : $noValue;
                 $_kValueIsOptionNull = strpos($_kConditionalStr, 'null') !== false;
+                // logger(__FILE__ . ':' . __LINE__ . ' $_kValue ', [$_kValue]);
 
                 if (!$_kValueIsOptionNull && $_kValue === $noValue) {
                     continue;

@@ -3,7 +3,7 @@
 namespace Juanfv2\BaseCms\Commands;
 
 use Illuminate\Console\Command;
-use Juanfv2\BaseCms\Models\Auth\Permission;
+use App\Models\Auth\Permission;
 
 class CreateMenus extends Command
 {
