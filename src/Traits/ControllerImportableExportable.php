@@ -26,13 +26,14 @@ trait ControllerImportableExportable
         $massiveQueryFileName         = $request->get('massiveQueryFileName');
         $fileTemp                     = explode('.', $massiveQueryFileName);
         $fileTempName                 = $fileTemp[0];
-        $massiveQueryFileNameDataPath = '/public/assets/adm/temporals/' . $fileTempName;
+        $massiveQueryFileNameDataPath = storage_path('app/public/assets/adm/temporals/' . $fileTempName);
         $massiveQueryFile             = $massiveQueryFileNameDataPath . '/' . $table . '/' . $massiveQueryFieldName . '/' . $massiveQueryFileName;
         $keys                         = $request->get('keys');
         $primaryKeyName               = $request->get('primaryKeyName');
         $original                     = ini_get('auto_detect_line_endings');
         $created                      = 0;
         $handle                       = null;
+        $xHeaders                     = [];
 
         try {
 
@@ -40,7 +41,6 @@ trait ControllerImportableExportable
 
                 ini_set('auto_detect_line_endings', true);
                 DB::beginTransaction();
-                $xHeaders = [];
 
                 while (($datum = fgetcsv($handle, 10000, ',')) !== false) {
                     $datum = $this->toUtf8($datum);
@@ -95,9 +95,13 @@ trait ControllerImportableExportable
 
                 File::deleteDirectory($massiveQueryFileNameDataPath);
 
-                return [
-                    'updated' => $created - 1,
-                ];
+                // return [
+                //     'updated' => $created - 1,
+                // ];
+                return $this->sendResponse(
+                    ['updated' => $created - 1],
+                    __('validation.model.list', ['model' => $table]),
+                );
             } // end ($handle = fopen($massiveQueryFile, 'r')) !== false
         } catch (Exception $e) {
             // logger(__FILE__ . ':' . __LINE__ . ' $errors // exception.: ' . $created);
@@ -107,7 +111,11 @@ trait ControllerImportableExportable
 
             File::deleteDirectory($massiveQueryFileNameDataPath);
 
-            return $this->sendError('Error en la linea ' . $created, 500, ['code' => $e->getCode(), 'message' => $e->getMessage(), 'updated' => $created,]);
+            return $this->sendError(
+                ['code' => $e->getCode(), 'message' => $e->getMessage(), 'updated' => $created,],
+                'Error en la linea ' . $created,
+                500
+            );
         }
     }
 
