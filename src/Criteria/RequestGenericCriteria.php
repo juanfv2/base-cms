@@ -182,7 +182,7 @@ class RequestGenericCriteria implements CriteriaInterface
 
         if (is_array($select)) {
             foreach ($select as $k) {
-                $this->model = $this->model->addSelect($table . '.' . $k);
+                $this->model = $this->model->addSelect($k);
             }
         } else {
             $this->model = $this->model->addSelect($table . '.*');
