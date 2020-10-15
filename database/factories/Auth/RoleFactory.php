@@ -1,8 +1,8 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\Auth;
 
-use App\Models\Role;
+use App\Models\Auth\Role;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class RoleFactory extends Factory
@@ -23,12 +23,9 @@ class RoleFactory extends Factory
     {
         return [
             'name' => $this->faker->word,
-        'description' => $this->faker->word,
-        'createdBy' => $this->faker->word,
-        'updatedBy' => $this->faker->word,
-        'created_at' => $this->faker->date('Y-m-d H:i:s'),
-        'updated_at' => $this->faker->date('Y-m-d H:i:s'),
-        'deleted_at' => $this->faker->date('Y-m-d H:i:s')
+            'description' => $this->faker->word,
+            'createdBy' => $this->faker->numberBetween(1, 3),
+            'updatedBy' => $this->faker->numberBetween(1, 3),
         ];
     }
 }

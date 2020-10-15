@@ -1,8 +1,9 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\Country;
 
-use App\Models\Region;
+use App\Models\Country\Country;
+use App\Models\Country\Region;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class RegionFactory extends Factory
@@ -23,8 +24,8 @@ class RegionFactory extends Factory
     {
         return [
             'name' => $this->faker->word,
-        'code' => $this->faker->word,
-        'country_id' => $this->faker->word
+            'code' => $this->faker->countryCode,
+            'country_id' => Country::factory(),
         ];
     }
 }
