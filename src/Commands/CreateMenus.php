@@ -64,6 +64,12 @@ class CreateMenus extends Command
 
     public function createMenus($request)
     {
+
+        if (isset($request['individual'])) {
+            Permission::create($request);
+            return 'ok';
+        }
+
         $id = isset($request['id']) ? $request['id'] : null;
         $isGroup = isset($request['isGroup']);
         $nameSingular = $request['name'];
