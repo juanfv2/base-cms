@@ -23,7 +23,7 @@ class CreateUsersTable extends Migration
             $table->boolean('disabled')->default(0);
             $table->string('uid')->nullable();
 
-            $table->bigInteger('role_id')->nullable();
+            $table->bigInteger('role_id');
 
             $table->rememberToken();
             $table->bigInteger('createdBy')->nullable();
