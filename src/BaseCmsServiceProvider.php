@@ -48,7 +48,6 @@ class BaseCmsServiceProvider extends ServiceProvider
 
         $this->publishes([
             __DIR__ . '/../resources/infyom'        => resource_path('infyom'),
-            __DIR__ . '/../resources/infyom'        => resource_path('infyom'),
             __DIR__ . '/../resources/model_schemas' => resource_path('model_schemas'),
             __DIR__ . '/../resources/assets'        => public_path('assets'),
             __DIR__ . '/../resources/base'          => public_path('base'),
