@@ -56,7 +56,7 @@ class CreateMenus extends Command
             }
         }
 
-        $r = count($results);
+        $r = Permission::count();
         $this->info("Menus creados: {$r}");
 
         return count($results);
