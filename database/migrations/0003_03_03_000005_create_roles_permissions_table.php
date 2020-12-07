@@ -14,21 +14,9 @@ class CreateRolesPermissionsTable extends Migration
     public function up()
     {
         Schema::create('auth_roles_has_permissions', function (Blueprint $table) {
-
-            $table->bigInteger('role_id')->unsigned();
-            $table->bigInteger('permission_id')->unsigned();
-
+            $table->foreignId('role_id')->constrained('auth_roles')->onDelete('cascade');
+            $table->foreignId('permission_id')->constrained('auth_permissions')->onDelete('cascade');
             $table->primary(['role_id', 'permission_id']);
-
-            $table->foreign('role_id')
-                ->references('id')
-                ->on('auth_roles')
-                ->onDelete('cascade');
-
-            $table->foreign('permission_id')
-                ->references('id')
-                ->on('auth_permissions')
-                ->onDelete('cascade');
         });
     }
 

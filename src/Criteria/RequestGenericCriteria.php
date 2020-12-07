@@ -3,12 +3,12 @@
 namespace Juanfv2\BaseCms\Criteria;
 
 use Illuminate\Http\Request;
-use Prettus\Repository\Contracts\CriteriaInterface;
-use Prettus\Repository\Contracts\RepositoryInterface;
+use App\Contracts\CriteriaInterface;
+use App\Contracts\RepositoryInterface;
 
 /**
  * Class RequestGenericCriteria
- * @package namespace Juanfv2\BaseCms\Criteria;
+ * @package namespace Juanfv2\BaseCms\Criteria
  */
 class RequestGenericCriteria implements CriteriaInterface
 {
@@ -17,12 +17,13 @@ class RequestGenericCriteria implements CriteriaInterface
      * @var \Illuminate\Http\Request
      */
     protected $request;
+    protected $model;
+
     // protected $kOperatorStr = 'AND'; // $kOperator AND, OR ...
     protected $kConditionalStr = '='; // $kConditional =, LIKE, >, <, =>, ...
 
     protected $kOperatorStrNested; // $kConditional =, LIKE, >, <, =>, ...
     protected $kOperatorStrNestedIndex; // $kConditional =, LIKE, >, <, =>, ...
-    protected $model;
 
     public function __construct(Request $request)
     {
@@ -39,27 +40,25 @@ class RequestGenericCriteria implements CriteriaInterface
      */
     public function apply($model, RepositoryInterface $repository)
     {
-        $queries = $this->request->get('queries', '');
-        $joins = $this->request->get('joins', '');
-        $select = $this->request->get('select', '');
-        $sorts = $this->request->get('sorts', '');
+        $this->model      = $model;
+        $table            = $this->model->getModel()->getTable();
+        $fieldsSearchable = $repository->getFieldsSearchable();
+        $limit            = $this->request->get('limit', null);
+        $offset           = $this->request->get('offset', null);
+        $conditions       = $this->request->get('conditions', '');
+        $joins            = $this->request->get('joins', '');
+        $select           = $this->request->get('select', '');
+        $sorts            = $this->request->get('sorts', '');
+        $conditions       = json_decode(urldecode($conditions));
+        $joins            = json_decode(urldecode($joins));
+        $select           = $select ? explode(',', urldecode($select)) : null;
+        $sorts            = json_decode(urldecode($sorts));
 
-        $this->model = $model;
-
-        $table = $this->model->getModel()->getTable();
-
-        $queries    = json_decode(urldecode($queries));
-        $joins      = json_decode(urldecode($joins));
-        $select     = $select ? explode(',', urldecode($select)) : null;
-        $sorts      = json_decode(urldecode($sorts));
-
-        // logger(__FILE__ . ':' . __LINE__ . '  $select ', [$queries, $joins, $select, $sorts]);
-
-        if (is_array($queries)) {
+        if (is_array($conditions) && is_array($fieldsSearchable) && count($fieldsSearchable)) {
 
             $_kOperatorStrNested = null; // $kOperator AND, OR ...
 
-            foreach ($queries as $k) {
+            foreach ($conditions as $k) {
                 // logger(__FILE__ . ':' . __LINE__ . ' $k ', [$k]);
 
                 if (is_array($k)) {
@@ -72,7 +71,7 @@ class RequestGenericCriteria implements CriteriaInterface
                 }
                 $_kOperatorStr = 'AND';
                 $_kConditionalStr = '='; // $kConditional =, LIKE, >, <, =>, ...
-                $condition = explode(' ', $k->condition);
+                $condition = explode(' ', $k->c);
                 // logger(__FILE__ . ':' . __LINE__ . ' $condition ', [$condition]);
 
                 switch (count($condition)) {
@@ -89,9 +88,14 @@ class RequestGenericCriteria implements CriteriaInterface
                     $_kOperatorStrNested = 'OR';
                     continue; // next
                 }
+                // todo: is too difficult
+                // dump($kFieldStr, $fieldsSearchable, in_array($kFieldStr, $fieldsSearchable));
+                if (in_array($kFieldStr, $fieldsSearchable)) {
+                    continue; // next
+                }
 
                 $noValue = '--false--';
-                $_kValue = property_exists($k, 'value') ? $k->value : $noValue;
+                $_kValue = property_exists($k, 'v') ? $k->v : $noValue;
                 $_kValueIsOptionNull = strpos($_kConditionalStr, 'null') !== false;
 
                 if (!$_kValueIsOptionNull && $_kValue === $noValue) {
@@ -124,7 +128,7 @@ class RequestGenericCriteria implements CriteriaInterface
 
         if (is_array($joins)) {
             foreach ($joins as $k) {
-                $split = explode('.', $k->condition);
+                $split = explode('.', $k->c);
                 if (count($split) < 3) {
                     continue;
                 }
@@ -133,8 +137,8 @@ class RequestGenericCriteria implements CriteriaInterface
                 $ownerKey = $split[2];
 
                 $this->model = $this->model->leftJoin($joinTable, $joinTable . '.' . $foreignKey, '=', $table . '.' . $ownerKey);
-                if (isset($k->value)) {
-                    $joinSelect = $k->value;
+                if (isset($k->v)) {
+                    $joinSelect = $k->v;
                     foreach ($joinSelect as $joinK) {
                         $this->model = $this->model->addSelect($joinTable . '.' . $joinK);
                     }
@@ -158,6 +162,14 @@ class RequestGenericCriteria implements CriteriaInterface
                     $this->model = $this->model->orderBy($k->field, ($k->order == 1 ? 'asc' : 'desc'));
                 }
             }
+        }
+
+        if ($limit) {
+            $model = $model->limit($limit);
+        }
+
+        if ($offset && $limit) {
+            $model = $model->skip($offset);
         }
 
         return $this->model;
@@ -198,7 +210,7 @@ class RequestGenericCriteria implements CriteriaInterface
 
                 $_kOperatorStr = 'AND';
                 $_kConditionalStr = '='; // $kConditional =, LIKE, >, <, =>, ...
-                $condition = explode(' ', $k->condition);
+                $condition = explode(' ', $k->c);
                 // logger(__FILE__ . ':' . __LINE__ . ' $condition ', [$condition]);
 
                 switch (count($condition)) {
@@ -219,7 +231,7 @@ class RequestGenericCriteria implements CriteriaInterface
                 $_kOperatorStrNested = null;
 
                 $noValue = '--false--';
-                $_kValue = property_exists($k, 'value') ? $k->value : $noValue;
+                $_kValue = property_exists($k, 'value') ? $k->v : $noValue;
                 $_kValueIsOptionNull = strpos($_kConditionalStr, 'null') !== false;
 
                 if (!$_kValueIsOptionNull && $_kValue === $noValue) {

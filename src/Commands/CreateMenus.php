@@ -12,7 +12,7 @@ class CreateMenus extends Command
      *
      * @var string
      */
-    protected $signature = 'base-cms:menus {path}';
+    protected $signature = 'base-cms:menus {paths*}';
 
     /**
      * The console command description.
@@ -39,19 +39,25 @@ class CreateMenus extends Command
     public function handle()
     {
 
-        $path = $this->argument('path');
-
+        $paths = $this->argument('paths');
+        // var_dump($paths);
         // Read File
+        $results[] = [];
 
-        $jsonString = file_get_contents(base_path($path));
+        foreach ($paths as $path) {
+            $jsonString = file_get_contents(base_path($path));
 
-        $permissions = json_decode($jsonString, true);
+            $permissions = json_decode($jsonString, true);
 
-        // echo $path;
+            // echo $path;
 
-        foreach ($permissions as $value) {
-            $results[] = $this->createMenus($value);
+            foreach ($permissions as $value) {
+                $results[] = $this->createMenus($value);
+            }
         }
+
+        $r = count($results);
+        $this->info("Menus creados: {$r}");
 
         return count($results);
     }

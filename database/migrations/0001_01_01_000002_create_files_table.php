@@ -14,7 +14,7 @@ class CreateFilesTable extends Migration
     public function up()
     {
         Schema::create('auth_x_files', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->id();
             $table->string('entity');
             $table->integer('entity_id');
             $table->string('field');

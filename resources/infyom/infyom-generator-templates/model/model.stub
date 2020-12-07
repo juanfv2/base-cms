@@ -3,14 +3,14 @@
 namespace $NAMESPACE_MODEL$;
 
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 $SOFT_DELETE_IMPORT$
 $DOCS$
 class $MODEL_NAME$ extends Model
 {
 $SOFT_DELETE$
-    public $table = '$TABLE_NAME$';
+    public $table = '$TABLE_NAME$'; // , HasFactory;
     $TIMESTAMPS$
 $SOFT_DELETE_DATES$
 $CONNECTION$
@@ -37,15 +37,13 @@ $PRIMARY$
         $RULES$
     ];
 
-    protected $hidden = [
+    public $hidden = [
         'createdBy', 'updatedBy', 'created_at', 'updated_at', 'deleted_at'
     ];
 
-    $RELATIONS$
-
     public function getCreatedByPersonAttribute()
     {
-        $value = Cache::remember("createdBy-{$this->createdBy}", 3600, function () {
+        $value = cache()->remember("createdBy-{$this->createdBy}", 3600, function () {
             return DB::table('auth_people')
                 ->select(DB::raw("concat(firstName, ' ', lastName) as fullName"))
                 ->where('id', $this->createdBy)
@@ -56,7 +54,7 @@ $PRIMARY$
 
     public function getUpdatedByPersonAttribute()
     {
-        $value = Cache::remember("updatedBy-{$this->updatedBy}", 3600, function () {
+        $value = cache()->remember("updatedBy-{$this->updatedBy}", 3600, function () {
            return DB::table('auth_people')
                 ->select(DB::raw("concat(firstName, ' ', lastName) as fullName"))
                 ->where('id', $this->updatedBy)
@@ -64,4 +62,6 @@ $PRIMARY$
         });
         return $value;
     }
+
+    $RELATIONS$
 }

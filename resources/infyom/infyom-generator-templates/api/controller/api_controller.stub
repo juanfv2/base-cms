@@ -2,15 +2,15 @@
 
 namespace $NAMESPACE_API_CONTROLLER$;
 
-use Illuminate\Http\Request;
-use App\Http\Controllers\AppBaseController;
-use $NAMESPACE_REPOSITORY$\$MODEL_NAME$Repository;
-use $NAMESPACE_API_REQUEST$\Create$MODEL_NAME$APIRequest;
-use $NAMESPACE_API_REQUEST$\Update$MODEL_NAME$APIRequest;
-use InfyOm\Generator\Criteria\LimitOffsetCriteria;
 
-use Juanfv2\BaseCms\Resources\GenericResource;
-use Juanfv2\BaseCms\Criteria\RequestGenericCriteria;
+use App\Criteria\LimitOffsetCriteria;
+use App\Criteria\RequestGenericCriteria;
+use App\Http\Resources\GenericResource;
+use App\Http\Controllers\AppBaseController;
+use Illuminate\Http\Request;
+
+use $NAMESPACE_MODEL$\$MODEL_NAME$;
+use $NAMESPACE_REPOSITORY$\$MODEL_NAME$Repository;
 
 $DOC_CONTROLLER$
 class $MODEL_NAME$APIController extends AppBaseController
@@ -26,7 +26,7 @@ class $MODEL_NAME$APIController extends AppBaseController
     $DOC_INDEX$
     public function index(Request $request)
     {
-        $action = $request->get('action', '-');
+        $action = $request->get('action', '');
         $limit  = $request->get('limit', -1);
 
         $this->modelRepository->pushCriteria(new RequestGenericCriteria($request));
@@ -48,20 +48,21 @@ class $MODEL_NAME$APIController extends AppBaseController
                 $zname = $request->get('title', '-');
                 return $this->export($zname, $headers, $items);
             default:
-                return $this->response2Api($items, $itemCount, $limit);
+                return $this->sendResponse(
+                    ['totalPages' => abs(ceil($itemCount / $limit)), 'totalElements' => $itemCount, 'content' => $items,],
+                    __('validation.model.list', ['model' => __('models.$MODEL_NAME_CAMEL$.plural')])
+                );
         }
     }
 
     $DOC_STORE$
-    public function store(Create$MODEL_NAME$APIRequest $request)
+    public function store(Request $request)
     {
-        $input = $request->all();
+        $input = $this->validate($request, $MODEL_NAME$::$rules);
+        // $input = $request->all();
 
-        $model = $this->modelRepository->create($input);
-
-        // $model = new GenericResource($model);
-
-        return ['id' => $model->id];
+        $model = $this->modelRepository->create($input); // $model = new GenericResource($model);
+        return $this->sendResponse(['id' => $model->id], __('validation.model.stored', ['model' => __('models.$MODEL_NAME_CAMEL$.name')]));
     }
 
     $DOC_SHOW$
@@ -69,19 +70,18 @@ class $MODEL_NAME$APIController extends AppBaseController
     {
         /** @var \$NAMESPACE_MODEL$\$MODEL_NAME$ $model */
         $model = $this->modelRepository->findWithoutFail($id);
-
         if (empty($model)) {
             return $this->sendError(__('validation.model.not.found', ['model' => __('models.$MODEL_NAME_CAMEL$.name')]));
         }
         $model = new GenericResource($model);
-
-        return $model;
+        return $this->sendResponse($model, __('validation.model.showed', ['model' => __('models.$MODEL_NAME_CAMEL$.name')]));
     }
 
     $DOC_UPDATE$
-    public function update($id, Update$MODEL_NAME$APIRequest $request)
+    public function update($id, Request $request)
     {
-        $input = $request->all();
+        $input = $this->validate($request, $MODEL_NAME$::$rules);
+        // $input = $request->all();
 
         /** @var \$NAMESPACE_MODEL$\$MODEL_NAME$ $model */
         $model = $this->modelRepository->findWithoutFail($id);
@@ -89,12 +89,8 @@ class $MODEL_NAME$APIController extends AppBaseController
         if (empty($model)) {
             return $this->sendError(__('validation.model.not.found', ['model' => __('models.$MODEL_NAME_CAMEL$.name')]));
         }
-
-        $model = $this->modelRepository->update($input, $id);
-
-        // $model = new GenericResource($MODEL_NAME_CAMEL$);
-
-        return ['id' => $model->id];
+        $model = $this->modelRepository->update($model, $input); // $model = new GenericResource($MODEL_NAME_CAMEL$);
+        return $this->sendResponse(['id' => $model->id], __('validation.model.updated', ['model' => __('models.$MODEL_NAME_CAMEL$.name')]));
     }
 
     $DOC_DESTROY$
@@ -109,6 +105,6 @@ class $MODEL_NAME$APIController extends AppBaseController
 
         $model->delete();
 
-        return $this->sendResponse(__('validation.model.deleted', ['model' => __('models.$MODEL_NAME_CAMEL$.name')]), $id);
+        return $this->sendResponse(['id' => $id], __('validation.model.deleted', ['model' => __('models.$MODEL_NAME_CAMEL$.name')]));
     }
 }

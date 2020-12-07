@@ -1,14 +1,13 @@
 <?php
 
-namespace Juanfv2\BaseCms\Traits;
+namespace  Juanfv2\BaseCms\Traits;
 
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
-use Juanfv2\BaseCms\Helpers\ExportDataCSV;
-use Juanfv2\BaseCms\Repositories\MyBaseRepository;
-use Juanfv2\BaseCms\Criteria\RequestGenericCriteria;
+
+use Juanfv2\BaseCms\Utils\ExportDataCSV;
 
 trait ControllerImportableExportable
 {
@@ -27,8 +26,8 @@ trait ControllerImportableExportable
         $massiveQueryFileName         = $request->get('massiveQueryFileName');
         $fileTemp                     = explode('.', $massiveQueryFileName);
         $fileTempName                 = $fileTemp[0];
-        $massiveQueryFileNameDataPath = 'assets/adm/temporals/' . $fileTempName;
-        $massiveQueryFile             = public_path($massiveQueryFileNameDataPath . '/' . $table . '/' . $massiveQueryFieldName . '/' . $massiveQueryFileName);
+        $massiveQueryFileNameDataPath = '/public/assets/adm/temporals/' . $fileTempName;
+        $massiveQueryFile             = $massiveQueryFileNameDataPath . '/' . $table . '/' . $massiveQueryFieldName . '/' . $massiveQueryFileName;
         $keys                         = $request->get('keys');
         $primaryKeyName               = $request->get('primaryKeyName');
         $original                     = ini_get('auto_detect_line_endings');
@@ -199,21 +198,21 @@ trait ControllerImportableExportable
 
     public function exportCsv(Request $request)
     {
-        $criteria = new RequestGenericCriteria($request);
-        $zname    = $request->get('zname');
-        $repo     = new MyBaseRepository(app());
+        // $criteria = new RequestGenericCriteria($request);
+        // $zname    = $request->get('zname');
+        // $repo     = new MyBaseRepository(app());
 
-        $repo->table = $zname;
-        $repo->primaryKey = $request->get('zid', null);
-        $repo->resetModel();
-        $repo->pushCriteria($criteria);
+        // $repo->table = $zname;
+        // $repo->primaryKey = $request->get('zid', null);
+        // $repo->resetModel();
+        // $repo->pushCriteria($criteria);
 
-        $items = $repo->all();
+        // $items = $repo->all();
 
-        $headers = json_decode($request->get('fields'), true);
-        $results = json_decode(json_encode($items), true);
+        // $headers = json_decode($request->get('fields'), true);
+        // $results = json_decode(json_encode($items), true);
 
-        return $this->export($zname, $headers, $results);
+        // return $this->export($zname, $headers, $results);
     }
 
     protected function toUtf8($in)

@@ -1,0 +1,7 @@
+Route::apiResource('$MODEL_NAME_PLURAL_SNAKE$', $NAMESPACE_API_CONTROLLER$\$PATH_PREFIX$$MODEL_NAME$APIController::class);
+
+// $router->post('$MODEL_NAME_PLURAL_SNAKE$',           ['as' => '$MODEL_NAME_PLURAL_SNAKE$.store',   'uses' => '$NAMESPACE_API_CONTROLLER$\$PATH_PREFIX$$MODEL_NAME$APIController@store']);
+// $router->get('$MODEL_NAME_PLURAL_SNAKE$',            ['as' => '$MODEL_NAME_PLURAL_SNAKE$.index', 'uses' =>  '$NAMESPACE_API_CONTROLLER$\$PATH_PREFIX$$MODEL_NAME$APIController@index']);
+// $router->get('$MODEL_NAME_PLURAL_SNAKE$/{id}',       ['as' => '$MODEL_NAME_PLURAL_SNAKE$.show',  'uses' =>  '$NAMESPACE_API_CONTROLLER$\$PATH_PREFIX$$MODEL_NAME$APIController@show']);
+// $router->put('$MODEL_NAME_PLURAL_SNAKE$/{id}',       ['as' => '$MODEL_NAME_PLURAL_SNAKE$.update',   'uses' => '$NAMESPACE_API_CONTROLLER$\$PATH_PREFIX$$MODEL_NAME$APIController@update']);
+// $router->delete('$MODEL_NAME_PLURAL_SNAKE$/{id}',    ['as' => '$MODEL_NAME_PLURAL_SNAKE$.destroy',  'uses' =>  '$NAMESPACE_API_CONTROLLER$\$PATH_PREFIX$$MODEL_NAME$APIController@destroy']);
