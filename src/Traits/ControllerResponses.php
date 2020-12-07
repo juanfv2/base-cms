@@ -7,10 +7,10 @@ use App\Utils\ResponseUtil;
 trait ControllerResponses
 {
     /**
-     * @param mixed  $data
-     * @param string $message
-     * @param boolean $isSuccess
-     * @param integer $responseCode
+     * @param array|string  $data
+     * @param string        $message
+     * @param boolean       $isSuccess
+     * @param integer       $responseCode
      *
      * @return \Illuminate\Http\JsonResponse
      */

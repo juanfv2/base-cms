@@ -2,15 +2,15 @@
 
 namespace $NAMESPACE_API_CONTROLLER$;
 
-
-use App\Criteria\LimitOffsetCriteria;
-use App\Criteria\RequestGenericCriteria;
-use App\Http\Resources\GenericResource;
-use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
-
 use $NAMESPACE_MODEL$\$MODEL_NAME$;
+
+use App\Http\Controllers\AppBaseController;
 use $NAMESPACE_REPOSITORY$\$MODEL_NAME$Repository;
+
+use Juanfv2\BaseCms\Resources\GenericResource;
+use Juanfv2\BaseCms\Criteria\LimitOffsetCriteria;
+use Juanfv2\BaseCms\Criteria\RequestGenericCriteria;
 
 $DOC_CONTROLLER$
 class $MODEL_NAME$APIController extends AppBaseController
@@ -103,8 +103,13 @@ class $MODEL_NAME$APIController extends AppBaseController
             return $this->sendError(__('validation.model.not.found', ['model' => __('models.$MODEL_NAME_CAMEL$.name')]));
         }
 
-        $model->delete();
+        $resp = $this->modelRepository->delete($id);
 
-        return $this->sendResponse(['id' => $id], __('validation.model.deleted', ['model' => __('models.$MODEL_NAME_CAMEL$.name')]));
+        return $this->sendResponse(
+                ['id' => $id],
+                __('validation.model.deleted', ['model' => __('models.$MODEL_NAME_CAMEL$.name')]),
+                $resp,
+                $resp ? 200 : 500
+        );
     }
 }

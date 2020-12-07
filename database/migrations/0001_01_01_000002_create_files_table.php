@@ -16,10 +16,11 @@ class CreateFilesTable extends Migration
         Schema::create('auth_x_files', function (Blueprint $table) {
             $table->id();
             $table->string('entity');
-            $table->integer('entity_id');
+            $table->bigInteger('entity_id');
             $table->string('field');
             $table->string('name');
             $table->string('nameOriginal');
+            $table->string('publicPath');
             $table->string('extension', 10);
             $table->text('data')->nullable();
             $table->timestamps();

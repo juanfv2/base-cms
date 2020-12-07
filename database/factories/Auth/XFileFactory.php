@@ -1,8 +1,8 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\Auth;
 
-use App\Models\XFile;
+use App\Models\Auth\XFile;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class XFileFactory extends Factory
@@ -23,14 +23,13 @@ class XFileFactory extends Factory
     {
         return [
             'entity' => $this->faker->word,
-        'entity_id' => $this->faker->randomDigitNotNull,
-        'field' => $this->faker->word,
-        'name' => $this->faker->word,
-        'nameOriginal' => $this->faker->word,
-        'extension' => $this->faker->word,
-        'data' => $this->faker->text,
-        'created_at' => $this->faker->date('Y-m-d H:i:s'),
-        'updated_at' => $this->faker->date('Y-m-d H:i:s')
+            'entity_id' => $this->faker->numberBetween(1, 1000),
+            'field' => $this->faker->word,
+            'name' => $this->faker->word,
+            'nameOriginal' => $this->faker->word,
+            'publicPath' => $this->faker->word,
+            'extension' => $this->faker->countryCode,
+            'data' => $this->faker->word,
         ];
     }
 }

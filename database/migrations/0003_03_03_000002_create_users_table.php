@@ -18,12 +18,12 @@ class CreateUsersTable extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('api_token')->unique()->nullable()->default(null);
             $table->boolean('disabled')->default(0);
+
+            $table->string('api_token')->unique()->nullable()->default(null);
             $table->string('uid')->nullable();
 
-            $table->bigInteger('role_id')->nullable();
+            $table->foreignId('role_id')->constrained();
 
             $table->rememberToken();
             $table->bigInteger('createdBy')->nullable();

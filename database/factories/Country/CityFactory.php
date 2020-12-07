@@ -1,8 +1,10 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\Country;
 
-use App\Models\City;
+use App\Models\Country\City;
+use App\Models\Country\Region;
+use App\Models\Country\Country;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CityFactory extends Factory
@@ -23,10 +25,10 @@ class CityFactory extends Factory
     {
         return [
             'name' => $this->faker->word,
-        'latitude' => $this->faker->word,
-        'longitude' => $this->faker->word,
-        'country_id' => $this->faker->word,
-        'region_id' => $this->faker->word
+            'latitude' => $this->faker->latitude,
+            'longitude' => $this->faker->longitude,
+            'country_id' => Country::factory(),
+            'region_id' => Region::factory(),
         ];
     }
 }

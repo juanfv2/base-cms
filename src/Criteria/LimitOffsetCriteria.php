@@ -3,8 +3,8 @@
 namespace Juanfv2\BaseCms\Criteria;
 
 use Illuminate\Http\Request;
-use App\Contracts\CriteriaInterface;
-use App\Contracts\RepositoryInterface;
+use Juanfv2\BaseCms\Contracts\CriteriaInterface;
+use Juanfv2\BaseCms\Contracts\RepositoryInterface;
 
 /**
  * Class LimitOffsetCriteria

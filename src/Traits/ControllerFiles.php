@@ -109,13 +109,14 @@ trait ControllerFiles
         if ($isTemporal) {
 
             $strLocation = "$baseAssets/temporals/$newName/$tableName/$fieldName";
-            $path        = $request->$fieldName->store($strLocation);
+            $path        = $request->$fieldName->storeAs($strLocation, $newNameWithExtension);
             $parts       = explode('/', $path);
             $name        = Arr::last($parts);
             $location    = storage_path("app/$path");
             $xFile->name = $name;
+            $xFile->nameOriginal = $originalName;
 
-            if ($fileExtension == 'csv' && ($handle = fopen($location, "r")) !== false) {
+            if (($fileExtension == 'csv' || $fileExtension == 'txt') && ($handle = fopen($location, "r")) !== false) {
                 while (($data = fgetcsv($handle, 1000, ",")) !== false) {
                     $columns = count($data);
                     break;
@@ -143,10 +144,11 @@ trait ControllerFiles
                 $xFile->name         = $name;
                 $xFile->nameOriginal = $originalName;
                 $xFile->extension    = $fileExtension;
+                $xFile->publicPath   = Storage::url($path);
 
-                if ($color && class_exists('\ColorPalette')) {
+                if ($color && class_exists('\ColorThief\ColorThief')) {
 
-                    $colors = $this->getColor($strLocation . '/' . $newNameWithExtension);
+                    $colors = $this->getColor($path);
 
                     $data['colors'] = $colors;
 
@@ -174,10 +176,11 @@ trait ControllerFiles
                 $xFile->name         = $name;
                 $xFile->nameOriginal = $originalName;
                 $xFile->extension    = $fileExtension;
+                $xFile->publicPath   = Storage::url($path);
 
-                if ($color && class_exists('\ColorPalette')) {
+                if ($color && class_exists('\ColorThief\ColorThief')) {
 
-                    $colors = $this->getColor($strLocation . '/' . $newNameWithExtension);
+                    $colors = $this->getColor($path);
 
                     $data = $xFile->data ?? [];
                     $data['colors'] = $colors;
@@ -265,14 +268,15 @@ trait ControllerFiles
     }
 
     /**
-     * https://github.com/nikkanetiya/laravel-color-palette
+     * https://github.com/ksubileau/color-thief-php
      *
      */
     public function getColor($sourceImage)
     {
 
         ini_set('memory_limit', '-1');
-        $colors = \ColorPalette::getPalette($sourceImage);
+        // $colors = \ColorPalette::getPalette($sourceImage);
+        $colors = \ColorThief\ColorThief::getPalette(storage_path("app/$sourceImage"));
 
         return $colors;
     }
