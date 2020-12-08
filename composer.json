@@ -16,7 +16,7 @@
         "infyomlabs/laravel-generator": "5.8.x-dev",
         "infyomlabs/swagger-generator": "dev-master",
         "appointer/swaggervel": "dev-master",
-        "doctrine/dbal": "~2.3"
+        "doctrine/dbal": "^2.12"
     },
     "extra": {
         "laravel": {
