@@ -1,31 +1,19 @@
 <?php
 
-namespace Database\Factories\Auth;
+/** @var \Illuminate\Database\Eloquent\Factory $factory */
 
 use App\Models\Auth\Role;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use Faker\Generator as Faker;
 
-class RoleFactory extends Factory
-{
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
-    protected $model = Role::class;
+$factory->define(Role::class, function (Faker $faker) {
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array
-     */
-    public function definition()
-    {
-        return [
-            'name' => $this->faker->word,
-            'description' => $this->faker->word,
-            'createdBy' => $this->faker->numberBetween(1, 3),
-            'updatedBy' => $this->faker->numberBetween(1, 3),
-        ];
-    }
-}
+    return [
+        'name' => $faker->word,
+        'description' => $faker->word,
+        // 'createdBy' => $faker->word,
+        // 'updatedBy' => $faker->word,
+        // 'created_at' => $faker->date('Y-m-d H:i:s'),
+        // 'updated_at' => $faker->date('Y-m-d H:i:s'),
+        // 'deleted_at' => $faker->date('Y-m-d H:i:s')
+    ];
+});

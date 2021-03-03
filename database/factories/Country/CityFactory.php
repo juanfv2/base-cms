@@ -1,34 +1,19 @@
 <?php
 
-namespace Database\Factories\Country;
+/** @var \Illuminate\Database\Eloquent\Factory $factory */
 
 use App\Models\Country\City;
+use Faker\Generator as Faker;
 use App\Models\Country\Region;
 use App\Models\Country\Country;
-use Illuminate\Database\Eloquent\Factories\Factory;
 
-class CityFactory extends Factory
-{
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
-    protected $model = City::class;
+$factory->define(City::class, function (Faker $faker) {
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array
-     */
-    public function definition()
-    {
-        return [
-            'name' => $this->faker->word,
-            'latitude' => $this->faker->latitude,
-            'longitude' => $this->faker->longitude,
-            'country_id' => Country::factory(),
-            'region_id' => Region::factory(),
-        ];
-    }
-}
+    return [
+        'name' => $faker->word,
+        'latitude' => $faker->latitude,
+        'longitude' => $faker->longitude,
+        'country_id' => factory(Country::class),
+        'region_id' => factory(Region::class),
+    ];
+});

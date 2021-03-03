@@ -1,46 +1,34 @@
 <?php
 
-namespace Database\Factories\Auth;
+/** @var \Illuminate\Database\Eloquent\Factory $factory */
 
 use App\Models\Auth\User;
 use App\Models\Auth\Account;
-use App\Models\Country\City;
-use App\Models\Country\Region;
-use App\Models\Country\Country;
+use App\Models\AccountGroup;
+use Faker\Generator as Faker;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
+$factory->define(Account::class, function (Faker $faker) {
 
-class AccountFactory extends Factory
-{
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
-    protected $model = Account::class;
+    $user = factory(User::class)->create();
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array
-     */
-    public function definition()
-    {
-        $user = User::factory()->create();
-        return [
-            'firstName' => $this->faker->word,
-            'lastName' => $this->faker->word,
-            'phone' => $this->faker->phoneNumber,
-            'cellPhone' => $this->faker->phoneNumber,
-            'birthDate' => $this->faker->date(),
-            'address' => $this->faker->address,
-            'neighborhood' => $this->faker->word,
-            'email' => $user->email,
-            'country_id' => Country::factory(),
-            'region_id' => Region::factory(),
-            'city_id' => City::factory(),
-            'createdBy' => $this->faker->numberBetween(0, 10),
-            'updatedBy' => $this->faker->numberBetween(0, 10),
-        ];
-    }
-}
+    return [
+        'firstName' => $faker->firstName(),
+        'lastName' => $faker->lastName,
+        'phone' => $faker->phoneNumber,
+        'cellPhone' => $faker->phoneNumber,
+        'birthDate' => $faker->date('Y-m-d'),
+        'email' => $user->email,
+        // 'address' => $faker->word,
+        // 'neighborhood' => $faker->word,
+        // 'email' => $faker->word,
+        'account_group_id' => factory(AccountGroup::class),
+        // 'country_id' => $faker->word,
+        // 'region_id' => $faker->word,
+        // 'city_id' => $faker->word,
+        // 'createdBy' => $faker->word,
+        // 'updatedBy' => $faker->word,
+        // 'created_at' => $faker->date('Y-m-d H:i:s'),
+        // 'updated_at' => $faker->date('Y-m-d H:i:s'),
+        // 'deleted_at' => $faker->date('Y-m-d H:i:s')
+    ];
+});
