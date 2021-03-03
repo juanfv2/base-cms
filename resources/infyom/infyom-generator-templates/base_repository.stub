@@ -5,10 +5,11 @@ namespace App\Repositories;
 use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use App\Contracts\RepositoryInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Container\Container as Application;
+
+use Juanfv2\BaseCms\Contracts\RepositoryInterface;
 
 /**
  *
@@ -29,7 +30,6 @@ abstract class BaseRepository implements RepositoryInterface
      * @var bool
      */
     protected $skipCriteria = false;
-
 
     /**
      * @param Application $app
@@ -292,6 +292,26 @@ abstract class BaseRepository implements RepositoryInterface
         return $model;
     }
 
+    /**
+     * Delete a entity in repository by id
+     *
+     * @param $id
+     *
+     * @return int
+     */
+    public function delete($id)
+    {
+
+        $model = $this->find($id);
+        $originalModel = clone $model;
+
+        $this->resetModel();
+
+        $deleted = $model->delete();
+
+        return $deleted;
+    }
+
     public function updateRelations($model, $attributes)
     {
         foreach ($attributes as $key => $val) {
@@ -304,10 +324,18 @@ abstract class BaseRepository implements RepositoryInterface
                 switch ($methodClass) {
                     case 'Illuminate\Database\Eloquent\Relations\BelongsToMany':
                         $new_values = Arr::get($attributes, $key, []);
-                        if (array_search('', $new_values) !== false) {
-                            unset($new_values[array_search('', $new_values)]);
+                        if ($new_values && is_array($new_values[0]) && count($new_values) > 0) {
+                            $data = [];
+                            foreach ($new_values as $val) {
+                                $data[$val[$model->$key()->getRelatedPivotKeyName()]] = $val;
+                            }
+                            $model->$key()->sync($data);
+                        } else {
+                            if (array_search('', $new_values) !== false) {
+                                unset($new_values[array_search('', $new_values)]);
+                            }
+                            $model->$key()->sync(array_values($new_values));
                         }
-                        $model->$key()->sync(array_values($new_values));
                         break;
                     case 'Illuminate\Database\Eloquent\Relations\BelongsTo':
                         $model_key = $model->$key()->getQualifiedForeignKeyName();

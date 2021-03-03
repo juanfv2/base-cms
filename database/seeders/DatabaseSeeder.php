@@ -16,6 +16,9 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->truncateTables([
+            // warning: si usa passport
+            // 'oauth_clients',
+            // 'oauth_personal_access_clients',
 
             'auth_users_has_roles',
             'auth_roles_has_permissions',

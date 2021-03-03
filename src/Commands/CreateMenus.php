@@ -2,8 +2,10 @@
 
 namespace Juanfv2\BaseCms\Commands;
 
-use Illuminate\Console\Command;
 use App\Models\Auth\Permission;
+use App\Models\Auth\Role;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Schema;
 
 class CreateMenus extends Command
 {
@@ -12,7 +14,7 @@ class CreateMenus extends Command
      *
      * @var string
      */
-    protected $signature = 'base-cms:menus {paths*}';
+    protected $signature = 'base-cms:menus {paths*} {--t|truncate} {--a|admin}';
 
     /**
      * The console command description.
@@ -39,7 +41,15 @@ class CreateMenus extends Command
     public function handle()
     {
 
-        $paths = $this->argument('paths');
+        $paths    = $this->argument('paths');
+        $truncate = $this->option('truncate');
+        $admin    = $this->option('admin');
+        if ($truncate) {
+            Schema::disableForeignKeyConstraints();
+            Permission::truncate();
+            Schema::enableForeignKeyConstraints();
+        }
+
         // var_dump($paths);
         // Read File
         $results[] = [];
@@ -57,8 +67,17 @@ class CreateMenus extends Command
         }
 
         $r = Permission::count();
-        $this->info("Menus creados: {$r}");
 
+        if ($admin) {
+            $role = Role::find(1);
+            $permissions = [];
+            for ($i = 1; $i <= $r; $i++) {
+                $permissions[] = $i;
+            }
+            $role->permissions()->sync($permissions);
+        }
+
+        $this->info("Menus creados: {$r}");
         return count($results);
     }
 
