@@ -21,7 +21,7 @@ class AnyTableSeeder extends Seeder
             // 'oauth/oauth_personal_access_clients',
 
             'auth/auth_roles',
-            'auth/auth_users',
+            'auth/auth_users', // password: '123456'
             'auth/auth_people',
             'auth/auth_accounts',
             'auth/auth_permissions',
