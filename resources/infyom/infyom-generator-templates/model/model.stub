@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 $SOFT_DELETE_IMPORT$
 $DOCS$
 class $MODEL_NAME$ extends Model
-{ // , HasFactory;
-$SOFT_DELETE$
+{
+$SOFT_DELETE$//, HasFactory;
     public $table = '$TABLE_NAME$';
     $TIMESTAMPS$
 $SOFT_DELETE_DATES$
