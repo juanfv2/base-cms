@@ -2,8 +2,8 @@
 
 namespace Juanfv2\BaseCms\Commands;
 
-use App\Models\Auth\Permission;
 use App\Models\Auth\Role;
+use App\Models\Auth\Permission;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Schema;
 
@@ -21,7 +21,7 @@ class CreateMenus extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Command description (-t) truncate permissions table, (-a) add all permissions to role admin';
 
     /**
      * Create a new command instance.

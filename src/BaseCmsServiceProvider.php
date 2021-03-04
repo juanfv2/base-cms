@@ -43,7 +43,7 @@ class BaseCmsServiceProvider extends ServiceProvider
             __DIR__ . '/../database/factories'  => database_path('factories'),
             __DIR__ . '/../database/migrations' => database_path('migrations'),
             __DIR__ . '/../database/seeders'    => database_path('seeders'),
-        ], 'base-cms-migrations');
+        ], 'base-cms-databases');
 
 
         $this->publishes([
