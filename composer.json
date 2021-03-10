@@ -12,6 +12,7 @@
   "minimum-stability": "dev",
   "require": {
     "php": "^7.3",
+    "doctrine/dbal": "~2.3",
     "intervention/imagecache": "^2.5",
     "infyomlabs/laravel-generator": "8.0.x-dev"
   },

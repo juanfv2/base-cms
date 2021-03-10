@@ -21,7 +21,7 @@ class CreateMenus extends Command
      *
      * @var string
      */
-    protected $description = 'Command description (-t) truncate permissions table, (-a) add all permissions to role admin';
+    protected $description = '(-t): truncate permissions table, (-a): add all permissions to role admin';
 
     /**
      * Create a new command instance.
