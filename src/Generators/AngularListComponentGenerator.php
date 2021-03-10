@@ -340,9 +340,9 @@ class AngularListComponentGenerator extends BaseGenerator
                 <div class="col-12 col-md-7">
                     <div class="form-group">
                         <app-$fieldDash-auto-complete id="$fieldSnape"
-                                                   [name]="labels.$fieldSnape.ownName"
-                                                   [currentPage]="mApi.index()"
-                                                   [(ngModel)]="modelSearch.condition$field.value">
+                                                      [name]="labels.$fieldSnape.ownName"
+                                                      [currentPage]="mApi.index()"
+                                                      [(ngModel)]="modelSearch.condition$field.value">
                         </app-$fieldDash-auto-complete>
                     </div>
                 </div>
@@ -362,7 +362,7 @@ class AngularListComponentGenerator extends BaseGenerator
                 </div>
             </div>
             <!-- $fieldSnape . end -->
-        EOF;
+            EOF;
             $relations[] = $relationText;
         }
 
@@ -409,11 +409,11 @@ class AngularListComponentGenerator extends BaseGenerator
             $fieldCamel = Str::camel($field);
             $relationText = <<<EOF
             <th appMultiSortMeta
-            [host]="this"
-            colName="{$fieldCamel}Name">
-            {{ labels.{$fieldCamel}.ownName }}
-        </th>
-        EOF;
+                [host]="this"
+                colName="{$fieldCamel}Name">
+                {{ labels.{$fieldCamel}.ownName }}
+            </th>
+            EOF;
             $relations[] = $relationText;
         }
 
@@ -469,7 +469,7 @@ class AngularListComponentGenerator extends BaseGenerator
                 {{ model.{$fieldCamel}Name }}
                 <!-- <app-$fieldDash [$fieldCamel]="model.$fieldCamel"></app-$fieldDash> -->
             </td>
-        EOF;
+            EOF;
             $relations[] = $relationText;
         }
 

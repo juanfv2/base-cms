@@ -353,7 +353,8 @@ class AngularDetailComponentGenerator extends BaseGenerator
         foreach ($this->commandData->relations as $relation) {
             $type  = (isset($relation->type))      ? $relation->type      : null;
             $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
-
+            /* AngularDetailComponentGenerator::htmlRelations_1tm(); */
+            /* AngularDetailComponentGenerator::htmlRelations_mtm(); */
             if (method_exists($this, "htmlRelations_$type")) {
                 $relations .= "\n{$this->{'htmlRelations_' .$type}($field)}";
             }

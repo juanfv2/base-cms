@@ -120,13 +120,13 @@ class AngularAutoCompleteComponentGenerator extends BaseGenerator
 
             $fieldSnape = Str::camel($field);
             $relationText = <<<EOF
-m$field?: $field;
-@Input()
-set $fieldSnape($fieldSnape: $field) {
-    this.value = undefined;
-    this.m$field = $fieldSnape;
-}
-EOF;
+            m$field?: $field;
+            @Input()
+            set $fieldSnape($fieldSnape: $field) {
+                this.value = undefined;
+                this.m$field = $fieldSnape;
+            }
+            EOF;
             $relations[] = $relationText;
         }
 
@@ -148,10 +148,10 @@ EOF;
 
             $fieldSnape = Str::camel($field);
             $relationText = <<<EOF
-if (this.m$field) {
-    conditions.push(new JfCondition(`\${this.labels.{$this->commandData->config->mCamel}.tableName}.$fieldFK`, this.m$field.id));
-}
-EOF;
+            if (this.m$field) {
+                conditions.push(new JfCondition(`\${this.labels.{$this->commandData->config->mCamel}.tableName}.$fieldFK`, this.m$field.id));
+            }
+            EOF;
             $relations[] = $relationText;
         }
 
