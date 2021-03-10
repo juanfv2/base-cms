@@ -1,0 +1,204 @@
+import { Component, EventEmitter, forwardRef, Input, Output, ViewChild } from '@angular/core';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { Router } from '@angular/router';
+
+import { NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
+import { Subject, Observable, merge, of } from 'rxjs';
+import { debounceTime, distinctUntilChanged, tap, switchMap, catchError, map } from 'rxjs/operators';
+
+import { k } from 'src/environments/k';
+import { l } from 'src/environments/l';
+import { JfCondition, JfLazyLoadEvent, JfResponse, JfSort } from 'src/app/core/support/utils.classes';
+
+import { AuthService } from 'src/app/core/services/auth.service';
+import { CrudService } from 'src/app/core/services/crud.service';
+import { JfMessageService } from 'src/app/core/services/message.service';
+
+import { $MODEL_NAME$, $RELATION_MODEL_NAMES$ } from 'src/app/models/_models';
+
+// Resource: http://almerosteyn.com/2016/04/linkup-custom-control-to-ngcontrol-ngmodel
+
+export const $MODEL_NAME_SNAKE$_auto_complete_control_value_accessor: any = {
+provide: NG_VALUE_ACCESSOR,
+useExisting: forwardRef(() => $MODEL_NAME$AutoCompleteComponent),
+multi: true
+};
+
+const kRoute = k.routes.$MODEL_NAME_PLURAL_CAMEL$;
+const templateUrl = '../../_common/auto-complete.html';
+
+@Component({
+selector: 'app-$MODEL_NAME_DASHED$-auto-complete',
+templateUrl,
+providers: [$MODEL_NAME_SNAKE$_auto_complete_control_value_accessor]
+})
+export class $MODEL_NAME$AutoCompleteComponent implements ControlValueAccessor {
+
+labels = l;
+
+focus = new Subject<string>();
+// click$ = new Subject<string>();
+searching = false;
+searchFailed = false;
+hasPermission2show = false;
+previousTerm = '';
+values: $MODEL_NAME$[] = [];
+
+@ViewChild('instance', { static: true }) instance?: NgbTypeahead;
+
+@Output() oSelected = new EventEmitter<any>();
+@Input() disabled = false;
+@Input() multiple = false;
+@Input() id = '';
+@Input() name = '';
+@Input() currentPage = '';
+@Input() selectables: $MODEL_NAME$[] = [];
+@Input() avoidables: $MODEL_NAME$[] = [];
+@Input() value?: $MODEL_NAME$;
+$RELATIONS_AS_FIELDS_1$
+
+constructor(
+private router: Router,
+private authService: AuthService,
+private crudService: CrudService,
+private messageService: JfMessageService) {
+this.hasPermission2show = this.authService.isAuthorized(`/${kRoute}/show`);
+}
+
+/** OnChange */
+private fnChange = (_: any) => { };
+
+/** OnTouched */
+private fnTouched = () => { };
+
+// Set touched on blur
+onTouched(): void { this.fnTouched(); }
+
+/** ControlValueAccessor.writeValue */
+writeValue(value: any): void {
+// console.log('value', value);
+if (this.multiple) {
+this.values = value as $MODEL_NAME$[];
+} else {
+this.value = value as $MODEL_NAME$;
+}
+}
+
+/** ControlValueAccessor.registerOnChange */
+registerOnChange(fn: any): void {
+this.fnChange = fn;
+}
+
+/** ControlValueAccessor.registerOnTouched */
+registerOnTouched(fn: any): void {
+this.fnTouched = fn;
+}
+
+/** ControlValueAccessor.setDisabledState */
+setDisabledState(isDisabled: boolean): void { }
+
+actBlur(e: any): void {
+const mV = typeof this.value === 'object' ? { item: this.value } : null;
+this.select(mV);
+}
+
+actClear(): void {
+setTimeout(() => {
+this.select({ item: { id: null } });
+this.searchFailed = false;
+}, 100);
+}
+
+actGo2Detail(): void {
+if (this.value && this.value.id) {
+const id = this.value.id;
+this.router.navigate([kRoute, id]);
+}
+}
+
+formatter = (x: $MODEL_NAME$) => `${ x.name || ''}`;
+
+select(e: any): void {
+
+if (this.multiple) {
+if(e){
+e.preventDefault();
+setTimeout(() => { this.focus.next(this.previousTerm); }, 0.000001);
+
+this.values.push(e.item as $MODEL_NAME$);
+this.searchFailed = this.values.length === 0;
+this.fnChange(this.values);
+this.oSelected.emit(this.values);
+}
+} else {
+this.previousTerm = '';
+
+this.value = e ? e.item as $MODEL_NAME$ : undefined;
+this.searchFailed = this.value === null;
+this.fnChange(this.value);
+this.oSelected.emit(this.value);
+}
+this.fnTouched();
+}
+
+search = (text: Observable<string>) => {
+const debouncedText = text.pipe(debounceTime(200), distinctUntilChanged());
+// const clicksWithClosedPopup = this.click.pipe(filter(() => !this.instance.isPopupOpen()));
+const inputFocus = this.focus;
+
+if (this.selectables && this.selectables.length > 0) {
+return merge(debouncedText, inputFocus).pipe(
+tap(() => this.searching = true),
+map(term => (term === ''
+? this.selectables
+: this.selectables.filter(x => this.formatter(x).toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 10)
+),
+tap(() => this.searching = false)
+);
+}
+
+return merge(debouncedText, inputFocus).pipe(
+tap(() => this.searching = true),
+switchMap(term => this.searchTerm(term)),
+tap(() => this.searching = false)
+);
+}
+
+searchTerm(term: string): Observable<any> {
+this.previousTerm = term;
+const conditions: any[] = [];
+if (this.avoidables && this.avoidables.length > 0) {
+conditions.push(new JfCondition(`and ${this.labels.$MODEL_NAME_CAMEL$.$PRIMARY_KEY_NAME$.field} not-in`, this.avoidables.map(r => r.id)));
+}
+$RELATIONS_AS_FIELDS_2$
+
+if (term) {
+const g: any[] = [];
+$SEARCHABLE_FIELDS_1$
+conditions.push(g);
+}
+const mEvent = new JfLazyLoadEvent();
+mEvent.select = [
+$SEARCHABLE_FIELDS_2$
+];
+mEvent.multiSortMeta = [new JfSort(`${this.labels.$MODEL_NAME_CAMEL$.$PRIMARY_KEY_NAME$.field}`, JfSort.asc)];
+mEvent.additional = [new JfCondition('cp', this.currentPage)];
+mEvent.conditions = conditions;
+// mEvent.rows = 10;
+
+return this.crudService.getPage(kRoute, mEvent)
+.pipe(
+tap(() => this.searchFailed = false),
+map((resp: JfResponse) => {
+this.searchFailed = resp.data.content.length === 0;
+return resp.data.content;
+}),
+catchError( error => {
+this.searchFailed = true;
+this.messageService.error(k.project_name, error, this.labels.$MODEL_NAME_CAMEL$.ownName);
+return of([]);
+})
+);
+}
+
+}

@@ -1,0 +1,25 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { $MODEL_NAME$ListComponent } from './$MODEL_NAME_DASHED$-detail.component';
+
+describe('$MODEL_NAME$ListComponent', () => {
+let component: $MODEL_NAME$ListComponent;
+let fixture: ComponentFixture<$MODEL_NAME$ListComponent>;
+
+beforeEach(async () => {
+await TestBed.configureTestingModule({
+declarations: [$MODEL_NAME$ListComponent]
+})
+.compileComponents();
+});
+
+beforeEach(() => {
+fixture = TestBed.createComponent($MODEL_NAME$ListComponent);
+component = fixture.componentInstance;
+fixture.detectChanges();
+});
+
+it('should create', () => {
+expect(component).toBeTruthy();
+});
+});
