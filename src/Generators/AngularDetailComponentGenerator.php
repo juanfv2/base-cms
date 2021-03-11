@@ -133,6 +133,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
 
             $fieldCamel = Str::camel($field);
             $relationText = <<<EOF
+            modelTemp.{$fieldCamel}_id = null;
             if (modelTemp.$fieldCamel) {
                 modelTemp.{$fieldCamel}_id = modelTemp.$fieldCamel.id;
                 delete modelTemp.$fieldCamel;
@@ -326,12 +327,12 @@ class AngularDetailComponentGenerator extends BaseGenerator
             <!-- $fieldCamel . init -->
             <div class="form-group">
               <app-$fieldDash-auto-complete id="{$this->commandData->config->mCamel}-$fieldCamel"
-                                         [name]="labels.$fieldCamel.ownName"
-                                         required
-                                         [disabled]="isSubComponentFrom === '$fieldCamel'"
-                                         [currentPage]="mApi.show()"
-                                         #{$this->commandData->config->mCamel}_$fieldCamel="ngModel"
-                                         [(ngModel)]="{$this->commandData->config->mCamel}.$fieldCamel">
+                                            [name]="labels.$fieldCamel.ownName"
+                                            [(ngModel)]="{$this->commandData->config->mCamel}.$fieldCamel"
+                                            #{$this->commandData->config->mCamel}_$fieldCamel="ngModel"
+                                            [disabled]="isSubComponentFrom === '$fieldCamel'"
+                                            [currentPage]="mApi.show()"
+                                            required>
               </app-$fieldDash-auto-complete>
               <div *ngIf="!{$this->commandData->config->mCamel}_$fieldCamel.valid && {$this->commandData->config->mCamel}_$fieldCamel.dirty && {$this->commandData->config->mCamel}_$fieldCamel.errors?.required"
                    class="alert alert-danger form-text">
@@ -469,22 +470,42 @@ class AngularDetailComponentGenerator extends BaseGenerator
         foreach ($this->commandData->relations as $relation) {
             $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
             $fieldCamel = Str::camel($field);
-            $fields[] =  "{$fieldCamel}Name: number;";
+            $fields[] =  "{$fieldCamel}Name: string;";
             $fields[] =  "$fieldCamel: $field;";
         }
 
         $fields[] =  "}\n";
+
+        $fields[] =  "// admin-angular/src/environments/k.ts>routes\n";
+        $fields[] =  "{$this->commandData->config->mCamelPlural}: '{$this->commandData->config->mSnakePlural}',\n";
 
         $fields[] =  "// admin-angular/src/environments/l.ts\n";
         $fields[] =  "{$this->commandData->config->mCamel}: {";
         $fields[] =  "tablePK: '{$mPrimaryKey}',";
         $fields[] =  "tableName: '{$this->commandData->config->tableName}',";
         $fields[] =  "ownName: '{$this->commandData->config->mName}',";
-        $fields[] =  "ownNamePlural: '{$this->commandData->config->mCamelPlural}',";
+        $fields[] =  "ownNamePlural: '{$this->commandData->config->mPlural}',";
 
         foreach ($this->commandData->fields as $field) {
             $converted = Str::title($field->name);
-            $fields[] = "$field->name: new DBType('{$converted}', '{$this->commandData->config->tableName}.$field->name', '$field->htmlType'),";
+            $fieldText = "$field->name: new DBType('{$converted}', '{$this->commandData->config->tableName}.$field->name', ";
+
+            if ($field->isPrimary) {
+                $mPrimaryKey = $field->name;
+                $fieldText .= '?';
+            }
+            switch ($field->htmlType) {
+                case 'date':
+                    $fieldText .= ": 'date'),";
+                    break;
+                case 'number':
+                    $fieldText .= ": 'number'),";
+                    break;
+                default:
+                    $fieldText .= ": 'string'),";
+                    break;
+            }
+            $fields[] =  $fieldText;
         }
 
         foreach ($this->commandData->relations as $relation) {
@@ -499,7 +520,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
             $fields[] =  "{$fieldCamel}Name: new DBType(`$title`, '{$fieldCamel}Name'),";
         }
 
-        $fields[] =  "}\n";
+        $fields[] =  "},\n";
 
         $fields[] =  "// admin-angular/src/app/core/modules/main/main.module.ts\n";
         $fields[] =  "{$this->commandData->config->mName}ListComponent,";
@@ -509,13 +530,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
         $fields[] =  "{ path: `\${k.routes.{$this->commandData->config->mCamelPlural}}/:id`, component: {$this->commandData->config->mName}DetailComponent },";
         $fields[] =  "{ path: k.routes.{$this->commandData->config->mSnakePlural}, component: {$this->commandData->config->mName}ListComponent },";
 
-        $fields[] =  "// admin-angular/src/environments/k.ts\n";
-        $fields[] =  "{$this->commandData->config->mCamelPlural}: '{$this->commandData->config->mSnakePlural}',";
         $fields[] =  "*/";
-
-
-
-
         return $fields;
     }
 
