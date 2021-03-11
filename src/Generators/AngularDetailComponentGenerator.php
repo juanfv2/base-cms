@@ -191,16 +191,6 @@ class AngularDetailComponentGenerator extends BaseGenerator
         $templateData = str_replace('$LISTS_RELATED$', implode("\n",        [$this->generateHtmlRelated()]), $templateData);
 
         return $templateData;
-
-        /*
-        `php artisan base-cms:angular Country     --fromTable --tableName=countries`
-        `php artisan base-cms:angular Region      --fromTable --tableName=regions`
-        php artisan base-cms:angular City        --fromTable --tableName=cities
-        php artisan base-cms:angular Permission  --fromTable --tableName=auth_permissions
-        php artisan base-cms:angular Role        --fromTable --tableName=auth_roles
-        php artisan base-cms:angular User        --fromTable --tableName=auth_users
-        php artisan base-cms:angular Person      --fromTable --tableName=auth_people
-        */
     }
 
     private function generateHtmlInputFields()

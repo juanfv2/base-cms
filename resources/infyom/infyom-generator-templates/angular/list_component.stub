@@ -27,12 +27,16 @@ templateUrl: './$MODEL_NAME_DASHED$-list.component.html',
 styleUrls: ['./$MODEL_NAME_DASHED$-list.component.scss']
 })
 export class $MODEL_NAME$ListComponent implements OnInit, OnChanges {
-labels = l;
-$MODEL_NAME_CAMEL$?: $MODEL_NAME$;
+
+@ViewChild(SearchFieldDirective) searchField?: SearchFieldDirective;
+
 @Input() isSubComponentFrom = '-';
 @Input() isSubComponent = false;
 $RELATIONS_AS_FIELDS$
-@ViewChild(SearchFieldDirective) searchField?: SearchFieldDirective;
+labels = l;
+$MODEL_NAME_CAMEL$?: $MODEL_NAME$;
+csv: any;
+mApi = new Api(kRoute);
 searchFieldAdded: any[] = [];
 operatorOptions: any[];
 queryFieldOptions: any[];
@@ -43,10 +47,7 @@ showForm = false;
 hasPermission2show = false;
 hasPermission2new = false;
 hasPermission2delete = false;
-mApi = new Api(kRoute);
-// list is paginated
 currentPage: JfResponseList<$MODEL_NAME$> = new JfResponseList<$MODEL_NAME$>(0, 0, []);
-csv: any;
 
 constructor(
 private router: Router,
@@ -231,22 +232,22 @@ this.router.navigate([kRoute, 'new']);
 }
 }
 
-showDeleteDialog(rowData: any): void {
+showDeleteDialog(item2delete: $MODEL_NAME$): void {
 const modalRef = this.modalService.open(MessageComponent);
 modalRef.componentInstance.header = 'Confirmación';
-modalRef.componentInstance.message = '¿Desea eliminar este registro?';
+modalRef.componentInstance.message = `¿Desea eliminar ${this.labels.$MODEL_NAME_CAMEL$.ownName} # ${item2delete.id}?`;
 modalRef.componentInstance.withOk = true;
 modalRef.result
 .then(result => {
 // console.log('result', result);
 if (result === 'ok') {
-const $MODEL_NAME_CAMEL$ToDelete = rowData as $MODEL_NAME$;
-this.delete$MODEL_NAME$($MODEL_NAME_CAMEL$ToDelete);
+this.delete$MODEL_NAME$(item2delete);
 }
 }).catch(error => {
 // console.log('error', error);
 });
 }
+
 private delete$MODEL_NAME$($MODEL_NAME_CAMEL$ToDelete: $MODEL_NAME$): void {
 // todo: #if($entity.hasCompositePk())
 const id = $MODEL_NAME_CAMEL$ToDelete.$PRIMARY_KEY_NAME$;
@@ -254,11 +255,12 @@ this.crudService.deleteEntity(kRoute, id)
 .subscribe(
 (resp: JfResponse) => {
 MyUtils.remove(this.currentPage, $MODEL_NAME_CAMEL$ToDelete);
-this.messageService.info(k.project_name, 'Eliminado');
+this.messageService.info(k.project_name, `${this.labels.$MODEL_NAME_CAMEL$.ownName} Eliminado`);
 },
 error => this.messageService.error(k.project_name, error, this.labels.$MODEL_NAME_CAMEL$.ownName)
 );
 }
+
 changePage(event: number): void {
 if (this.loading) {
 return;
@@ -270,6 +272,7 @@ this.modelSearch.lazyLoadEvent.first = event;
 this.onLazyLoad();
 }
 }
+
 changePageLimit(event: any): void {
 if (this.loading) {
 return;
@@ -281,6 +284,7 @@ this.modelSearch.lazyLoadEvent.first = 1;
 this.onLazyLoad();
 }
 }
+
 saveFormClicked(event: any): void {
 this.$MODEL_NAME_CAMEL$ = event;
 this.showForm = false;

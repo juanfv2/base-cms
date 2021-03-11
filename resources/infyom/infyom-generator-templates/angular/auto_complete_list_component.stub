@@ -34,19 +34,10 @@ providers: [$MODEL_NAME_SNAKE$_auto_complete_control_value_accessor]
 })
 export class $MODEL_NAME$AutoCompleteComponent implements ControlValueAccessor {
 
-labels = l;
-
-focus = new Subject<string>();
-// click$ = new Subject<string>();
-searching = false;
-searchFailed = false;
-hasPermission2show = false;
-previousTerm = '';
-values: $MODEL_NAME$[] = [];
-
 @ViewChild('instance', { static: true }) instance?: NgbTypeahead;
 
 @Output() oSelected = new EventEmitter<any>();
+
 @Input() disabled = false;
 @Input() multiple = false;
 @Input() id = '';
@@ -56,6 +47,15 @@ values: $MODEL_NAME$[] = [];
 @Input() avoidables: $MODEL_NAME$[] = [];
 @Input() value?: $MODEL_NAME$;
 $RELATIONS_AS_FIELDS_1$
+
+labels = l;
+searching = false;
+searchFailed = false;
+hasPermission2show = false;
+focus = new Subject<string>();
+// click$ = new Subject<string>();
+previousTerm = '';
+values: $MODEL_NAME$[] = [];
 
 constructor(
 private router: Router,
@@ -104,7 +104,7 @@ this.select(mV);
 
 actClear(): void {
 setTimeout(() => {
-this.select({ item: { id: null } });
+this.select(null);
 this.searchFailed = false;
 }, 100);
 }
@@ -119,12 +119,10 @@ this.router.navigate([kRoute, id]);
 formatter = (x: $MODEL_NAME$) => `${ x.name || ''}`;
 
 select(e: any): void {
-
 if (this.multiple) {
 if(e){
 e.preventDefault();
 setTimeout(() => { this.focus.next(this.previousTerm); }, 0.000001);
-
 this.values.push(e.item as $MODEL_NAME$);
 this.searchFailed = this.values.length === 0;
 this.fnChange(this.values);
@@ -132,7 +130,6 @@ this.oSelected.emit(this.values);
 }
 } else {
 this.previousTerm = '';
-
 this.value = e ? e.item as $MODEL_NAME$ : undefined;
 this.searchFailed = this.value === null;
 this.fnChange(this.value);
@@ -145,7 +142,6 @@ search = (text: Observable<string>) => {
 const debouncedText = text.pipe(debounceTime(200), distinctUntilChanged());
 // const clicksWithClosedPopup = this.click.pipe(filter(() => !this.instance.isPopupOpen()));
 const inputFocus = this.focus;
-
 if (this.selectables && this.selectables.length > 0) {
 return merge(debouncedText, inputFocus).pipe(
 tap(() => this.searching = true),
@@ -171,7 +167,6 @@ if (this.avoidables && this.avoidables.length > 0) {
 conditions.push(new JfCondition(`and ${this.labels.$MODEL_NAME_CAMEL$.$PRIMARY_KEY_NAME$.field} not-in`, this.avoidables.map(r => r.id)));
 }
 $RELATIONS_AS_FIELDS_2$
-
 if (term) {
 const g: any[] = [];
 $SEARCHABLE_FIELDS_1$
@@ -185,7 +180,6 @@ mEvent.multiSortMeta = [new JfSort(`${this.labels.$MODEL_NAME_CAMEL$.$PRIMARY_KE
 mEvent.additional = [new JfCondition('cp', this.currentPage)];
 mEvent.conditions = conditions;
 // mEvent.rows = 10;
-
 return this.crudService.getPage(kRoute, mEvent)
 .pipe(
 tap(() => this.searchFailed = false),

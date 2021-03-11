@@ -12,7 +12,7 @@ import { JfMessageService } from 'src/app/core/services/message.service';
 
 import { $MODEL_NAME$$RELATION_MODEL_CAMEL_NAMES_1$ } from 'src/app/models/_models';
 
-const kRoute = k.routes.cities;
+const kRoute = k.routes.$MODEL_NAME_PLURAL_CAMEL$;
 
 @Component({
 selector: 'app-$MODEL_NAME_DASHED$-detail',
@@ -20,21 +20,22 @@ templateUrl: './$MODEL_NAME_DASHED$-detail.component.html',
 styleUrls: ['./$MODEL_NAME_DASHED$-detail.component.scss']
 })
 export class $MODEL_NAME$DetailComponent implements OnInit, OnDestroy {
-labels = l;
-includes = [$RELATION_MODEL_CAMEL_NAMES_2$];
+
+@Output() saveClicked = new EventEmitter<$MODEL_NAME$>();
+@Output() cancelClicked = new EventEmitter();
 
 @Input() $MODEL_NAME_CAMEL$?: $MODEL_NAME$;
 @Input() isSubComponentFrom = '-';
 @Input() isSubComponent = false;
-@Output() saveClicked = new EventEmitter<$MODEL_NAME$>();
-@Output() cancelClicked = new EventEmitter();
-private mSubscription: any;
-tabActive = '<first-tab>';
 
+labels = l;
+includes = [$RELATION_MODEL_CAMEL_NAMES_2$];
+tabActive = '<first-tab>';
+mApi = new Api(kRoute);
+private mSubscription: any;
 sending = false;
 hasPermission2new = false;
 hasPermission2edit = false;
-mApi = new Api(kRoute);
 
 constructor(
 private router: Router,
@@ -55,7 +56,6 @@ this.new$MODEL_NAME$(this.$MODEL_NAME_CAMEL$);
 if (id !== 'new') {
 this.get$MODEL_NAME$(id);
 }
-
 });
 }
 
@@ -130,6 +130,7 @@ if (this.isSubComponent) {
 this.cancelClicked.emit('cancel');
 return;
 }
+
 this.router.navigate([kRoute]);
 }
 // ? m2m

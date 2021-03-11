@@ -9,7 +9,7 @@
 <div class="card-header">
 <h5 class="title d-inline-block">{{labels.$MODEL_NAME_CAMEL$.ownName}}</h5>
 <h6 class="pl-1 d-inline-block ml-2"
-*ngIf="isSubComponent">{{labels.$MODEL_NAME_CAMEL$.id.label}} {{$MODEL_NAME_CAMEL$.id}}</h6>
+*ngIf="isSubComponent">{{labels.$MODEL_NAME_CAMEL$.$PRIMARY_KEY_NAME$.label}} {{$MODEL_NAME_CAMEL$.$PRIMARY_KEY_NAME$}}</h6>
 </div>
 <div class="card-body">
 $INPUT_FIELDS$
@@ -30,7 +30,7 @@ class="fa-3x i-sending mx-1 float-right">
 <i class="fas fa-spinner fa-spin"></i>
 </div>
 </button>
-<button *ngIf="hasPermission2new && !isSubComponent && city.id"
+<button *ngIf="hasPermission2new && !isSubComponent && $MODEL_NAME_CAMEL$.$PRIMARY_KEY_NAME$"
 (click)="addNew()"
 type="button"
 class="btn btn-warning m-1">Agregar otro</button>
