@@ -24,7 +24,6 @@ class AngularDetailComponentGenerator extends BaseGenerator
     public function __construct(CommandData $commandData)
     {
         $this->commandData = $commandData;
-
         // dd($this->commandData);
         $this->path = base_path('angular/') . $this->commandData->config->mCamel . '/';
         $name = $this->commandData->config->mCamel . '-detail.component.';
@@ -468,10 +467,21 @@ class AngularDetailComponentGenerator extends BaseGenerator
         }
 
         foreach ($this->commandData->relations as $relation) {
+            $type  = (isset($relation->type))      ? $relation->type      : null;
             $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
             $fieldCamel = Str::camel($field);
-            $fields[] =  "{$fieldCamel}Name: string;";
-            $fields[] =  "$fieldCamel: $field;";
+            $fields[] =  "{$fieldCamel}Name: string;// $type";
+            switch ($type) {
+                case 'mtm':
+                case '1tm':
+                    $fieldCamel = Str::pluralStudly($fieldCamel);
+                    $fields[] =  "$fieldCamel: {$field}[]; ";
+                    break;
+
+                default:
+                    $fields[] =  "$fieldCamel: $field; ";
+                    break;
+            }
         }
 
         $fields[] =  "}\n";
