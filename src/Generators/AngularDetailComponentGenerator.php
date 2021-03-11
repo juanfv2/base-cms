@@ -407,13 +407,13 @@ class AngularDetailComponentGenerator extends BaseGenerator
                                               [multiple]="true"
                                               [currentPage]="mApi.show()"
                                               (oSelected)="update2{$fieldCamel}(\$event)"
-                                              [avoidables]="{$this->commandData->config->mCamel}.$plural"
+                                              [avoidables]="avoidables$plural"
                                               [(ngModel)]="{$this->commandData->config->mCamel}.$plural">
                 </app-$fieldDash-auto-complete>
                 <label>$plural seleccionados:</label>
                 <ul class="list-group">
-                    <li class="list-group-item d-flex justify-content-between align-items-center"
-                        *ngFor="let model of {$this->commandData->config->mCamel}.{$fieldCamel}">
+                    <li *ngFor="let model of {$this->commandData->config->mCamel}.{$fieldCamel}"
+                        class="list-group-item d-flex justify-content-between align-items-center">
                         {{ model.name }} <!-- reemplazar "name" por campo del modelo $fieldCamel -->
                         <div class="input-group-append">
                             <button (click)="rm2{$fieldCamel}(model)"
