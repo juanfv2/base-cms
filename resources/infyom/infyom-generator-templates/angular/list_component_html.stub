@@ -1,0 +1,150 @@
+<div class="panel-header panel-header-sm"
+*ngIf="!isSubComponent"></div>
+<div [class.main-content]="!isSubComponent">
+<div class="row"
+*ngIf="!isSubComponent">
+<div class="col-md-12">
+<form class="card"
+#modelForm="ngForm">
+<div class="card-header">
+<h5 class="title">{{ labels.$MODEL_NAME_CAMEL$.ownNamePlural }}</h5>
+</div>
+<div class="card-body">
+$RELATIONS_AS_SEARCH_FIELDS$
+</div>
+<div class="card-body">
+<ng-template appSearchField></ng-template>
+<div class="row">
+<div class="col-12">
+<div class="form-group">
+<button (click)="addFilter()"
+type="button"
+class="btn btn-info m-1 float-right">
+Agregar criterio de búsqueda
+</button>
+</div>
+</div>
+</div>
+</div>
+<div class="card-footer">
+<button (click)="onLazyLoad()"
+type="submit"
+class="btn btn-primary m-1">
+Buscar
+</button>
+<button (click)="addNew()"
+type="button"
+class="btn btn-warning m-1"
+*ngIf="hasPermission2new">
+Crear {{ labels.$MODEL_NAME_CAMEL$.ownName }}
+</button>
+</div>
+</form>
+</div>
+</div>
+<app-$MODEL_NAME_DASHED$-detail *ngIf="showForm"
+[$MODEL_NAME_CAMEL$]="$MODEL_NAME_CAMEL$"
+[isSubComponent]="isSubComponent"
+[isSubComponentFrom]="isSubComponentFrom"
+(saveClicked)="saveFormClicked($event)"
+(cancelClicked)="showForm = false">
+</app-$MODEL_NAME_DASHED$-detail>
+<div class="row"
+*ngIf="!showForm">
+<div class="col-md-12">
+<div class="card">
+<div class="card-header">
+<button *ngIf="hasPermission2new && isSubComponent"
+(click)="addNew()"
+type="button"
+class="btn btn-warning m-1">
+Crear {{ labels.$MODEL_NAME_CAMEL$.ownName }}
+</button>
+<button *ngIf="!isSubComponent"
+(click)="clearFilters()"
+type="button"
+class="btn btn-link m-1">
+Limpiar filtros de busqueda
+</button>
+
+<span class="btn btn-link m-1 float-right">{{ currentPage.totalElements }}</span>
+</div>
+<div class="card-body">
+<div class="table-full-width t-responsive table-responsive">
+<table class="table table-sm table-striped table-hover">
+<caption> lista de {{ labels.$MODEL_NAME_CAMEL$.ownNamePlural }} </caption>
+<thead class="text-primary">
+<tr class="cursor-pointer text-nowrap">
+$COLUMN_FIELDS$
+$COLUMN_FIELDS_RELATIONS$
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr *ngFor="let model of currentPage.content">
+$COLUMN_VALUES$
+$COLUMN_VALUES_RELATIONS$
+<td class="td-actions">
+<button *ngIf="hasPermission2delete"
+(click)="showDeleteDialog(model)"
+type="button"
+rel="tooltip"
+title="Borrar"
+class="btn btn-sm btn-danger btn-round btn-icon btn-icon-mini btn-neutral"
+data-original-title="Borrar">
+<i class="fas fa-trash-alt"></i>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="card-footer">
+<div class="row">
+<div *ngIf="currentPage.totalElements"
+class="col-12 col-md-6">
+<ngb-pagination [collectionSize]="currentPage.totalElements"
+[page]="modelSearch.lazyLoadEvent.first"
+[pageSize]="modelSearch.lazyLoadEvent.rows"
+size="sm"
+[maxSize]="5"
+[boundaryLinks]="true"
+(pageChange)="changePage($event)"
+class="d-inline-block"></ngb-pagination>
+<div class="ui-paginator ui-dropdown d-inline-block">
+<select id="select-qty-table"
+name="select-qty-table"
+class="form-control m-1"
+[(ngModel)]="modelSearch.lazyLoadEvent.rows"
+(change)="changePageLimit($event)">
+<option *ngFor="let q of [5, 10, 50, 100, -1]">
+{{ q }}
+</option>
+</select>
+</div>
+</div>
+<div class="col-12 col-md-6">
+<button (click)="onLazyLoad('export')"
+type="button"
+class="btn btn-primary m-1 w-100">
+Exportar resultados
+</button>
+<app-file-upload [allowedTypes]="['text/csv', 'application/vnd.ms-excel']"
+label="Importar CSV"
+name="massive-inserts"
+[value]="{ id: -1, entity: labels.$MODEL_NAME_CAMEL$.tableName, field: 'massive-inserts' }"
+url2showStaticImage="/visor/assets/images/admin/ic-csv.svg"
+minHeight="100px"
+class="h-100"
+(finish)="massiveInsert($event)"
+[error]="csv?.error?.error"></app-file-upload>
+</div>
+</div>
+<app-spinner-loading *ngIf="loading"
+class="m-4"></app-spinner-loading>
+</div>
+</div>
+</div>
+</div>
+</div>

@@ -4,6 +4,7 @@ namespace Juanfv2\BaseCms;
 
 use Illuminate\Support\ServiceProvider;
 use Juanfv2\BaseCms\Commands\CreateMenus;
+use Juanfv2\BaseCms\Commands\AngularCommand;
 
 class BaseCmsServiceProvider extends ServiceProvider
 {
@@ -28,6 +29,7 @@ class BaseCmsServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 CreateMenus::class,
+                AngularCommand::class
             ]);
         }
 
@@ -43,7 +45,7 @@ class BaseCmsServiceProvider extends ServiceProvider
             __DIR__ . '/../database/factories'  => database_path('factories'),
             __DIR__ . '/../database/migrations' => database_path('migrations'),
             __DIR__ . '/../database/seeders'    => database_path('seeders'),
-        ], 'base-cms-migrations');
+        ], 'base-cms-databases');
 
 
         $this->publishes([

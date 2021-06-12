@@ -90,6 +90,7 @@ trait ControllerFiles
         ini_set('upload_max_filesize', '-1');
         ini_set('memory_limit', '-1');
 
+        $xFile                = new XFile();
         $columns              = 0;
         $isMulti              = $request->header('isMulti', 0);
         $isTemporal           = strpos($fieldName, 'massive') !== false;
@@ -100,7 +101,6 @@ trait ControllerFiles
         $fileNamePrefix       = $tableName . '-' . $id;
         $newName              = uniqid($fileNamePrefix . '-');
         $newNameWithExtension = $newName . '.' . $fileExtension;
-        $xFile                = new XFile();
 
         /**
          * Si el nombre del archivo trae la palabra "massive"
@@ -134,7 +134,6 @@ trait ControllerFiles
 
             if ($isMulti) {
 
-
                 $parts               = explode('/', $path);
                 $name                = Arr::last($parts);
 
@@ -148,11 +147,9 @@ trait ControllerFiles
 
                 if ($color && class_exists('\ColorThief\ColorThief')) {
 
-                    $colors = $this->getColor($path);
-
-                    $data['colors'] = $colors;
-
-                    $xFile->data = $data;
+                    $colors            = $this->getColor($path);
+                    $data['colors']    = $colors;
+                    $xFile->data       = $data;
                 }
 
                 $xFile->save();
@@ -196,7 +193,7 @@ trait ControllerFiles
 
         return $this->sendResponse(
             [$fieldName => $xFile, 'columns' => $columns,],
-            __('validation.model.image.added', ['model' => $tableName]),
+            __('validation.model.image.added', ['model' => $tableName])
         );
     }
 

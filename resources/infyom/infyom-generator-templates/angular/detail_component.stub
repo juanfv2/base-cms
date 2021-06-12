@@ -1,0 +1,140 @@
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+
+import { k } from 'src/environments/k';
+import { l } from 'src/environments/l';
+import { Api } from 'src/app/core/support/utils.api';
+import { JfResponse } from 'src/app/core/support/utils.classes';
+
+import { AuthService } from 'src/app/core/services/auth.service';
+import { CrudService } from 'src/app/core/services/crud.service';
+import { JfMessageService } from 'src/app/core/services/message.service';
+
+import { $MODEL_NAME$$RELATION_MODEL_CAMEL_NAMES_1$ } from 'src/app/models/_models';
+
+const kRoute = k.routes.$MODEL_NAME_PLURAL_CAMEL$;
+
+@Component({
+selector: 'app-$MODEL_NAME_DASHED$-detail',
+templateUrl: './$MODEL_NAME_DASHED$-detail.component.html',
+styleUrls: ['./$MODEL_NAME_DASHED$-detail.component.scss']
+})
+export class $MODEL_NAME$DetailComponent implements OnInit, OnDestroy {
+
+@Output() saveClicked = new EventEmitter<$MODEL_NAME$>();
+@Output() cancelClicked = new EventEmitter();
+
+@Input() $MODEL_NAME_CAMEL$?: $MODEL_NAME$;
+@Input() isSubComponentFrom = '-';
+@Input() isSubComponent = false;
+
+labels = l;
+includes = [$RELATION_MODEL_CAMEL_NAMES_2$];
+tabActive = '<first-tab>';
+mApi = new Api(kRoute);
+private mSubscription: any;
+sending = false;
+hasPermission2new = false;
+hasPermission2edit = false;
+
+constructor(
+private router: Router,
+private route: ActivatedRoute,
+private authService: AuthService,
+private crudService: CrudService,
+private messageService: JfMessageService) {
+this.hasPermission2new = this.authService.isAuthorized(`/${kRoute}/new`);
+this.hasPermission2edit = this.authService.isAuthorized(`/${kRoute}/edit`)
+|| this.hasPermission2new;
+}
+
+ngOnInit(): void {
+this.mSubscription = this.route.params.subscribe(params => {
+const id = this.isSubComponent ? this.$MODEL_NAME_CAMEL$?.id : params.id;
+// console.log('params', params, `\nthis.$MODEL_NAME_CAMEL$`, this.$MODEL_NAME_CAMEL$);
+this.new$MODEL_NAME$(this.$MODEL_NAME_CAMEL$);
+if (id !== 'new') {
+this.get$MODEL_NAME$(id);
+}
+});
+}
+
+ngOnDestroy(): void {
+if (!this.isSubComponent && this.mSubscription) {
+this.mSubscription.unsubscribe();
+}
+}
+
+new$MODEL_NAME$(temp$MODEL_NAME$?: $MODEL_NAME$):void {
+this.$MODEL_NAME_CAMEL$ = temp$MODEL_NAME$ || {} as $MODEL_NAME$;
+delete this.$MODEL_NAME_CAMEL$.id;
+$RELATED_2$
+}
+
+get$MODEL_NAME$(id: any): void {
+const mId = id + '?includes=' + JSON.stringify(this.includes);
+this.sending = true;
+this.crudService.getEntity(kRoute, mId)
+.subscribe(
+(resp: JfResponse) => {
+this.sending = false;
+this.$MODEL_NAME_CAMEL$ = resp.data;
+$RELATED_2$
+},
+error => {
+this.sending = false;
+this.messageService.error(k.project_name, error, this.labels.$MODEL_NAME_CAMEL$.ownName);
+});
+}
+
+onSave(): void {
+const modelTemp = JSON.parse(JSON.stringify(this.$MODEL_NAME_CAMEL$));
+const uPersonId = this.authService.userPersonId();
+// prepare
+modelTemp.updatedBy = uPersonId;
+if (!modelTemp.id) {
+modelTemp.createdBy = uPersonId;
+}
+$RELATIONS_AS_FIELDS$
+// modelTemp.includes = this.includes;
+// prepare
+this.sending = true;
+this.crudService.updateEntity(kRoute, modelTemp)
+.subscribe(
+(resp: JfResponse) => {
+this.sending = false;
+if(this.$MODEL_NAME_CAMEL$){
+this.$MODEL_NAME_CAMEL$.id = resp.data.id;
+this.messageService.success(k.project_name, 'Guardado');
+if (this.isSubComponent) {
+// ?? this.saveClicked.emit(this.$MODEL_NAME_CAMEL$);
+} else {
+this.router.navigate([kRoute, this.$MODEL_NAME_CAMEL$.id]);
+}
+}
+},
+error =>  {
+this.sending = false;
+this.messageService.error(k.project_name, error, this.labels.$MODEL_NAME_CAMEL$.ownName);
+}
+);
+}
+
+addNew(): void {
+this.new$MODEL_NAME$();
+this.router.navigate([kRoute, 'new']);
+}
+
+onBack(): void {
+if (this.isSubComponent) {
+this.cancelClicked.emit('cancel');
+return;
+}
+
+this.router.navigate([kRoute]);
+}
+// ? m2m
+$RELATED_1$
+
+}
+$_MODEL_INFO_$

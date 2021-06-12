@@ -2,6 +2,7 @@
 
 namespace Juanfv2\BaseCms\Commands;
 
+use App\Models\Auth\Role;
 use App\Models\Auth\Permission;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Schema;
@@ -13,14 +14,14 @@ class CreateMenus extends Command
      *
      * @var string
      */
-    protected $signature = 'base-cms:menus {paths*} {--t|truncate}';
+    protected $signature = 'base-cms:menus {paths*} {--t|truncate} {--a|admin}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = '(-t): truncate permissions table, (-a): add all permissions to role admin';
 
     /**
      * Create a new command instance.
@@ -40,8 +41,9 @@ class CreateMenus extends Command
     public function handle()
     {
 
-        $paths = $this->argument('paths');
+        $paths    = $this->argument('paths');
         $truncate = $this->option('truncate');
+        $admin    = $this->option('admin');
         if ($truncate) {
             Schema::disableForeignKeyConstraints();
             Permission::truncate();
@@ -65,8 +67,17 @@ class CreateMenus extends Command
         }
 
         $r = Permission::count();
-        $this->info("Menus creados: {$r}");
 
+        if ($admin) {
+            $role = Role::find(1);
+            $permissions = [];
+            for ($i = 1; $i <= $r; $i++) {
+                $permissions[] = $i;
+            }
+            $role->permissions()->sync($permissions);
+        }
+
+        $this->info("Menus creados: {$r}");
         return count($results);
     }
 

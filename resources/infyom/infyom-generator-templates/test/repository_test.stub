@@ -25,10 +25,8 @@ class $MODEL_NAME$RepositoryTest extends TestCase
         $this->modelRepository = App::make($MODEL_NAME$Repository::class);
     }
 
-    /**
-     * @test create
-     */
-    public function test_repo_create_$MODEL_NAME_SNAKE$()
+    /** @test */
+    public function repo_create_$MODEL_NAME_SNAKE$()
     {
         $$MODEL_NAME_CAMEL$ = $MODEL_NAME$::factory()->make()->toArray();
 
@@ -41,10 +39,8 @@ class $MODEL_NAME$RepositoryTest extends TestCase
         $this->assertModelData($$MODEL_NAME_CAMEL$, $created$MODEL_NAME$);
     }
 
-    /**
-     * @test read
-     */
-    public function test_repo_read_$MODEL_NAME_SNAKE$()
+    /** @test */
+    public function repo_read_$MODEL_NAME_SNAKE$()
     {
         $$MODEL_NAME_CAMEL$ = $MODEL_NAME$::factory()->create();
 
@@ -54,10 +50,8 @@ class $MODEL_NAME$RepositoryTest extends TestCase
         $this->assertModelData($$MODEL_NAME_CAMEL$->toArray(), $db$MODEL_NAME$);
     }
 
-    /**
-     * @test update
-     */
-    public function test_repo_update_$MODEL_NAME_SNAKE$()
+    /** @test */
+    public function repo_update_$MODEL_NAME_SNAKE$()
     {
         $$MODEL_NAME_CAMEL$ = $MODEL_NAME$::factory()->create();
         $fake$MODEL_NAME$ = $MODEL_NAME$::factory()->make()->toArray();
@@ -69,10 +63,8 @@ class $MODEL_NAME$RepositoryTest extends TestCase
         $this->assertModelData($fake$MODEL_NAME$, $db$MODEL_NAME$->toArray());
     }
 
-    /**
-     * @test delete
-     */
-    public function test_repo_delete_$MODEL_NAME_SNAKE$()
+    /** @test */
+    public function repo_delete_$MODEL_NAME_SNAKE$()
     {
         $$MODEL_NAME_CAMEL$ = $MODEL_NAME$::factory()->create();
 

@@ -1,0 +1,327 @@
+import { Component, ComponentFactoryResolver, Input, OnInit, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+
+import { k } from 'src/environments/k';
+import { l } from 'src/environments/l';
+import { Api } from 'src/app/core/support/utils.api';
+import { MyUtils } from 'src/app/core/support/utils';
+import { JfResponse, JfResponseList, JfLazyLoadEvent, JfSearchCondition, JfCondition } from 'src/app/core/support/utils.classes';
+
+import { AuthService } from 'src/app/core/services/auth.service';
+import { CrudService } from 'src/app/core/services/crud.service';
+import { JfMessageService } from 'src/app/core/services/message.service';
+
+import { MessageComponent } from 'src/app/components/main/_common/message/message.component';
+import { SearchFieldDirective } from 'src/app/core/directives/search-field.directive';
+
+import { $MODEL_NAME$, $RELATION_MODEL_NAMES$ } from 'src/app/models/_models';
+// todo: #if($entity.hasCompositePk())
+
+const kRoute = k.routes.$MODEL_NAME_PLURAL_CAMEL$;
+const kConditions = `${k.suggestions}${kRoute}`;
+
+@Component({
+selector: 'app-$MODEL_NAME_DASHED$-list',
+templateUrl: './$MODEL_NAME_DASHED$-list.component.html',
+styleUrls: ['./$MODEL_NAME_DASHED$-list.component.scss']
+})
+export class $MODEL_NAME$ListComponent implements OnInit, OnChanges {
+
+@ViewChild(SearchFieldDirective) searchField?: SearchFieldDirective;
+
+@Input() isSubComponentFrom = '-';
+@Input() isSubComponent = false;
+$RELATIONS_AS_FIELDS$
+labels = l;
+$MODEL_NAME_CAMEL$?: $MODEL_NAME$;
+csv: any;
+mApi = new Api(kRoute);
+searchFieldAdded: any[] = [];
+operatorOptions: any[];
+queryFieldOptions: any[];
+conditionalOptions: any[];
+modelSearch: any = {};
+loading = false;
+showForm = false;
+hasPermission2show = false;
+hasPermission2new = false;
+hasPermission2delete = false;
+currentPage: JfResponseList<$MODEL_NAME$> = new JfResponseList<$MODEL_NAME$>(0, 0, []);
+
+constructor(
+private router: Router,
+private modalService: NgbModal,
+private authService: AuthService,
+private crudService: CrudService,
+private messageService: JfMessageService,
+private resolver: ComponentFactoryResolver) {
+this.operatorOptions = k.operatorOptions;
+this.conditionalOptions = k.conditionalOptions;
+this.queryFieldOptions = [
+$SEARCHABLE_FIELDS$
+];
+this.hasPermission2show = this.authService.isAuthorized(`/${kRoute}/show`);
+this.hasPermission2new = this.authService.isAuthorized(`/${kRoute}/new`);
+this.hasPermission2delete = this.authService.isAuthorized(`/${kRoute}/delete`);
+}
+
+ngOnInit(): void {
+this.initSearch();
+this.onLazyLoad();
+}
+
+ngOnChanges(changes: SimpleChanges): void {
+if (this.isSubComponent) {
+this.initSearch();
+this.onLazyLoad();
+}
+}
+
+initSearchModel(): any {
+const search = !this.isSubComponent ? k.getItem(kConditions) : null;
+const mSearch = {
+lazyLoadEvent: new JfLazyLoadEvent(),
+$RELATIONS_AS_INIT_SEARCH_MODEL$
+};
+const r = search ? (JSON.parse(search) || mSearch) : mSearch;
+// console.log('r', r);
+return r;
+}
+
+initSearch(): void {
+this.modelSearch = this.initSearchModel();
+if (this.isSubComponent) {
+$RELATIONS_AS_INIT_SEARCH$
+} else {
+if (this.modelSearch) {
+if (this.modelSearch.conditions) {
+Promise.resolve(this.searchField).then(() => {
+for (const condition of this.modelSearch.conditions) {
+this.addFilter(condition);
+}
+});
+}
+}
+}
+}
+
+clearFilters(): void {
+this.searchFieldAdded.forEach((f: any) => f.deleteField());
+this.searchFieldAdded = [];
+k.removeItem(kConditions);
+this.initSearch();
+this.onLazyLoad();
+}
+
+addFilter(condition?: JfSearchCondition): void {
+const c = MyUtils.addSearchField({
+resolver: this.resolver,
+searchField: this.searchField,
+operatorOptions: this.operatorOptions,
+conditionalOptions: this.conditionalOptions,
+queryFieldOptions: this.queryFieldOptions,
+objectSearch: this.modelSearch,
+condition
+});
+this.searchFieldAdded.push(c);
+}
+
+onLazyLoad(strAction = ''): void {
+if (this.loading) {
+return;
+}
+// console.log('onLazyLoad this.loading', this.loading);
+// console.log('onLazyLoad this.loading', this.modelSearch);
+this.loading = true;
+// prepare
+let nextOperator = 'AND';
+const conditions: any[] = [];
+$RELATIONS_AS_ON_LAZY_LOAD$
+if (this.modelSearch.conditions) {
+for (const c of this.modelSearch.conditions) {
+if (c.value || c.field.type === 'boolean') {
+const nCondition = `${nextOperator} ${c.field.field} ${c.cond}`;
+nextOperator = c.oper;
+switch (c.field.type) {
+case 'date':
+const d = `${c.value.year}-${c.value.month}-${c.value.day}`;
+conditions.push(new JfCondition(nCondition, d));
+break;
+// case 'boolean':
+// const bx = !c.value;
+// conditions.push(new JfCondition(nCondition, bx));
+// break;
+default:
+conditions.push(new JfCondition(nCondition, c.value));
+break;
+}
+}
+}
+}
+// joinType === '<' leftJoin, '>' rightJoin
+// 'joinTable.joinTablePK.ownTableFK'
+// 'joinTable.joinTablePK.ownTableFK.joinType'
+// 'joinTable.joinTablePK.ownTable.ownTableFK'
+// 'joinTable.joinTablePK.ownTable.ownTableFK.joinType'
+this.modelSearch.lazyLoadEvent.joins = [
+$RELATIONS_AS_ON_LAZY_LOAD2$
+];
+this.modelSearch.lazyLoadEvent.conditions = conditions;
+this.modelSearch.lazyLoadEvent.additional = [];
+// this.modelSearch.lazyLoadEvent.includes = ['relation-1tm', 'relation-mt1', 'relation-1t1', ...];
+const mSearch = JSON.stringify(this.modelSearch);
+switch (strAction) {
+case 'export':
+const csvColumns: any = MyUtils.csvColumns(this.labels.$MODEL_NAME_CAMEL$);
+this.modelSearch.lazyLoadEvent.additional.push(new JfCondition('action', strAction));
+this.modelSearch.lazyLoadEvent.additional.push(new JfCondition('title', this.labels.$MODEL_NAME_CAMEL$.ownNamePlural));
+this.modelSearch.lazyLoadEvent.additional.push(new JfCondition('fields', JSON.stringify(csvColumns)));
+this.crudService.export(kRoute, this.modelSearch.lazyLoadEvent)
+.subscribe(
+resp => {
+this.loading = false;
+MyUtils.downloadFile(resp, this.labels.$MODEL_NAME_CAMEL$.ownNamePlural);
+},
+error => {
+this.loading = false;
+this.messageService.error(k.project_name, error, this.labels.$MODEL_NAME_CAMEL$.ownName);
+}
+);
+this.modelSearch.lazyLoadEvent.additional = [];
+break;
+default:
+this.crudService.getPage(kRoute, this.modelSearch.lazyLoadEvent)
+.subscribe(
+(resp: JfResponse) => {
+this.loading = false;
+this.currentPage = resp.data;
+if (!this.isSubComponent) {
+k.setItem(kConditions, mSearch);
+}
+},
+error => {
+this.loading = false;
+this.messageService.error(k.project_name, error, this.labels.$MODEL_NAME_CAMEL$.ownName);
+}
+);
+break;
+}
+}
+
+onRowSelect($MODEL_NAME_CAMEL$: $MODEL_NAME$): void {
+if (this.isSubComponent) {
+this.$MODEL_NAME_CAMEL$ = { $PRIMARY_KEY_NAME$: $MODEL_NAME_CAMEL$.$PRIMARY_KEY_NAME$ } as $MODEL_NAME$;
+this.showForm = true;
+} else {
+// todo: #if($entity.hasCompositePk())
+const id = $MODEL_NAME_CAMEL$.$PRIMARY_KEY_NAME$;
+this.router.navigate([kRoute, id]);
+}
+}
+
+addNew(): void {
+if (this.isSubComponent) {
+this.$MODEL_NAME_CAMEL$ = {
+$PRIMARY_KEY_NAME$: 'new',
+$RELATIONS_AS_ADD_NEW$
+} as unknown as $MODEL_NAME$;
+this.showForm = true;
+} else {
+this.router.navigate([kRoute, 'new']);
+}
+}
+
+showDeleteDialog(item2delete: $MODEL_NAME$): void {
+const modalRef = this.modalService.open(MessageComponent);
+modalRef.componentInstance.header = 'Confirmación';
+modalRef.componentInstance.message = `¿Desea eliminar ${this.labels.$MODEL_NAME_CAMEL$.ownName} # ${item2delete.id}?`;
+modalRef.componentInstance.withOk = true;
+modalRef.result
+.then(result => {
+// console.log('result', result);
+if (result === 'ok') {
+this.delete$MODEL_NAME$(item2delete);
+}
+}).catch(error => {
+// console.log('error', error);
+});
+}
+
+private delete$MODEL_NAME$($MODEL_NAME_CAMEL$ToDelete: $MODEL_NAME$): void {
+// todo: #if($entity.hasCompositePk())
+const id = $MODEL_NAME_CAMEL$ToDelete.$PRIMARY_KEY_NAME$;
+this.crudService.deleteEntity(kRoute, id)
+.subscribe(
+(resp: JfResponse) => {
+MyUtils.remove(this.currentPage, $MODEL_NAME_CAMEL$ToDelete);
+this.messageService.info(k.project_name, `${this.labels.$MODEL_NAME_CAMEL$.ownName} Eliminado`);
+},
+error => this.messageService.error(k.project_name, error, this.labels.$MODEL_NAME_CAMEL$.ownName)
+);
+}
+
+changePage(event: number): void {
+if (this.loading) {
+return;
+}
+// console.log('changePage this.loading', this.loading);
+// console.log('page', event);
+if (event) {
+this.modelSearch.lazyLoadEvent.first = event;
+this.onLazyLoad();
+}
+}
+
+changePageLimit(event: any): void {
+if (this.loading) {
+return;
+}
+// console.log('changePageLimit this.loading', this.loading);
+// console.log('page', event);
+if (event) {
+this.modelSearch.lazyLoadEvent.first = 1;
+this.onLazyLoad();
+}
+}
+
+saveFormClicked(event: any): void {
+this.$MODEL_NAME_CAMEL$ = event;
+this.showForm = false;
+this.onLazyLoad();
+}
+
+// <editor-fold desc='import - export'>
+
+massiveInsert(jCondition: JfCondition): void {
+// console.log('jCondition', jCondition);
+const csvColumns: any = MyUtils.csvColumns(this.labels.$MODEL_NAME_CAMEL$, true);
+this.csv = {};
+this.csv.cp = this.mApi.store();
+this.csv.table = this.labels.$MODEL_NAME_CAMEL$.tableName;
+this.csv.primaryKeyName = this.labels.$MODEL_NAME_CAMEL$.tablePK;
+this.csv.massiveInsert = jCondition.v.name;
+this.csv.massiveQueryFieldName = jCondition.c;
+this.csv.massiveQueryFileName = jCondition.v.name;
+this.csv.keys = csvColumns;
+this.loading = true;
+// console.log('resp.csv', this.csv);
+this.crudService.updateEntity(k.routes.files.importCsv, this.csv).subscribe(
+(resp: JfResponse) => {
+this.loading = false;
+// console.log('resp', resp);
+this.onLazyLoad();
+this.messageService.success(k.project_name, resp.data.updated + ' Guardados');
+this.csv = {};
+},
+error => {
+this.loading = false;
+// console.log('error', error);
+this.messageService.error(k.project_name, error);
+this.csv = {};
+this.csv.error = error;
+}
+);
+}
+// </editor-fold>
+}

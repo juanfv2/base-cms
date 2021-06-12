@@ -1,33 +1,31 @@
 {
-    "name": "juanfv2/base-cms",
-    "description": "Code base for a cms",
-    "type": "library",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Juan Villalta",
-            "email": "juanfv2@gmail.com"
-        }
-    ],
-    "minimum-stability": "dev",
-    "require": {
-        "php": "^7.1.3",
-        "intervention/imagecache": "^2.4",
-        "infyomlabs/laravel-generator": "5.8.x-dev",
-        "infyomlabs/swagger-generator": "dev-master",
-        "appointer/swaggervel": "dev-master",
-        "doctrine/dbal": "~2.3"
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Juanfv2\\BaseCms\\BaseCmsServiceProvider"
-            ]
-        }
-    },
-    "autoload": {
-        "psr-4": {
-            "Juanfv2\\BaseCms\\": "src/"
-        }
+  "name": "juanfv2/base-cms",
+  "description": "Code base for a cms",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Juan Villalta",
+      "email": "juanfv2@gmail.com"
     }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "php": "^7.3",
+    "doctrine/dbal": "~2.3",
+    "intervention/imagecache": "^2.5",
+    "infyomlabs/laravel-generator": "8.0.x-dev"
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Juanfv2\\BaseCms\\BaseCmsServiceProvider"
+      ]
+    }
+  },
+  "autoload": {
+    "psr-4": {
+      "Juanfv2\\BaseCms\\": "src/"
+    }
+  }
 }

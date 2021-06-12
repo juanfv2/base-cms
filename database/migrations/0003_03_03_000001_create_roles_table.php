@@ -18,8 +18,8 @@ class CreateRolesTable extends Migration
             $table->string('name');
             $table->string('description');
 
-            $table->bigInteger('createdBy')->nullable();
-            $table->bigInteger('updatedBy')->nullable();
+            $table->unsignedBigInteger('createdBy')->nullable();
+            $table->unsignedBigInteger('updatedBy')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

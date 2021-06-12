@@ -25,12 +25,13 @@ class CreatePeopleTable extends Migration
 
             $table->string('email')->unique();
             $table->foreign('email')->references('email')->on('auth_users')->onDelete('cascade');
-            $table->foreignId('country_id')->nullable()->constrained();
-            $table->foreignId('region_id')->nullable()->constrained();
-            $table->foreignId('city_id')->nullable()->constrained();
 
-            $table->bigInteger('createdBy')->nullable();
-            $table->bigInteger('updatedBy')->nullable();
+            $table->foreignId('country_id')->constrained()->nullable();
+            $table->foreignId('region_id')->constrained()->nullable();
+            $table->foreignId('city_id')->constrained()->nullable();
+
+            $table->unsignedBigInteger('createdBy')->nullable();
+            $table->unsignedBigInteger('updatedBy')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

@@ -2,114 +2,22 @@
 
 namespace $NAMESPACE_API_CONTROLLER$;
 
-use Illuminate\Http\Request;
 use $NAMESPACE_MODEL$\$MODEL_NAME$;
 
 use App\Http\Controllers\AppBaseController;
 use $NAMESPACE_REPOSITORY$\$MODEL_NAME$Repository;
 
-use Juanfv2\BaseCms\Resources\GenericResource;
-use Juanfv2\BaseCms\Criteria\LimitOffsetCriteria;
-use Juanfv2\BaseCms\Criteria\RequestGenericCriteria;
-
 $DOC_CONTROLLER$
 class $MODEL_NAME$APIController extends AppBaseController
 {
-    /** @var  $MODEL_NAME$Repository */
-    private $modelRepository;
+    /** @var $MODEL_NAME$Repository */
+    public $modelRepository;
+    public $rules;
+    public $modelNameCamel = '$MODEL_NAME$';
 
     public function __construct($MODEL_NAME$Repository $modelRepo)
     {
         $this->modelRepository = $modelRepo;
-    }
-
-    $DOC_INDEX$
-    public function index(Request $request)
-    {
-        $action = $request->get('action', '');
-        $limit  = $request->get('limit', -1);
-
-        $this->modelRepository->pushCriteria(new RequestGenericCriteria($request));
-        $itemCount = $this->modelRepository->count();
-
-        if ($action != 'export') {
-            $this->modelRepository->pushCriteria(new LimitOffsetCriteria($request));
-        }
-
-        $items = $this->modelRepository->all();
-
-        /* */
-        $items = GenericResource::collection($items);
-        /* */
-
-        switch ($action) {
-            case 'export':
-                $headers = json_decode($request->get('fields'), true);
-                $zname = $request->get('title', '-');
-                return $this->export($zname, $headers, $items);
-            default:
-                return $this->sendResponse(
-                    ['totalPages' => abs(ceil($itemCount / $limit)), 'totalElements' => $itemCount, 'content' => $items,],
-                    __('validation.model.list', ['model' => __('models.$MODEL_NAME_CAMEL$.plural')])
-                );
-        }
-    }
-
-    $DOC_STORE$
-    public function store(Request $request)
-    {
-        $input = $this->validate($request, $MODEL_NAME$::$rules);
-        // $input = $request->all();
-
-        $model = $this->modelRepository->create($input); // $model = new GenericResource($model);
-        return $this->sendResponse(['id' => $model->id], __('validation.model.stored', ['model' => __('models.$MODEL_NAME_CAMEL$.name')]));
-    }
-
-    $DOC_SHOW$
-    public function show($id)
-    {
-        /** @var \$NAMESPACE_MODEL$\$MODEL_NAME$ $model */
-        $model = $this->modelRepository->findWithoutFail($id);
-        if (empty($model)) {
-            return $this->sendError(__('validation.model.not.found', ['model' => __('models.$MODEL_NAME_CAMEL$.name')]));
-        }
-        $model = new GenericResource($model);
-        return $this->sendResponse($model, __('validation.model.showed', ['model' => __('models.$MODEL_NAME_CAMEL$.name')]));
-    }
-
-    $DOC_UPDATE$
-    public function update($id, Request $request)
-    {
-        $input = $this->validate($request, $MODEL_NAME$::$rules);
-        // $input = $request->all();
-
-        /** @var \$NAMESPACE_MODEL$\$MODEL_NAME$ $model */
-        $model = $this->modelRepository->findWithoutFail($id);
-
-        if (empty($model)) {
-            return $this->sendError(__('validation.model.not.found', ['model' => __('models.$MODEL_NAME_CAMEL$.name')]));
-        }
-        $model = $this->modelRepository->update($model, $input); // $model = new GenericResource($MODEL_NAME_CAMEL$);
-        return $this->sendResponse(['id' => $model->id], __('validation.model.updated', ['model' => __('models.$MODEL_NAME_CAMEL$.name')]));
-    }
-
-    $DOC_DESTROY$
-    public function destroy($id)
-    {
-        /** @var \$NAMESPACE_MODEL$\$MODEL_NAME$ $model */
-        $model = $this->modelRepository->findWithoutFail($id);
-
-        if (empty($model)) {
-            return $this->sendError(__('validation.model.not.found', ['model' => __('models.$MODEL_NAME_CAMEL$.name')]));
-        }
-
-        $resp = $this->modelRepository->delete($id);
-
-        return $this->sendResponse(
-                ['id' => $id],
-                __('validation.model.deleted', ['model' => __('models.$MODEL_NAME_CAMEL$.name')]),
-                $resp,
-                $resp ? 200 : 500
-        );
+        $this->rules = $MODEL_NAME$::$rules;
     }
 }
