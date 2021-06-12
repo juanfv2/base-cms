@@ -1,21 +1,21 @@
 [
-	{
-		"id" : 1,
-		"firstName" : "juanfv1",
-		"lastName" : "Demo demo",
-		"phone" : null,
-		"cellPhone" : null,
-		"birthDate" : null,
-		"address" : null,
-		"neighborhood" : null,
-		"email" : "juanfv1@gmail.com",
-		"country_id" : null,
-		"region_id" : null,
-		"city_id" : null,
-		"createdBy" : null,
-		"updatedBy" : null,
-		"created_at" : null,
-		"updated_at" : null,
-		"deleted_at" : null
-	}
+  {
+    "id": 1,
+    "firstName": "juanfv1",
+    "lastName": "Demo demo",
+    "phone": null,
+    "cellPhone": null,
+    "birthDate": null,
+    "address": null,
+    "neighborhood": null,
+    "email": "juanfv1@gmail.com",
+    "country_id": null,
+    "region_id": null,
+    "city_id": null,
+    "createdBy": null,
+    "updatedBy": null,
+    "created_at": null,
+    "updated_at": null,
+    "deleted_at": null
+  }
 ]

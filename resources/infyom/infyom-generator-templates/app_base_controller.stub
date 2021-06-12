@@ -2,13 +2,6 @@
 
 namespace $NAMESPACE_APP$\Http\Controllers;
 
-<<<<<<< HEAD
-use App\Traits\ControllerFiles;
-use App\Traits\ControllerResponses;
-use App\Traits\ControllerImportableExportable;
-
-use App\Http\Controllers\Controller;
-=======
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -19,7 +12,6 @@ use Juanfv2\BaseCms\Criteria\RequestGenericCriteria;
 use Juanfv2\BaseCms\Traits\ControllerFiles;
 use Juanfv2\BaseCms\Traits\ControllerResponses;
 use Juanfv2\BaseCms\Traits\ControllerImportableExportable;
->>>>>>> v8.0
 
 /**
  * @SWG\Swagger(

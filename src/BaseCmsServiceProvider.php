@@ -15,8 +15,6 @@ class BaseCmsServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        // $this->app->make('Juanfv2\BaseCms\CalculatorController');
-        // $this->app->make('Juanfv2\BaseCms\Controllers\Country\CountryAPIController');
     }
 
     /**
@@ -43,7 +41,7 @@ class BaseCmsServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../database/data'       => database_path('data'),
             __DIR__ . '/../database/factories'  => database_path('factories'),
-            __DIR__ . '/../database/migrations' => database_path('migrations'),
+            // __DIR__ . '/../database/migrations' => database_path('migrations'),
             __DIR__ . '/../database/seeders'    => database_path('seeders'),
         ], 'base-cms-databases');
 

@@ -24,8 +24,8 @@ class AngularAutoCompleteComponentGenerator extends BaseGenerator
     {
         $this->commandData = $commandData;
         // dd($this->commandData);
-        $this->path = base_path('angular/') . $this->commandData->config->mCamel . '/';
-        $name = $this->commandData->config->mCamel . '-auto-complete.component.';
+        $this->path = base_path('angular/') . $this->commandData->config->mDashed . '/';
+        $name = $this->commandData->config->mDashed . '-auto-complete.component.';
         $this->fileName = $name . 'ts';
     }
 

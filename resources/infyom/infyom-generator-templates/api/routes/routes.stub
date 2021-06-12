@@ -1,4 +1,4 @@
-Route::apiResource('$MODEL_NAME_PLURAL_SNAKE$', $NAMESPACE_API_CONTROLLER$\$PATH_PREFIX$$MODEL_NAME$APIController::class);
+Route::apiResource('$MODEL_NAME_PLURAL_SNAKE$', $PATH_PREFIX$$MODEL_NAME$APIController::class);
 
 // $router->post('$MODEL_NAME_PLURAL_SNAKE$',           ['as' => '$MODEL_NAME_PLURAL_SNAKE$.store',   'uses' => '$NAMESPACE_API_CONTROLLER$\$PATH_PREFIX$$MODEL_NAME$APIController@store']);
 // $router->get('$MODEL_NAME_PLURAL_SNAKE$',            ['as' => '$MODEL_NAME_PLURAL_SNAKE$.index', 'uses' =>  '$NAMESPACE_API_CONTROLLER$\$PATH_PREFIX$$MODEL_NAME$APIController@index']);

@@ -25,8 +25,8 @@ class AngularListComponentGenerator extends BaseGenerator
         $this->commandData = $commandData;
 
         // dd($this->commandData);
-        $this->path = base_path('angular/') . $this->commandData->config->mCamel . '/';
-        $name = $this->commandData->config->mCamel . '-list.component.';
+        $this->path = base_path('angular/') . $this->commandData->config->mDashed . '/';
+        $name = $this->commandData->config->mDashed . '-list.component.';
         $this->fileName = $name . 'ts';
         $this->fileNameSpec = $name . 'spec.ts';
         $this->fileNameScss = $name . 'scss';
@@ -299,9 +299,9 @@ class AngularListComponentGenerator extends BaseGenerator
 
         $templateData = str_replace('$RELATIONS_AS_SEARCH_FIELDS$',           implode("\n", $this->generateRelationsHtmlSearchFields()), $templateData);
         $templateData = str_replace('$COLUMN_FIELDS$',                        implode("\n", $this->generateHtmlColumnFields()), $templateData);
-        $templateData = str_replace('$COLUMN_FIELDS_RELATIONS$',              implode("\n", $this->generateHtmlColumnFieldsRelations()), $templateData);
+        $templateData = str_replace('$COLUMN_FIELDS_RELATIONS$',              implode("\n", $this->generateHtmlColumnRelationsFields()), $templateData);
         $templateData = str_replace('$COLUMN_VALUES$',                        implode("\n", $this->generateHtmlColumnValues()), $templateData);
-        $templateData = str_replace('$COLUMN_VALUES_RELATIONS$',              implode("\n", $this->generateHtmlColumnValuesRelations()), $templateData);
+        $templateData = str_replace('$COLUMN_VALUES_RELATIONS$',              implode("\n", $this->generateHtmlColumnRelationsValues()), $templateData);
 
         return $templateData;
     }
@@ -319,7 +319,7 @@ class AngularListComponentGenerator extends BaseGenerator
             }
 
             $fieldSnape = Str::camel($field);
-            $fieldDash = Str::slug($field);
+            $fieldDash = Str::kebab($field);
             $relationText = <<<EOF
             <!-- $fieldSnape -->
             <div class="row">
@@ -373,29 +373,61 @@ class AngularListComponentGenerator extends BaseGenerator
     {
         $relations = [];
         foreach ($this->commandData->fields as $field) {
-            $relationText = <<<EOF
-            <th appMultiSortMeta
-                [host]="this"
-                [colName]="labels.{$this->commandData->config->mCamel}.$field->name.field!">
-                {{ labels.{$this->commandData->config->mCamel}.$field->name.label }}
-            </th>
-            EOF;
-            if ($field->isPrimary) {
+            if ($field->inIndex) {
                 $relationText = <<<EOF
                 <th appMultiSortMeta
                     [host]="this"
                     [colName]="labels.{$this->commandData->config->mCamel}.$field->name.field!">
-                    #
+                    {{ labels.{$this->commandData->config->mCamel}.$field->name.label }}
                 </th>
                 EOF;
+                if ($field->isPrimary) {
+                    $relationText = <<<EOF
+                    <th appMultiSortMeta
+                        [host]="this"
+                        [colName]="labels.{$this->commandData->config->mCamel}.$field->name.field!">
+                        #
+                    </th>
+                    EOF;
+                }
+                $relations[] = $relationText;
             }
-            $relations[] = $relationText;
         }
 
         return $relations;
     }
 
-    private function generateHtmlColumnFieldsRelations()
+    private function generateHtmlColumnValues()
+    {
+        $relations = [];
+        foreach ($this->commandData->fields as $field) {
+            if ($field->inIndex) {
+                $relationText = <<<EOF
+                <td>
+                    <strong class="d-block d-md-none">{{ labels.{$this->commandData->config->mCamel}.$field->name.label }}</strong>
+                    {{ model.$field->name }}
+                </td>
+                EOF;
+
+                if ($field->isPrimary) {
+                    $relationText = <<<EOF
+                    <td class="td-actions">
+                        <button *ngIf="hasPermission2show"
+                                (click)="onRowSelect(model)"
+                                type="button"
+                                class="btn btn-sm btn-info m-1">
+                            {{ model.$field->name }}
+                        </button>
+                    </td>
+                    EOF;
+                }
+                $relations[] = $relationText;
+            }
+        }
+        return $relations;
+    }
+
+    private function generateHtmlColumnRelationsFields()
     {
         $relations = [];
         foreach ($this->commandData->relations as $relation) {
@@ -420,37 +452,7 @@ class AngularListComponentGenerator extends BaseGenerator
         return $relations;
     }
 
-    private function generateHtmlColumnValues()
-    {
-        $relations = [];
-        foreach ($this->commandData->fields as $field) {
-
-            $relationText = <<<EOF
-                <td>
-                <strong class="d-block d-md-none">{{ labels.{$this->commandData->config->mCamel}.$field->name.label }}</strong>
-                {{ model.$field->name }}
-                </td>
-            EOF;
-
-            if ($field->isPrimary) {
-                $relationText = <<<EOF
-                    <td class="td-actions">
-                        <button *ngIf="hasPermission2show"
-                                (click)="onRowSelect(model)"
-                                type="button"
-                                class="btn btn-sm btn-info m-1">
-                            {{ model.$field->name }}
-                        </button>
-                    </td>
-                EOF;
-            }
-            $relations[] = $relationText;
-        }
-
-        return $relations;
-    }
-
-    private function generateHtmlColumnValuesRelations()
+    private function generateHtmlColumnRelationsValues()
     {
         $relations = [];
         foreach ($this->commandData->relations as $relation) {
@@ -462,7 +464,7 @@ class AngularListComponentGenerator extends BaseGenerator
                 continue;
             }
             $fieldCamel = Str::camel($field);
-            $fieldDash = Str::slug($field);
+            $fieldDash = Str::kebab($field);
             $relationText = <<<EOF
             <td>
                 <strong class="d-block d-md-none">{{ labels.$fieldCamel.ownName }}</strong>

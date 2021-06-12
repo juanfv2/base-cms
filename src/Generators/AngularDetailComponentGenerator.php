@@ -25,8 +25,8 @@ class AngularDetailComponentGenerator extends BaseGenerator
     {
         $this->commandData = $commandData;
         // dd($this->commandData);
-        $this->path = base_path('angular/') . $this->commandData->config->mCamel . '/';
-        $name = $this->commandData->config->mCamel . '-detail.component.';
+        $this->path = base_path('angular/') . $this->commandData->config->mDashed . '/';
+        $name = $this->commandData->config->mDashed . '-detail.component.';
         $this->fileName = $name . 'ts';
         $this->fileNameSpec = $name . 'spec.ts';
         $this->fileNameScss = $name . 'scss';
@@ -131,10 +131,11 @@ class AngularDetailComponentGenerator extends BaseGenerator
             }
 
             $fieldCamel = Str::camel($field);
+            $fieldSnake = Str::snake($field);
             $relationText = <<<EOF
-            modelTemp.{$fieldCamel}_id = null;
+            modelTemp.{$fieldSnake}_id = null;
             if (modelTemp.$fieldCamel) {
-                modelTemp.{$fieldCamel}_id = modelTemp.$fieldCamel.id;
+                modelTemp.{$fieldSnake}_id = modelTemp.$fieldCamel.id;
                 delete modelTemp.$fieldCamel;
             }
             EOF;
@@ -158,16 +159,17 @@ class AngularDetailComponentGenerator extends BaseGenerator
             }
 
             $fieldCamel = Str::camel($field);
+            $fieldCamelPlural = Str::plural($fieldCamel);
             $relationText = <<<EOF
             update2$fieldCamel(\$e: any): void {
                 // do: something like that?
-                // this.{$fieldCamel}AreRequired   = this.{$this->commandData->config->mCamel}.$fieldCamel.length > 0 ? '-' : '';
-                // this.selectables{$field} = this.{$this->commandData->config->mCamel}.$fieldCamel;
-                // this.avoidables{$field}  = [...new Set([...k.{$this->commandData->config->mCamel}Clients, ...this.selectables{$field}])];
+                // this.{$fieldCamelPlural}AreRequired   = this.{$this->commandData->config->mCamel}.$fieldCamelPlural.length > 0 ? '-' : '';
+                // this.selectables{$fieldCamelPlural} = this.{$this->commandData->config->mCamel}.$fieldCamelPlural;
+                // this.avoidables{$fieldCamelPlural}  = [...new Set([...k.{$this->commandData->config->mCamel}Clients, ...this.selectables{$fieldCamelPlural}])];
             }
 
             rm2{$fieldCamel}($fieldCamel: $field): void {
-                this.{$this->commandData->config->mCamel}.$fieldCamel = this.{$this->commandData->config->mCamel}.$fieldCamel.filter(r => r.id !== $fieldCamel.id);
+                this.{$this->commandData->config->mCamel}.$fieldCamelPlural = this.{$this->commandData->config->mCamel}.$fieldCamelPlural.filter(r => r.id !== $fieldCamel.id);
                 // this.update2$fieldCamel('');
             }
 
@@ -198,102 +200,105 @@ class AngularDetailComponentGenerator extends BaseGenerator
         $relations = [];
         foreach ($this->commandData->fields as $field) {
 
-            if ($field->isPrimary) {
-                continue;
-            }
-            $relationText = "<!-- $field->name . init -->\n";
-            $fieldCamel = Str::camel($field->name);
-            $requiredTextProperties = '';
-            $requiredTextAsterisk = '';
-            $requiredText = '';
-            if ($field->isNotNull) {
-                $requiredTextAsterisk = '*';
-                $requiredTextProperties = "required\nplaceholder=\"Requerido\"";
+            // if ($field->isPrimary) {
+            //     continue;
+            // }
+            if ($field->inForm) {
+                $relationText = "<!-- $field->name . init -->\n";
+                $fieldCamel = Str::camel($field->name);
+                $requiredTextProperties = '';
+                $requiredTextAsterisk = '';
+                $requiredText = '';
+                $required = strpos($field->validations, 'required') !== false;
+                if ($required) {
+                    $requiredTextAsterisk = '*';
+                    $requiredTextProperties = "required\nplaceholder=\"Requerido\"";
 
-                $requiredText = <<<EOF
-                <div *ngIf="!{$this->commandData->config->mCamel}_$fieldCamel.valid && {$this->commandData->config->mCamel}_$fieldCamel.dirty && {$this->commandData->config->mCamel}_$fieldCamel.errors?.required"
-                     class="alert alert-danger form-text"
-                     role="alert">
-                    {{labels.{$this->commandData->config->mCamel}.$field->name.label}} es requerido
-                </div>
-                EOF;
-            }
-
-            $relationText .= "<div class=\"form-group\">\n";
-            $relationText .= "<label for=\"{$this->commandData->config->mCamel}-$field->name\">{{labels.{$this->commandData->config->mCamel}.$field->name.label}} $requiredTextAsterisk</label>\n";
-
-            switch ($field->htmlType) {
-                case 'textarea':
-                    $relationText .= <<<EOF
-                    <textarea id="{$this->commandData->config->mCamel}-$field->name"
-                              name="{$this->commandData->config->mCamel}-$field->name"
-                              [(ngModel)]="{$this->commandData->config->mCamel}.$field->name"
-                              #{$this->commandData->config->mCamel}_$fieldCamel="ngModel"
-                              class="form-control"
-                              rows="3"
-                              $requiredTextProperties></textarea>
-                    EOF;
-                    break;
-                case 'boolean':
-                    $requiredText = '';
-                    $relationText .= <<<EOF
-                    <div class="d-flex">
-                        <label for="{$this->commandData->config->mCamel}-$field->name"
-                               class="switch">
-                               <input id="{$this->commandData->config->mCamel}-$field->name"
-                                      name="{$this->commandData->config->mCamel}-$field->name"
-                                      [(ngModel)]="{$this->commandData->config->mCamel}.$field->name"
-                                      #{$this->commandData->config->mCamel}_$fieldCamel="ngModel"
-                                      type="checkbox">
-                            <span class="slider round"></span>
-                        </label>
-                        <span class="p-1">{{ {$this->commandData->config->mCamel}.$field->name ? 'Activo' : 'Desactivo' }}</span>
+                    $requiredText = <<<EOF
+                    <div *ngIf="!{$this->commandData->config->mCamel}_$fieldCamel.valid && {$this->commandData->config->mCamel}_$fieldCamel.dirty && {$this->commandData->config->mCamel}_$fieldCamel.errors?.required"
+                         class="alert alert-danger form-text"
+                         role="alert">
+                        {{labels.{$this->commandData->config->mCamel}.$field->name.label}} es requerido
                     </div>
                     EOF;
-                    break;
-                case 'date-time':
-                case 'datetime':
-                case 'date':
-                    $relationText .= <<<EOF
-                    <div class="input-group">
+                }
+
+                $relationText .= "<div class=\"form-group\">\n";
+                $relationText .= "<label for=\"{$this->commandData->config->mCamel}-$field->name\">{{labels.{$this->commandData->config->mCamel}.$field->name.label}} $requiredTextAsterisk</label>\n";
+
+                switch ($field->htmlType) {
+                    case 'textarea':
+                        $relationText .= <<<EOF
+                        <textarea id="{$this->commandData->config->mCamel}-$field->name"
+                                  name="{$this->commandData->config->mCamel}-$field->name"
+                                  [(ngModel)]="{$this->commandData->config->mCamel}.$field->name"
+                                  #{$this->commandData->config->mCamel}_$fieldCamel="ngModel"
+                                  class="form-control"
+                                  rows="3"
+                                  $requiredTextProperties></textarea>
+                        EOF;
+                        break;
+                    case 'checkbox':
+                        $requiredText = '';
+                        $relationText .= <<<EOF
+                        <div class="d-flex">
+                            <label for="{$this->commandData->config->mCamel}-$field->name"
+                                   class="switch">
+                                   <input id="{$this->commandData->config->mCamel}-$field->name"
+                                          name="{$this->commandData->config->mCamel}-$field->name"
+                                          [(ngModel)]="{$this->commandData->config->mCamel}.$field->name"
+                                          #{$this->commandData->config->mCamel}_$fieldCamel="ngModel"
+                                          type="checkbox">
+                                <span class="slider round"></span>
+                            </label>
+                            <span class="p-1">{{ {$this->commandData->config->mCamel}.$field->name ? 'Activo' : 'Desactivo' }}</span>
+                        </div>
+                        EOF;
+                        break;
+                    case 'date-time':
+                    case 'datetime':
+                    case 'date':
+                        $relationText .= <<<EOF
+                        <div class="input-group">
+                            <input id="{$this->commandData->config->mCamel}-$field->name"
+                                   name="{$this->commandData->config->mCamel}-$field->name"
+                                   [(ngModel)]="{$this->commandData->config->mCamel}.$field->name"
+                                   #{$this->commandData->config->mCamel}_$fieldCamel="ngModel"
+                                   #{$this->commandData->config->mCamel}_{$fieldCamel}_date="ngbDatepicker"
+                                   class="form-control"
+                                   placeholder="yyyy-mm-dd"
+                                   ngbDatepicker>
+                            <div class="input-group-append" (click)="{$this->commandData->config->mCamel}_{$fieldCamel}_date.toggle()">
+                                <span class="input-group-text"><i class="fa fa-calendar text-info"></i></span>
+                            </div>
+                        </div>
+                        <div *ngIf="!{$this->commandData->config->mCamel}_$fieldCamel.valid && {$this->commandData->config->mCamel}_$fieldCamel.dirty && {$this->commandData->config->mCamel}_$fieldCamel.errors?.ngbDate?.invalid"
+                            class="alert alert-danger form-text"
+                            role="alert">
+                            {{labels.{$this->commandData->config->mCamel}.$field->name.label}} fecha invalida
+                        </div>
+                        EOF;
+                        break;
+
+                    default: // text, number, email, password
+                        $relationText .= <<<EOF
                         <input id="{$this->commandData->config->mCamel}-$field->name"
                                name="{$this->commandData->config->mCamel}-$field->name"
-                               [(ngModel)]="{$this->commandData->config->mCamel}.$field->name"
+                               [(ngModel)]="{$this->commandData->config->mCamel}.$fieldCamel"
                                #{$this->commandData->config->mCamel}_$fieldCamel="ngModel"
-                               #{$this->commandData->config->mCamel}_{$fieldCamel}_date="ngbDatepicker"
                                class="form-control"
-                               placeholder="yyyy-mm-dd"
-                               ngbDatepicker>
-                        <div class="input-group-append" (click)="{$this->commandData->config->mCamel}_{$fieldCamel}_date.toggle()">
-                            <span class="input-group-text"><i class="fa fa-calendar text-info"></i></span>
-                        </div>
-                    </div>
-                    <div *ngIf="!{$this->commandData->config->mCamel}_$fieldCamel.valid && {$this->commandData->config->mCamel}_$fieldCamel.dirty && {$this->commandData->config->mCamel}_$fieldCamel.errors?.ngbDate?.invalid"
-                        class="alert alert-danger form-text"
-                        role="alert">
-                        {{labels.{$this->commandData->config->mCamel}.$field->name.label}} fecha invalida
-                    </div>
-                    EOF;
-                    break;
+                               type="$field->htmlType"
+                               $requiredTextProperties />
+                        EOF;
+                        break;
+                }
 
-                default: // text, number, email, password
-                    $relationText .= <<<EOF
-                    <input id="{$this->commandData->config->mCamel}-$field->name"
-                           name="{$this->commandData->config->mCamel}-$field->name"
-                           [(ngModel)]="{$this->commandData->config->mCamel}.$fieldCamel"
-                           #{$this->commandData->config->mCamel}_$fieldCamel="ngModel"
-                           class="form-control"
-                           type="$field->htmlType"
-                           $requiredTextProperties />
-                    EOF;
-                    break;
+                $relationText .= $requiredText;
+                $relationText .= "\n</div>";
+                $relationText .= "\n<!-- $field->name . end -->";
+
+                $relations[] = $relationText;
             }
-
-            $relationText .= $requiredText;
-            $relationText .= "\n</div>";
-            $relationText .= "\n<!-- $field->name . end -->";
-
-            $relations[] = $relationText;
         }
         return $relations;
     }
@@ -375,6 +380,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
     private function htmlRelations_mtm($field)
     {
         $fieldCamel = Str::camel($field);
+        $fieldCamelPlural = Str::plural($fieldCamel);
         $fieldDash = Str::kebab($field);
         $plural = Str::plural($field);
 
@@ -398,11 +404,11 @@ class AngularDetailComponentGenerator extends BaseGenerator
                                               [currentPage]="mApi.show()"
                                               (oSelected)="update2{$fieldCamel}(\$event)"
                                               [avoidables]="avoidables$plural"
-                                              [(ngModel)]="{$this->commandData->config->mCamel}.$plural">
+                                              [(ngModel)]="{$this->commandData->config->mCamel}.$fieldCamelPlural">
                 </app-$fieldDash-auto-complete>
                 <label>$plural seleccionados:</label>
                 <ul class="list-group">
-                    <li *ngFor="let model of {$this->commandData->config->mCamel}.{$fieldCamel}"
+                    <li *ngFor="let model of {$this->commandData->config->mCamel}.{$fieldCamelPlural}"
                         class="list-group-item d-flex justify-content-between align-items-center">
                         {{ model.name }} <!-- reemplazar "name" por campo del modelo $fieldCamel -->
                         <div class="input-group-append">
@@ -446,6 +452,9 @@ class AngularDetailComponentGenerator extends BaseGenerator
                 $fieldText .= '?';
             }
             switch ($field->htmlType) {
+                case 'checkbox':
+                    $fieldText .= ': boolean;';
+                    break;
                 case 'number':
                     $fieldText .= ': number;';
                     break;
@@ -492,17 +501,19 @@ class AngularDetailComponentGenerator extends BaseGenerator
 
             if ($field->isPrimary) {
                 $mPrimaryKey = $field->name;
-                $fieldText .= '?';
             }
             switch ($field->htmlType) {
+                case 'boolean':
+                    $fieldText .= " 'boolean'),";
+                    break;
                 case 'date':
-                    $fieldText .= ": 'date'),";
+                    $fieldText .= " 'date'),";
                     break;
                 case 'number':
-                    $fieldText .= ": 'number'),";
+                    $fieldText .= " 'number'),";
                     break;
                 default:
-                    $fieldText .= ": 'string'),";
+                    $fieldText .= " 'string'),";
                     break;
             }
             $fields[] =  $fieldText;
@@ -517,7 +528,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
 
             $fields[] =  "";
             $fields[] =  "{$fieldCamel}_id: new DBType(`$title #`, '$fieldCamel.$fieldFk', 'number'),";
-            $fields[] =  "{$fieldCamel}Name: new DBType(`$title`, '{$fieldCamel}Name'),";
+            $fields[] =  "{$fieldCamel}Name: new DBType(`$title`, '{$fieldCamel}Name', 'string', true, false),";
         }
 
         $fields[] =  "},\n";
@@ -528,7 +539,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
         $fields[] =  "{$this->commandData->config->mName}AutoCompleteComponent,\n";
         $fields[] =  "// admin-angular/src/app/core/modules/main/main-routing.module.ts\n";
         $fields[] =  "{ path: `\${k.routes.{$this->commandData->config->mCamelPlural}}/:id`, component: {$this->commandData->config->mName}DetailComponent },";
-        $fields[] =  "{ path: k.routes.{$this->commandData->config->mSnakePlural}, component: {$this->commandData->config->mName}ListComponent },";
+        $fields[] =  "{ path: k.routes.{$this->commandData->config->mCamelPlural}, component: {$this->commandData->config->mName}ListComponent },";
 
         $fields[] =  "*/";
         return $fields;
