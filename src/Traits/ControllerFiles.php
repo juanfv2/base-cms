@@ -85,7 +85,7 @@ trait ControllerFiles
      * @param boolean $color
      * @return \Illuminate\Http\JsonResponse
      */
-    public function fileUpload($tableName, $fieldName, $id = 0, $color = false, Request $request)
+    public function fileUpload(Request $request, $tableName, $fieldName, $id = 0, $color = false)
     {
         ini_set('upload_max_filesize', '-1');
         ini_set('memory_limit', '-1');
