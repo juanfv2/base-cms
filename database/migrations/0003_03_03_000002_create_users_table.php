@@ -28,9 +28,9 @@ class CreateUsersTable extends Migration
             $table->string('uid')->nullable();
 
             $table->foreignId('role_id')->constrained('auth_roles')->onCascade('no action');
-            $table->foreignId('country_id')->constrained()->onDelete('cascade');
-            $table->foreignId('region_id')->constrained()->onDelete('cascade');
-            $table->foreignId('city_id')->constrained()->onDelete('cascade');
+            $table->foreignId('country_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId('region_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId('city_id')->nullable()->constrained()->onDelete('cascade');
 
             $table->text('api_token')->nullable();
             $table->string('remember_token')->nullable(); // aqui "$table->rememberToken();" >>> nooo!!!

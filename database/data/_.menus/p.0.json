@@ -1,0 +1,24 @@
+[
+  {
+    "id": 1,
+    "name": "---",
+    "namePlural": "Sistema",
+    "namePluralBackEnd": "#system#",
+    "icon": "tools",
+    "isSection": 1,
+    "isVisible": 1,
+    "permission_id": 0,
+    "orderInMenu": 0
+  },
+  {
+    "id": 2,
+    "name": "---",
+    "namePlural": "Clientes",
+    "namePluralBackEnd": "#accounts#",
+    "icon": "users-cog",
+    "isSection": 1,
+    "isVisible": 1,
+    "permission_id": 0,
+    "orderInMenu": 1
+  }
+]

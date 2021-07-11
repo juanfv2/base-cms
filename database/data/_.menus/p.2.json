@@ -1,0 +1,13 @@
+[
+  {
+    "isGroup": true,
+    "name": "Cuenta",
+    "namePlural": "Cuentas",
+    "namePluralBackEnd": "accounts",
+    "icon": "address-book",
+    "isSection": 0,
+    "isVisible": 1,
+    "permission_id": 2,
+    "orderInMenu": 0
+  }
+]
