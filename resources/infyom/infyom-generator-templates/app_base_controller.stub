@@ -41,24 +41,22 @@ class AppBaseController extends Controller
         $limit  = $request->get('limit', -1);
 
         $this->modelRepository->pushCriteria(new RequestGenericCriteria($request));
-        $itemCount = $this->modelRepository->count();
-
-        if ($action != 'export') {
-            $this->modelRepository->pushCriteria(new LimitOffsetCriteria($request));
-        }
-
-        $items = $this->modelRepository->all();
-
-        /* */
-        $items = GenericResource::collection($items);
-        /* */
 
         switch ($action) {
             case 'export':
                 $headers = json_decode($request->get('fields'), true);
                 $zname = $request->get('title', '-');
-                return $this->export($zname, $headers, $items);
+                return $this->export($zname, $headers, $this->modelRepository);
             default:
+                $itemCount = $this->modelRepository->count();
+
+                $this->modelRepository->pushCriteria(new LimitOffsetCriteria($request));
+
+                $items = $this->modelRepository->all();
+
+                /* */
+                $items = GenericResource::collection($items);
+                /* */
                 return $this->sendResponse(
                     ['totalPages' => abs(ceil($itemCount / $limit)), 'totalElements' => $itemCount, 'content' => $items,],
                     __('validation.model.list', ['model' => __("models.{$this->modelNameCamel}.plural")])
@@ -147,6 +145,6 @@ class AppBaseController extends Controller
 
         $resp = $this->modelRepository->delete($id);
 
-        return $this->sendResponse(['id' => $id], __('validation.model.deleted', ['model' => __("models.{$this->modelNameCamel}.name")]));
+        return $this->sendResponse(['id' => $id, 'success' => $resp], __('validation.model.deleted', ['model' => __("models.{$this->modelNameCamel}.name")]));
     }
 }

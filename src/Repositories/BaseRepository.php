@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories;
+namespace Juanfv2\BaseCms\Repositories;
 
 use Exception;
 use Illuminate\Support\Arr;
@@ -8,7 +8,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Container\Container as Application;
-
 use Juanfv2\BaseCms\Contracts\RepositoryInterface;
 
 /**
@@ -189,6 +188,19 @@ abstract class BaseRepository implements RepositoryInterface
         return $this;
     }
 
+    public function distinct(array $where = ['*'], $columns = ['*'])
+    {
+        $this->applyCriteria();
+        // $this->applyScope();
+
+        $results = $this->model->distinct($where)->get($columns);
+
+        $this->resetModel();
+        // $this->resetScope();
+
+        return $results;
+    }
+
     /**
      * Retrieve all data of repository
      *
@@ -206,6 +218,39 @@ abstract class BaseRepository implements RepositoryInterface
         } else {
             $results = $this->model->all($columns);
         }
+
+        $this->resetModel();
+        // $this->resetScope();
+
+        return $results;
+    }
+
+    public function distinctForChunk(array $where = ['*'], $columns = '*')
+    {
+        $this->applyCriteria();
+        // $this->applyScope();
+
+        $results = $this->model->distinct($where);
+
+        $this->resetModel();
+        // $this->resetScope();
+
+        return $results;
+    }
+
+    /**
+     * Retrieve all data of repository
+     *
+     * @param array $columns
+     *
+     * @return mixed
+     */
+    public function allForChunk($columns = ['*'])
+    {
+        $this->applyCriteria();
+        // $this->applyScope();
+
+        $results = $this->model;
 
         $this->resetModel();
         // $this->resetScope();
@@ -255,6 +300,7 @@ abstract class BaseRepository implements RepositoryInterface
 
         return $model;
     }
+
     public function findWithoutFail($id, $columns = ['*'])
     {
         try {
@@ -262,6 +308,27 @@ abstract class BaseRepository implements RepositoryInterface
         } catch (Exception $e) {
             return;
         }
+    }
+
+    /**
+     * Find data by multiple fields
+     *
+     * @param array $where
+     * @param array $columns
+     *
+     * @return mixed
+     */
+    public function findWhere(array $where, $columns = ['*'])
+    {
+        $this->applyCriteria();
+        // $this->applyScope();
+
+        $this->applyConditions($where);
+
+        $model = $this->model->get($columns);
+        $this->resetModel();
+
+        return $model;
     }
 
     public function create(array $attributes)
@@ -375,6 +442,40 @@ abstract class BaseRepository implements RepositoryInterface
                 }
             }
         }
+
+        return $model;
+    }
+
+    /**
+     * Update or Create an entity in repository
+     *
+     * @throws ValidatorException
+     *
+     * @param array $attributes
+     * @param array $values
+     *
+     * @return mixed
+     */
+    public function updateOrCreate(array $attributes, array $values = [])
+    {
+        // $this->applyScope();
+
+        // if (!is_null($this->validator)) {
+        //     $this->validator->with(array_merge($attributes, $values))->passesOrFail(ValidatorInterface::RULE_CREATE);
+        // }
+
+        // $temporarySkipPresenter = $this->skipPresenter;
+
+        // $this->skipPresenter(true);
+
+        // event(new RepositoryEntityCreating($this, $attributes));
+
+        $model = $this->model->updateOrCreate($attributes, $values);
+
+        // $this->skipPresenter($temporarySkipPresenter);
+        $this->resetModel();
+
+        // event(new RepositoryEntityUpdated($this, $model));
 
         return $model;
     }
