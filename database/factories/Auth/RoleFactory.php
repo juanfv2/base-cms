@@ -24,8 +24,19 @@ class RoleFactory extends Factory
         return [
             'name' => $this->faker->word,
             'description' => $this->faker->word,
-            'createdBy' => $this->faker->numberBetween(1, 3),
-            'updatedBy' => $this->faker->numberBetween(1, 3),
         ];
+    }
+
+    /**
+     * Indicate that the user is admin.
+     */
+    public function admin(): Factory
+    {
+        return $this->state(function () {
+            return [
+                'name' => 'admin',
+                'description' => $this->faker->word,
+            ];
+        });
     }
 }

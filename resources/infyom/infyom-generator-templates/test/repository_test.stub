@@ -2,9 +2,10 @@
 
 namespace $NAMESPACE_REPOSITORIES_TESTS$;
 
+use $NAMESPACE_MODEL$\$MODEL_NAME$;
+
 use $NAMESPACE_TESTS$\TestCase;
 use $NAMESPACE_TESTS$\ApiTestTrait;
-use $NAMESPACE_MODEL$\$MODEL_NAME$;
 
 use Illuminate\Support\Facades\App;
 use $NAMESPACE_REPOSITORY$\$MODEL_NAME$Repository;

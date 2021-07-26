@@ -29,7 +29,7 @@ class XFileFactory extends Factory
             'nameOriginal' => $this->faker->word,
             'publicPath' => $this->faker->word,
             'extension' => $this->faker->countryCode,
-            'data' => $this->faker->word,
+            'data' => $this->faker->text,
         ];
     }
 }

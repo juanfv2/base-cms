@@ -21,9 +21,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->timestamp('email_verified_at')->nullable();
             $table->boolean('disabled')->default(0);
-            $table->boolean('userCanDownload')->default(1);
             $table->string('phoneNumber')->nullable();
-            $table->string('photoUrl')->nullable()->default('');
 
             $table->string('uid')->nullable();
 
@@ -33,7 +31,7 @@ class CreateUsersTable extends Migration
             $table->foreignId('city_id')->nullable()->constrained()->onDelete('cascade');
 
             $table->text('api_token')->nullable();
-            $table->string('remember_token')->nullable(); // aqui "$table->rememberToken();" >>> nooo!!!
+            $table->string('remember_token')->nullable(); // aquí "$table->rememberToken();" >>> nooo!!!
             $table->unsignedBigInteger('createdBy')->nullable();
             $table->unsignedBigInteger('updatedBy')->nullable();
             $table->timestamps();

@@ -2,10 +2,12 @@
 
 namespace $NAMESPACE_MODEL$;
 
-use App\Traits\UserResponsible;
+use Juanfv2\BaseCms\Traits\UserResponsible;
+
 use Illuminate\Database\Eloquent\Model;
-$SOFT_DELETE_IMPORT$
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+$SOFT_DELETE_IMPORT$
+
 $DOCS$
 class $MODEL_NAME$ extends Model
 {
