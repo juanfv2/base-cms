@@ -11,8 +11,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Crypt;
 
-use App\Http\Resources\GenericResource;
 use App\Http\Controllers\AppBaseController;
+use Juanfv2\BaseCms\Resources\GenericResource;
 
 /**
  * Class LoginAPIController
@@ -39,7 +39,7 @@ class ZLoginAPIController extends AppBaseController
     {
         $r = $this->attemptLogout();
         // return response()->json(['bye' => $r], 204);
-        return $this->sendResponse(__('user.bye'), null, $r);
+        return $this->sendResponse(__('user.bye'), null, $r, 204);
     }
 
     // Utilities

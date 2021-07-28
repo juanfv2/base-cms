@@ -5,14 +5,15 @@ namespace App\Http\Controllers\API\Auth;
 use Carbon\Carbon;
 use App\Models\Auth\User;
 use Illuminate\Support\Str;
+
 use App\Models\Auth\Account;
 use Illuminate\Http\Request;
 use App\Models\Auth\XUserVerified;
 
-use App\Http\Resources\GenericResource;
 use App\Repositories\Auth\UserRepository;
 use App\Http\Controllers\AppBaseController;
 use App\Repositories\Auth\AccountRepository;
+use Juanfv2\BaseCms\Resources\GenericResource;
 
 /**
  * Class ZRegisterAPIController
@@ -23,89 +24,14 @@ class ZRegisterAPIController extends AppBaseController
 
     /** @var  UserRepository */
     private $userRepository;
-    /** @var  AccountRepository */
-    private $accountRepository;
     /** @var  User */
     private $user;
 
-    function __construct(UserRepository $userRepo, AccountRepository $customerRepo)
+    function __construct(UserRepository $userRepo)
     {
         $this->userRepository = $userRepo;
-        $this->accountRepository = $customerRepo;
     }
 
-    /**
-     * @param Request $request
-     * @return Response
-     *
-     * @SWG\Post(
-     *      path="/register",
-     *      summary="Store a newly created Account in storage",
-     *      tags={"Register"},
-     *      description="Store Account",
-     *      produces={"application/json"},
-     *      @SWG\Parameter(
-     *          name="body",
-     *          in="body",
-     *          description="Account that should be stored",
-     *          required=false,
-     *          @SWG\Schema(
-     *              type="object",
-     *              @SWG\Property(
-     *                  property="name",
-     *                  type="string"
-     *              ),
-     *              @SWG\Property(
-     *                  property="password",
-     *                  type="string"
-     *              ),
-     *              @SWG\Property(
-     *                  property="password_confirmation",
-     *                  type="string"
-     *              ),
-     *              @SWG\Property(
-     *                  property="firstName",
-     *                  type="string"
-     *              ),
-     *              @SWG\Property(
-     *                  property="lastName",
-     *                  type="string"
-     *              ),
-     *              @SWG\Property(
-     *                  property="email",
-     *                  type="string"
-     *              ),
-     *              @SWG\Property(
-     *                  property="uid",
-     *                  type="string"
-     *              ),
-     *              @SWG\Property(
-     *                  property="role_id",
-     *                  type="integer"
-     *              ),
-     *          )
-     *      ),
-     *      @SWG\Response(
-     *          response=200,
-     *          description="successful operation",
-     *          @SWG\Schema(
-     *              type="object",
-     *              @SWG\Property(
-     *                  property="success",
-     *                  type="boolean"
-     *              ),
-     *              @SWG\Property(
-     *                  property="data",
-     *                  ref="#/definitions/Account"
-     *              ),
-     *              @SWG\Property(
-     *                  property="message",
-     *                  type="string"
-     *              )
-     *          )
-     *      )
-     * )
-     */
     function register(Request $request)
     {
         $rules      = User::$rules + Account::$rules;
@@ -130,7 +56,6 @@ class ZRegisterAPIController extends AppBaseController
      *
      * @param Request $request
      * @return array
-     * @throws \Prettus\Validator\Exceptions\ValidatorException
      */
     function registerUser($input)
     {
@@ -153,9 +78,8 @@ class ZRegisterAPIController extends AppBaseController
     /**
      * Si uid tiene un valor el usuario viene de red social, ej. facebook
      *
-     * @param Request $request
+     * @param Array $request
      * @return $this|\Illuminate\Database\Eloquent\Model|null|static
-     * @throws \Prettus\Validator\Exceptions\ValidatorException
      */
     function registerUserByUid($input)
     {
@@ -200,7 +124,11 @@ class ZRegisterAPIController extends AppBaseController
         }
 
         return $this->sendResponse(
-            ['success' => $isValid, 'title' => __('messages.mail.welcome', ['app_name' => config('app.name')]), 'description' => $response],
+            [
+                'success' => $isValid,
+                'title' => __('messages.mail.welcome', ['app_name' => config('app.name')]),
+                'description' => $response
+            ],
             __('messages.mail.welcome', ['app_name' => config('app.name')]),
             $isValid ? 200 : 500
         );
@@ -228,9 +156,9 @@ class ZRegisterAPIController extends AppBaseController
         // -- // 3224       ss
         // -- // 2317133    ss
 
-        $model = $this->accountRepository->registerAccountWithUser($this->userRepository, $input);
+        $model = $this->userRepository->auth_accounts_create_with($input, null);
 
-        $this->user = $model->user;
+        $this->user = $model;
 
         return $this->user;
     }

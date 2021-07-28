@@ -11,16 +11,18 @@ use App\Repositories\Auth\PermissionRepository;
 
 /**
  * Class RoleController
- * @package App\Http\Controllers\API
+ *
+ * @package App\Http\Controllers\API\Auth
  */
 class RoleAPIController extends AppBaseController
 {
     /** @var  PermissionRepository */
     private $permissionRepository;
+
     /** @var  RoleRepository */
     public $modelRepository;
     public $rules;
-    public $modelNameCamel = 'role';
+    public $modelNameCamel = 'Role';
 
     public function __construct(RoleRepository $modelRepo, PermissionRepository $pRepo)
     {

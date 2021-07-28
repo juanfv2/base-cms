@@ -9,7 +9,8 @@ use App\Repositories\Auth\XFileRepository;
 
 /**
  * Class XFileController
- * @package App\Http\Controllers\API
+ *
+ * @package App\Http\Controllers\API\Auth
  */
 class XFileAPIController extends AppBaseController
 {
