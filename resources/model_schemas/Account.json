@@ -13,9 +13,9 @@
   },
   {
     "name": "firstName",
-    "dbType": "string,255",
+    "dbType": "string,191",
     "htmlType": "text",
-    "validations": "required|string|max:255|string|max:255",
+    "validations": "required|string|max:191|string|max:191",
     "searchable": true,
     "fillable": true,
     "primary": false,
@@ -25,21 +25,9 @@
   },
   {
     "name": "lastName",
-    "dbType": "string,255",
+    "dbType": "string,191",
     "htmlType": "text",
-    "validations": "required|string|max:255|string|max:255",
-    "searchable": true,
-    "fillable": true,
-    "primary": false,
-    "inForm": true,
-    "inIndex": true,
-    "inView": true
-  },
-  {
-    "name": "phone",
-    "dbType": "string,255:nullable",
-    "htmlType": "text",
-    "validations": "nullable|string|max:255|nullable|string|max:255",
+    "validations": "required|string|max:191|string|max:191",
     "searchable": true,
     "fillable": true,
     "primary": false,
@@ -49,9 +37,9 @@
   },
   {
     "name": "cellPhone",
-    "dbType": "string,255:nullable",
+    "dbType": "string,191:nullable",
     "htmlType": "text",
-    "validations": "nullable|string|max:255|nullable|string|max:255",
+    "validations": "nullable|string|max:191|nullable|string|max:191",
     "searchable": true,
     "fillable": true,
     "primary": false,
@@ -73,9 +61,9 @@
   },
   {
     "name": "address",
-    "dbType": "string,255:nullable",
+    "dbType": "string,191:nullable",
     "htmlType": "text",
-    "validations": "nullable|string|max:255|nullable|string|max:255",
+    "validations": "nullable|string|max:191|nullable|string|max:191",
     "searchable": true,
     "fillable": true,
     "primary": false,
@@ -85,9 +73,9 @@
   },
   {
     "name": "neighborhood",
-    "dbType": "string,255:nullable",
+    "dbType": "string,191:nullable",
     "htmlType": "text",
-    "validations": "nullable|string|max:255|nullable|string|max:255",
+    "validations": "nullable|string|max:191|nullable|string|max:191",
     "searchable": true,
     "fillable": true,
     "primary": false,
@@ -96,46 +84,10 @@
     "inView": true
   },
   {
-    "name": "email",
-    "dbType": "string,255",
-    "htmlType": "text",
-    "validations": "required|string|max:255|string|max:255",
-    "searchable": true,
-    "fillable": true,
-    "primary": false,
-    "inForm": true,
-    "inIndex": true,
-    "inView": true
-  },
-  {
-    "name": "country_id",
+    "name": "user_id",
     "dbType": "bigInteger,false,true",
     "htmlType": null,
-    "validations": "nullable|nullable",
-    "searchable": true,
-    "fillable": true,
-    "primary": false,
-    "inForm": true,
-    "inIndex": true,
-    "inView": true
-  },
-  {
-    "name": "region_id",
-    "dbType": "bigInteger,false,true",
-    "htmlType": null,
-    "validations": "nullable|nullable",
-    "searchable": true,
-    "fillable": true,
-    "primary": false,
-    "inForm": true,
-    "inIndex": true,
-    "inView": true
-  },
-  {
-    "name": "city_id",
-    "dbType": "bigInteger,false,true",
-    "htmlType": null,
-    "validations": "nullable|nullable",
+    "validations": "required",
     "searchable": true,
     "fillable": true,
     "primary": false,
@@ -145,7 +97,7 @@
   },
   {
     "name": "createdBy",
-    "dbType": "bigInteger,false",
+    "dbType": "bigInteger,false,true",
     "htmlType": null,
     "validations": "nullable|nullable",
     "searchable": true,
@@ -157,7 +109,7 @@
   },
   {
     "name": "updatedBy",
-    "dbType": "bigInteger,false",
+    "dbType": "bigInteger,false,true",
     "htmlType": null,
     "validations": "nullable|nullable",
     "searchable": true,
@@ -205,14 +157,6 @@
   },
   {
     "type": "relation",
-    "relation": "mt1,City,city_id"
-  },
-  {
-    "type": "relation",
-    "relation": "mt1,Country,country_id"
-  },
-  {
-    "type": "relation",
-    "relation": "mt1,Region,region_id"
+    "relation": "mt1,User,user_id"
   }
 ]

@@ -1,12 +1,13 @@
 var token = findGetParameter('t')
 var urlStr = _verify + token
-// console.log('urlStr', urlStr);
+console.log('urlStr', urlStr);
 
-$.post(urlStr, function (data) {
-  $('.r-title').html(data.title)
-  $('.r-description').html(data.description)
-}).fail(function (data) {
-  console.log('data', data)
-  $('.r-title').html(data.responseJSON.title)
-  $('.r-description').html(data.responseJSON.description)
+$.post(urlStr, function (resp) {
+    console.log('data', resp);
+  $('.r-title').html(resp.data.title)
+  $('.r-description').html(resp.data.description)
+}).fail(function (resp) {
+  console.log('data', resp)
+  $('.r-title').html(resp.responseJSON.data.title)
+  $('.r-description').html(resp.responseJSON.data.description)
 })

@@ -38,13 +38,13 @@ function send() {
     return
   }
 
-  $.post(_reset, model, function (data) {
-    $('.r-description').html(data.message)
+  $.post(_reset, model, function (resp) {
+    $('.r-description').html(resp.data.message)
     $('.success').addClass('d-block')
     $('.d-form').hide()
     $('.msg-success').addClass('d-block')
-  }).fail(function (data) {
-    $('.r-description').html(data.responseJSON.message)
+  }).fail(function (resp) {
+    $('.r-description').html(resp.responseJSON.data.message)
     $('.errors').addClass('d-block')
   })
 }

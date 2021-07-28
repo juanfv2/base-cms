@@ -13,9 +13,9 @@
   },
   {
     "name": "name",
-    "dbType": "string,255",
+    "dbType": "string,191",
     "htmlType": "text",
-    "validations": "required|string|max:255|string|max:255",
+    "validations": "required|string|max:191|string|max:191",
     "searchable": true,
     "fillable": true,
     "primary": false,
@@ -25,9 +25,9 @@
   },
   {
     "name": "description",
-    "dbType": "string,255",
+    "dbType": "string,191",
     "htmlType": "text",
-    "validations": "required|string|max:255|string|max:255",
+    "validations": "required|string|max:191|string|max:191",
     "searchable": true,
     "fillable": true,
     "primary": false,
@@ -37,7 +37,7 @@
   },
   {
     "name": "createdBy",
-    "dbType": "bigInteger,false",
+    "dbType": "bigInteger,false,true",
     "htmlType": null,
     "validations": "nullable|nullable",
     "searchable": true,
@@ -49,7 +49,7 @@
   },
   {
     "name": "updatedBy",
-    "dbType": "bigInteger,false",
+    "dbType": "bigInteger,false,true",
     "htmlType": null,
     "validations": "nullable|nullable",
     "searchable": true,
@@ -97,10 +97,14 @@
   },
   {
     "type": "relation",
-    "relation": "mtm,AuthPermission,auth_roles_has_permissions"
+    "relation": "mtm,Permission,auth_roles_has_permissions"
   },
   {
     "type": "relation",
-    "relation": "mtm,AuthUser,auth_users_has_roles"
+    "relation": "1tm,User,role_id"
+  },
+  {
+    "type": "relation",
+    "relation": "mtm,User,auth_users_has_roles"
   }
 ]
