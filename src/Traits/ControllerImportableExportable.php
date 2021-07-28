@@ -181,23 +181,24 @@ trait ControllerImportableExportable
         }
     }
 
-    protected function export($table, $headers, $items)
+    protected function export($table, $headers, $repo)
     {
         $labels   = array_values($headers);
-        $fnames   = array_keys($headers);
+        $fieldNames   = array_keys($headers);
         $exporter = new ExportDataCSV('browser', $table . '.csv');
 
         $exporter->initialize(); // starts streaming data to web browser
         $exporter->addRow($labels);
 
-        foreach ($items as $item) {
-
-            $i = array();
-            foreach ($fnames as $key) {
-                $i[$key] = $item->{$key};
+        $repo->allForChunk()->chunk(10000, function ($items) use ($fieldNames, $exporter) {
+            foreach ($items as $listItem) {
+                $i = [];
+                foreach ($fieldNames as $key) {
+                    $i[$key] = $listItem->{$key};
+                }
+                $exporter->addRow($i);
             }
-            $exporter->addRow($i);
-        }
+        });
 
         $exporter->finalize(); // writes the footer, flushes remaining data to browser.
 
