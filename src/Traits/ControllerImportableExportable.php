@@ -46,7 +46,7 @@ trait ControllerImportableExportable
                     $datum = $this->toUtf8($datum);
 
                     if ($created === 0) {
-                        $xHeaders = $this->toUtf8($datum);
+                        $xHeaders = $datum;
                         $created++;
                         continue;
                     }

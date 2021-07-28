@@ -1,4 +1,5 @@
 <?php
+
 namespace Juanfv2\BaseCms\Contracts;
 
 /**
