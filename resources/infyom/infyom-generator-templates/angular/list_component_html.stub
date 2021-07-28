@@ -19,7 +19,7 @@ $RELATIONS_AS_SEARCH_FIELDS$
 <div class="form-group">
 <button (click)="addFilter()"
 type="button"
-class="btn btn-info m-1 float-right">
+class="btn btn-info m-1 float-end">
 Agregar criterio de búsqueda
 </button>
 </div>
@@ -67,34 +67,26 @@ class="btn btn-link m-1">
 Limpiar filtros de busqueda
 </button>
 
-<span class="btn btn-link m-1 float-right">{{ currentPage.totalElements }}</span>
+<span class="btn btn-link m-1 float-end">{{ currentPage.totalElements }}</span>
 </div>
 <div class="card-body">
 <div class="table-full-width t-responsive table-responsive">
 <table class="table table-sm table-striped table-hover">
 <caption> lista de {{ labels.$MODEL_NAME_CAMEL$.ownNamePlural }} </caption>
-<thead class="text-primary">
-<tr class="cursor-pointer text-nowrap">
+<thead class="text-nowrap text-primary">
+<tr>
+<th appMultiSortMeta [host]="this" [colName]="labels.$MODEL_NAME_CAMEL$.id.field!">#</th>
 $COLUMN_FIELDS$
 $COLUMN_FIELDS_RELATIONS$
 <th></th>
 </tr>
 </thead>
-<tbody>
+<tbody class="text-nowrap">
 <tr *ngFor="let model of currentPage.content">
+<td class="td-actions"> <button *ngIf="hasPermission2show" (click)="onRowSelect(model)" type="button" class="btn btn-sm btn-info m-1" > {{ model.id }} </button> </td>
 $COLUMN_VALUES$
 $COLUMN_VALUES_RELATIONS$
-<td class="td-actions">
-<button *ngIf="hasPermission2delete"
-(click)="showDeleteDialog(model)"
-type="button"
-rel="tooltip"
-title="Borrar"
-class="btn btn-sm btn-danger btn-round btn-icon btn-icon-mini btn-neutral"
-data-original-title="Borrar">
-<i class="fas fa-trash-alt"></i>
-</button>
-</td>
+<td class="td-actions"> <button *ngIf="hasPermission2delete" (click)="showDeleteDialog(model)" type="button" rel="tooltip" title="Borrar" class="btn btn-sm btn-danger btn-round btn-icon btn-icon-mini btn-neutral" data-original-title="Borrar"> <i class="fas fa-trash-alt"></i> </button> </td>
 </tr>
 </tbody>
 </table>
@@ -118,9 +110,7 @@ name="select-qty-table"
 class="form-control m-1"
 [(ngModel)]="modelSearch.lazyLoadEvent.rows"
 (change)="changePageLimit($event)">
-<option *ngFor="let q of [5, 10, 50, 100, -1]">
-{{ q }}
-</option>
+<option *ngFor="let q of labels.misc.pageLimit" [value]="q.v">{{ q.c }}</option>
 </select>
 </div>
 </div>
@@ -130,15 +120,19 @@ type="button"
 class="btn btn-primary m-1 w-100">
 Exportar resultados
 </button>
-<app-file-upload [allowedTypes]="['text/csv', 'application/vnd.ms-excel']"
+<app-file-upload
+id="$MODEL_NAME_CAMEL$-importer"
+class="h-100"
+minHeight="100px"
 label="Importar CSV"
 name="massive-inserts"
-[value]="{ id: -1, entity: labels.$MODEL_NAME_CAMEL$.tableName, field: 'massive-inserts' }"
-url2showStaticImage="/visor/assets/images/admin/ic-csv.svg"
-minHeight="100px"
-class="h-100"
+[showPublicPath]="false"
+[error]="csv?.error?.error"
 (finish)="massiveInsert($event)"
-[error]="csv?.error?.error"></app-file-upload>
+[url2showStaticImage]="labels.misc.csv"
+[value]="{ id: -1, entity: labels.$MODEL_NAME_CAMEL$.tableName, field: 'massive-inserts' }"
+[allowedTypes]="['text/csv', 'application/vnd.ms-excel']"
+></app-file-upload>
 </div>
 </div>
 <app-spinner-loading *ngIf="loading"

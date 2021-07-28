@@ -16,7 +16,6 @@ import { MessageComponent } from 'src/app/components/main/_common/message/messag
 import { SearchFieldDirective } from 'src/app/core/directives/search-field.directive';
 
 import { $MODEL_NAME$, $RELATION_MODEL_NAMES$ } from 'src/app/models/_models';
-// todo: #if($entity.hasCompositePk())
 
 const kRoute = k.routes.$MODEL_NAME_PLURAL_CAMEL$;
 const kConditions = `${k.suggestions}${kRoute}`;

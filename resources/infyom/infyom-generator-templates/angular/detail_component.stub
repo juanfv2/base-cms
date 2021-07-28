@@ -89,12 +89,7 @@ this.messageService.error(k.project_name, error, this.labels.$MODEL_NAME_CAMEL$.
 
 onSave(): void {
 const modelTemp = JSON.parse(JSON.stringify(this.$MODEL_NAME_CAMEL$));
-const uPersonId = this.authService.userPersonId();
 // prepare
-modelTemp.updatedBy = uPersonId;
-if (!modelTemp.id) {
-modelTemp.createdBy = uPersonId;
-}
 $RELATIONS_AS_FIELDS$
 // modelTemp.includes = this.includes;
 // prepare
