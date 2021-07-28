@@ -1,35 +1,13 @@
 [
   {
     "isGroup": true,
-    "name": "País",
-    "namePlural": "Países",
-    "namePluralBackEnd": "countries",
-    "icon": "flag",
+    "name": "Cuenta",
+    "namePlural": "Cuentas",
+    "namePluralBackEnd": "accounts",
+    "icon": "address-book",
     "isSection": 0,
     "isVisible": 1,
     "permission_id": 3,
     "orderInMenu": 0
-  },
-  {
-    "isGroup": true,
-    "name": "Región",
-    "namePlural": "Regiones",
-    "namePluralBackEnd": "regions",
-    "icon": "globe-americas",
-    "isSection": 0,
-    "isVisible": 1,
-    "permission_id": 3,
-    "orderInMenu": 1
-  },
-  {
-    "isGroup": true,
-    "name": "Ciudad",
-    "namePlural": "Ciudades",
-    "namePluralBackEnd": "cities",
-    "icon": "city",
-    "isSection": 0,
-    "isVisible": 1,
-    "permission_id": 3,
-    "orderInMenu": 2
   }
 ]

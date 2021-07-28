@@ -1,35 +1,13 @@
 [
   {
-    "isGroup": true,
-    "name": "Sección",
-    "namePlural": "Secciónes",
-    "namePluralBackEnd": "stores",
-    "icon": "store",
+    "individual": true,
+    "icon": "-",
+    "name": "Subir Archivos",
+    "urlBackEnd": "api.x_files.upload",
+    "urlFrontEnd": "files.upload",
     "isSection": 0,
     "isVisible": 1,
-    "permission_id": 1,
-    "orderInMenu": 0
-  },
-  {
-    "isGroup": true,
-    "name": "Usuario",
-    "namePlural": "Usuarios",
-    "namePluralBackEnd": "people",
-    "icon": "address-book",
-    "isSection": 0,
-    "isVisible": 1,
-    "permission_id": 1,
-    "orderInMenu": 1
-  },
-  {
-    "isGroup": true,
-    "name": "Rol",
-    "namePlural": "Roles",
-    "namePluralBackEnd": "roles",
-    "icon": "fingerprint",
-    "isSection": 0,
-    "isVisible": 1,
-    "permission_id": 1,
-    "orderInMenu": 2
+    "orderInMenu": 0,
+    "permission_id": 1
   }
 ]

@@ -1,0 +1,35 @@
+[
+  {
+    "isGroup": true,
+    "name": "País",
+    "namePlural": "Países",
+    "namePluralBackEnd": "countries",
+    "icon": "flag",
+    "isSection": 0,
+    "isVisible": 1,
+    "permission_id": 4,
+    "orderInMenu": 0
+  },
+  {
+    "isGroup": true,
+    "name": "Región",
+    "namePlural": "Regiones",
+    "namePluralBackEnd": "regions",
+    "icon": "globe-americas",
+    "isSection": 0,
+    "isVisible": 1,
+    "permission_id": 4,
+    "orderInMenu": 1
+  },
+  {
+    "isGroup": true,
+    "name": "Ciudad",
+    "namePlural": "Ciudades",
+    "namePluralBackEnd": "cities",
+    "icon": "city",
+    "isSection": 0,
+    "isVisible": 1,
+    "permission_id": 4,
+    "orderInMenu": 2
+  }
+]

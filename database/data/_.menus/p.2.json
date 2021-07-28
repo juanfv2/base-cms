@@ -1,13 +1,24 @@
 [
   {
     "isGroup": true,
-    "name": "Cuenta",
-    "namePlural": "Cuentas",
-    "namePluralBackEnd": "accounts",
+    "name": "Usuario",
+    "namePlural": "Usuarios",
+    "namePluralBackEnd": "users",
     "icon": "address-book",
     "isSection": 0,
     "isVisible": 1,
     "permission_id": 2,
     "orderInMenu": 0
+  },
+  {
+    "isGroup": true,
+    "name": "Rol",
+    "namePlural": "Roles",
+    "namePluralBackEnd": "roles",
+    "icon": "fingerprint",
+    "isSection": 0,
+    "isVisible": 1,
+    "permission_id": 2,
+    "orderInMenu": 1
   }
 ]

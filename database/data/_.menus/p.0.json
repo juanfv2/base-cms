@@ -2,16 +2,27 @@
   {
     "id": 1,
     "name": "---",
+    "namePlural": "Misc. (oculto)",
+    "namePluralBackEnd": "#misc-hide#",
+    "icon": "---",
+    "isSection": 1,
+    "isVisible": 0,
+    "permission_id": 0,
+    "orderInMenu": 0
+  },
+  {
+    "id": 2,
+    "name": "---",
     "namePlural": "Sistema",
     "namePluralBackEnd": "#system#",
     "icon": "tools",
     "isSection": 1,
     "isVisible": 1,
     "permission_id": 0,
-    "orderInMenu": 0
+    "orderInMenu": 1
   },
   {
-    "id": 2,
+    "id": 3,
     "name": "---",
     "namePlural": "Clientes",
     "namePluralBackEnd": "#accounts#",
@@ -19,6 +30,17 @@
     "isSection": 1,
     "isVisible": 1,
     "permission_id": 0,
-    "orderInMenu": 1
+    "orderInMenu": 2
+  },
+  {
+    "id": 4,
+    "name": "---",
+    "namePlural": "Países",
+    "namePluralBackEnd": "#countries#",
+    "icon": "globe",
+    "isSection": 1,
+    "isVisible": 1,
+    "permission_id": 0,
+    "orderInMenu": 3
   }
 ]
