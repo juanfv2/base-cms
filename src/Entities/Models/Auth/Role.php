@@ -2,22 +2,17 @@
 
 namespace App\Models\Auth;
 
+use Juanfv2\BaseCms\Traits\UserResponsible;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Juanfv2\BaseCms\Traits\UserResponsible;
 
 /**
  * Class Role
- * @package App\Models
- * @version September 8, 2020, 4:57 pm UTC
  *
- * @property \Illuminate\Database\Eloquent\Collection $authPermissions
- * @property \Illuminate\Database\Eloquent\Collection $authUsers
- * @property string $name
- * @property string $description
- * @property integer $createdBy
- * @property integer $updatedBy
+ * @package App\Models
+ * @version July 18, 2021, 1:48 am UTC
  */
 class Role extends Model
 {
@@ -70,6 +65,14 @@ class Role extends Model
     public $hidden = [
         'createdBy', 'updatedBy', 'created_at', 'updated_at', 'deleted_at'
     ];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     **/
+    public function user()
+    {
+        return $this->hasMany(\App\Models\AuthUser::class, 'role_id');
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany

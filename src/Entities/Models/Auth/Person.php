@@ -2,26 +2,17 @@
 
 namespace App\Models\Auth;
 
+use Juanfv2\BaseCms\Traits\UserResponsible;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Juanfv2\BaseCms\Traits\UserResponsible;
 
 /**
  * Class Person
+ *
  * @package App\Models
  * @version April 1, 2021, 10:16 pm UTC
- *
- * @property \App\Models\AuthUser $user
- * @property string $firstName
- * @property string $lastName
- * @property string $cellPhone
- * @property string $birthDate
- * @property string $address
- * @property string $neighborhood
- * @property integer $user_id
- * @property integer $createdBy
- * @property integer $updatedBy
  */
 class Person extends Model
 {

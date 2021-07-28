@@ -17,20 +17,9 @@ use Juanfv2\BaseCms\Traits\UserResponsible;
 
 /**
  * Class User
+ *
  * @package App\Models
  * @version September 8, 2020, 4:57 pm UTC
- *
- * @property \Illuminate\Database\Eloquent\Collection $authRoles
- * @property string $name
- * @property string $email
- * @property string $password
- * @property boolean $disabled
- * @property string $uid
- * @property string $api_token
- * @property integer $role_id
- * @property integer $createdBy
- * @property integer $updatedBy
- * @property string $remember_token
  */
 class User extends Model implements AuthenticatableContract, AuthorizableContract
 {
@@ -52,11 +41,15 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'password',
         'email_verified_at',
         'disabled',
-        'userCanDownload',
         'phoneNumber',
+        'uid',
+
         'role_id',
-        'company_id',
-        'group_id',
+        'country_id',
+        'region_id',
+        'city_id',
+
+        'api_token',
         'remember_token',
     ];
 
@@ -72,18 +65,16 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'password' => 'string',
         'email_verified_at' => 'datetime',
         'disabled' => 'boolean',
-        'userCanDownload' => 'boolean',
         'phoneNumber' => 'string',
-        'role_id' => 'integer',
-        'company_id' => 'integer',
-        'group_id' => 'integer',
-        'remember_token' => 'string',
-        'createdBy' => 'integer',
-        'updatedBy' => 'integer',
+        'uid' => 'string',
 
-        'logs'      => 'integer',
-        'viewed_at' => 'datetime',
-        'search' => 'json',
+        'role_id' => 'integer',
+        'country_id' => 'integer',
+        'region_id' => 'integer',
+        'city_id' => 'integer',
+
+        'api_token' => 'string',
+        'remember_token' => 'string',
     ];
 
     /**
@@ -97,17 +88,22 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'password'          => 'required|string|max:191',
         'email_verified_at' => 'nullable',
         'disabled'          => 'required|boolean',
-        'userCanDownload'   => 'required|boolean',
         'phoneNumber'       => 'nullable|string|max:191',
+        'uid'               => 'nullable|string|max:191',
+
         'role_id'           => 'required',
-        'company_id'        => 'required',
-        'group_id'          => 'required',
-        'remember_token'    => 'nullable',
+        'country_id'        => 'nullable',
+        'region_id'         => 'nullable',
+        'city_id'           => 'nullable',
+
+        'api_token'         => 'nullable|string',
+        'remember_token'    => 'nullable|string|max:191',
         'createdBy'         => 'nullable',
         'updatedBy'         => 'nullable',
         'created_at'        => 'nullable',
         'updated_at'        => 'nullable',
         'deleted_at'        => 'nullable',
+
         'withEntity'        => 'nullable', // <<<
         'roles'             => 'nullable',
     ];
@@ -119,17 +115,25 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      **/
-    public function company()
+    public function country()
     {
-        return $this->belongsTo(\App\Models\Company::class, 'company_id');
+        return $this->belongsTo(\App\Models\Country\Country::class, 'country_id');
     }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      **/
-    public function group()
+    public function region()
     {
-        return $this->belongsTo(\App\Models\Group::class, 'group_id');
+        return $this->belongsTo(\App\Models\Country\Region::class, 'region_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     **/
+    public function city()
+    {
+        return $this->belongsTo(\App\Models\Country\City::class, 'city_id');
     }
 
     /**
@@ -180,50 +184,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         // $this->notify(new ResetPasswordNotification($token));
     }
 
-    public function getVersionsAttribute()
-    {
-        $varname1 = "";
-        $varname1 .= "SELECT v.* ";
-        $varname1 .= "FROM visor_list_file_version_logs l ";
-        $varname1 .= "join visor_list_file_versions v on l.visor_list_file_version_id = v.id ";
-        $varname1 .= "where l.visor_list_searching_log_id = ?";
-        $t1 = DB::select($varname1, [$this->visor_list_searching_log_id]);
-        return $t1;
-    }
-
-    /**
-     * @return array
-     */
-    public function getViewedsAttribute()
-    {
-        $min = session('min', '-');
-        $max = session('max', '-');
-
-        $varname1 = "";
-        $varname1 .= "SELECT ";
-        $varname1 .= " COUNT(`v`.`container_id`) `views`, ";
-        $varname1 .= " `c`.`name` ";
-        $varname1 .= "FROM ";
-        $varname1 .= "`visor_list_file_version_logs` `l` ";
-        $varname1 .= "JOIN ";
-        $varname1 .= "`visor_list_file_versions` `v` ON `v`.`id` = `l`.`visor_list_file_version_id` ";
-        $varname1 .= "JOIN ";
-        $varname1 .= "`containers` `c` ON `c`.`id` = `v`.`container_id` ";
-        $varname1 .= "WHERE ";
-        $varname1 .= "`user_id` = ? ";
-
-        if ($min != '-') {
-            $varname1 .= "and `l`.`viewed_at` > '{$min}' ";
-        }
-        if ($max != '-') {
-            $varname1 .= "and `l`.`viewed_at` <= '{$max}' ";
-        }
-        $varname1 .= "GROUP BY `c`.`name` ";
-        $varname1 .= "ORDER BY `views` DESC";
-        $t1 = DB::select($varname1, [$this->id]);
-        return $t1;
-    }
-
     /**
      * @return array
      */
@@ -241,7 +201,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             ->where('field', 'photoUrl')
             ->where('entity_id', $this->id)
             ->first();
-        // logger(__FILE__ . ':' . __LINE__ . ' $f ', [$f]);
+        logger(__FILE__ . ':' . __LINE__ . ' $f ', [$f]);
         return $f;
     }
 

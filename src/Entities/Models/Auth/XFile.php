@@ -2,24 +2,16 @@
 
 namespace App\Models\Auth;
 
+use Juanfv2\BaseCms\Traits\ControllerFiles;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-use Juanfv2\BaseCms\Traits\ControllerFiles;
-
 /**
  * Class XFile
+ *
  * @package App\Models
  * @version September 8, 2020, 4:56 pm UTC
- *
- * @property string $entity
- * @property integer $entity_id
- * @property string $field
- * @property string $name
- * @property string $nameOriginal
- * @property string $publicPath
- * @property string $extension
- * @property string $data
  */
 class XFile extends Model
 {

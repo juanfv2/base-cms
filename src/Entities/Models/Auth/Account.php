@@ -2,26 +2,17 @@
 
 namespace App\Models\Auth;
 
+use Juanfv2\BaseCms\Traits\UserResponsible;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Juanfv2\BaseCms\Traits\UserResponsible;
 
 /**
  * Class Account
- * @package App\Models
- * @version April 1, 2021, 10:54 pm UTC
  *
- * @property \App\Models\AuthUser $user
- * @property string $firstName
- * @property string $lastName
- * @property string $cellPhone
- * @property string $birthDate
- * @property string $address
- * @property string $neighborhood
- * @property integer $user_id
- * @property integer $createdBy
- * @property integer $updatedBy
+ * @package App\Models\Auth
+ * @version April 1, 2021, 10:54 pm UTC
  */
 class Account extends Model
 {
@@ -71,7 +62,7 @@ class Account extends Model
      * @var array
      */
     public static $rules = [
-        'user_id'      => 'required',
+        'user_id'      => 'nullable', // <-- required ???
         'firstName'    => 'required|string|max:191',
         'lastName'     => 'required|string|max:191',
         'cellPhone'    => 'nullable|string|max:191',
@@ -91,45 +82,4 @@ class Account extends Model
     public $hidden = [
         'createdBy', 'updatedBy', 'created_at', 'updated_at', 'deleted_at'
     ];
-
-    /**
-     * @return array
-     */
-    public function getPhotoUrlAttribute()
-    {
-        $f = \App\Models\Auth\XFile::where('entity', $this->table)
-            ->where('field', 'photoUrl')
-            ->where('entity_id', $this->id)
-            ->first();
-        // logger(__FILE__ . ':' . __LINE__ . ' $f ', [$f]);
-        return $f;
-    }
-
-    /**
-     * @return array
-     */
-    public function getImagesAttribute()
-    {
-        $f = \App\Models\Auth\XFile::where('entity', $this->table)
-            ->where('field', 'images')
-            ->where('entity_id', $this->id)
-            ->get();
-        // logger(__FILE__ . ':' . __LINE__ . ' $f ', [$f]);
-        return $f;
-    }
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::deleting(function ($account) {
-
-            $account->images->each->delete();
-
-            $p = $account->photoUrl;
-            if ($p) {
-                $p->delete();
-            }
-        });
-    }
 }
