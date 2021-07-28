@@ -4,11 +4,13 @@ namespace App\Repositories\Auth;
 
 use App\Models\Auth\User;
 use App\Models\Auth\Person;
+use Illuminate\Support\Str;
 use App\Models\Auth\Account;
+use App\Models\Auth\XUserVerified;
 use Illuminate\Support\Facades\DB;
+
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
-
 use Juanfv2\BaseCms\Repositories\BaseRepository;
 
 /**
@@ -16,7 +18,6 @@ use Juanfv2\BaseCms\Repositories\BaseRepository;
  * @package App\Repositories
  * @version September 8, 2020, 4:57 pm UTC
  */
-
 class UserRepository extends BaseRepository
 {
     /**
@@ -78,11 +79,17 @@ class UserRepository extends BaseRepository
         return DB::transaction(function () use ($input) {
             $input['password'] = Hash::make($input['password']);
             $input['roles']    = is_string($input['roles']) ? json_decode($input['roles']) : $input['roles'];
-            $r = $this->create($input);
+            $user = $this->create($input);
 
-            $input['user_id'] = $r->id;
+            $input['user_id'] = $user->id;
             Account::create($input);
-            return $r;
+
+            if (!isset($input['uid'])) {
+                XUserVerified::create(['user_id' => $user->id, 'token' => Str::random(40)]);
+                $user->notify(new \App\Notifications\UserRegisteredNotification($user));
+            }
+
+            return $user;
         });
     }
 

@@ -11,7 +11,6 @@ use Juanfv2\BaseCms\Repositories\BaseRepository;
  * @package App\Repositories
  * @version September 8, 2020, 4:57 pm UTC
  */
-
 class RoleRepository extends BaseRepository
 {
     /**
