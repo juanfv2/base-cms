@@ -71,7 +71,7 @@ class Role extends Model
      **/
     public function user()
     {
-        return $this->hasMany(\App\Models\AuthUser::class, 'role_id');
+        return $this->hasMany(\App\Models\Auth\User::class, 'role_id');
     }
 
     /**
