@@ -44,7 +44,6 @@ class BaseCmsServiceProvider extends ServiceProvider
 
         $this->publishes([
             __DIR__ . '/../config/base-cms.php' => config_path('base-cms.php'),
-            __DIR__ . '/../config/api.php'      => base_path('routes/api.php'),
         ]);
 
         $this->publishes([
