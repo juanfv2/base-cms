@@ -20,6 +20,12 @@ class AnyTableSeeder extends Seeder
             // 'oauth/oauth_clients',
             // 'oauth/oauth_personal_access_clients',
 
+            'country/countries',
+            'country/regions',
+            'country/cities-194-3224',
+            // 'carpeta-a/carpeta-b/country/cities-1', // (mysql insert multiple rows maximum) ej. 5000
+            // 'carpeta-a/carpeta-b/country/cities-2', // (mysql insert multiple rows maximum) ej. 5000
+
             'auth/auth_roles',
             'auth/auth_users', // password: '123456'
             'auth/auth_people',
@@ -29,11 +35,6 @@ class AnyTableSeeder extends Seeder
             'auth/auth_users_has_roles',
             'auth/auth_x_files',
 
-            'country/countries',
-            'country/regions',
-            'country/cities-194-3224',
-            // 'carpeta-a/carpeta-b/country/cities-1', // (mysql insert multiple rows maximum) ej. 5000
-            // 'carpeta-a/carpeta-b/country/cities-2', // (mysql insert multiple rows maximum) ej. 5000
 
             // entities
 
