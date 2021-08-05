@@ -147,7 +147,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
 
     private function tsRelations_mtm()
     {
-        $relations1 = [$this->commandData->config->mName];
+        $relations1 = [];
         $relations2 = [];
         foreach ($this->commandData->relations as $relation) {
 
