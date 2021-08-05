@@ -67,6 +67,12 @@ class AngularAutoCompleteComponentGenerator extends BaseGenerator
         $this->primaryKey = 'id';
 
         foreach ($this->commandData->fields as $field) {
+            if (
+                $field->name == 'createdBy' ||
+                $field->name == 'updatedBy'
+            ) {
+                continue;
+            }
             if ($field->isSearchable) {
                 $searchables1[] = "g.push(new JfCondition(`OR \${this.labels.{$this->commandData->config->mCamel}.{$field->name}.field} like`, term));";
                 $searchables2[] = "`\${this.labels.{$this->commandData->config->mCamel}.{$field->name}.field}`";

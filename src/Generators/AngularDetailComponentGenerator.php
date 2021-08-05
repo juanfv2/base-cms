@@ -102,7 +102,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
 
     private function generateRelationModelNames()
     {
-        $relations1 = [];
+        $relations1 = [$this->commandData->config->mName];
         $relations2 = [];
         foreach ($this->commandData->relations as $relation) {
             $type  = (isset($relation->type))      ? $relation->type      : null;
@@ -147,7 +147,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
 
     private function tsRelations_mtm()
     {
-        $relations1 = [];
+        $relations1 = [$this->commandData->config->mName];
         $relations2 = [];
         foreach ($this->commandData->relations as $relation) {
 
@@ -200,9 +200,12 @@ class AngularDetailComponentGenerator extends BaseGenerator
         $relations = [];
         foreach ($this->commandData->fields as $field) {
 
-            // if ($field->isPrimary) {
-            //     continue;
-            // }
+            if (
+                $field->name == 'createdBy' ||
+                $field->name == 'updatedBy'
+            ) {
+                continue;
+            }
             if ($field->inForm) {
                 $relationText = "<!-- $field->name . init -->\n";
                 $fieldCamel = Str::camel($field->name);

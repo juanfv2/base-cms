@@ -120,6 +120,12 @@ class AngularListComponentGenerator extends BaseGenerator
         $this->primaryKey = 'id';
 
         foreach ($this->commandData->fields as $field) {
+            if (
+                $field->name == 'createdBy' ||
+                $field->name == 'updatedBy'
+            ) {
+                continue;
+            }
             if ($field->isSearchable) {
                 $searchables[] = "this.labels.{$this->commandData->config->mCamel}.{$field->name}";
             }
@@ -133,7 +139,7 @@ class AngularListComponentGenerator extends BaseGenerator
 
     private function generateRelationModelNames()
     {
-        $relations = [];
+        $relations = [$this->commandData->config->mName];
 
         foreach ($this->commandData->relations as $relation) {
             $type  = (isset($relation->type))      ? $relation->type      : null;
@@ -373,6 +379,12 @@ class AngularListComponentGenerator extends BaseGenerator
     {
         $relations = [];
         foreach ($this->commandData->fields as $field) {
+            if (
+                $field->name == 'createdBy' ||
+                $field->name == 'updatedBy'
+            ) {
+                continue;
+            }
             if ($field->inIndex) {
                 $relationText = <<<EOF
                 <th appMultiSortMeta
@@ -401,6 +413,12 @@ class AngularListComponentGenerator extends BaseGenerator
     {
         $relations = [];
         foreach ($this->commandData->fields as $field) {
+            if (
+                $field->name == 'createdBy' ||
+                $field->name == 'updatedBy'
+            ) {
+                continue;
+            }
             if ($field->inIndex) {
                 $relationText = <<<EOF
                 <td>
