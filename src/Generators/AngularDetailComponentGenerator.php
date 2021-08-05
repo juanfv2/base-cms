@@ -174,7 +174,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
             }
 
             go2{$fieldCamel}($fieldCamel: $field): void {
-                this.router.navigate([k.routes.$fieldCamel, $fieldCamel.id]);
+                this.router.navigate([k.routes.$fieldCamelPlural, $fieldCamel.id]);
             }
             EOF;
             $relations1[] = $relationText;
@@ -287,7 +287,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
                         $relationText .= <<<EOF
                         <input id="{$this->commandData->config->mCamel}-$field->name"
                                name="{$this->commandData->config->mCamel}-$field->name"
-                               [(ngModel)]="{$this->commandData->config->mCamel}.$fieldCamel"
+                               [(ngModel)]="{$this->commandData->config->mCamel}.$field->name"
                                #{$this->commandData->config->mCamel}_$fieldCamel="ngModel"
                                class="form-control"
                                type="$field->htmlType"
