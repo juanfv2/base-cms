@@ -271,9 +271,12 @@ class AngularDetailComponentGenerator extends BaseGenerator
                                    class="form-control"
                                    placeholder="yyyy-mm-dd"
                                    ngbDatepicker>
-                            <div class="input-group-append" (click)="{$this->commandData->config->mCamel}_{$fieldCamel}_date.toggle()">
-                                <span class="input-group-text"><i class="fa fa-calendar text-info"></i></span>
-                            </div>
+                            <button title="calendario"
+                                    class="btn btn-outline-secondary m-0"
+                                    (click)="{$this->commandData->config->mCamel}_{$fieldCamel}_date.toggle()"
+                                    type="button">
+                                    <i class="fa fa-calendar text-info"></i>
+                                    </button>
                         </div>
                         <div *ngIf="!{$this->commandData->config->mCamel}_$fieldCamel.valid && {$this->commandData->config->mCamel}_$fieldCamel.dirty && {$this->commandData->config->mCamel}_$fieldCamel.errors?.ngbDate?.invalid"
                             class="alert alert-danger form-text"
@@ -455,14 +458,14 @@ class AngularDetailComponentGenerator extends BaseGenerator
                 $fieldText .= '?';
             }
             switch ($field->htmlType) {
-                case 'checkbox':
+                case 'text':
+                    $fieldText .= ': string;';
+                    break;
+                case 'checkbox,1':
                     $fieldText .= ': boolean;';
                     break;
-                case 'number':
-                    $fieldText .= ': number;';
-                    break;
                 default:
-                    $fieldText .= ': string;';
+                    $fieldText .= ': number;';
                     break;
             }
             $fields[] =  $fieldText;
@@ -506,13 +509,13 @@ class AngularDetailComponentGenerator extends BaseGenerator
                 $mPrimaryKey = $field->name;
             }
             switch ($field->htmlType) {
-                case 'boolean':
+                case 'checkbox,1':
                     $fieldText .= " 'boolean'),";
                     break;
                 case 'date':
                     $fieldText .= " 'date'),";
                     break;
-                case 'number':
+                case 'integer,false':
                     $fieldText .= " 'number'),";
                     break;
                 default:
@@ -530,7 +533,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
             $fieldCamel = Str::camel($field);
 
             $fields[] =  "";
-            $fields[] =  "{$fieldCamel}_id: new DBType(`$title #`, '$fieldCamel.$fieldFk', 'number'),";
+            $fields[] =  "{$fieldFk}: new DBType(`$title #`, '$fieldCamel.$fieldFk', 'number'),";
             $fields[] =  "{$fieldCamel}Name: new DBType(`$title`, '{$fieldCamel}Name', 'string', true, false),";
         }
 
