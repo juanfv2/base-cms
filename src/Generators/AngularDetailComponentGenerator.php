@@ -126,20 +126,24 @@ class AngularDetailComponentGenerator extends BaseGenerator
             $type  = (isset($relation->type))      ? $relation->type      : null;
             $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
 
-            if ($type != 'mt1') {
-                continue;
+            $fieldCamel = Str::camel($field);
+            $fieldCamelPlural = Str::plural($fieldCamel);
+            $fieldSnake = Str::snake($field);
+            if ($type == 'mt1') {
+                $relationText = <<<EOF
+                modelTemp.{$fieldSnake}_id = null;
+                if (modelTemp.$fieldCamel) {
+                    modelTemp.{$fieldSnake}_id = modelTemp.$fieldCamel.id;
+                    delete modelTemp.$fieldCamel;
+                }
+                EOF;
+                $relations[] = $relationText;
             }
 
-            $fieldCamel = Str::camel($field);
-            $fieldSnake = Str::snake($field);
-            $relationText = <<<EOF
-            modelTemp.{$fieldSnake}_id = null;
-            if (modelTemp.$fieldCamel) {
-                modelTemp.{$fieldSnake}_id = modelTemp.$fieldCamel.id;
-                delete modelTemp.$fieldCamel;
+            if ($type == 'mtm') {
+                $relationText = " modelTemp.{$fieldCamelPlural} = modelTemp.{$fieldCamelPlural} ? modelTemp.{$fieldCamelPlural}.map(item => item.id) : [];";
+                $relations[] = $relationText;
             }
-            EOF;
-            $relations[] = $relationText;
         }
 
         return $relations;
@@ -162,9 +166,9 @@ class AngularDetailComponentGenerator extends BaseGenerator
             $fieldCamelPlural = Str::plural($fieldCamel);
             $relationText = <<<EOF
             update2$fieldCamel(\$e: any): void {
+                this.{$this->commandData->config->mCamel}.$fieldCamelPlural = this.{$this->commandData->config->mCamel}.$fieldCamelPlural || [];
                 // do: something like that?
                 // this.{$fieldCamelPlural}AreRequired   = this.{$this->commandData->config->mCamel}.$fieldCamelPlural.length > 0 ? '-' : '';
-                // this.selectables{$fieldCamelPlural} = this.{$this->commandData->config->mCamel}.$fieldCamelPlural;
                 // this.avoidables{$fieldCamelPlural}  = [...new Set([...k.{$this->commandData->config->mCamel}Clients, ...this.selectables{$fieldCamelPlural}])];
             }
 
@@ -409,26 +413,42 @@ class AngularDetailComponentGenerator extends BaseGenerator
                                               [multiple]="true"
                                               [currentPage]="mApi.show()"
                                               (oSelected)="update2{$fieldCamel}(\$event)"
-                                              [avoidables]="avoidables$plural"
+                                              [avoidable]="{$this->commandData->config->mCamel}.$fieldCamelPlural"
                                               [(ngModel)]="{$this->commandData->config->mCamel}.$fieldCamelPlural">
                 </app-$fieldDash-auto-complete>
                 <label>$plural seleccionados:</label>
                 <ul class="list-group">
                     <li *ngFor="let model of {$this->commandData->config->mCamel}.{$fieldCamelPlural}"
-                        class="list-group-item d-flex justify-content-between align-items-center">
-                        {{ model.name }} <!-- reemplazar "name" por campo del modelo $fieldCamel -->
-                        <div class="input-group-append">
-                            <button (click)="rm2{$fieldCamel}(model)"
-                                    class="input-group-text cursor-pointer"
-                                    title="Remover">
+                        class="list-group-item">
+                        <div class="form-group">
+                        <div class="input-group">
+                        <!-- reemplazar "name" por campo del modelo $fieldCamel -->
+                          <textarea
+                            name="{$this->commandData->config->mCamel}-{$fieldCamelPlural}-text"
+                            [(ngModel)]="model.name"
+                            class="form-control bg-transparent text-primary border-0 resize-none cursor-none"
+                            placeholder="Requerido"
+                            required
+                            readonly
+                            ></textarea>
+                          <button
+                            title="Remover"
+                            class="btn btn-outline-secondary m-0"
+                            (click)="rm2{$fieldCamel}(model)"
+                            type="button"
+                          >
                             <i class="fa fa-times text-danger"></i>
-                            </button>
-                            <button (click)="go2{$fieldCamel}(model)"
-                                    class="input-group-text cursor-pointer"
-                                    title="Ver detalle">
+                          </button>
+                          <button
+                            title="Ver detalle"
+                            class="btn btn-outline-secondary m-0"
+                            (click)="go2{$fieldCamel}(model)"
+                            type="button"
+                          >
                             <i class="fa fa-info text-info"></i>
-                            </button>
+                          </button>
                         </div>
+                      </div>
                     </li>
                 </ul>
                 </div>
@@ -457,15 +477,17 @@ class AngularDetailComponentGenerator extends BaseGenerator
                 $mPrimaryKey = $field->name;
                 $fieldText .= '?';
             }
-            switch ($field->htmlType) {
-                case 'text':
-                    $fieldText .= ': string;';
+            logger(__FILE__ . ':' . __LINE__ . ' $field->htmlType ', [$field->htmlType, $field]);
+            switch ($field->fieldType) {
+                case 'integer':
+                case 'bigInteger':
+                    $fieldText .= ': number;';
                     break;
-                case 'checkbox,1':
+                case 'boolean':
                     $fieldText .= ': boolean;';
                     break;
                 default:
-                    $fieldText .= ': number;';
+                    $fieldText .= ': string;';
                     break;
             }
             $fields[] =  $fieldText;
@@ -508,15 +530,17 @@ class AngularDetailComponentGenerator extends BaseGenerator
             if ($field->isPrimary) {
                 $mPrimaryKey = $field->name;
             }
-            switch ($field->htmlType) {
-                case 'checkbox,1':
-                    $fieldText .= " 'boolean'),";
+            switch ($field->fieldType) {
+                case 'integer':
+                case 'bigInteger':
+                    $fieldText .= " 'number'),";
                     break;
                 case 'date':
+                case 'datetime':
                     $fieldText .= " 'date'),";
                     break;
-                case 'integer,false':
-                    $fieldText .= " 'number'),";
+                case 'boolean':
+                    $fieldText .= " 'boolean'),";
                     break;
                 default:
                     $fieldText .= " 'string'),";
