@@ -43,8 +43,8 @@ export class $MODEL_NAME$AutoCompleteComponent implements ControlValueAccessor {
 @Input() id = '';
 @Input() name = '';
 @Input() currentPage = '';
-@Input() selectables: $MODEL_NAME$[] = [];
-@Input() avoidables: $MODEL_NAME$[] = [];
+@Input() selectable: $MODEL_NAME$[] = [];
+@Input() avoidable: $MODEL_NAME$[] = [];
 @Input() value?: $MODEL_NAME$;
 $RELATIONS_AS_FIELDS_1$
 
@@ -142,12 +142,12 @@ search = (text: Observable<string>) => {
 const debouncedText = text.pipe(debounceTime(200), distinctUntilChanged());
 // const clicksWithClosedPopup = this.click.pipe(filter(() => !this.instance.isPopupOpen()));
 const inputFocus = this.focus;
-if (this.selectables && this.selectables.length > 0) {
+if (this.selectable && this.selectable.length > 0) {
 return merge(debouncedText, inputFocus).pipe(
 tap(() => this.searching = true),
 map(term => (term === ''
-? this.selectables
-: this.selectables.filter(x => this.formatter(x).toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 10)
+? this.selectable
+: this.selectable.filter(x => this.formatter(x).toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 10)
 ),
 tap(() => this.searching = false)
 );
@@ -163,8 +163,8 @@ tap(() => this.searching = false)
 searchTerm(term: string): Observable<any> {
 this.previousTerm = term;
 const conditions: any[] = [];
-if (this.avoidables && this.avoidables.length > 0) {
-conditions.push(new JfCondition(`and ${this.labels.$MODEL_NAME_CAMEL$.$PRIMARY_KEY_NAME$.field} not-in`, this.avoidables.map(r => r.id)));
+if (this.avoidable && this.avoidable.length > 0) {
+conditions.push(new JfCondition(`and ${this.labels.$MODEL_NAME_CAMEL$.$PRIMARY_KEY_NAME$.field} not-in`, this.avoidable.map(r => r.id)));
 }
 $RELATIONS_AS_FIELDS_2$
 if (term) {

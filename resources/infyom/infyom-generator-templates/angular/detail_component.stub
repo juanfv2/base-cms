@@ -10,7 +10,7 @@ import { AuthService } from 'src/app/core/services/auth.service';
 import { CrudService } from 'src/app/core/services/crud.service';
 import { JfMessageService } from 'src/app/core/services/message.service';
 
-import { $MODEL_NAME$$RELATION_MODEL_CAMEL_NAMES_1$ } from 'src/app/models/_models';
+import { $RELATION_MODEL_CAMEL_NAMES_1$ } from 'src/app/models/_models';
 
 const kRoute = k.routes.$MODEL_NAME_PLURAL_CAMEL$;
 
@@ -24,7 +24,7 @@ export class $MODEL_NAME$DetailComponent implements OnInit, OnDestroy {
 @Output() saveClicked = new EventEmitter<$MODEL_NAME$>();
 @Output() cancelClicked = new EventEmitter();
 
-@Input() $MODEL_NAME_CAMEL$?: $MODEL_NAME$;
+@Input() $MODEL_NAME_CAMEL$: $MODEL_NAME$;
 @Input() isSubComponentFrom = '-';
 @Input() isSubComponent = false;
 
@@ -43,6 +43,7 @@ private route: ActivatedRoute,
 private authService: AuthService,
 private crudService: CrudService,
 private messageService: JfMessageService) {
+this.$MODEL_NAME_CAMEL$ = {} as $MODEL_NAME$;
 this.hasPermission2new = this.authService.isAuthorized(`/${kRoute}/new`);
 this.hasPermission2edit = this.authService.isAuthorized(`/${kRoute}/edit`)
 || this.hasPermission2new;
@@ -72,7 +73,7 @@ $RELATED_2$
 }
 
 get$MODEL_NAME$(id: any): void {
-const mId = id + '?includes=' + JSON.stringify(this.includes);
+const mId = id + `?includes=${JSON.stringify(this.includes)}`
 this.sending = true;
 this.crudService.getEntity(kRoute, mId)
 .subscribe(
@@ -98,14 +99,12 @@ this.crudService.updateEntity(kRoute, modelTemp)
 .subscribe(
 (resp: JfResponse) => {
 this.sending = false;
-if(this.$MODEL_NAME_CAMEL$){
 this.$MODEL_NAME_CAMEL$.id = resp.data.id;
 this.messageService.success(k.project_name, 'Guardado');
 if (this.isSubComponent) {
 // ?? this.saveClicked.emit(this.$MODEL_NAME_CAMEL$);
 } else {
 this.router.navigate([kRoute, this.$MODEL_NAME_CAMEL$.id]);
-}
 }
 },
 error =>  {

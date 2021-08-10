@@ -42,15 +42,15 @@ Crear {{ labels.$MODEL_NAME_CAMEL$.ownName }}
 </form>
 </div>
 </div>
-<app-$MODEL_NAME_DASHED$-detail *ngIf="showForm"
+<app-$MODEL_NAME_DASHED$-detail *ngIf="$MODEL_NAME_CAMEL$"
 [$MODEL_NAME_CAMEL$]="$MODEL_NAME_CAMEL$"
 [isSubComponent]="isSubComponent"
 [isSubComponentFrom]="isSubComponentFrom"
 (saveClicked)="saveFormClicked($event)"
-(cancelClicked)="showForm = false">
+(cancelClicked)="$MODEL_NAME_CAMEL$ = undefined">
 </app-$MODEL_NAME_DASHED$-detail>
 <div class="row"
-*ngIf="!showForm">
+*ngIf="!$MODEL_NAME_CAMEL$">
 <div class="col-md-12">
 <div class="card">
 <div class="card-header">
@@ -64,7 +64,7 @@ Crear {{ labels.$MODEL_NAME_CAMEL$.ownName }}
 (click)="clearFilters()"
 type="button"
 class="btn btn-link m-1">
-Limpiar filtros de busqueda
+Limpiar filtros de búsqueda
 </button>
 
 <span class="btn btn-link m-1 float-end">{{ currentPage.totalElements }}</span>

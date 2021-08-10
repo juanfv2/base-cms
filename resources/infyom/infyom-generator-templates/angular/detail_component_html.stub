@@ -8,8 +8,7 @@
 #modelForm="ngForm">
 <div class="card-header">
 <h5 class="title d-inline-block">{{labels.$MODEL_NAME_CAMEL$.ownName}}</h5>
-<h6 class="ps-1 d-inline-block ms-2"
-*ngIf="isSubComponent">{{labels.$MODEL_NAME_CAMEL$.$PRIMARY_KEY_NAME$.label}} {{$MODEL_NAME_CAMEL$.$PRIMARY_KEY_NAME$}}</h6>
+<h6 class="ps-1 d-inline-block ms-2">{{labels.$MODEL_NAME_CAMEL$.$PRIMARY_KEY_NAME$.label}} {{$MODEL_NAME_CAMEL$.$PRIMARY_KEY_NAME$}}</h6>
 </div>
 <div class="card-body">
 $INPUT_FIELDS$

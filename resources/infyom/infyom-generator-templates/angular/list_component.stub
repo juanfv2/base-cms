@@ -15,7 +15,7 @@ import { JfMessageService } from 'src/app/core/services/message.service';
 import { MessageComponent } from 'src/app/components/main/_common/message/message.component';
 import { SearchFieldDirective } from 'src/app/core/directives/search-field.directive';
 
-import { $MODEL_NAME$, $RELATION_MODEL_NAMES$ } from 'src/app/models/_models';
+import { $RELATION_MODEL_NAMES$ } from 'src/app/models/_models';
 
 const kRoute = k.routes.$MODEL_NAME_PLURAL_CAMEL$;
 const kConditions = `${k.suggestions}${kRoute}`;
@@ -42,7 +42,6 @@ queryFieldOptions: any[];
 conditionalOptions: any[];
 modelSearch: any = {};
 loading = false;
-showForm = false;
 hasPermission2show = false;
 hasPermission2new = false;
 hasPermission2delete = false;
@@ -211,7 +210,6 @@ break;
 onRowSelect($MODEL_NAME_CAMEL$: $MODEL_NAME$): void {
 if (this.isSubComponent) {
 this.$MODEL_NAME_CAMEL$ = { $PRIMARY_KEY_NAME$: $MODEL_NAME_CAMEL$.$PRIMARY_KEY_NAME$ } as $MODEL_NAME$;
-this.showForm = true;
 } else {
 // todo: #if($entity.hasCompositePk())
 const id = $MODEL_NAME_CAMEL$.$PRIMARY_KEY_NAME$;
@@ -225,7 +223,6 @@ this.$MODEL_NAME_CAMEL$ = {
 $PRIMARY_KEY_NAME$: 'new',
 $RELATIONS_AS_ADD_NEW$
 } as unknown as $MODEL_NAME$;
-this.showForm = true;
 } else {
 this.router.navigate([kRoute, 'new']);
 }
@@ -286,8 +283,8 @@ this.onLazyLoad();
 
 saveFormClicked(event: any): void {
 this.$MODEL_NAME_CAMEL$ = event;
-this.showForm = false;
 this.onLazyLoad();
+this.$MODEL_NAME_CAMEL$ = undefined;
 }
 
 // <editor-fold desc='import - export'>
