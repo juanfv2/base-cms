@@ -283,6 +283,14 @@ abstract class BaseRepository implements RepositoryInterface
         return $result;
     }
 
+    public function groupBy($fieldName)
+    {
+        $this->applyCriteria();
+        $result = $this->model->groupBy($fieldName);
+
+        return $result;
+    }
+
     /**
      * Find data by id
      *

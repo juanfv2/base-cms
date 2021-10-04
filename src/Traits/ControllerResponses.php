@@ -57,7 +57,6 @@ trait ControllerResponses
 
         $d = $data;
         $m = $message;
-
         if (is_string($data)) {
             $m = $data;
             $d = [];
