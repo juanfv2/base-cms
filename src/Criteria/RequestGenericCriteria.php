@@ -297,7 +297,7 @@ class RequestGenericCriteria implements CriteriaInterface
         }, null, null, $_kOperatorStrParam);
     }
 
-    public function conditionz($conditions = array())
+    public static function conditionz($conditions = array())
     {
         if ($conditions) {
             $conditionsStr = '';
