@@ -297,48 +297,82 @@ class RequestGenericCriteria implements CriteriaInterface
         }, null, null, $_kOperatorStrParam);
     }
 
-    public static function conditionz($conditions = array())
+    public static function conditionz($conditions = [], $_kOperatorStrNested = '')
     {
         if ($conditions) {
-            $conditionsStr = '';
-            $params = array();
-            $where = ' WHERE';
-            $equalizer = '=';
-            $separator = $keyStr = $keyOrder = '';
 
-            foreach ($conditions as $k => $v) {
-                if ($k === 'ORDER') {
-                    $keyOrder = " $k BY $v";
-                    unset($conditions['ORDER']);
-                    continue;
+            // $_kOperatorStrNested = null; // $kOperator AND, OR ...
+
+            $where = $_kOperatorStr = '';
+            $_kConditionalStr = '='; // $kConditional =, LIKE, >, <, =>, ...
+
+            foreach ($conditions as $index => $k) {
+
+                $_kOperatorStr = $_kOperatorStr == '' ? 'AND' : $_kOperatorStr;
+                $_kOperatorStrNested = $_kOperatorStrNested == '' ? 'AND' : $_kOperatorStrNested;
+
+                if ($index == 0) {
+                    $_kOperatorStr = $_kOperatorStrNested = '';
                 }
-                //$where .= " $k = '$v'";
-                $arr = explode(' ', $k);
 
-                // array_pad complete the array with your values, here is : ''.
-                // list($dir, $act) = array_pad(explode('/',$url), 2, '');
+                if (is_array($k)) {
+                    $where .= " $_kOperatorStrNested (" . RequestGenericCriteria::conditionz($k, 'OR') . ')';
+                    continue; // continuar con el siguiente.
+                }
+                $condition = explode(' ', $k->c);
 
-                switch (count($arr)) {
+                switch (count($condition)) {
                     case 3:
-                        list($separator, $keyStr, $equalizer) = $arr;
+                        list($_kOperatorStr, $kFieldStr, $_kConditionalStr) = $condition;
                         break;
                     case 2:
-                        list($keyStr, $equalizer) = $arr;
+                        list($_kOperatorStr, $kFieldStr) = $condition;
                         break;
                     default:
-                        list($keyStr) = $arr;
+                        list($kFieldStr) = $condition;
+                }
+                if ($kFieldStr === 'OR') {
+                    $_kOperatorStrNested = 'OR';
+                    continue; // next
+                }
+                if ($index == 0) {
+                    $_kOperatorStr = '';
+                }
+                $noValue = '--false--';
+                $_kValue = property_exists($k, 'v') ? $k->v : $noValue;
+                $_kValueIsOptionNull = strpos($_kConditionalStr, 'null') !== false;
+
+                if (!$_kValueIsOptionNull && $_kValue === $noValue) {
+                    continue;
                 }
 
-                $vStr = ":$keyStr";
-                $params[$vStr] = $v;
-                $where .= " $separator $keyStr $equalizer $vStr";
-                $separator = 'AND';
-                $equalizer = '=';
+                if ($_kConditionalStr === 'like') {
+                    $_kValue = '%' . $_kValue . '%';
+                }
+                if ($_kConditionalStr === 'like>') {
+                    $_kConditionalStr = 'like';
+                    $_kValue = $_kValue . '%';
+                }
+                if ($_kConditionalStr === '<like') {
+                    $_kConditionalStr = 'like';
+                    $_kValue = '%' . $_kValue;
+                }
+
+                $kFieldStr = '`' . implode('`.`', explode('.', $kFieldStr)) . '`';
+
+                if ($_kValueIsOptionNull) {
+                    $isNot = $_kConditionalStr === 'not-null' ? ' NOT' : '';
+                    $where .= " $_kOperatorStr $kFieldStr$isNot $_kConditionalStr '$_kValue'";
+                } elseif (strpos($_kConditionalStr, 'in') !== false) {
+                    $isNot = $_kConditionalStr === 'not-in' ? ' NOT' : '';
+                    $inStr = implode("','", $_kValue);
+                    $where .= " $_kOperatorStr $kFieldStr$isNot $_kConditionalStr ('$inStr')";
+                } else {
+                    $where .= " $_kOperatorStr $kFieldStr $_kConditionalStr '$_kValue'";
+                }
             }
 
-            $conditionsStr = $where . $keyOrder;
-
-            return [$conditionsStr, $params];
+            return $where;
         } else {
             return '';
         }
