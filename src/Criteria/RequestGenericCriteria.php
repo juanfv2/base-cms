@@ -358,8 +358,6 @@ class RequestGenericCriteria implements CriteriaInterface
                     $_kValue = '%' . $_kValue;
                 }
 
-                $kFieldStr = '`' . implode('`.`', explode('.', $kFieldStr)) . '`';
-
                 if ($_kValueIsOptionNull) {
                     $isNot = $_kConditionalStr === 'not-null' ? ' NOT' : '';
                     $where .= " $_kOperatorStr $kFieldStr$isNot $_kConditionalStr '$_kValue'";

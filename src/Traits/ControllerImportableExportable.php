@@ -36,7 +36,7 @@ trait ControllerImportableExportable
         $xHeaders                     = [];
 
         try {
-
+            logger(__FILE__ . ':' . __LINE__ . ' $massiveQueryFile ', [$massiveQueryFile]);
             if (($handle = fopen($massiveQueryFile, 'r')) !== false) {
 
                 ini_set('auto_detect_line_endings', true);
@@ -69,7 +69,7 @@ trait ControllerImportableExportable
                     }
                     $exist = false;
                     if (isset($obj[$primaryKeyName])) {
-                        $r = DB::select("select count(*) as `aggregate` from $table where $primaryKeyName = ?", [$obj[$primaryKeyName]]);
+                        $r = DB::select("select count(*) as aggregate from $table where $primaryKeyName = ?", [$obj[$primaryKeyName]]);
                         $exist = $r[0]->aggregate > 0;
                     }
 
