@@ -21,7 +21,7 @@ class $MODEL_NAME$ApiTest extends TestCase
 
         $$MODEL_NAME_CAMEL$ = $MODEL_NAME$::factory()->make()->toArray();
 
-        $this->response = $this->actingAsAdmin('api')->json('POST', '/$API_PREFIX$/$ROUTE_PREFIX$$MODEL_NAME_PLURAL_SNAKE$', $$MODEL_NAME_CAMEL$);
+        $this->response = $this->actingAsAdmin('api')->json('POST', route('$API_PREFIX$.$MODEL_NAME_PLURAL_SNAKE$.store'), $$MODEL_NAME_CAMEL$);
 
         // $this->response->dump();
 
@@ -33,7 +33,7 @@ class $MODEL_NAME$ApiTest extends TestCase
     {
         $$MODEL_NAME_CAMEL$ = $MODEL_NAME$::factory()->create();
 
-        $this->response = $this->actingAsAdmin('api')->json('GET', "/$API_PREFIX$/$ROUTE_PREFIX$$MODEL_NAME_PLURAL_SNAKE$/{$$MODEL_NAME_CAMEL$->$PRIMARY_KEY_NAME$}");
+        $this->response = $this->actingAsAdmin('api')->json('GET', route('$API_PREFIX$.$MODEL_NAME_PLURAL_SNAKE$.show', ['$MODEL_NAME_SNAKE$' => $$MODEL_NAME_CAMEL$->$PRIMARY_KEY_NAME$]));
 
         $this->assertApiResponse($$MODEL_NAME_CAMEL$->toArray());
     }
@@ -44,7 +44,7 @@ class $MODEL_NAME$ApiTest extends TestCase
         $$MODEL_NAME_CAMEL$ = $MODEL_NAME$::factory()->create();
         $edited$MODEL_NAME$ = $MODEL_NAME$::factory()->make()->toArray();
 
-        $this->response = $this->actingAsAdmin('api')->json('PUT', "/$API_PREFIX$/$ROUTE_PREFIX$$MODEL_NAME_PLURAL_SNAKE$/{$$MODEL_NAME_CAMEL$->$PRIMARY_KEY_NAME$}", $edited$MODEL_NAME$);
+        $this->response = $this->actingAsAdmin('api')->json('PUT', route('$API_PREFIX$.$MODEL_NAME_PLURAL_SNAKE$.update', ['$MODEL_NAME_SNAKE$' => $$MODEL_NAME_CAMEL$->$PRIMARY_KEY_NAME$]), $edited$MODEL_NAME$);
 
         $this->assertApiModifications($edited$MODEL_NAME$);
     }
@@ -54,11 +54,11 @@ class $MODEL_NAME$ApiTest extends TestCase
     {
         $$MODEL_NAME_CAMEL$ = $MODEL_NAME$::factory()->create();
 
-        $this->response = $this->actingAsAdmin('api')->json('DELETE', "/$API_PREFIX$/$ROUTE_PREFIX$$MODEL_NAME_PLURAL_SNAKE$/{$$MODEL_NAME_CAMEL$->$PRIMARY_KEY_NAME$}");
+        $this->response = $this->actingAsAdmin('api')->json('DELETE', route('$API_PREFIX$.$MODEL_NAME_PLURAL_SNAKE$.destroy', ['$MODEL_NAME_SNAKE$' => $$MODEL_NAME_CAMEL$->$PRIMARY_KEY_NAME$]));
 
         $this->assertApiSuccess();
 
-        $this->response = $this->actingAsAdmin('api')->json('GET', "/$API_PREFIX$/$ROUTE_PREFIX$$MODEL_NAME_PLURAL_SNAKE$/{$$MODEL_NAME_CAMEL$->$PRIMARY_KEY_NAME$}");
+        $this->response = $this->actingAsAdmin('api')->json('GET', route('$API_PREFIX$.$MODEL_NAME_PLURAL_SNAKE$.show', ['$MODEL_NAME_SNAKE$' => $$MODEL_NAME_CAMEL$->$PRIMARY_KEY_NAME$]));
 
         $this->response->assertStatus(404);
     }
