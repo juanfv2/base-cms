@@ -36,7 +36,6 @@ trait ControllerImportableExportable
         $xHeaders                     = [];
 
         try {
-            logger(__FILE__ . ':' . __LINE__ . ' $massiveQueryFile ', [$massiveQueryFile]);
             if (($handle = fopen($massiveQueryFile, 'r')) !== false) {
 
                 ini_set('auto_detect_line_endings', true);
