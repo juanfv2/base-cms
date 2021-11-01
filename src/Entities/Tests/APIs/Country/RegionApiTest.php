@@ -21,7 +21,7 @@ class RegionApiTest extends TestCase
 
         $region = Region::factory()->make()->toArray();
 
-        $this->response = $this->actingAsAdmin('api')->json('POST', '/api/regions', $region);
+        $this->response = $this->actingAsAdmin('api')->json('POST', route('api.regions.store'), $region);
 
         // $this->response->dump();
 
@@ -33,7 +33,7 @@ class RegionApiTest extends TestCase
     {
         $region = Region::factory()->create();
 
-        $this->response = $this->actingAsAdmin('api')->json('GET', "/api/regions/{$region->id}");
+        $this->response = $this->actingAsAdmin('api')->json('GET', route('api.regions.show', ['region' => $region->id]));
 
         $this->assertApiResponse($region->toArray());
     }
@@ -44,7 +44,7 @@ class RegionApiTest extends TestCase
         $region = Region::factory()->create();
         $editedRegion = Region::factory()->make()->toArray();
 
-        $this->response = $this->actingAsAdmin('api')->json('PUT', "/api/regions/{$region->id}", $editedRegion);
+        $this->response = $this->actingAsAdmin('api')->json('PUT', route('api.regions.update', ['region' => $region->id]), $editedRegion);
 
         $this->assertApiModifications($editedRegion);
     }
@@ -54,11 +54,11 @@ class RegionApiTest extends TestCase
     {
         $region = Region::factory()->create();
 
-        $this->response = $this->actingAsAdmin('api')->json('DELETE', "/api/regions/{$region->id}");
+        $this->response = $this->actingAsAdmin('api')->json('DELETE', route('api.regions.destroy', ['region' => $region->id]));
 
         $this->assertApiSuccess();
 
-        $this->response = $this->actingAsAdmin('api')->json('GET', "/api/regions/{$region->id}");
+        $this->response = $this->actingAsAdmin('api')->json('GET', route('api.regions.show', ['region' => $region->id]));
 
         $this->response->assertStatus(404);
     }

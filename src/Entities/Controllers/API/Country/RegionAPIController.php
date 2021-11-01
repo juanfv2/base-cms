@@ -9,6 +9,7 @@ use App\Repositories\Country\RegionRepository;
 
 /**
  * Class RegionController
+ *
  * @package App\Http\Controllers\API
  */
 class RegionAPIController extends AppBaseController

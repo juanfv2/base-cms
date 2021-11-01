@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * Class Country
  *
  * @package App\Models\Country
- * @version July 18, 2021, 1:48 am UTC
+ * @version October 22, 2021, 4:44 pm UTC
  */
 class Country extends Model
 {
@@ -49,7 +49,7 @@ class Country extends Model
      * @var array
      */
     public static $rules = [
-        'name' => 'required|string|max:255',
+        'name' => 'required|string|max:191',
         'code' => 'required|string|max:10'
     ];
 

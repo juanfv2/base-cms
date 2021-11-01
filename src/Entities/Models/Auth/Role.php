@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * Class Role
  *
  * @package App\Models
- * @version July 18, 2021, 1:48 am UTC
+ * @version October 22, 2021, 5:23 pm UTC
  */
 class Role extends Model
 {
@@ -52,8 +52,8 @@ class Role extends Model
      * @var array
      */
     public static $rules = [
-        'name'        => 'required|string|max:255',
-        'description' => 'required|string|max:255',
+        'name'        => 'required|string|max:191',
+        'description' => 'required|string|max:191',
         'createdBy'   => 'nullable',
         'updatedBy'   => 'nullable',
         'created_at'  => 'nullable',

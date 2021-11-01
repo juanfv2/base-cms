@@ -53,8 +53,8 @@ class UserAPIController extends AppBaseController
 
         $model = $this->modelRepository->withAdditionalInfo('create', $input);
 
-        if ($request->hasFile('photoUrl')) {
-            return $this->fileUpload($request, 'auth_users', 'photoUrl', $model->id, 0);
+        if ($request->hasFile('photo')) {
+            return $this->fileUpload($request, 'auth_users', 'photo', $model->id, 0);
         }
 
         return $this->sendResponse(['id' => $model->id], __('validation.model.stored', ['model' => __("models.{$this->modelNameCamel}.name")]));

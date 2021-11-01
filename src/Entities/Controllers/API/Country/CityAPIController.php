@@ -9,6 +9,7 @@ use App\Repositories\Country\CityRepository;
 
 /**
  * Class CityController
+ *
  * @package App\Http\Controllers\API
  */
 class CityAPIController extends AppBaseController

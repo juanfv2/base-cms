@@ -21,7 +21,7 @@ class CityApiTest extends TestCase
 
         $city = City::factory()->make()->toArray();
 
-        $this->response = $this->actingAsAdmin('api')->json('POST', '/api/cities', $city);
+        $this->response = $this->actingAsAdmin('api')->json('POST', route('api.cities.store'), $city);
 
         // $this->response->dump();
 
@@ -33,7 +33,7 @@ class CityApiTest extends TestCase
     {
         $city = City::factory()->create();
 
-        $this->response = $this->actingAsAdmin('api')->json('GET', "/api/cities/{$city->id}");
+        $this->response = $this->actingAsAdmin('api')->json('GET', route('api.cities.show', ['city' => $city->id]));
 
         $this->assertApiResponse($city->toArray());
     }
@@ -44,7 +44,7 @@ class CityApiTest extends TestCase
         $city = City::factory()->create();
         $editedCity = City::factory()->make()->toArray();
 
-        $this->response = $this->actingAsAdmin('api')->json('PUT', "/api/cities/{$city->id}", $editedCity);
+        $this->response = $this->actingAsAdmin('api')->json('PUT', route('api.cities.update', ['city' => $city->id]), $editedCity);
 
         $this->assertApiModifications($editedCity);
     }
@@ -54,11 +54,11 @@ class CityApiTest extends TestCase
     {
         $city = City::factory()->create();
 
-        $this->response = $this->actingAsAdmin('api')->json('DELETE', "/api/cities/{$city->id}");
+        $this->response = $this->actingAsAdmin('api')->json('DELETE', route('api.cities.destroy', ['city' => $city->id]));
 
         $this->assertApiSuccess();
 
-        $this->response = $this->actingAsAdmin('api')->json('GET', "/api/cities/{$city->id}");
+        $this->response = $this->actingAsAdmin('api')->json('GET', route('api.cities.show', ['city' => $city->id]));
 
         $this->response->assertStatus(404);
     }

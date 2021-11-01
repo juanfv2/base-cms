@@ -21,7 +21,7 @@ class XFileApiTest extends TestCase
 
         $xFile = XFile::factory()->make()->toArray();
 
-        $this->response = $this->actingAsAdmin('api')->json('POST', '/api/x_files', $xFile);
+        $this->response = $this->actingAsAdmin('api')->json('POST', route('api.x_files.store'), $xFile);
 
         // $this->response->dump();
 
@@ -33,7 +33,7 @@ class XFileApiTest extends TestCase
     {
         $xFile = XFile::factory()->create();
 
-        $this->response = $this->actingAsAdmin('api')->json('GET', "/api/x_files/{$xFile->id}");
+        $this->response = $this->actingAsAdmin('api')->json('GET', route('api.x_files.show', ['x_file' => $xFile->id]));
 
         $this->assertApiResponse($xFile->toArray());
     }
@@ -44,7 +44,7 @@ class XFileApiTest extends TestCase
         $xFile = XFile::factory()->create();
         $editedXFile = XFile::factory()->make()->toArray();
 
-        $this->response = $this->actingAsAdmin('api')->json('PUT', "/api/x_files/{$xFile->id}", $editedXFile);
+        $this->response = $this->actingAsAdmin('api')->json('PUT', route('api.x_files.update', ['x_file' => $xFile->id]), $editedXFile);
 
         $this->assertApiModifications($editedXFile);
     }
@@ -54,11 +54,11 @@ class XFileApiTest extends TestCase
     {
         $xFile = XFile::factory()->create();
 
-        $this->response = $this->actingAsAdmin('api')->json('DELETE', "/api/x_files/{$xFile->id}");
+        $this->response = $this->actingAsAdmin('api')->json('DELETE', route('api.x_files.destroy', ['x_file' => $xFile->id]));
 
         $this->assertApiSuccess();
 
-        $this->response = $this->actingAsAdmin('api')->json('GET', "/api/x_files/{$xFile->id}");
+        $this->response = $this->actingAsAdmin('api')->json('GET', route('api.x_files.show', ['x_file' => $xFile->id]));
 
         $this->response->assertStatus(404);
     }

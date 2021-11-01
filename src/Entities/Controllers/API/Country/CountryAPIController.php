@@ -1,6 +1,5 @@
 <?php
 
-namespace App\Http\Controllers\API;
 namespace App\Http\Controllers\API\Country;
 
 use App\Models\Country\Country;
@@ -10,6 +9,7 @@ use App\Repositories\Country\CountryRepository;
 
 /**
  * Class CountryController
+ *
  * @package App\Http\Controllers\API
  */
 class CountryAPIController extends AppBaseController

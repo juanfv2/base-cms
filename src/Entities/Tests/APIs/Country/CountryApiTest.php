@@ -21,7 +21,7 @@ class CountryApiTest extends TestCase
 
         $country = Country::factory()->make()->toArray();
 
-        $this->response = $this->actingAsAdmin('api')->json('POST', '/api/countries', $country);
+        $this->response = $this->actingAsAdmin('api')->json('POST', route('api.countries.store'), $country);
 
         // $this->response->dump();
 
@@ -33,7 +33,7 @@ class CountryApiTest extends TestCase
     {
         $country = Country::factory()->create();
 
-        $this->response = $this->actingAsAdmin('api')->json('GET', "/api/countries/{$country->id}");
+        $this->response = $this->actingAsAdmin('api')->json('GET', route('api.countries.show', ['country' => $country->id]));
 
         $this->assertApiResponse($country->toArray());
     }
@@ -44,7 +44,7 @@ class CountryApiTest extends TestCase
         $country = Country::factory()->create();
         $editedCountry = Country::factory()->make()->toArray();
 
-        $this->response = $this->actingAsAdmin('api')->json('PUT', "/api/countries/{$country->id}", $editedCountry);
+        $this->response = $this->actingAsAdmin('api')->json('PUT', route('api.countries.update', ['country' => $country->id]), $editedCountry);
 
         $this->assertApiModifications($editedCountry);
     }
@@ -54,11 +54,11 @@ class CountryApiTest extends TestCase
     {
         $country = Country::factory()->create();
 
-        $this->response = $this->actingAsAdmin('api')->json('DELETE', "/api/countries/{$country->id}");
+        $this->response = $this->actingAsAdmin('api')->json('DELETE', route('api.countries.destroy', ['country' => $country->id]));
 
         $this->assertApiSuccess();
 
-        $this->response = $this->actingAsAdmin('api')->json('GET', "/api/countries/{$country->id}");
+        $this->response = $this->actingAsAdmin('api')->json('GET', route('api.countries.show', ['country' => $country->id]));
 
         $this->response->assertStatus(404);
     }
