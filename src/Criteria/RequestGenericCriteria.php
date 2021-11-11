@@ -189,12 +189,8 @@ class RequestGenericCriteria implements CriteriaInterface
         }
 
         if ($sorts) {
-            if (isset($sorts->sortField) && !isset($sorts->multiSortMeta)) {
-                $this->model = $this->model->orderBy($sorts->sortField, ($sorts->sortOrder == 1 ? 'asc' : 'desc'));
-            } elseif (isset($sorts->multiSortMeta)) {
-                foreach ($sorts->multiSortMeta as $k) {
-                    $this->model = $this->model->orderBy($k->field, ($k->order == 1 ? 'asc' : 'desc'));
-                }
+            foreach ($sorts as $k) {
+                $this->model = $this->model->orderBy($k->field, ($k->order == 1 ? 'asc' : 'desc'));
             }
         }
 
