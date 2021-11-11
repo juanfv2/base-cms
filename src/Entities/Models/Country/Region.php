@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 /**
  * Class Region
  *
- * @package App\Models\Country
- * @version July 18, 2021, 1:48 am UTC
+ * @package App\Models
+ * @version October 22, 2021, 5:02 pm UTC
  */
 class Region extends Model
 {

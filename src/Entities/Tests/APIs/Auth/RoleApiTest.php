@@ -24,7 +24,7 @@ class RoleApiTest extends TestCase
         $role = Role::factory()->make()->toArray();
         $role['permissions'] = $permissions;
 
-        $this->response = $this->actingAsAdmin('api')->json('POST', '/api/roles', $role);
+        $this->response = $this->actingAsAdmin('api')->json('POST', route('api.roles.store'), $role);
 
         $this->getContent();
 
@@ -47,7 +47,7 @@ class RoleApiTest extends TestCase
     {
         $role = Role::factory()->create();
 
-        $this->response = $this->actingAsAdmin('api')->json('GET', "/api/roles/{$role->id}");
+        $this->response = $this->actingAsAdmin('api')->json('GET', route('api.roles.show', ['role' => $role->id]));
 
         $this->assertApiResponse($role->toArray());
     }
@@ -58,7 +58,7 @@ class RoleApiTest extends TestCase
         $role = Role::factory()->create();
         $editedRole = Role::factory()->make()->toArray();
 
-        $this->response = $this->actingAsAdmin('api')->json('PUT', "/api/roles/{$role->id}", $editedRole);
+        $this->response = $this->actingAsAdmin('api')->json('PUT', route('api.roles.update', ['role' => $role->id]), $editedRole);
 
         $this->assertApiModifications($editedRole);
     }
@@ -68,11 +68,11 @@ class RoleApiTest extends TestCase
     {
         $role = Role::factory()->create();
 
-        $this->response = $this->actingAsAdmin('api')->json('DELETE', "/api/roles/{$role->id}");
+        $this->response = $this->actingAsAdmin('api')->json('DELETE', route('api.roles.destroy', ['role' => $role->id]));
 
         $this->assertApiSuccess();
 
-        $this->response = $this->actingAsAdmin('api')->json('GET', "/api/roles/{$role->id}");
+        $this->response = $this->actingAsAdmin('api')->json('GET', route('api.roles.show', ['role' => $role->id]));
 
         $this->response->assertStatus(404);
     }

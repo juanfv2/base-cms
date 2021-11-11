@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\API\Auth;
 
 use App\Models\Auth\Role;
-use Illuminate\Http\Request;
 
+use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
 use App\Repositories\Auth\RoleRepository;
 use App\Repositories\Auth\PermissionRepository;

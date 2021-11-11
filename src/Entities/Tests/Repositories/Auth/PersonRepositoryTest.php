@@ -51,11 +51,7 @@ class PersonRepositoryTest extends TestCase
         $this->assertModelData($person->toArray(), $dbPerson);
     }
 
-    /**
-     * @test
-     *
-     * todo: update "user" too
-     */
+    /** @test */
     public function repo_update_person()
     {
         $person = Person::factory()->create();

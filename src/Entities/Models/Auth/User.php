@@ -3,17 +3,18 @@
 namespace App\Models\Auth;
 
 use Illuminate\Support\Facades\DB;
+use Juanfv2\BaseCms\Traits\HasFile;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\SoftDeletes;
 // use App\Notifications\ResetPasswordNotification;
+use Juanfv2\BaseCms\Traits\UserResponsible;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
-use Juanfv2\BaseCms\Traits\UserResponsible;
 
 /**
  * Class User
@@ -23,7 +24,7 @@ use Juanfv2\BaseCms\Traits\UserResponsible;
  */
 class User extends Model implements AuthenticatableContract, AuthorizableContract
 {
-    use Authenticatable, Authorizable, Notifiable, SoftDeletes, HasFactory, UserResponsible;
+    use Authenticatable, Authorizable, Notifiable, SoftDeletes, HasFactory, UserResponsible, HasFile;
 
     public $table = 'auth_users';
 
@@ -193,16 +194,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     }
 
     /**
-     * @return \App\Models\Auth\XFile
-     */
-    public function getPhotoUrlAttribute()
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     **/
+    public function photo()
     {
-        $f =  \App\Models\Auth\XFile::where('entity', $this->table)
-            ->where('field', 'photoUrl')
-            ->where('entity_id', $this->id)
-            ->first();
-        logger(__FILE__ . ':' . __LINE__ . ' $f ', [$f]);
-        return $f;
+        return $this->hasOneXFile(__FUNCTION__);
     }
 
     protected static function boot()
@@ -210,7 +206,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         parent::boot();
 
         static::deleting(function ($model) {
-            if ($i = $model->photoUrl) {
+            if ($i = $model->photo) {
                 $i->delete();
             }
         });
