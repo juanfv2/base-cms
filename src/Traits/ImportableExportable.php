@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\File;
 
 use Juanfv2\BaseCms\Utils\ExportDataCSV;
 
-trait ControllerImportableExportable
+trait ImportableExportable
 {
 
     /**
