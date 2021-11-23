@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Auth;
+namespace App\Models\Misc;
 
 use Juanfv2\BaseCms\Traits\ControllerFiles;
 

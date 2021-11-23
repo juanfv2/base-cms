@@ -1,8 +1,8 @@
 <?php
 
-namespace Database\Factories\Auth;
+namespace Database\Factories\Misc;
 
-use App\Models\Auth\XFile;
+use App\Models\Misc\XFile;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class XFileFactory extends Factory

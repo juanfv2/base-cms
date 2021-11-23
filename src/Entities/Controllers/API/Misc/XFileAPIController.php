@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\API\Auth;
+namespace App\Http\Controllers\API\Misc;
 
-use App\Models\Auth\XFile;
+use App\Models\Misc\XFile;
 
 use App\Http\Controllers\AppBaseController;
 use App\Repositories\Auth\XFileRepository;

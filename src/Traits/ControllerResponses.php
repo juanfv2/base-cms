@@ -2,8 +2,6 @@
 
 namespace  Juanfv2\BaseCms\Traits;
 
-use App\Utils\ResponseUtil;
-
 trait ControllerResponses
 {
     /**

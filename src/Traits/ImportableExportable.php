@@ -1,13 +1,13 @@
 <?php
 
-namespace  Juanfv2\BaseCms\Traits;
+namespace Juanfv2\BaseCms\Traits;
+
+use App\Models\Misc\BulkError;
 
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
-
-use Juanfv2\BaseCms\Utils\ExportDataCSV;
+use App\Services\ExportDataService;
 
 trait ImportableExportable
 {
@@ -30,91 +30,86 @@ trait ImportableExportable
         $massiveQueryFile             = $massiveQueryFileNameDataPath . '/' . $table . '/' . $massiveQueryFieldName . '/' . $massiveQueryFileName;
         $keys                         = $request->get('keys');
         $primaryKeyName               = $request->get('primaryKeyName');
-        $original                     = ini_get('auto_detect_line_endings');
-        $created                      = 0;
-        $handle                       = null;
-        $xHeaders                     = [];
 
-        try {
-            if (($handle = fopen($massiveQueryFile, 'r')) !== false) {
+        if (($handle = fopen($massiveQueryFile, 'r')) !== false) {
+            try {
+                $delimiter    = $this->getFileDelimiter($massiveQueryFile);
 
-                ini_set('auto_detect_line_endings', true);
-                DB::beginTransaction();
+                $created = $this->importing($handle, $table, $primaryKeyName, $keys, $delimiter);
 
-                while (($datum = fgetcsv($handle, 10000, ',')) !== false) {
-                    $datum = $this->toUtf8($datum);
+                return $this->sendResponse(['updated' => $created - 1], __('validation.model.list', ['model' => $table]),);
+            } catch (\Throwable $th) {
+                //throw $th;
+                return $this->sendError(['code' => $th->getCode(), 'message' => $th->getMessage(), 'updated' => $created,], 'Error en la linea ' . $created, 500);
+            }
+        } // end ($handle = fopen($massiveQueryFile, 'r')) !== false
+    }
 
-                    if ($created === 0) {
-                        $xHeaders = $datum;
-                        $created++;
-                        continue;
-                    }
-                    $cKeys = count($xHeaders);
-                    $cDatum = count($datum);
+    public function importing($handle, $table, $primaryKeys, $keys, $delimiter)
+    {
+        $created      = 0;
+        $line         = 0;
+        $data1        = [];
+        $xHeadersTemp = fgetcsv($handle, 0, $delimiter);
+        while (($data = fgetcsv($handle, 0, $delimiter)) !== false) {
+            $line++;
+            try {
+                $data1       = $this->toUtf8($data);
+                $dataCombine = array_combine($xHeadersTemp, $data1);
 
-                    if ($cKeys !== $cDatum) {
-                        throw new \Exception(__('validation.columns.no.match', ['required' => $cKeys, 'sent' => $cDatum]), $created + 1);
-                    }
-                    $itemArr = array_combine($xHeaders, $datum);
+                if ($dataCombine) {
+                    $data = $this->getDataToSave($xHeadersTemp, $dataCombine, $keys);
 
-                    // AVOID columns empties
-                    $obj = [];
-                    foreach ($xHeaders as $k) {
-                        if (isset($keys[$k])) {
-                            if ($itemArr[$k] !== '') {
-                                $obj[$keys[$k]] = $itemArr[$k];
-                            }
+                    $attrKeys = [];
+
+                    if (is_string($primaryKeys)) {
+                        if (isset($data[$primaryKeys])) {
+                            $attrKeys[$primaryKeys] = $data[$primaryKeys];
                         }
                     }
-                    $exist = false;
-                    if (isset($obj[$primaryKeyName])) {
-                        $r = DB::select("select count(*) as aggregate from $table where $primaryKeyName = ?", [$obj[$primaryKeyName]]);
-                        $exist = $r[0]->aggregate > 0;
+                    if (is_array($primaryKeys)) {
+                        $attrKeys = $this->getDataToSave($primaryKeys, $dataCombine, $keys);
                     }
 
-                    if ($exist) {
-                        DB::table('' . $table)
-                            ->where($primaryKeyName, $obj[$primaryKeyName])
-                            ->update($obj);
-                    } else {
-                        DB::table('' . $table)->insert($obj);
-                    }
-
-                    $created++;
-
-                    // logger(__FILE__ . ':' . __LINE__ . ' $errors // end while ' . $created);
-                } // end while
-
-                if ($created) {
-                    DB::commit();
+                    $r = $this->saveData($table, $attrKeys, $data, $created);
+                    if ($r)  $created++;
                 }
+            } catch (\Throwable $th) {
+                $d = implode($delimiter, $data1);
+                BulkError::create(['queue' => $this->event->data->cQueue, 'payload' => "Línea: {$line} {$d} {$th->getMessage()}",]);
+            }
+        }
 
-                ini_set('auto_detect_line_endings', $original);
-                fclose($handle);
+        fclose($handle);
 
-                File::deleteDirectory($massiveQueryFileNameDataPath);
+        return $created;
+    }
 
-                // return [
-                //     'updated' => $created - 1,
-                // ];
-                return $this->sendResponse(
-                    ['updated' => $created - 1],
-                    __('validation.model.list', ['model' => $table]),
-                );
-            } // end ($handle = fopen($massiveQueryFile, 'r')) !== false
-        } catch (Exception $e) {
-            // logger(__FILE__ . ':' . __LINE__ . ' $errors // exception.: ' . $created);
-            DB::rollBack();
-            ini_set('auto_detect_line_endings', $original);
-            if ($handle) fclose($handle);
+    public function getDataToSave($headers, $data, $keys)
+    {
+        $dataToSave = [];
 
-            File::deleteDirectory($massiveQueryFileNameDataPath);
+        foreach ($headers as $k) {
+            if (isset($keys[$k])) {
+                if ($data[$k] !== '') {
+                    $dataToSave[$keys[$k]] = $data[$k];
+                }
+            }
+        }
 
-            return $this->sendError(
-                ['code' => $e->getCode(), 'message' => $e->getMessage(), 'updated' => $created,],
-                'Error en la linea ' . $created,
-                500
-            );
+        return $dataToSave;
+    }
+
+    public function saveData($table, $attrKeys, $data)
+    {
+        try {
+            if (empty($attrKeys)) {
+                return DB::table($table)->insert($data);
+            }
+
+            return DB::table($table)->updateOrInsert($attrKeys, $data);
+        } catch (\Throwable $th) {
+            throw $th;
         }
     }
 
@@ -183,16 +178,16 @@ trait ImportableExportable
     protected function export($table, $headers, $repo)
     {
         $labels   = array_values($headers);
-        $fieldNames   = array_keys($headers);
-        $exporter = new ExportDataCSV('browser', $table . '.csv');
+        $fNames   = array_keys($headers);
+        $exporter = (new ExportDataService('csv', 'browser', $table . '.csv'))->getExporter();
 
         $exporter->initialize(); // starts streaming data to web browser
         $exporter->addRow($labels);
 
-        $repo->allForChunk()->chunk(10000, function ($items) use ($fieldNames, $exporter) {
+        $repo->allForChunk()->chunk(10000, function ($items) use ($fNames, $exporter) {
             foreach ($items as $listItem) {
                 $i = [];
-                foreach ($fieldNames as $key) {
+                foreach ($fNames as $key) {
                     $i[$key] = $listItem->{$key};
                 }
                 $exporter->addRow($i);
@@ -202,25 +197,6 @@ trait ImportableExportable
         $exporter->finalize(); // writes the footer, flushes remaining data to browser.
 
         exit(); // all done
-    }
-
-    public function exportCsv(Request $request)
-    {
-        // $criteria = new RequestGenericCriteria($request);
-        // $zname    = $request->get('zname');
-        // $repo     = new MyBaseRepository(app());
-
-        // $repo->table = $zname;
-        // $repo->primaryKey = $request->get('zid', null);
-        // $repo->resetModel();
-        // $repo->pushCriteria($criteria);
-
-        // $items = $repo->all();
-
-        // $headers = json_decode($request->get('fields'), true);
-        // $results = json_decode(json_encode($items), true);
-
-        // return $this->export($zname, $headers, $results);
     }
 
     protected function toUtf8($in)
@@ -239,5 +215,30 @@ trait ImportableExportable
             return trim($in);
         }
         return $out;
+    }
+
+    function getFileDelimiter($file, $checkLines = 2)
+    {
+        $file = new \SplFileObject($file);
+        $delimiters = [',', '\t', ';', '|', ':'];
+        $results = array();
+        $i = 0;
+        while ($file->valid() && $i <= $checkLines) {
+            $line = $file->fgets();
+            foreach ($delimiters as $delimiter) {
+                $regExp = '/[' . $delimiter . ']/';
+                $fields = preg_split($regExp, $line);
+                if (count($fields) > 1) {
+                    if (!empty($results[$delimiter])) {
+                        $results[$delimiter]++;
+                    } else {
+                        $results[$delimiter] = 1;
+                    }
+                }
+            }
+            $i++;
+        }
+        $results = array_keys($results, max($results));
+        return $results[0];
     }
 }

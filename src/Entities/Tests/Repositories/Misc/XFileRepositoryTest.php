@@ -1,14 +1,14 @@
 <?php
 
-namespace Tests\Repositories\Auth;
+namespace Tests\Repositories\Misc;
 
-use App\Models\Auth\XFile;
+use App\Models\Misc\XFile;
 
 use Tests\TestCase;
 use Tests\ApiTestTrait;
 
 use Illuminate\Support\Facades\App;
-use App\Repositories\Auth\XFileRepository;
+use App\Repositories\Misc\XFileRepository;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class XFileRepositoryTest extends TestCase
@@ -20,7 +20,7 @@ class XFileRepositoryTest extends TestCase
      */
     protected $modelRepository;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
         $this->modelRepository = App::make(XFileRepository::class);

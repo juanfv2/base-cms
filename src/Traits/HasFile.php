@@ -9,7 +9,7 @@ trait HasFile
      */
     public function hasOneXFile($field)
     {
-        return $this->hasOne(\App\Models\Auth\XFile::class, 'entity_id')
+        return $this->hasOne(\App\Models\Misc\XFile::class, 'entity_id')
             ->where('entity', $this->table)
             ->where('field', $field)->withDefault([
                 'id' => 1,
@@ -26,7 +26,7 @@ trait HasFile
      */
     public function hasManyXFile($field)
     {
-        return $this->hasMany(\App\Models\Auth\XFile::class, 'entity_id')
+        return $this->hasMany(\App\Models\Misc\XFile::class, 'entity_id')
             ->where('entity', $this->table)
             ->where('field', $field);
     }

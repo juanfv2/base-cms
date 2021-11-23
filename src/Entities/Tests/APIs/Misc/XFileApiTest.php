@@ -1,12 +1,15 @@
 <?php
 
-namespace Tests\APIs\Auth;
+namespace Tests\APIs\Misc;
 
-use App\Models\Auth\XFile;
+use App\Models\Misc\XFile;
 
 use Tests\TestCase;
 use Tests\ApiTestTrait;
 
+
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 

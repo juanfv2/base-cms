@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Repositories\Auth;
+namespace App\Repositories\Misc;
 
-use App\Models\Auth\XFile;
+use App\Models\Misc\XFile;
 
 use Juanfv2\BaseCms\Repositories\BaseRepository;
 

@@ -2,7 +2,7 @@
 
 namespace  Juanfv2\BaseCms\Traits;
 
-use App\Models\Auth\XFile;
+use App\Models\Misc\XFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
