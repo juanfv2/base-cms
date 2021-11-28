@@ -1,8 +1,9 @@
 <?php
 
-namespace  Juanfv2\BaseCms\Traits;
+namespace Juanfv2\BaseCms\Traits;
 
 use App\Models\Misc\XFile;
+
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -94,8 +95,16 @@ trait ControllerFiles
         $columns              = 0;
         $isMulti              = $request->header('isMulti', 0);
         $isTemporal           = strpos($fieldName, 'massive') !== false;
-        $baseAssets           = 'public/assets/adm';
-        $strLocation          = "$baseAssets/$tableName/$fieldName";
+        $baseAssets           = 'public/assets/adm/';
+
+        $rCountry             = $request->header('r-country', '');
+
+        if ($rCountry) {
+            $baseAssets = $baseAssets . $rCountry . '/';
+        }
+
+        $strLocation          = "$baseAssets$tableName/$fieldName";
+
         $originalName         = $request->$fieldName->getClientOriginalName();
         $fileExtension        = $request->$fieldName->extension();
         $fileNamePrefix       = $tableName . '-' . $id;
@@ -209,8 +218,14 @@ trait ControllerFiles
      */
     public function fileDown($tableName, $fieldName, $id, $w = 0, $h = 0, $imageName = '')
     {
+        $rCountry     = request()->get('rCountry', '');
         if (!$imageName) {
+            if ($rCountry) {
+                config()->set('database.default', config('base-cms.default_prefix') . $rCountry);
+            }
+
             $imageName = '-';
+
             $f = XFile::where('entity', "{$tableName}")
                 ->where('field', $fieldName)
                 ->where('entity_id', $id)
@@ -221,13 +236,20 @@ trait ControllerFiles
             }
         }
 
-        $baseAssets               = 'public/assets/adm/';
         $w                        = (int) $w;
         $h                        = (int) $h;
+        $baseAssets               = 'public/assets/adm/';
         $strLocationImageNotFound = $baseAssets . '../images/image-not-found.png';
-        $strLocationImageSaved    = $baseAssets . $tableName . '/' . $fieldName . '/' . $imageName;
+
+        if ($rCountry) {
+            $baseAssets = $baseAssets . $rCountry . '/';
+        }
+
+        $strLocationImageSaved    = "$baseAssets$tableName/$fieldName/$imageName";
         $exists                   = Storage::exists($strLocationImageSaved);
         $strLocationImage2show    = $exists ? $strLocationImageSaved : $strLocationImageNotFound;
+
+        logger(__FILE__ . ':' . __LINE__ . ' $strLocationImageSaved ', [$strLocationImageSaved]);
 
         ini_set('memory_limit', '-1');
 
