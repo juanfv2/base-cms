@@ -2,12 +2,12 @@
 
 namespace Juanfv2\BaseCms\Traits;
 
-use App\Models\Misc\BulkError;
-
 use Exception;
+
 use Illuminate\Http\Request;
+use App\Models\Misc\BulkError;
 use Illuminate\Support\Facades\DB;
-use App\Services\ExportDataService;
+use Juanfv2\BaseCms\Utils\ExportDataService;
 
 trait ImportableExportable
 {
