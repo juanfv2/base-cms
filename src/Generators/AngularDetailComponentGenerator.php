@@ -141,7 +141,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
             }
 
             if ($type == 'mtm') {
-                $relationText = " modelTemp.{$fieldCamelPlural} = modelTemp.{$fieldCamelPlural} ? modelTemp.{$fieldCamelPlural}.map(item => item.id) : [];";
+                $relationText = " modelTemp.{$fieldCamelPlural} = modelTemp.{$fieldCamelPlural} ? modelTemp.{$fieldCamelPlural}.map((item:any) => item.id) : [];";
                 $relations[] = $relationText;
             }
         }
