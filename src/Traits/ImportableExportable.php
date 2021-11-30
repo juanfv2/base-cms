@@ -2,10 +2,9 @@
 
 namespace Juanfv2\BaseCms\Traits;
 
-use Exception;
+use App\Models\Misc\BulkError;
 
 use Illuminate\Http\Request;
-use App\Models\Misc\BulkError;
 use Illuminate\Support\Facades\DB;
 use Juanfv2\BaseCms\Utils\ExportDataService;
 
@@ -72,7 +71,8 @@ trait ImportableExportable
                     }
 
                     $r = $this->saveData($table, $attrKeys, $data, $created);
-                    if ($r)  $created++;
+
+                    $created++;
                 }
             } catch (\Throwable $th) {
                 $d = implode($delimiter, $data1);
@@ -159,7 +159,7 @@ trait ImportableExportable
                     'success' => true,
                 ];
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
 
             DB::rollBack();
 
