@@ -39,7 +39,8 @@ class ExportDataCSV extends ExportData
 
     public function sendHttpHeaders()
     {
-        header("Content-type: text/csv");
+        header('Content-Encoding: UTF-8');
+        header('Content-type: text/csv; charset=UTF-8');
         header("Content-Disposition: attachment; filename=" . basename($this->filename));
     }
 }
