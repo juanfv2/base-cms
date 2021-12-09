@@ -24,7 +24,8 @@ class AngularAutoCompleteComponentGenerator extends BaseGenerator
     {
         $this->commandData = $commandData;
         // dd($this->commandData);
-        $this->path = base_path('angular/') . $this->commandData->config->mDashed . '/';
+        $mPath = config('infyom.laravel_generator.path.angular', 'angular/');
+        $this->path = $mPath . $this->commandData->config->mDashed . '/';
         $name = $this->commandData->config->mDashed . '-auto-complete.component.';
         $this->fileName = $name . 'ts';
     }
