@@ -174,7 +174,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
             }
 
             rm2{$fieldCamel}($fieldCamel: $field): void {
-                this.{$this->commandData->config->mCamel}.$fieldCamelPlural = this.{$this->commandData->config->mCamel}.$fieldCamelPlural.filter(r => r.id !== $fieldCamel.id);
+                this.{$this->commandData->config->mCamel}.$fieldCamelPlural = this.{$this->commandData->config->mCamel}.$fieldCamelPlural.filter((r:any) => r.id !== $fieldCamel.id);
                 // this.update2$fieldCamel('');
             }
 
