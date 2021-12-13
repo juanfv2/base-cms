@@ -417,41 +417,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
                                               [avoidable]="{$this->commandData->config->mCamel}.$fieldCamelPlural"
                                               [(ngModel)]="{$this->commandData->config->mCamel}.$fieldCamelPlural">
                 </app-$fieldDash-auto-complete>
-                <label>$plural seleccionados:</label>
-                <ul class="list-group">
-                    <li *ngFor="let model of {$this->commandData->config->mCamel}.{$fieldCamelPlural}"
-                        class="list-group-item">
-                        <div class="form-group">
-                        <div class="input-group">
-                        <!-- reemplazar "name" por campo del modelo $fieldCamel -->
-                          <textarea
-                            name="{$this->commandData->config->mCamel}-{$fieldCamelPlural}-text"
-                            [(ngModel)]="model.name"
-                            class="form-control bg-transparent text-primary border-0 resize-none cursor-none"
-                            placeholder="Requerido"
-                            required
-                            readonly
-                            ></textarea>
-                          <button
-                            title="Remover"
-                            class="btn btn-outline-secondary m-0"
-                            (click)="rm2{$fieldCamel}(model)"
-                            type="button"
-                          >
-                            <i class="fa fa-times text-danger"></i>
-                          </button>
-                          <button
-                            title="Ver detalle"
-                            class="btn btn-outline-secondary m-0"
-                            (click)="go2{$fieldCamel}(model)"
-                            type="button"
-                          >
-                            <i class="fa fa-info text-info"></i>
-                          </button>
-                        </div>
-                      </div>
-                    </li>
-                </ul>
+                <app-many-to-many lField="name" [lModel]="labels.{$fieldCamel}" [gOptions]="{$this->commandData->config->mCamel}.$fieldCamelPlural" (rm)="rm2{$fieldCamel}(\$event)" (go)="go2{$fieldCamel}(\$event)" ></app-many-to-many>
                 </div>
                 <div class="card-footer">
                 </div>
