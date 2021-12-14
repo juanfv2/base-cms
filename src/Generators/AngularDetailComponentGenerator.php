@@ -396,12 +396,12 @@ class AngularDetailComponentGenerator extends BaseGenerator
         $plural = Str::plural($field);
 
         $relationText = <<<EOF
-        <li [ngbNavItem]="'$fieldCamel'">
+        <li [ngbNavItem]="'$fieldCamelPlural'">
             <a ngbNavLink>{{labels.$fieldCamel.ownNamePlural}}</a>
             <ng-template ngbNavContent>
             <div class="card">
                 <div class="card-body">
-                <!-- todo: if is required <div *ngIf="!{$fieldCamel}sIsRequired" class="alert alert-danger form-text" role="alert"> Debe seleccionar {{labels.$fieldCamel.ownName}} </div> -->
+                <div *ngIf="!{$fieldCamelPlural}IsRequired" class="alert alert-danger form-text" role="alert"> Debe seleccionar {{labels.$fieldCamel.ownName}} </div>
                 <app-$fieldDash-auto-complete id="{$fieldCamel}-availables"
                                               name="$plural disponibles"
                                               [multiple]="true"
