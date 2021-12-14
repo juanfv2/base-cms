@@ -166,7 +166,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
             $fieldCamel = Str::camel($field);
             $fieldCamelPlural = Str::plural($fieldCamel);
             $relationText = <<<EOF
-            update2$fieldCamel(\$e: any): void {
+            update2$fieldCamelPlural(\$e: any): void {
                 this.{$this->commandData->config->mCamel}.$fieldCamelPlural = this.{$this->commandData->config->mCamel}.$fieldCamelPlural || [];
                 // do: something like that?
                 // this.{$fieldCamelPlural}AreRequired   = this.{$this->commandData->config->mCamel}.$fieldCamelPlural.length > 0 ? '-' : '';
@@ -175,7 +175,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
 
             rm2{$fieldCamel}($fieldCamel: $field): void {
                 this.{$this->commandData->config->mCamel}.$fieldCamelPlural = this.{$this->commandData->config->mCamel}.$fieldCamelPlural.filter((r:any) => r.id !== $fieldCamel.id);
-                // this.update2$fieldCamel('');
+                // this.update2$fieldCamelPlural('');
             }
 
             go2{$fieldCamel}($fieldCamel: $field): void {
@@ -183,7 +183,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
             }
             EOF;
             $relations1[] = $relationText;
-            $relations2[] = "this.update2$fieldCamel('');";
+            $relations2[] = "this.update2$fieldCamelPlural('');";
         }
 
         return [$relations1, $relations2];
@@ -401,19 +401,12 @@ class AngularDetailComponentGenerator extends BaseGenerator
             <ng-template ngbNavContent>
             <div class="card">
                 <div class="card-body">
-                <!--
-                    todo: if is required
-                    <div *ngIf="!{$fieldCamel}sIsRequired"
-                    class="alert alert-danger form-text"
-                    role="alert">
-                    Debe seleccionar {{labels.$fieldCamel.ownName}}
-                    </div>
-                 -->
+                <!-- todo: if is required <div *ngIf="!{$fieldCamel}sIsRequired" class="alert alert-danger form-text" role="alert"> Debe seleccionar {{labels.$fieldCamel.ownName}} </div> -->
                 <app-$fieldDash-auto-complete id="{$fieldCamel}-availables"
                                               name="$plural disponibles"
                                               [multiple]="true"
                                               [currentPage]="mApi.show()"
-                                              (oSelected)="update2{$fieldCamel}(\$event)"
+                                              (oSelected)="update2{$fieldCamelPlural}(\$event)"
                                               [avoidable]="{$this->commandData->config->mCamel}.$fieldCamelPlural"
                                               [(ngModel)]="{$this->commandData->config->mCamel}.$fieldCamelPlural">
                 </app-$fieldDash-auto-complete>
