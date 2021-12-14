@@ -205,10 +205,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
         $relations = [];
         foreach ($this->commandData->fields as $field) {
 
-            if (
-                $field->name == 'createdBy' ||
-                $field->name == 'updatedBy'
-            ) {
+            if ($field->name == 'createdBy' || $field->name == 'updatedBy') {
                 continue;
             }
             if ($field->inForm) {
@@ -292,13 +289,15 @@ class AngularDetailComponentGenerator extends BaseGenerator
                         break;
 
                     default: // text, number, email, password
+                        $tType = $field->htmlInput == '' ? 'number' : 'text';
+
                         $relationText .= <<<EOF
                         <input id="{$this->commandData->config->mCamel}-$field->name"
                                name="{$this->commandData->config->mCamel}-$field->name"
                                [(ngModel)]="{$this->commandData->config->mCamel}.$field->name"
                                #{$this->commandData->config->mCamel}_$fieldCamel="ngModel"
                                class="form-control"
-                               type="$field->htmlType"
+                               type="$tType"
                                $requiredTextProperties />
                         EOF;
                         break;
@@ -321,7 +320,6 @@ class AngularDetailComponentGenerator extends BaseGenerator
 
             $type  = (isset($relation->type))      ? $relation->type      : null;
             $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
-
             if ($type != 'mt1') {
                 continue;
             }
