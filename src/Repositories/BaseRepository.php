@@ -29,6 +29,7 @@ abstract class BaseRepository implements RepositoryInterface
      * @var bool
      */
     protected $skipCriteria = false;
+    protected $table = '';
 
     /**
      * @param Application $app
@@ -90,7 +91,9 @@ abstract class BaseRepository implements RepositoryInterface
     public function makeModel()
     {
         $model = $this->app->make($this->model());
-
+        if ($this->table) {
+            $model->setTable($this->table);
+        }
         if (!$model instanceof Model) {
             throw new \Exception("Class {$this->model()} must be an instance of Illuminate\\Database\\Eloquent\\Model");
         }
@@ -104,6 +107,12 @@ abstract class BaseRepository implements RepositoryInterface
     public function resetModel()
     {
         $this->makeModel();
+    }
+
+    public function useTable($table)
+    {
+        $this->table = $table;
+        $this->resetModel();
     }
 
     /**
