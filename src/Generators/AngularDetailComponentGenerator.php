@@ -352,7 +352,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
     private function generateHtmlRelated()
     {
         $relations = "<div *ngIf=\"{$this->commandData->config->mCamel}?.id\">";
-        $relations .= "<ul ngbNav #nav=\"ngbNav\" [(activeId)]=\"tabActive\" class=\"nav-tabs\">";
+        $relations .= "    <nav ngbNav #nav=\"ngbNav\" class=\"nav-tabs\">";
 
         foreach ($this->commandData->relations as $relation) {
             $type  = (isset($relation->type))      ? $relation->type      : null;
@@ -364,7 +364,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
             }
         }
 
-        $relations .= "\n</ul><div [ngbNavOutlet]=\"nav\" class=\"bg-white\"></div></div>";
+        $relations .= "\n</nav><div [ngbNavOutlet]=\"nav\" class=\"bg-white\"></div></div>";
         return $relations;
     }
 
@@ -373,14 +373,14 @@ class AngularDetailComponentGenerator extends BaseGenerator
         $fieldCamel = Str::camel($field);
         $fieldDash = Str::kebab($field);
         $relationText = <<<EOF
-        <li [ngbNavItem]="'$fieldCamel'">
+        <ng-container ngbNavItem>
             <a ngbNavLink>{{labels.$fieldCamel.ownNamePlural}}</a>
             <ng-template ngbNavContent>
             <app-$fieldDash-list [{$this->commandData->config->mCamel}]="{$this->commandData->config->mCamel}"
                                  [isSubComponent]="true">
             </app-$fieldDash-list>
             </ng-template>
-        </li>
+        </ng-container>
         EOF;
 
         return $relationText;
@@ -394,7 +394,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
         $plural = Str::plural($field);
 
         $relationText = <<<EOF
-        <li [ngbNavItem]="'$fieldCamelPlural'">
+        <ng-container ngbNavItem>
             <a ngbNavLink>{{labels.$fieldCamel.ownNamePlural}}</a>
             <ng-template ngbNavContent>
             <div class="card">
@@ -410,11 +410,10 @@ class AngularDetailComponentGenerator extends BaseGenerator
                 </app-$fieldDash-auto-complete>
                 <app-many-to-many lField="name" [lModel]="labels.{$fieldCamel}" [gOptions]="{$this->commandData->config->mCamel}.$fieldCamelPlural" (rm)="rm2{$fieldCamel}(\$event)" (go)="go2{$fieldCamel}(\$event)" ></app-many-to-many>
                 </div>
-                <div class="card-footer">
-                </div>
+                <div class="card-footer"> </div>
             </div>
             </ng-template>
-        </li>
+        </ng-container>
         EOF;
 
         return $relationText;
