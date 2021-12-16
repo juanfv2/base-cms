@@ -434,7 +434,6 @@ class AngularDetailComponentGenerator extends BaseGenerator
                 $mPrimaryKey = $field->name;
                 $fieldText .= '?';
             }
-            logger(__FILE__ . ':' . __LINE__ . ' $field->htmlType ', [$field->htmlType, $field]);
             switch ($field->fieldType) {
                 case 'integer':
                 case 'bigInteger':
