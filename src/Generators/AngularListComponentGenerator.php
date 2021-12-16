@@ -483,12 +483,10 @@ class AngularListComponentGenerator extends BaseGenerator
                 continue;
             }
             $fieldCamel = Str::camel($field);
-            $fieldDash = Str::kebab($field);
             $relationText = <<<EOF
             <td>
                 <strong class="d-block d-md-none">{{ labels.$fieldCamel.ownName }}</strong>
                 {{ model.{$fieldCamel}Name }}
-                <!-- <app-$fieldDash [$fieldCamel]="model.$fieldCamel"></app-$fieldDash> -->
             </td>
             EOF;
             $relations[] = $relationText;
