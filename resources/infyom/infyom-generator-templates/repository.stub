@@ -5,7 +5,6 @@ namespace $NAMESPACE_REPOSITORY$;
 use $NAMESPACE_MODEL$\$MODEL_NAME$;
 use Juanfv2\BaseCms\Repositories\BaseRepository;
 
-$DOCS$
 class $MODEL_NAME$Repository extends BaseRepository
 {
     /**

@@ -53,26 +53,14 @@ Crear {{ labels.$MODEL_NAME_CAMEL$.ownName }}
 *ngIf="!$MODEL_NAME_CAMEL$">
 <div class="col-md-12">
 <div class="card">
-<div class="card-header">
-<button *ngIf="hasPermission2new && isSubComponent"
-(click)="addNew()"
-type="button"
-class="btn btn-warning m-1">
-Crear {{ labels.$MODEL_NAME_CAMEL$.ownName }}
-</button>
-<button *ngIf="!isSubComponent"
-(click)="clearFilters()"
-type="button"
-class="btn btn-link m-1">
-Limpiar filtros de búsqueda
-</button>
-
-<span class="btn btn-link m-1 float-end">{{ currentPage.totalElements }}</span>
+<div class="card-header d-flex justify-content-between">
+<button *ngIf="hasPermission2new && isSubComponent" (click)="addNew()" type="button" class="btn btn-warning m-1"> Crear {{ labels.$MODEL_NAME_CAMEL$.ownName }} </button>
+<button *ngIf="!isSubComponent" (click)="clearFilters()" type="button" class="btn btn-link m-1"> Limpiar filtros de búsqueda </button>
+<small class="m-1 fw-light p-1">{{ responseList.totalElements }}</small>
 </div>
 <div class="card-body">
 <div class="table-full-width t-responsive table-responsive">
 <table class="table table-sm table-striped table-hover">
-<caption> lista de {{ labels.$MODEL_NAME_CAMEL$.ownNamePlural }} </caption>
 <thead class="text-nowrap text-primary">
 <tr>
 <th appMultiSortMeta [host]="this" [colName]="labels.$MODEL_NAME_CAMEL$.id.field!">#</th>
@@ -82,11 +70,11 @@ $COLUMN_FIELDS_RELATIONS$
 </tr>
 </thead>
 <tbody class="text-nowrap">
-<tr *ngFor="let model of currentPage.content">
-<td class="td-actions"> <button *ngIf="hasPermission2show" (click)="onRowSelect(model)" type="button" class="btn btn-sm btn-info m-1" > {{ model.id }} </button> </td>
+<tr *ngFor="let model of responseList.content">
+<td class="td-actions"> <button [disabled]="!hasPermission2show" (click)="onRowSelect(model)" type="button" class="btn btn-sm btn-info m-1 row-select-$MODEL_NAME_CAMEL$-{{model.id}}" title="Ver {{labels.$MODEL_NAME_CAMEL$.ownName}}: {{model.id}}" > {{ model.id }} </button> </td>
 $COLUMN_VALUES$
 $COLUMN_VALUES_RELATIONS$
-<td class="td-actions"> <button *ngIf="hasPermission2delete" (click)="showDeleteDialog(model)" type="button" rel="tooltip" title="Borrar" class="btn btn-sm btn-danger btn-round btn-icon btn-icon-mini btn-neutral" data-original-title="Borrar"> <i class="fas fa-trash-alt"></i> </button> </td>
+<td class="td-actions"> <button *ngIf="hasPermission2delete" (click)="showDeleteDialog(model)" type="button" class="btn btn-sm btn-danger btn-round btn-icon btn-icon-mini btn-neutral row-delete-$MODEL_NAME_CAMEL$-{{model.id}}" title="Borrar {{labels.$MODEL_NAME_CAMEL$.ownName}}: {{model.id}}" > <i class="fas fa-trash-alt"></i> </button> </td>
 </tr>
 </tbody>
 </table>
@@ -94,9 +82,9 @@ $COLUMN_VALUES_RELATIONS$
 </div>
 <div class="card-footer">
 <div class="row">
-<div *ngIf="currentPage.totalElements"
+<div *ngIf="responseList.totalElements"
 class="col-12 col-md-6">
-<ngb-pagination [collectionSize]="currentPage.totalElements"
+<ngb-pagination [collectionSize]="responseList.totalElements"
 [page]="modelSearch.lazyLoadEvent.first"
 [pageSize]="modelSearch.lazyLoadEvent.rows"
 size="sm"

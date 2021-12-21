@@ -10,7 +10,7 @@ import { JfResponse, JfResponseList, JfLazyLoadEvent, JfSearchCondition, JfCondi
 
 import { AuthService } from 'src/app/core/services/auth.service';
 import { CrudService } from 'src/app/core/services/crud.service';
-import { JfMessageService } from 'src/app/core/services/message.service';
+import {ToastService} from 'src/app/core/services/toast.service'
 
 import { MessageComponent } from 'src/app/components/main/_common/message/message.component';
 import { SearchFieldDirective } from 'src/app/core/directives/search-field.directive';
@@ -45,14 +45,14 @@ loading = false;
 hasPermission2show = false;
 hasPermission2new = false;
 hasPermission2delete = false;
-currentPage: JfResponseList<$MODEL_NAME$> = new JfResponseList<$MODEL_NAME$>(0, 0, []);
+responseList: JfResponseList<$MODEL_NAME$> = new JfResponseList<$MODEL_NAME$>(0, 0, []);
 
 constructor(
 private router: Router,
 private modalService: NgbModal,
 private authService: AuthService,
 private crudService: CrudService,
-private messageService: JfMessageService,
+private messageService: ToastService,
 private resolver: ComponentFactoryResolver) {
 this.operatorOptions = k.operatorOptions;
 this.conditionalOptions = k.conditionalOptions;
@@ -113,16 +113,8 @@ this.onLazyLoad();
 }
 
 addFilter(condition?: JfSearchCondition): void {
-const c = MyUtils.addSearchField({
-resolver: this.resolver,
-searchField: this.searchField,
-operatorOptions: this.operatorOptions,
-conditionalOptions: this.conditionalOptions,
-queryFieldOptions: this.queryFieldOptions,
-objectSearch: this.modelSearch,
-condition
-});
-this.searchFieldAdded.push(c);
+const c = MyUtils.addSearchField(this, condition)
+this.searchFieldAdded.push(c)
 }
 
 onLazyLoad(strAction = ''): void {
@@ -183,7 +175,7 @@ MyUtils.downloadFile(resp, this.labels.$MODEL_NAME_CAMEL$.ownNamePlural);
 },
 error => {
 this.loading = false;
-this.messageService.error(k.project_name, error, this.labels.$MODEL_NAME_CAMEL$.ownName);
+this.messageService.danger(k.project_name, error, this.labels.$MODEL_NAME_CAMEL$.ownName);
 }
 );
 this.modelSearch.lazyLoadEvent.additional = [];
@@ -193,14 +185,14 @@ this.crudService.getPage(kRoute, this.modelSearch.lazyLoadEvent)
 .subscribe(
 (resp: JfResponse) => {
 this.loading = false;
-this.currentPage = resp.data;
+this.responseList = resp.data;
 if (!this.isSubComponent) {
 k.setItem(kConditions, mSearch);
 }
 },
 error => {
 this.loading = false;
-this.messageService.error(k.project_name, error, this.labels.$MODEL_NAME_CAMEL$.ownName);
+this.messageService.danger(k.project_name, error, this.labels.$MODEL_NAME_CAMEL$.ownName);
 }
 );
 break;
@@ -250,10 +242,10 @@ const id = $MODEL_NAME_CAMEL$ToDelete.$PRIMARY_KEY_NAME$;
 this.crudService.deleteEntity(kRoute, id)
 .subscribe(
 (resp: JfResponse) => {
-MyUtils.remove(this.currentPage, $MODEL_NAME_CAMEL$ToDelete);
+MyUtils.remove(this.responseList, $MODEL_NAME_CAMEL$ToDelete);
 this.messageService.info(k.project_name, `${this.labels.$MODEL_NAME_CAMEL$.ownName} Eliminado`);
 },
-error => this.messageService.error(k.project_name, error, this.labels.$MODEL_NAME_CAMEL$.ownName)
+error => this.messageService.danger(k.project_name, error, this.labels.$MODEL_NAME_CAMEL$.ownName)
 );
 }
 
@@ -302,7 +294,7 @@ this.csv.massiveQueryFileName = jCondition.v.name;
 this.csv.keys = csvColumns;
 this.loading = true;
 // console.log('resp.csv', this.csv);
-this.crudService.updateEntity(k.routes.files.importCsv, this.csv).subscribe(
+this.crudService.updateEntity(k.routes.misc.importCsv, this.csv).subscribe(
 (resp: JfResponse) => {
 this.loading = false;
 // console.log('resp', resp);
@@ -313,7 +305,7 @@ this.csv = {};
 error => {
 this.loading = false;
 // console.log('error', error);
-this.messageService.error(k.project_name, error);
+this.messageService.danger(k.project_name, error);
 this.csv = {};
 this.csv.error = error;
 }

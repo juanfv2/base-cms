@@ -8,7 +8,7 @@ import { JfResponse } from 'src/app/core/support/utils.classes';
 
 import { AuthService } from 'src/app/core/services/auth.service';
 import { CrudService } from 'src/app/core/services/crud.service';
-import { JfMessageService } from 'src/app/core/services/message.service';
+import {ToastService} from 'src/app/core/services/toast.service'
 
 import { $RELATION_MODEL_CAMEL_NAMES_1$ } from 'src/app/models/_models';
 
@@ -42,7 +42,8 @@ private router: Router,
 private route: ActivatedRoute,
 private authService: AuthService,
 private crudService: CrudService,
-private messageService: JfMessageService) {
+private messageService: ToastService
+) {
 this.$MODEL_NAME_CAMEL$ = {} as $MODEL_NAME$;
 this.hasPermission2new = this.authService.isAuthorized(`/${kRoute}/new`);
 this.hasPermission2edit = this.authService.isAuthorized(`/${kRoute}/edit`)
@@ -84,7 +85,7 @@ $RELATED_2$
 },
 error => {
 this.sending = false;
-this.messageService.error(k.project_name, error, this.labels.$MODEL_NAME_CAMEL$.ownName);
+this.messageService.danger(k.project_name, error, this.labels.$MODEL_NAME_CAMEL$.ownName);
 });
 }
 
@@ -109,7 +110,7 @@ this.router.navigate([kRoute, this.$MODEL_NAME_CAMEL$.id]);
 },
 error =>  {
 this.sending = false;
-this.messageService.error(k.project_name, error, this.labels.$MODEL_NAME_CAMEL$.ownName);
+this.messageService.danger(k.project_name, error, this.labels.$MODEL_NAME_CAMEL$.ownName);
 }
 );
 }

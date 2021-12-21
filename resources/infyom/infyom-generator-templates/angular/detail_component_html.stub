@@ -36,7 +36,7 @@ class="btn btn-warning m-1">Agregar otro</button>
 </div>
 </form>
 <!-- form . end -->
-<!-- related . init -->
+<!-- related . init -- >
 $LISTS_RELATED$
 <!-- related . end -->
 </div>
