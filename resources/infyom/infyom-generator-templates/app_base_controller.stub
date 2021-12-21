@@ -26,7 +26,7 @@ use Juanfv2\BaseCms\Traits\ControllerImportableExportable;
  */
 class AppBaseController extends Controller
 {
-    use ControllerResponses, ControllerFiles, ControllerImportableExportable;
+    use ControllerResponses, ControllerFiles, ImportableExportable;
 
     /**
      * Display a listing of the {{CurrentModel}}.
