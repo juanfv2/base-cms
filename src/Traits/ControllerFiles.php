@@ -103,12 +103,12 @@ trait ControllerFiles
             $baseAssets = $baseAssets . $rCountry . '/';
         }
 
+        $time                 = now()->format('Y_m_d_H_i_s_u');
         $strLocation          = "$baseAssets$tableName/$fieldName";
-
         $originalName         = $request->$fieldName->getClientOriginalName();
         $fileExtension        = $request->$fieldName->extension();
         $fileNamePrefix       = $tableName . '-' . $id;
-        $newName              = uniqid($fileNamePrefix . '-');
+        $newName              = "$fileNamePrefix-$time";                        // uniqid($fileNamePrefix . '-');
         $newNameWithExtension = $newName . '.' . $fileExtension;
 
         /**
@@ -116,7 +116,6 @@ trait ControllerFiles
          * se guarda en una carpeta temporal
          */
         if ($isTemporal) {
-
             $strLocation = "$baseAssets/temporals/$newName/$tableName/$fieldName";
             $path        = $request->$fieldName->storeAs($strLocation, $newNameWithExtension);
             $parts       = explode('/', $path);
@@ -133,8 +132,7 @@ trait ControllerFiles
                 fclose($handle);
             }
         } else {
-
-            $path = $request->$fieldName->store($strLocation);
+            $path = $request->$fieldName->storeAs($strLocation, $newNameWithExtension);
         }
 
         // logger(__FILE__ . ':' . __LINE__ . ' $file ', [$file]);
@@ -164,11 +162,7 @@ trait ControllerFiles
                 $xFile->save();
             } else {
 
-                $xFile = XFile::firstOrNew([
-                    'entity_id' => $id,
-                    'entity'    => $tableName,
-                    'field'     => $fieldName,
-                ]);
+                $xFile = XFile::firstOrNew(['entity_id' => $id, 'entity' => $tableName, 'field' => $fieldName,]);
 
                 if ($xFile->id) {
 
@@ -179,6 +173,7 @@ trait ControllerFiles
 
                 $parts               = explode('/', $path);
                 $name                = Arr::last($parts);
+
                 $xFile->name         = $name;
                 $xFile->nameOriginal = $originalName;
                 $xFile->extension    = $fileExtension;
@@ -239,7 +234,7 @@ trait ControllerFiles
         $w                        = (int) $w;
         $h                        = (int) $h;
         $baseAssets               = 'public/assets/adm/';
-        $strLocationImageNotFound = $baseAssets . '../images/image-not-found.png';
+        $strLocationImageNotFound = 'assets/images/image-not-found.png';
 
         if ($rCountry) {
             $baseAssets = $baseAssets . $rCountry . '/';
@@ -253,37 +248,36 @@ trait ControllerFiles
 
         ini_set('memory_limit', '-1');
 
-        if ($strLocationImage2show && ($w || $h)) {
+        if ($exists) {
 
-            $parts                    = explode('.', $imageName);
-            $ext                      = end($parts);
-            $strLocationImage2showNew = Str::replaceLast(".{$ext}", "-{$w}x{$h}.{$ext}", $strLocationImage2show);
-            $exists                   = Storage::exists($strLocationImage2showNew);
-            $temp                     = storage_path("app/$strLocationImage2show");
+            if ($w || $h) {
 
-            if (!$exists) {
-                // use jpg format and quality of 100
-                $resized_image = Image::make($temp)->resize(
-                    $w > 0 ? $w : null,
-                    $h > 0 ? $h : null,
-                    function ($constraint) use ($w, $h) {
+                $parts                    = explode('.', $imageName);
+                $ext                      = end($parts);
+                $strLocationImage2showNew = Str::replaceLast(".{$ext}", "-{$w}x{$h}.{$ext}", $strLocationImage2show);
+                $exists                   = Storage::exists($strLocationImage2showNew);
+                $temp                     = storage_path("app/$strLocationImage2show");
+
+                if (!$exists) {
+                    // use jpg format and quality of 100
+                    $resized_image = Image::make($temp)->resize($w > 0 ? $w : null, $h > 0 ? $h : null, function ($constraint) use ($w, $h) {
                         if (!($w > 0 && $h > 0)) {
                             $constraint->aspectRatio();
                         }
-                    }
-                )->stream($ext, 100);
-                // then use Illuminate\Support\Facades\Storage
-                Storage::put($strLocationImage2showNew, $resized_image);
+                    })->stream($ext, 100);
+                    // then use Illuminate\Support\Facades\Storage
+                    Storage::put($strLocationImage2showNew, $resized_image);
+                }
             }
 
             $temp = storage_path("app/$strLocationImage2showNew");
 
             return response()->file($temp);
-        } else {
-            $temp = storage_path("app/$strLocationImage2show");
-
-            return response()->file($temp);
         }
+
+        $temp = public_path($strLocationImageNotFound);
+
+        return response()->file($temp);
     }
 
     /**
