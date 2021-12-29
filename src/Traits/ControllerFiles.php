@@ -244,39 +244,41 @@ trait ControllerFiles
         $exists                   = Storage::exists($strLocationImageSaved);
         $strLocationImage2show    = $exists ? $strLocationImageSaved : $strLocationImageNotFound;
 
-        logger(__FILE__ . ':' . __LINE__ . ' $strLocationImageSaved ', [$strLocationImageSaved]);
+        // logger(__FILE__ . ':' . __LINE__ . ' $strLocationImageSaved ', [$strLocationImageSaved]);
 
         ini_set('memory_limit', '-1');
 
-        if ($exists) {
 
-            if ($w || $h) {
+        if ($strLocationImage2show && ($w || $h)) {
 
-                $parts                    = explode('.', $imageName);
-                $ext                      = end($parts);
-                $strLocationImage2showNew = Str::replaceLast(".{$ext}", "-{$w}x{$h}.{$ext}", $strLocationImage2show);
-                $exists                   = Storage::exists($strLocationImage2showNew);
-                $temp                     = storage_path("app/$strLocationImage2show");
+            $parts                    = explode('.', $imageName);
+            $ext                      = end($parts);
+            $strLocationImage2showNew = Str::replaceLast(".{$ext}", "-{$w}x{$h}.{$ext}", $strLocationImage2show);
+            $exists                   = Storage::exists($strLocationImage2showNew);
 
-                if (!$exists) {
-                    // use jpg format and quality of 100
-                    $resized_image = Image::make($temp)->resize($w > 0 ? $w : null, $h > 0 ? $h : null, function ($constraint) use ($w, $h) {
-                        if (!($w > 0 && $h > 0)) {
-                            $constraint->aspectRatio();
-                        }
-                    })->stream($ext, 100);
-                    // then use Illuminate\Support\Facades\Storage
-                    Storage::put($strLocationImage2showNew, $resized_image);
-                }
+            if ($strLocationImage2show == $strLocationImageNotFound) {
+                $temp = public_path($strLocationImageNotFound);
+            } else {
+                $temp = storage_path("app/$strLocationImage2show");
+            }
+
+            if (!$exists) {
+                // use jpg format and quality of 100
+                $resized_image = Image::make($temp)->resize($w > 0 ? $w : null, $h > 0 ? $h : null, function ($constraint) use ($w, $h) {
+                    if (!($w > 0 && $h > 0)) {
+                        $constraint->aspectRatio();
+                    }
+                })->stream($ext, 100);
+                // then use Illuminate\Support\Facades\Storage
+                Storage::put($strLocationImage2showNew, $resized_image);
             }
 
             $temp = storage_path("app/$strLocationImage2showNew");
-
             return response()->file($temp);
         }
 
-        $temp = public_path($strLocationImageNotFound);
 
+        $temp = public_path($strLocationImageNotFound);
         return response()->file($temp);
     }
 
