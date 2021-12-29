@@ -2,7 +2,6 @@
 
 namespace $NAMESPACE_REPOSITORY$;
 
-use $NAMESPACE_MODEL$\$MODEL_NAME$;
 use Juanfv2\BaseCms\Repositories\BaseRepository;
 
 class $MODEL_NAME$Repository extends BaseRepository
@@ -12,6 +11,6 @@ class $MODEL_NAME$Repository extends BaseRepository
      **/
     public function model()
     {
-        return $MODEL_NAME$::class;
+        return $NAMESPACE_MODEL$\$MODEL_NAME$::class;
     }
 }

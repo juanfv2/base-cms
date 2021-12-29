@@ -7,6 +7,7 @@ use $NAMESPACE_MODEL$\$MODEL_NAME$;
 use $NAMESPACE_TESTS$\TestCase;
 use $NAMESPACE_TESTS$\ApiTestTrait;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
