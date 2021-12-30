@@ -2,10 +2,11 @@
 
 namespace Juanfv2\BaseCms\Traits;
 
-use App\Models\Misc\BulkError;
-
 use Illuminate\Http\Request;
+
+use App\Models\Misc\BulkError;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Juanfv2\BaseCms\Utils\ExportDataService;
 
 trait ImportableExportable
@@ -20,28 +21,40 @@ trait ImportableExportable
      */
     public function importCsv(Request $request)
     {
-        $table                        = $request->get('table');
-        $massiveQueryFieldName        = $request->get('massiveQueryFieldName');
-        $massiveQueryFileName         = $request->get('massiveQueryFileName');
-        $fileTemp                     = explode('.', $massiveQueryFileName);
-        $fileTempName                 = $fileTemp[0];
-        $massiveQueryFileNameDataPath = storage_path('app/public/assets/adm/temporals/' . $fileTempName);
-        $massiveQueryFile             = $massiveQueryFileNameDataPath . '/' . $table . '/' . $massiveQueryFieldName . '/' . $massiveQueryFileName;
-        $keys                         = $request->get('keys');
-        $primaryKeyName               = $request->get('primaryKeyName');
+        $rCountry     = $request->header('r-country', '');
+        $tableName    = $request->get('table');
+        $fieldName    = $request->get('massiveQueryFieldName');
+        $fileName     = $request->get('massiveQueryFileName');
+        $fileTemp     = explode('.', $fileName);
+        $fileTempName = $fileTemp[0];
+        $baseAssets   = 'public/assets/adm/';
+        if ($rCountry) {
+            $baseAssets = $baseAssets . $rCountry . '/';
+        }
 
-        if (($handle = fopen($massiveQueryFile, 'r')) !== false) {
-            try {
+        $strLocationFileSaved = "{$baseAssets}temporals/$fileTempName/$tableName/$fieldName/$fileName";
+        $exists               = Storage::exists($strLocationFileSaved);
+        $massiveQueryFile     = Storage::path($strLocationFileSaved);
+        $keys                 = $request->get('keys');
+        $primaryKeyName       = $request->get('primaryKeyName');
+        $created              = 0;
+
+        // logger(__FILE__ . ':' . __LINE__ . ' $exists ', [$exists, $strLocationFileSaved, $massiveQueryFile]);
+
+        try {
+
+            if (($handle = fopen($massiveQueryFile, 'r')) !== false) {
+
                 $delimiter    = $this->getFileDelimiter($massiveQueryFile);
 
-                $created = $this->importing($handle, $table, $primaryKeyName, $keys, $delimiter);
+                $created = $this->importing($handle, $tableName, $primaryKeyName, $keys, $delimiter);
 
-                return $this->sendResponse(['updated' => $created - 1], __('validation.model.list', ['model' => $table]),);
-            } catch (\Throwable $th) {
-                //throw $th;
-                return $this->sendError(['code' => $th->getCode(), 'message' => $th->getMessage(), 'updated' => $created,], 'Error en la linea ' . $created, 500);
-            }
-        } // end ($handle = fopen($massiveQueryFile, 'r')) !== false
+                return $this->sendResponse(['updated' => $created - 1], __('validation.model.list', ['model' => $tableName]),);
+            } // end ($handle = fopen($massiveQueryFile, 'r')) !== false
+        } catch (\Throwable $th) {
+            //throw $th;
+            return $this->sendError(['code' => $th->getCode(), 'message' => $th->getMessage(), 'updated' => $created,], 'Error en la linea ' . $created, 500);
+        }
     }
 
     public function importing($handle, $table, $primaryKeys, $keys, $delimiter)

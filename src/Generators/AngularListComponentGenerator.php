@@ -242,7 +242,7 @@ class AngularListComponentGenerator extends BaseGenerator
             }
 
             $relationText = "
-            nextOperator = MyUtils.x2one({
+            nextOperator = JfUtils.x2one({
                 conditions,
                 conditionModel: this.modelSearch.condition$field,
                 foreignKName: `\${this.labels.{$this->commandData->config->mCamel}.tableName}.$fieldFK`,
@@ -388,21 +388,13 @@ class AngularListComponentGenerator extends BaseGenerator
             }
             if ($field->inIndex) {
                 $relationText = <<<EOF
-                <th appMultiSortMeta
-                    [host]="this"
-                    [colName]="labels.{$this->commandData->config->mCamel}.$field->name.field!">
+                <th [jfMultiSortMeta]="labels.{$this->commandData->config->mCamel}.$field->name.field!"
+                    [sorts]="modelSearch.lazyLoadEvent.sorts"
+                    (sort)="onSort(\$event)"
+                    scope="col">
                     {{ labels.{$this->commandData->config->mCamel}.$field->name.label }}
                 </th>
                 EOF;
-                if ($field->isPrimary) {
-                    $relationText = <<<EOF
-                    <th appMultiSortMeta
-                        [host]="this"
-                        [colName]="labels.{$this->commandData->config->mCamel}.$field->name.field!">
-                        #
-                    </th>
-                    EOF;
-                }
                 $relations[] = $relationText;
             }
         }
@@ -459,10 +451,11 @@ class AngularListComponentGenerator extends BaseGenerator
             }
             $fieldCamel = Str::camel($field);
             $relationText = <<<EOF
-            <th appMultiSortMeta
-                [host]="this"
-                colName="{$fieldCamel}Name">
-                {{ labels.{$fieldCamel}.ownName }}
+            <th [jfMultiSortMeta]="labels.{$this->commandData->config->mCamel}.{$fieldCamel}Name.field!"
+                [sorts]="modelSearch.lazyLoadEvent.sorts"
+                (sort)="onSort(\$event)"
+                scope="col">
+                {{ labels.{$this->commandData->config->mCamel}.{$fieldCamel}Name.label }}
             </th>
             EOF;
             $relations[] = $relationText;

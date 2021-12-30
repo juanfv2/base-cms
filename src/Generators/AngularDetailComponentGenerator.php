@@ -220,7 +220,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
                     $requiredTextProperties = "required\nplaceholder=\"Requerido\"";
 
                     $requiredText = <<<EOF
-                    <div *ngIf="!{$this->commandData->config->mCamel}_$fieldCamel.valid && {$this->commandData->config->mCamel}_$fieldCamel.dirty && {$this->commandData->config->mCamel}_$fieldCamel.errors?.required"
+                    <div *ngIf="!{$this->commandData->config->mCamel}_$fieldCamel.valid && {$this->commandData->config->mCamel}_$fieldCamel.dirty && {$this->commandData->config->mCamel}_$fieldCamel.errors?.['required']"
                          class="alert alert-danger form-text"
                          role="alert">
                         {{labels.{$this->commandData->config->mCamel}.$field->name.label}} es requerido
@@ -337,7 +337,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
                                             [currentPage]="mApi.show()"
                                             required>
               </app-$fieldDash-auto-complete>
-              <div *ngIf="!{$this->commandData->config->mCamel}_$fieldCamel.valid && {$this->commandData->config->mCamel}_$fieldCamel.dirty && {$this->commandData->config->mCamel}_$fieldCamel.errors?.required"
+              <div *ngIf="!{$this->commandData->config->mCamel}_$fieldCamel.valid && {$this->commandData->config->mCamel}_$fieldCamel.dirty && {$this->commandData->config->mCamel}_$fieldCamel.errors?.['required']"
                    class="alert alert-danger form-text">
                 {{labels.$fieldCamel.ownName}} es requerido
               </div>
