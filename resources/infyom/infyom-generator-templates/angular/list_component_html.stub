@@ -13,7 +13,7 @@
 $RELATIONS_AS_SEARCH_FIELDS$
 </div>
 <div class="card-body">
-<ng-template appSearchField></ng-template>
+<ng-template baseCmsJfAddComponent></ng-template>
 <div class="row">
 <div class="col-12">
 <div class="form-group">
@@ -42,15 +42,15 @@ Crear {{ labels.$MODEL_NAME_CAMEL$.ownName }}
 </form>
 </div>
 </div>
-<app-$MODEL_NAME_DASHED$-detail *ngIf="$MODEL_NAME_CAMEL$"
-[$MODEL_NAME_CAMEL$]="$MODEL_NAME_CAMEL$"
+<app-$MODEL_NAME_DASHED$-detail *ngIf="itemCurrent"
+[$MODEL_NAME_CAMEL$]="itemCurrent"
 [isSubComponent]="isSubComponent"
 [isSubComponentFrom]="isSubComponentFrom"
 (saveClicked)="saveFormClicked($event)"
-(cancelClicked)="$MODEL_NAME_CAMEL$ = undefined">
+(cancelClicked)="itemCurrent = undefined">
 </app-$MODEL_NAME_DASHED$-detail>
 <div class="row"
-*ngIf="!$MODEL_NAME_CAMEL$">
+*ngIf="!itemCurrent">
 <div class="col-md-12">
 <div class="card">
 <div class="card-header d-flex justify-content-between">
@@ -63,7 +63,7 @@ Crear {{ labels.$MODEL_NAME_CAMEL$.ownName }}
 <table class="table table-sm table-striped table-hover">
 <thead class="text-nowrap text-primary">
 <tr>
-<th appMultiSortMeta [host]="this" [colName]="labels.$MODEL_NAME_CAMEL$.id.field!">#</th>
+<th [jfMultiSortMeta]="labels.$MODEL_NAME_CAMEL$.id.field!" [sorts]="modelSearch.lazyLoadEvent.sorts" (sort)="onSort($event)" scope="col" >#</th>
 $COLUMN_FIELDS$
 $COLUMN_FIELDS_RELATIONS$
 <th></th>
@@ -108,7 +108,8 @@ type="button"
 class="btn btn-primary m-1 w-100">
 Exportar resultados
 </button>
-<app-file-upload
+<base-cms-file-upload
+[labels]="labels"
 id="$MODEL_NAME_CAMEL$-importer"
 class="h-100"
 minHeight="100px"
@@ -116,15 +117,15 @@ label="Importar CSV"
 name="massive-inserts"
 [showPublicPath]="false"
 [error]="csv?.error?.error"
-(finish)="massiveInsert($event)"
+(finish)="massiveInsert($event, labels.$MODEL_NAME_CAMEL$)"
 [url2showStaticImage]="labels.misc.csv"
 [value]="{ id: -1, entity: labels.$MODEL_NAME_CAMEL$.tableName, field: 'massive-inserts' }"
 [allowedTypes]="['text/csv', 'application/vnd.ms-excel']"
-></app-file-upload>
+></base-cms-file-upload>
 </div>
 </div>
-<app-spinner-loading *ngIf="loading"
-class="m-4"></app-spinner-loading>
+<base-cms-spinner-loading *ngIf="loading"
+class="m-4"></base-cms-spinner-loading>
 </div>
 </div>
 </div>

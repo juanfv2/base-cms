@@ -1,14 +1,15 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core'
+import {ActivatedRoute, Router} from '@angular/router'
 
-import { k } from 'src/environments/k';
-import { l } from 'src/environments/l';
-import { Api } from 'src/app/core/support/utils.api';
-import { JfResponse } from 'src/app/core/support/utils.classes';
-
-import { AuthService } from 'src/app/core/services/auth.service';
-import { CrudService } from 'src/app/core/services/crud.service';
-import {ToastService} from 'src/app/core/services/toast.service'
+import {
+JfResponse,
+JfApiRoute,
+JfCrudService,
+JfRequestOption,
+JfMessageService,
+} from '@juanfv2/base-cms'
+import {k} from 'src/environments/k'
+import {l} from 'src/environments/l'
 
 import { $RELATION_MODEL_CAMEL_NAMES_1$ } from 'src/app/models/_models';
 
@@ -30,8 +31,7 @@ export class $MODEL_NAME$DetailComponent implements OnInit, OnDestroy {
 
 labels = l;
 includes = [$RELATION_MODEL_CAMEL_NAMES_2$];
-tabActive = '<first-tab>';
-mApi = new Api(kRoute);
+mApi = new JfApiRoute(kRoute);
 private mSubscription: any;
 sending = false;
 hasPermission2new = false;
@@ -40,19 +40,17 @@ hasPermission2edit = false;
 constructor(
 private router: Router,
 private route: ActivatedRoute,
-private authService: AuthService,
-private crudService: CrudService,
-private messageService: ToastService
+private crudService: JfCrudService,
+private messageService: JfMessageService
 ) {
 this.$MODEL_NAME_CAMEL$ = {} as $MODEL_NAME$;
-this.hasPermission2new = this.authService.isAuthorized(`/${kRoute}/new`);
-this.hasPermission2edit = this.authService.isAuthorized(`/${kRoute}/edit`)
-|| this.hasPermission2new;
+this.hasPermission2new = JfRequestOption.isAuthorized(`/${kRoute}/new`)
+this.hasPermission2edit = JfRequestOption.isAuthorized(`/${kRoute}/edit`) || this.hasPermission2new
 }
 
 ngOnInit(): void {
 this.mSubscription = this.route.params.subscribe(params => {
-const id = this.isSubComponent ? this.$MODEL_NAME_CAMEL$?.id : params.id;
+const id = this.isSubComponent ? this.$MODEL_NAME_CAMEL$?.id : params['id'];
 // console.log('params', params, `\nthis.$MODEL_NAME_CAMEL$`, this.$MODEL_NAME_CAMEL$);
 this.new$MODEL_NAME$(this.$MODEL_NAME_CAMEL$);
 if (id !== 'new') {
@@ -74,18 +72,19 @@ $RELATED_2$
 }
 
 get$MODEL_NAME$(id: any): void {
-const mId = id + `?includes=${JSON.stringify(this.includes)}`
+const mId = `${id}?includes=${JSON.stringify(this.includes)}`
 this.sending = true;
 this.crudService.getEntity(kRoute, mId)
 .subscribe(
-(resp: JfResponse) => {
+{next: (resp: JfResponse) => {
 this.sending = false;
 this.$MODEL_NAME_CAMEL$ = resp.data;
 $RELATED_2$
 },
-error => {
+error: (error: any) => {
 this.sending = false;
 this.messageService.danger(k.project_name, error, this.labels.$MODEL_NAME_CAMEL$.ownName);
+}
 });
 }
 
@@ -98,7 +97,7 @@ $RELATIONS_AS_FIELDS$
 this.sending = true;
 this.crudService.updateEntity(kRoute, modelTemp)
 .subscribe(
-(resp: JfResponse) => {
+{next: (resp: JfResponse) => {
 this.sending = false;
 this.$MODEL_NAME_CAMEL$.id = resp.data.id;
 this.messageService.success(k.project_name, 'Guardado');
@@ -108,9 +107,10 @@ if (this.isSubComponent) {
 this.router.navigate([kRoute, this.$MODEL_NAME_CAMEL$.id]);
 }
 },
-error =>  {
+error: (error: any) => {
 this.sending = false;
 this.messageService.danger(k.project_name, error, this.labels.$MODEL_NAME_CAMEL$.ownName);
+}
 }
 );
 }
