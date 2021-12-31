@@ -408,7 +408,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
                                               [avoidable]="{$this->commandData->config->mCamel}.$fieldCamelPlural"
                                               [(ngModel)]="{$this->commandData->config->mCamel}.$fieldCamelPlural">
                 </app-$fieldDash-auto-complete>
-                <app-many-to-many lField="name" [lModel]="labels.{$fieldCamel}" [gOptions]="{$this->commandData->config->mCamel}.$fieldCamelPlural" (rm)="rm2{$fieldCamel}(\$event)" (go)="go2{$fieldCamel}(\$event)" ></app-many-to-many>
+                <base-cms-many-to-many lField="name" [lModel]="labels.{$fieldCamel}" [gOptions]="{$this->commandData->config->mCamel}.$fieldCamelPlural" (rm)="rm2{$fieldCamel}(\$event)" (go)="go2{$fieldCamel}(\$event)" ></base-cms-many-to-many>
                 </div>
                 <div class="card-footer"> </div>
             </div>

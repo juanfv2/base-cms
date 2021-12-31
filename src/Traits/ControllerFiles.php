@@ -251,8 +251,8 @@ trait ControllerFiles
 
         if ($strLocationImage2show && ($w || $h)) {
 
-            $parts                    = explode('.', $imageName);
-            $ext                      = end($parts);
+            $basename                 = basename($strLocationImage2show);
+            $ext                      = pathinfo($basename, PATHINFO_EXTENSION);
             $strLocationImage2showNew = Str::replaceLast(".{$ext}", "-{$w}x{$h}.{$ext}", $strLocationImage2show);
             $exists                   = Storage::exists($strLocationImage2showNew);
 
@@ -261,7 +261,7 @@ trait ControllerFiles
             } else {
                 $temp = storage_path("app/$strLocationImage2show");
             }
-
+            // logger(__FILE__ . ':' . __LINE__ . ' $temp ', [$temp, $strLocationImage2showNew]);
             if (!$exists) {
                 // use jpg format and quality of 100
                 $resized_image = Image::make($temp)->resize($w > 0 ? $w : null, $h > 0 ? $h : null, function ($constraint) use ($w, $h) {
