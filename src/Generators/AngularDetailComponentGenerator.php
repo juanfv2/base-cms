@@ -399,7 +399,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
             <ng-template ngbNavContent>
             <div class="card">
                 <div class="card-body">
-                <div *ngIf="!{$fieldCamelPlural}IsRequired" class="alert alert-danger form-text" role="alert"> Debe seleccionar {{labels.$fieldCamel.ownName}} </div>
+                <div *ngIf="!{$fieldCamelPlural}AreRequired" class="alert alert-danger form-text" role="alert"> Debe seleccionar {{labels.$fieldCamel.ownName}} </div>
                 <app-$fieldDash-auto-complete id="{$fieldCamel}-availables"
                                               name="$plural disponibles"
                                               [multiple]="true"
