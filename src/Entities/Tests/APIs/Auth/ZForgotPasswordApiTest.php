@@ -9,7 +9,7 @@ use Tests\ApiTestTrait;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class ZForgotPasswordTest extends TestCase
+class ZForgotPasswordApiTest extends TestCase
 {
     use ApiTestTrait, DatabaseTransactions;
 
@@ -24,7 +24,7 @@ class ZForgotPasswordTest extends TestCase
             'email' => $account->email
         ];
 
-        $this->response = $this->json('POST', '/api/password/email', $credentials);
+        $this->response = $this->json('POST', route('api.password.email'), $credentials);
 
         $this->assertApiSuccess();
 
@@ -47,7 +47,7 @@ class ZForgotPasswordTest extends TestCase
             'email' => $e //$account->email
         ];
 
-        $this->response = $this->json('POST', '/api/password/email', $credentials);
+        $this->response = $this->json('POST', route('api.password.email'), $credentials);
 
         $this->response->assertStatus(404);
 
@@ -70,12 +70,12 @@ class ZForgotPasswordTest extends TestCase
             'email' => $account->email
         ];
 
-        $response = $this->json('POST', '/api/password/email', $credentials);
+        $response = $this->json('POST', route('api.password.email'), $credentials);
 
         $response->assertOk();
 
         // validate time
-        $response1 = $this->json('POST', '/api/password/email', $credentials);
+        $response1 = $this->json('POST', route('api.password.email'), $credentials);
 
         // $response1->dump();
 

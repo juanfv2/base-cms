@@ -20,7 +20,7 @@ class CityRepositoryTest extends TestCase
      */
     protected $modelRepository;
 
-    public function setUp(): void
+    public function setUp() : void
     {
         parent::setUp();
         $this->modelRepository = App::make(CityRepository::class);

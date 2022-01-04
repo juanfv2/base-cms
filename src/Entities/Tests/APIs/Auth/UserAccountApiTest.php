@@ -16,7 +16,12 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class UserAccountApiTest extends TestCase
 {
-    use ApiTestTrait, WithoutMiddleware, RefreshDatabase; // , DatabaseTransactions; // , RefreshDatabase
+    use ApiTestTrait,
+        WithoutMiddleware,
+        DatabaseTransactions
+        // RefreshDatabase
+        // ...
+    ;
 
     /** @test */
     public function api_create_account_without_image()
@@ -55,31 +60,33 @@ class UserAccountApiTest extends TestCase
         $account = Account::factory()->make()->toArray();
         unset($account['user_id']); // sin "user_id"
         // dd(json_encode($account) );
-        Storage::fake('assets');
+        // Storage::fake('assets');
 
+        $rCountry = 'td';
         $file = UploadedFile::fake()->image('avatar.jpg');
 
         $required = [
-            'withEntity'            => 'auth_people',
+            'withEntity'            => 'auth_accounts',
             'password'              => '123456',
             'password_confirmation' => '123456',
             'roles'                 => [$role->id],
             'role_id'               => $role->id,
-            'photo'              => $file,
+            'photo'                 => $file,
         ];
         $account  = array_merge($account,  $user, $required);
 
 
-        $this->response = $this->json('POST', route('api.users.store'), $account);
+        $this->response = $this->json('POST', route('api.users.store'), $account, ['r-country' => $rCountry]);
 
         // $this->response->dump();
         $this->getContent();
+        $iPath = "assets/adm/$rCountry/auth_users/photo/{$this->responseContent['data']['photo']['name']}";
+        // logger(__FILE__ . ':' . __LINE__ . ' $this->responseContent, $file->hashName() ', [$this->responseContent, $iPath, $file->hashName()]);
         // dd($this->responseContent, $file->hashName());
-        // logger(__FILE__ . ':' . __LINE__ . ' $this->responseContent, $file->hashName() ', [$this->responseContent, $file->hashName()]);
 
         $this->assertIsNumeric($this->responseContent['data']['photo']['entity_id']);
         $this->assertIsNumeric($this->responseContent['data']['photo']['id']);
-        Storage::disk('public')->assertExists('assets/adm/auth_users/photo/' . $file->hashName());
+        // Storage::disk('public')->assertExists($iPath);
     }
 
     /** @test */
@@ -108,15 +115,16 @@ class UserAccountApiTest extends TestCase
             'withEntity'            => 'auth_accounts',
 
             // user
-            'email'           => 'antonette30@ebert.com',   // fk
-            'name'            => 'est',
-            'disabled'        => 1,
-            'user_id'         => $account->user_id,
-            'role_id'         => $role->id,
+            'email'    => 'antonette30@ebert.com',   // fk
+            'name'     => 'est',
+            'disabled' => 1,
+            'user_id'  => $account->user_id,
+            'role_id'  => $role->id,
 
             // account
             'firstName'    => 'est',
             'lastName'     => 'ut',
+            'imei'         => $account->imei,
             'cellPhone'    => '1-873-322-7732 x9420',
             'birthDate'    => '2011-09-21',
             'address'      => '3331 Torrey Valleys Suite 807 Abigailstad, FL 78513',

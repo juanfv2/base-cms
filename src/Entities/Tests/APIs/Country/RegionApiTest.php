@@ -7,12 +7,18 @@ use App\Models\Country\Region;
 use Tests\TestCase;
 use Tests\ApiTestTrait;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class RegionApiTest extends TestCase
 {
-    use ApiTestTrait, WithoutMiddleware, DatabaseTransactions; // , RefreshDatabase
+    use ApiTestTrait,
+        WithoutMiddleware,
+        DatabaseTransactions
+        // RefreshDatabase
+        // ...
+    ;
 
     /** @test */
     public function api_create_region()

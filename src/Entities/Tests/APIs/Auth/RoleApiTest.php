@@ -5,15 +5,21 @@ namespace Tests\APIs\Auth;
 use App\Models\Auth\Role;
 use App\Models\Auth\Permission;
 
-use Tests\ApiTestTrait;
 use Tests\TestCase;
+use Tests\ApiTestTrait;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class RoleApiTest extends TestCase
 {
-    use ApiTestTrait, WithoutMiddleware, DatabaseTransactions; // , RefreshDatabase
+    use ApiTestTrait,
+        WithoutMiddleware,
+        // DatabaseTransactions
+        RefreshDatabase
+        // ...
+    ;
 
     /** @test */
     public function api_create_role()
@@ -36,10 +42,12 @@ class RoleApiTest extends TestCase
                 'permission_id' => $key
             ];
         }
-        // $this->response->dump();
-        $this->assertApiModifications($role);
         $this->assertDatabaseCount('auth_roles_has_permissions', 3);
         $this->assertDatabaseHas('auth_roles_has_permissions', $rolePermissions[0]);
+
+        // $this->response->dump();
+
+        $this->assertApiModifications($role);
     }
 
     /** @test */

@@ -61,8 +61,9 @@ class UserPersonApiTest extends TestCase
         $person  = Person::factory()->make()->toArray();
         unset($person['user_id']); // sin "user_id"
         // dd(json_encode($person) );
-        Storage::fake('assets');
+        // Storage::fake('assets');
 
+        $rCountry = 'td';
         $file = UploadedFile::fake()->image('avatar.jpg');
 
         $required = [
@@ -76,16 +77,17 @@ class UserPersonApiTest extends TestCase
         $person  = array_merge($person,  $user, $required);
 
 
-        $this->response = $this->json('POST', route('api.users.store'), $person);
+        $this->response = $this->json('POST', route('api.users.store'), $person, ['r-country' => $rCountry]);
 
         // $this->response->dump();
         $this->getContent();
+        $iPath = "assets/adm/$rCountry/auth_users/photo/{$this->responseContent['data']['photo']['name']}";
         // dd($this->responseContent, $file->hashName());
         // logger(__FILE__ . ':' . __LINE__ . ' $this->responseContent, $file->hashName() ', [$this->responseContent, $file->hashName()]);
 
         $this->assertIsNumeric($this->responseContent['data']['photo']['entity_id']);
         $this->assertIsNumeric($this->responseContent['data']['photo']['id']);
-        Storage::disk('public')->assertExists('assets/adm/auth_users/photo/' . $file->hashName());
+        Storage::disk('public')->assertExists($iPath);
     }
 
     /** @test */

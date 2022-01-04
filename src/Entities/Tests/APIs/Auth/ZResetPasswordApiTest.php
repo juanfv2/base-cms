@@ -13,7 +13,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
-class ZResetPasswordTest extends TestCase
+class ZResetPasswordApiTest extends TestCase
 {
     use ApiTestTrait, WithoutMiddleware, DatabaseTransactions; // , RefreshDatabase
     /** @test */
@@ -27,7 +27,7 @@ class ZResetPasswordTest extends TestCase
             'email' => $account->email
         ];
 
-        $response = $this->json('POST', '/api/password/email', $credentials);
+        $response = $this->json('POST', route('api.password.email'), $credentials);
 
         $response->assertOk();
 
@@ -41,7 +41,7 @@ class ZResetPasswordTest extends TestCase
             'password_confirmation' => 'secret1',
         ];
 
-        $response1 = $this->json('POST', '/api/password/reset', $credentials);
+        $response1 = $this->json('POST', route('api.password.reset'), $credentials);
 
         // $response1->dump();
 
@@ -65,7 +65,7 @@ class ZResetPasswordTest extends TestCase
             'email' => $account->email
         ];
 
-        $response = $this->json('POST', '/api/password/email', $credentials);
+        $response = $this->json('POST', route('api.password.email'), $credentials);
 
         $response->assertOk();
 
@@ -76,7 +76,7 @@ class ZResetPasswordTest extends TestCase
             'password_confirmation' => 'secret1',
         ];
 
-        $response1 = $this->json('POST', '/api/password/reset', $credentials);
+        $response1 = $this->json('POST', route('api.password.reset'), $credentials);
 
         $response = json_decode($response1->getContent(), true);
 
@@ -98,7 +98,7 @@ class ZResetPasswordTest extends TestCase
             'email' => $account->email
         ];
 
-        $response = $this->json('POST', '/api/password/email', $credentials);
+        $response = $this->json('POST', route('api.password.email'), $credentials);
 
         $response->assertOk();
 
@@ -113,7 +113,7 @@ class ZResetPasswordTest extends TestCase
             'password_confirmation' => 'secret2',
         ];
 
-        $response1 = $this->json('POST', '/api/password/reset', $credentials);
+        $response1 = $this->json('POST', route('api.password.reset'), $credentials);
 
         // dump($response1);
         // $response1->dump();

@@ -2,8 +2,9 @@
 
 namespace Tests\APIs\Auth;
 
-use App\Models\Auth\Person;
 use App\Models\Auth\User;
+use App\Models\Auth\Person;
+
 use Tests\TestCase;
 use Tests\ApiTestTrait;
 
@@ -12,12 +13,18 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
-class ZLoginTest extends TestCase
+class ZLoginApiTest extends TestCase
 {
-    use ApiTestTrait, DatabaseTransactions;
+    use ApiTestTrait,
+        // WithoutMiddleware,
+        DatabaseTransactions
+        // , RefreshDatabase
+        // ...
+    ;
+
 
     /** @test */
-    public function login_user()
+    public function login_user_person()
     {
         $this->withoutExceptionHandling();
 
@@ -28,12 +35,10 @@ class ZLoginTest extends TestCase
         $credentials = [
             'email' => $user->email,
             'password' => $p,
-            'includes' => ["person"]
+            'includes' => ["person"],
         ];
 
-        $this->response = $this->json('POST', '/api/authenticate', $credentials);
-        // dd($response);
-        // $this->response->dump();
+        $this->response = $this->json('POST', route('api.login.login'), $credentials, ['r-country' => 'td']);
 
         $this->assertApiResponse($user->toArray());
     }
@@ -53,20 +58,18 @@ class ZLoginTest extends TestCase
             'includes' => ['person', 'token']
         ];
 
-        $this->response = $this->json('POST', '/api/authenticate', $credentials);
-        // dd($this->response);
-        // $this->response->dump();
+        $this->response = $this->json('POST', route('api.login.login'), $credentials, ['r-country' => 'td']);
+
         $this->assertApiSuccess();
+        $this->getContent();
 
-        $this->response = json_decode($this->response->getContent(), true);
-        $token = $this->response['data']['token'];
+        // dd($this->responseContent);
 
-        $this->response = $this->json(
-            'POST',
-            '/api/logout',
-            [],
-            ['Authorization' =>  'Bearer ' . $token]
-        );
+        $response = $this->responseContent;
+
+        $token = $response['data']['token'];
+
+        $this->response = $this->json('POST', route('api.login.logout'), [], ['Authorization' =>  'Bearer ' . $token, 'r-country' => 'td']);
         // $this->response->dump();
 
         $this->response->assertNoContent();
@@ -84,14 +87,11 @@ class ZLoginTest extends TestCase
             'password' => $p,
             'includes' => ["person"]
         ];
-        $response = $this->json('POST', '/api/authenticate', $credentials);
+        $this->response = $this->json('POST', route('api.login.login'), $credentials, ['r-country' => 'td']);
 
-        // dump($response);
-        // $response->dump();
+        $this->response->assertStatus(404);
 
-        $response->assertStatus(404);
-
-        $response = json_decode($response->getContent(), true);
+        $response = json_decode($this->response->getContent(), true);
         $actual   = $response['message'];
         $expected = __('passwords.user');
         $this->assertEquals($expected, $actual);
@@ -111,11 +111,11 @@ class ZLoginTest extends TestCase
             'password' => $p,
             'includes' => ["person"]
         ];
-        $response = $this->json('POST', '/api/authenticate', $credentials);
+        $this->response = $this->json('POST', route('api.login.login'), $credentials, ['r-country' => 'td']);
 
-        $response->assertStatus(422);
+        $this->response->assertStatus(422);
 
-        $response = json_decode($response->getContent(), true);
+        $response = json_decode($this->response->getContent(), true);
 
         $actual   = $response['message'];
         $expected = __('auth.failed');
@@ -139,11 +139,11 @@ class ZLoginTest extends TestCase
             'password' => $p,
             'includes' => ["person"]
         ];
-        $response = $this->json('POST', '/api/authenticate', $credentials);
+        $this->response = $this->json('POST', route('api.login.login'), $credentials, ['r-country' => 'td']);
 
-        $response->assertStatus(422);
+        $this->response->assertStatus(422);
 
-        $response = json_decode($response->getContent(), true);
+        $response = json_decode($this->response->getContent(), true);
 
         $actual   = $response['message'];
         $expected = __('auth.no.active');
