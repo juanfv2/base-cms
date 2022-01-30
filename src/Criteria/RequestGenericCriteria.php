@@ -24,6 +24,7 @@ class RequestGenericCriteria implements CriteriaInterface
 
     protected $kOperatorStrNested; // $kConditional =, LIKE, >, <, =>, ...
     protected $kOperatorStrNestedIndex; // $kConditional =, LIKE, >, <, =>, ...
+    protected $fieldsSearchable; // $kConditional =, LIKE, >, <, =>, ...
 
     public function __construct(Request $request)
     {
@@ -40,94 +41,26 @@ class RequestGenericCriteria implements CriteriaInterface
      */
     public function apply($model, RepositoryInterface $repository)
     {
-        $this->model      = $model;
-        $table            = $this->model->getModel()->getTable();
-        $fieldsSearchable = $repository->getFieldsSearchable();
-        $conditions       = $this->request->get('conditions', '');
-        $joins            = $this->request->get('joins', '');
-        $select           = $this->request->get('select', '');
-        $sorts            = $this->request->get('sorts', '');
-        $withCount        = $this->request->get('withCount', '');
-        $with             = $this->request->get('with', '');
-        $conditions       = json_decode(urldecode($conditions));
-        $joins            = json_decode(urldecode($joins));
-        $select           = $select ? explode(',', urldecode($select)) : null;
-        $sorts            = json_decode(urldecode($sorts));
-        $withCount        = json_decode(urldecode($withCount));
-        $with             = json_decode(urldecode($with));
+        $this->model            = $model;
+        $this->table            = $this->model->getModel()->getTable();
+        $this->fieldsSearchable = $repository->getFieldsSearchable();
+        $conditions             = $this->request->get('conditions', '');
+        $joins                  = $this->request->get('joins', '');
+        $select                 = $this->request->get('select', '');
+        $sorts                  = $this->request->get('sorts', '');
+        $withCount              = $this->request->get('withCount', '');
+        $with                   = $this->request->get('with', '');
+        $conditions             = json_decode(urldecode($conditions));
+        $joins                  = json_decode(urldecode($joins));
+        $select                 = $select ? explode(',', urldecode($select)) : null;
+        $sorts                  = json_decode(urldecode($sorts));
+        $withCount              = json_decode(urldecode($withCount));
+        $with                   = json_decode(urldecode($with));
 
         // logger(__FILE__ . ':' . __LINE__ . ' $this->request ', [$this->request]);
 
         if (is_array($conditions)) {
-
-            $_kOperatorStrNested = null; // $kOperator AND, OR ...
-
-            foreach ($conditions as $k) {
-                // logger(__FILE__ . ':' . __LINE__ . ' $k ', [$k]);
-
-                if (is_array($k)) {
-                    if (!isset($_kOperatorStrNested)) {
-                        $_kOperatorStrNested = 'AND';
-                    }
-                    // logger(__FILE__ . ':' . __LINE__ . ' $_kOperatorStrNested ', [$_kOperatorStrNested]);
-                    $this->mGroup($k, null, $_kOperatorStrNested);
-                    continue; // continuar con el siguiente.
-                }
-                $_kOperatorStr = 'AND';
-                $_kConditionalStr = '='; // $kConditional =, LIKE, >, <, =>, ...
-                $condition = explode(' ', $k->c);
-                // logger(__FILE__ . ':' . __LINE__ . ' $condition ', [$condition]);
-
-                switch (count($condition)) {
-                    case 3:
-                        list($_kOperatorStr, $kFieldStr, $_kConditionalStr) = $condition;
-                        break;
-                    case 2:
-                        list($_kOperatorStr, $kFieldStr) = $condition;
-                        break;
-                    default:
-                        list($kFieldStr) = $condition;
-                }
-                if ($kFieldStr === 'OR') {
-                    $_kOperatorStrNested = 'OR';
-                    continue; // next
-                }
-                $kFieldStrK = str_replace("$table.", '', $kFieldStr);
-                // logger(__FILE__ . ':' . __LINE__ . ' in_array($kFieldStrK, $fieldsSearchable) ', [$kFieldStrK, $fieldsSearchable, in_array($kFieldStrK, $fieldsSearchable)]);
-                if (in_array($kFieldStrK, $fieldsSearchable)) {
-                    continue; // next
-                }
-
-                $noValue = '--false--';
-                $_kValue = property_exists($k, 'v') ? $k->v : $noValue;
-                $_kValueIsOptionNull = strpos($_kConditionalStr, 'null') !== false;
-
-                if (!$_kValueIsOptionNull && $_kValue === $noValue) {
-                    continue;
-                }
-
-                if ($_kConditionalStr === 'like') {
-                    $_kValue = '%' . $_kValue . '%';
-                }
-                if ($_kConditionalStr === 'like>') {
-                    $_kConditionalStr = 'like';
-                    $_kValue = $_kValue . '%';
-                }
-                if ($_kConditionalStr === '<like') {
-                    $_kConditionalStr = 'like';
-                    $_kValue = '%' . $_kValue;
-                }
-
-                if ($_kValueIsOptionNull) {
-                    $isNot = $_kConditionalStr === 'not-null';
-                    $this->model = $this->model->whereNull($kFieldStr, $_kOperatorStr, $isNot);
-                } elseif (strpos($_kConditionalStr, 'in') !== false) {
-                    $isNot = $_kConditionalStr === 'not-in';
-                    $this->model = $this->model->whereIn($kFieldStr, $_kValue, $_kOperatorStr, $isNot);
-                } else {
-                    $this->model = $this->model->where($kFieldStr, $_kConditionalStr, [$_kValue], $_kOperatorStr);
-                }
-            } // end for...
+            $this->mGroup($conditions, '_ini_', 'and');
         }
 
         if (is_array($joins)) {
@@ -155,7 +88,7 @@ class RequestGenericCriteria implements CriteriaInterface
                         }
                         break;
                     default:
-                        $ownTable   = $table;
+                        $ownTable   = $this->table;
                         $ownerKey   = $split[2];
 
                         break;
@@ -185,7 +118,7 @@ class RequestGenericCriteria implements CriteriaInterface
                 $this->model = $this->model->addSelect($k);
             }
         } else {
-            $this->model = $this->model->addSelect($table . '.*');
+            $this->model = $this->model->addSelect($this->table . '.*');
         }
 
         if ($sorts) {
@@ -212,85 +145,85 @@ class RequestGenericCriteria implements CriteriaInterface
      */
     private function mGroup($kParent, $query = null, $_kOperatorStrParam = 'AND')
     {
-        // logger(__FILE__ . ':' . __LINE__ . ' mGroup $k ', [$k]);
-        // logger(__FILE__ . ':' . __LINE__ . ' mGroup $query ', [$query]);
-        // logger(__FILE__ . ':' . __LINE__ . ' mGroup $_kOperatorStrParam ', [$_kOperatorStrParam]);
 
-        $this->model = $this->model->where(function ($q) use ($kParent, $query) {
+        $q = $this->model->forNestedWhere();
 
-            $_kOperatorStrNested = null; // $kOperator AND, OR ..
+        foreach ($kParent as $k) {
+            // logger(__FILE__ . ':' . __LINE__ . ' inner $k ', [$k]);
+            if (is_array($k)) {
 
-            foreach ($kParent as $k) {
-                // logger(__FILE__ . ':' . __LINE__ . ' inner $k ', [$k]);
+                $qw = $this->mGroup($k, '_nested_', $_kOperatorStrParam);
+                $q->addNestedWhereQuery($qw->getQuery(), $_kOperatorStrParam);
+                continue; // continuar con el siguiente.
+            }
 
-                $mQuery = $q;
-                if ($query) {
-                    $mQuery = $query;
-                }
+            $noValue             = '--false--';
+            $_kOperatorStr       = 'AND';
+            $_kConditionalStr    = '=';                                           // $kConditional =, LIKE, >, <, =>, ...
+            $condition           = explode(' ', $k->c);
+            $_kValue             = property_exists($k, 'v') ? $k->v : $noValue;
+            $_kValueIsOptionNull = strpos($_kConditionalStr, 'null') !== false;
+            // logger(__FILE__ . ':' . __LINE__ . ' $condition ', [$condition, $k->c, $_kValue]);
 
-                if (is_array($k)) {
-                    if (!isset($_kOperatorStrNested)) {
-                        $_kOperatorStrNested = 'AND';
-                    }
-                    // logger(__FILE__ . ':' . __LINE__ . ' inner $_kOperatorStrNested ', [$_kOperatorStrNested]);
-                    $this->mGroup($k, $mQuery, $_kOperatorStrNested);
-                    continue; // continuar con el siguiente.
-                }
+            switch (count($condition)) {
+                case 3:
+                    list($_kOperatorStr, $_kFieldStr, $_kConditionalStr) = $condition;
+                    break;
+                case 2:
+                    list($_kOperatorStr, $_kFieldStr) = $condition;
+                    break;
+                default:
+                    list($_kFieldStr) = $condition;
+            }
 
-                $_kOperatorStr = 'AND';
-                $_kConditionalStr = '='; // $kConditional =, LIKE, >, <, =>, ...
-                $condition = explode(' ', $k->c);
-                // logger(__FILE__ . ':' . __LINE__ . ' $condition ', [$condition]);
+            if ($_kFieldStr === 'OR') {
+                $_kOperatorStrParam = 'OR';
+                continue; // next
+            }
 
-                switch (count($condition)) {
-                    case 3:
-                        list($_kOperatorStr, $_kFieldStr, $_kConditionalStr) = $condition;
-                        break;
-                    case 2:
-                        list($_kOperatorStr, $_kFieldStr) = $condition;
-                        break;
-                    default:
-                        list($_kFieldStr) = $condition;
-                }
+            $kFieldStrK = str_replace("$this->table.", '', $_kFieldStr);
+            // logger(__FILE__ . ':' . __LINE__ . ' in_array($kFieldStrK, $fieldsSearchable) ', [$kFieldStrK, $fieldsSearchable, in_array($kFieldStrK, $fieldsSearchable)]);
+            if (in_array($kFieldStrK, $this->fieldsSearchable)) {
+                continue; // next
+            }
 
-                if ($_kFieldStr === 'OR') {
-                    $_kOperatorStrNested = 'OR';
-                    continue; // next
-                }
-                $_kOperatorStrNested = null;
+            if (!$_kValueIsOptionNull && $_kValue === $noValue) {
+                continue;
+            }
 
-                $noValue = '--false--';
-                $_kValue = property_exists($k, 'v') ? $k->v : $noValue;
-                $_kValueIsOptionNull = strpos($_kConditionalStr, 'null') !== false;
-                // logger(__FILE__ . ':' . __LINE__ . ' $_kValue ', [$_kValue]);
+            if ($_kConditionalStr === 'like') {
+                $_kValue = '%' . $_kValue . '%';
+            }
+            if ($_kConditionalStr === 'like>') {
+                $_kConditionalStr = 'like';
+                $_kValue = $_kValue . '%';
+            }
+            if ($_kConditionalStr === '<like') {
+                $_kConditionalStr = 'like';
+                $_kValue = '%' . $_kValue;
+            }
 
-                if (!$_kValueIsOptionNull && $_kValue === $noValue) {
-                    continue;
-                }
+            if ($_kValueIsOptionNull) {
+                $isNot = $_kConditionalStr === 'not-null';
+                $q->whereNull($_kFieldStr, $_kOperatorStr, $isNot);
+            } elseif (strpos($_kConditionalStr, 'in') !== false) {
+                $isNot = $_kConditionalStr === 'not-in';
+                $q->whereIn($_kFieldStr, $_kValue, $_kOperatorStr, $isNot);
+            } elseif ($_kOperatorStr == 'OR') {
+                $q->orWhere($_kFieldStr, $_kConditionalStr, [$_kValue]);
+            } else {
+                $q->where($_kFieldStr, $_kConditionalStr, [$_kValue]);
+            }
+        } // end for ...
 
-                if ($_kConditionalStr === 'like') {
-                    $_kValue = '%' . $_kValue . '%';
-                }
-                if ($_kConditionalStr === 'like>') {
-                    $_kConditionalStr = 'like';
-                    $_kValue = $_kValue . '%';
-                }
-                if ($_kConditionalStr === '<like') {
-                    $_kConditionalStr = 'like';
-                    $_kValue = '%' . $_kValue;
-                }
+        if ($query == '_nested_') {
+            return $q;
+        }
+        // logger(__FILE__ . ':' . __LINE__ . ' $q->toSql() ', [$_kOperatorStrParam, $q->toSql()]);
 
-                if ($_kValueIsOptionNull) {
-                    $isNot = $_kConditionalStr === 'not-null';
-                    $mQuery->whereNull($_kFieldStr, $_kOperatorStr, $isNot);
-                } elseif (strpos($_kConditionalStr, 'in') !== false) {
-                    $isNot = $_kConditionalStr === 'not-in';
-                    $mQuery->whereIn($_kFieldStr, $_kValue, $_kOperatorStr, $isNot);
-                } else {
-                    $mQuery->where($_kFieldStr, $_kConditionalStr, [$_kValue], $_kOperatorStr);
-                }
-            } // end for ...
-        }, null, null, $_kOperatorStrParam);
+        if ($query == '_ini_') {
+            $this->model = $this->model->addNestedWhereQuery($q->getQuery());
+        }
     }
 
     public static function conditionz($conditions = [], $_kOperatorStrNested = '')
