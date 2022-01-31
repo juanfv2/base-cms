@@ -57,7 +57,7 @@ trait ImportableExportable
         }
     }
 
-    public function importing($handle, $table, $primaryKeys, $keys, $delimiter)
+    public function importing($handle, $table, $primaryKeys, $keys, $delimiter, $callback = null)
     {
         $created      = 0;
         $line         = 0;
@@ -84,6 +84,12 @@ trait ImportableExportable
                     }
 
                     $r = $this->saveData($table, $attrKeys, $data, $created);
+
+                    if ($callback && is_int($r) && $r > 0) {
+                        $row = $data;
+                        $row[$primaryKeys] = $r;
+                        call_user_func($callback, $row);
+                    }
 
                     $created++;
                 }
@@ -117,7 +123,7 @@ trait ImportableExportable
     {
         try {
             if (empty($attrKeys)) {
-                return DB::table($table)->insert($data);
+                return DB::table($table)->insertGetId($data);
             }
 
             return DB::table($table)->updateOrInsert($attrKeys, $data);
