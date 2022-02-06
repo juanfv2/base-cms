@@ -157,13 +157,11 @@ class RequestGenericCriteria implements CriteriaInterface
                 continue; // continuar con el siguiente.
             }
 
-            $noValue             = '--false--';
-            $_kOperatorStr       = 'AND';
-            $_kConditionalStr    = '=';                                           // $kConditional =, LIKE, >, <, =>, ...
-            $condition           = explode(' ', $k->c);
-            $_kValue             = property_exists($k, 'v') ? $k->v : $noValue;
-            $_kValueIsOptionNull = strpos($_kConditionalStr, 'null') !== false;
-            // logger(__FILE__ . ':' . __LINE__ . ' $condition ', [$condition, $k->c, $_kValue]);
+            $noValue          = '--false--';
+            $nullOrEmpty      = '---';
+            $_kOperatorStr    = 'AND';
+            $_kConditionalStr = '=';                  // $kConditional =, LIKE, >, <, =>, ...
+            $condition        = explode(' ', $k->c);
 
             switch (count($condition)) {
                 case 3:
@@ -181,14 +179,21 @@ class RequestGenericCriteria implements CriteriaInterface
                 continue; // next
             }
 
-            $kFieldStrK = str_replace("$this->table.", '', $_kFieldStr);
-            // logger(__FILE__ . ':' . __LINE__ . ' in_array($kFieldStrK, $fieldsSearchable) ', [$kFieldStrK, $fieldsSearchable, in_array($kFieldStrK, $fieldsSearchable)]);
-            if (in_array($kFieldStrK, $this->fieldsSearchable)) {
-                continue; // next
+            $_kValue              = property_exists($k, 'v') ? $k->v : $noValue;
+            $_kValueIsOptionNull  = strpos($_kConditionalStr, 'null') !== false;
+            $_kValueIsOptionEmpty = strpos($_kConditionalStr, 'empty') !== false;
+            $kFieldStrK           = str_replace("$this->table.", '', $_kFieldStr);
+
+            if ($_kValueIsOptionNull || $_kValueIsOptionEmpty) {
+                $_kValue = $nullOrEmpty;
             }
 
-            if (!$_kValueIsOptionNull && $_kValue === $noValue) {
+            if ($_kValue === $noValue) {
                 continue;
+            }
+
+            if (in_array($kFieldStrK, $this->fieldsSearchable)) {
+                continue; // next
             }
 
             if ($_kConditionalStr === 'like') {
@@ -203,16 +208,31 @@ class RequestGenericCriteria implements CriteriaInterface
                 $_kValue = '%' . $_kValue;
             }
 
-            if ($_kValueIsOptionNull) {
-                $isNot = $_kConditionalStr === 'not-null';
-                $q->whereNull($_kFieldStr, $_kOperatorStr, $isNot);
-            } elseif (strpos($_kConditionalStr, 'in') !== false) {
-                $isNot = $_kConditionalStr === 'not-in';
-                $q->whereIn($_kFieldStr, $_kValue, $_kOperatorStr, $isNot);
-            } elseif ($_kOperatorStr == 'OR') {
-                $q->orWhere($_kFieldStr, $_kConditionalStr, [$_kValue]);
-            } else {
-                $q->where($_kFieldStr, $_kConditionalStr, [$_kValue]);
+            switch ($_kConditionalStr) {
+                case 'is-empty':
+                case 'not-empty':
+                    $isNot = $_kConditionalStr === 'not-empty';
+                    $qSub = $this->model->forNestedWhere();
+                    $qSub->whereNull($_kFieldStr, $_kOperatorStr, $isNot)->orWhere($_kFieldStr, $isNot ? '!=' : '=', '');
+                    $q->addNestedWhereQuery($qSub->getQuery(), $_kOperatorStr);
+
+                    break;
+                case 'is-null':
+                case 'not-null':
+                    $isNot = $_kConditionalStr === 'not-null';
+                    $q->whereNull($_kFieldStr, $_kOperatorStr, $isNot);
+
+                    break;
+                case 'in':
+                case 'not-in':
+                    $isNot = $_kConditionalStr === 'not-in';
+                    $q->whereIn($_kFieldStr, $_kValue, $_kOperatorStr, $isNot);
+
+                    break;
+                default:
+                    $q->where($_kFieldStr, $_kConditionalStr, [$_kValue], $_kOperatorStr);
+
+                    break;
             }
         } // end for ...
 
