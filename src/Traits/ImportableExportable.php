@@ -8,6 +8,7 @@ use App\Models\Misc\BulkError;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Juanfv2\BaseCms\Utils\ExportDataService;
+use Juanfv2\BaseCms\Repositories\BaseRepository;
 
 trait ImportableExportable
 {
@@ -203,15 +204,29 @@ trait ImportableExportable
         $exporter->initialize(); // starts streaming data to web browser
         $exporter->addRow($labels);
 
-        $repo->allForChunk()->chunk(10000, function ($items) use ($fNames, $exporter) {
-            foreach ($items as $listItem) {
+
+        if ($repo instanceof BaseRepository) {
+            $repo->allForChunk()->chunk(10000, function ($items) use ($fNames, $exporter) {
+                foreach ($items as $listItem) {
+                    $i = [];
+                    foreach ($fNames as $key) {
+                        $i[$key] = $listItem->{$key};
+                    }
+                    $exporter->addRow($i);
+                }
+            });
+        } else {
+            foreach ($repo as $listItem) {
                 $i = [];
                 foreach ($fNames as $key) {
                     $i[$key] = $listItem->{$key};
                 }
                 $exporter->addRow($i);
             }
-        });
+        }
+
+
+
 
         $exporter->finalize(); // writes the footer, flushes remaining data to browser.
 
