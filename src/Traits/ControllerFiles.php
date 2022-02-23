@@ -108,7 +108,7 @@ trait ControllerFiles
         $originalName         = $request->$fieldName->getClientOriginalName();
         $fileExtension        = $request->$fieldName->extension();
         $fileNamePrefix       = $tableName . '-' . $id;
-        $newName              = "$fileNamePrefix-$time";                        // uniqid($fileNamePrefix . '-');
+        $newName              = "$fileNamePrefix-$time";
         $newNameWithExtension = $newName . '.' . $fileExtension;
 
         /**
@@ -195,8 +195,10 @@ trait ControllerFiles
             }
         }
 
+        $xFile->columns = $columns;
+
         return $this->sendResponse(
-            [$fieldName => $xFile, 'columns' => $columns,],
+            [$fieldName => $xFile],
             __('validation.model.image.added', ['model' => $tableName])
         );
     }
