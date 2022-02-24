@@ -3,8 +3,11 @@
 namespace Juanfv2\BaseCms\Criteria;
 
 use Illuminate\Http\Request;
+use App\Exceptions\NoSentryException;
+use Illuminate\Support\Facades\Storage;
 use Juanfv2\BaseCms\Contracts\CriteriaInterface;
 use Juanfv2\BaseCms\Contracts\RepositoryInterface;
+use stdClass;
 
 /**
  * Class RequestGenericCriteria
@@ -17,14 +20,7 @@ class RequestGenericCriteria implements CriteriaInterface
      * @var \Illuminate\Http\Request
      */
     protected $request;
-    protected $model;
-
-    // protected $kOperatorStr = 'AND'; // $kOperator AND, OR ...
-    protected $kConditionalStr = '='; // $kConditional =, LIKE, >, <, =>, ...
-
-    protected $kOperatorStrNested; // $kConditional =, LIKE, >, <, =>, ...
-    protected $kOperatorStrNestedIndex; // $kConditional =, LIKE, >, <, =>, ...
-    protected $fieldsSearchable; // $kConditional =, LIKE, >, <, =>, ...
+    protected $fieldsSearchable;
 
     public function __construct(Request $request)
     {
@@ -41,8 +37,7 @@ class RequestGenericCriteria implements CriteriaInterface
      */
     public function apply($model, RepositoryInterface $repository)
     {
-        $this->model            = $model;
-        $this->table            = $this->model->getModel()->getTable();
+        $table                  = $model->getModel()->getTable();
         $this->fieldsSearchable = $repository->getFieldsSearchable();
         $conditions             = $this->request->get('conditions', '');
         $joins                  = $this->request->get('joins', '');
@@ -60,7 +55,7 @@ class RequestGenericCriteria implements CriteriaInterface
         // logger(__FILE__ . ':' . __LINE__ . ' $this->request ', [$this->request]);
 
         if (is_array($conditions)) {
-            $this->mGroup($conditions, '_ini_', 'and');
+            $this->mGroup($model, $table, $conditions, '_ini_', 'and');
         }
 
         if (is_array($joins)) {
@@ -88,7 +83,7 @@ class RequestGenericCriteria implements CriteriaInterface
                         }
                         break;
                     default:
-                        $ownTable   = $this->table;
+                        $ownTable   = $table;
                         $ownerKey   = $split[2];
 
                         break;
@@ -96,46 +91,46 @@ class RequestGenericCriteria implements CriteriaInterface
 
                 switch ($joinType) {
                     case '<':
-                        $this->model = $this->model->leftJoin($joinTable, $joinTable . '.' . $foreignKey, '=', $ownTable . '.' . $ownerKey);
+                        $model = $model->leftJoin($joinTable, $joinTable . '.' . $foreignKey, '=', $ownTable . '.' . $ownerKey);
                         break;
                     case '>':
-                        $this->model = $this->model->leftJoin($joinTable, $joinTable . '.' . $foreignKey, '=', $ownTable . '.' . $ownerKey);
+                        $model = $model->leftJoin($joinTable, $joinTable . '.' . $foreignKey, '=', $ownTable . '.' . $ownerKey);
                         break;
 
                     default:
-                        $this->model = $this->model->join($joinTable, $joinTable . '.' . $foreignKey, '=', $ownTable . '.' . $ownerKey);
+                        $model = $model->join($joinTable, $joinTable . '.' . $foreignKey, '=', $ownTable . '.' . $ownerKey);
                         break;
                 }
 
                 if (isset($k->v)) {
-                    $this->model = $this->model->addSelect($k->v);
+                    $model = $model->addSelect($k->v);
                 }
             } // end for ...
         }
 
         if (is_array($select)) {
             foreach ($select as $k) {
-                $this->model = $this->model->addSelect($k);
+                $model = $model->addSelect($k);
             }
         } else {
-            $this->model = $this->model->addSelect($this->table . '.*');
+            $model = $model->addSelect($table . '.*');
         }
 
         if ($sorts) {
             foreach ($sorts as $k) {
-                $this->model = $this->model->orderBy($k->field, ($k->order == 1 ? 'asc' : 'desc'));
+                $model = $model->orderBy($k->field, ($k->order == 1 ? 'asc' : 'desc'));
             }
         }
 
         if ($withCount) {
-            $this->model->withCount($withCount);
+            $model->withCount($withCount);
         }
 
         if ($with) {
-            $this->model->with($with);
+            $model->with($with);
         }
 
-        return $this->model;
+        return $model;
     }
 
     /**
@@ -143,24 +138,23 @@ class RequestGenericCriteria implements CriteriaInterface
      * @param null $query
      * @param int $currentIndex
      */
-    private function mGroup($kParent, $query = null, $_kOperatorStrParam = 'AND')
+    private function mGroup(&$model, $table, $kParent, $query = null, $_kOperatorStrParam = 'AND')
     {
 
-        $q = $this->model->forNestedWhere();
+        $q                = $model->forNestedWhere();
+        $noValue          = '--false--';
+        $nullOrEmpty      = '---';
+        $_kOperatorStr    = 'AND';
+        $_kConditionalStr = '=';
 
         foreach ($kParent as $k) {
             // logger(__FILE__ . ':' . __LINE__ . ' inner $k ', [$k]);
             if (is_array($k)) {
-
-                $qw = $this->mGroup($k, '_nested_', $_kOperatorStrParam);
+                $qw = $this->mGroup($model, $table, $k, '_nested_', $_kOperatorStrParam);
                 $q->addNestedWhereQuery($qw->getQuery(), $_kOperatorStrParam);
                 continue; // continuar con el siguiente.
             }
 
-            $noValue          = '--false--';
-            $nullOrEmpty      = '---';
-            $_kOperatorStr    = 'AND';
-            $_kConditionalStr = '=';                  // $kConditional =, LIKE, >, <, =>, ...
             $condition        = explode(' ', $k->c);
 
             switch (count($condition)) {
@@ -173,7 +167,6 @@ class RequestGenericCriteria implements CriteriaInterface
                 default:
                     list($_kFieldStr) = $condition;
             }
-
             if ($_kFieldStr === 'OR') {
                 $_kOperatorStrParam = 'OR';
                 continue; // next
@@ -182,7 +175,7 @@ class RequestGenericCriteria implements CriteriaInterface
             $_kValue              = property_exists($k, 'v') ? $k->v : $noValue;
             $_kValueIsOptionNull  = strpos($_kConditionalStr, 'null') !== false;
             $_kValueIsOptionEmpty = strpos($_kConditionalStr, 'empty') !== false;
-            $kFieldStrK           = str_replace("$this->table.", '', $_kFieldStr);
+            $kFieldStrK           = str_replace("$table.", '', $_kFieldStr);
 
             if ($_kValueIsOptionNull || $_kValueIsOptionEmpty) {
                 $_kValue = $nullOrEmpty;
@@ -212,7 +205,7 @@ class RequestGenericCriteria implements CriteriaInterface
                 case 'is-empty':
                 case 'not-empty':
                     $isNot = $_kConditionalStr === 'not-empty';
-                    $qSub = $this->model->forNestedWhere();
+                    $qSub = $model->forNestedWhere();
                     $qSub->whereNull($_kFieldStr, $_kOperatorStr, $isNot)->orWhere($_kFieldStr, $isNot ? '!=' : '=', '');
                     $q->addNestedWhereQuery($qSub->getQuery(), $_kOperatorStr);
 
@@ -239,11 +232,116 @@ class RequestGenericCriteria implements CriteriaInterface
         if ($query == '_nested_') {
             return $q;
         }
+        if ($this->request->has('mq.massiveWithFile')) {
+            $qw = $this->applyWithFile($model);
+            if (property_exists($qw, 'query')) {
+                $q->addNestedWhereQuery($qw->query, $qw->prevOperator);
+            }
+        }
         // logger(__FILE__ . ':' . __LINE__ . ' $q->toSql() ', [$_kOperatorStrParam, $q->toSql()]);
 
         if ($query == '_ini_') {
-            $this->model = $this->model->addNestedWhereQuery($q->getQuery());
+            $model = $model->addNestedWhereQuery($q->getQuery());
         }
+    }
+
+
+    public function applyWithFile(&$model)
+    {
+
+        $table                = $model->getModel()->getTable();
+        $massiveQ             = $this->request->get('mq');
+        $conditions           = isset($massiveQ['conditions']) ? $massiveQ['conditions'] : null;
+        $conditions           = json_decode(urldecode($conditions));
+        $massiveQueryFileName = isset($massiveQ['massiveWithFile']) ? $massiveQ['massiveWithFile'] : '';
+        $rCountry             = $this->request->header('r-country', '');
+        $basename             = basename($massiveQueryFileName);
+        $fileTempName         = pathinfo($basename, PATHINFO_FILENAME);
+        $baseAssets           = 'assets/adm';
+
+        if ($rCountry) {
+            $baseAssets = $baseAssets . '/' . $rCountry;
+        }
+
+        $path    = "$baseAssets/temporals/$fileTempName/$table/massive-with-file/$massiveQueryFileName";
+        $columns = [];
+
+        if (!Storage::disk('public')->exists($path)) {
+            throw new NoSentryException("Archivo no encontrado: '{$this->event->data->massiveQueryFileNameOriginal}'");
+        }
+
+        try {
+            ini_set('auto_detect_line_endings', true);
+
+            $_versionsCsv_File = Storage::disk('public')->path($path);
+
+            if (($handle = fopen($_versionsCsv_File, "r")) !== false) {
+                while (($data = fgetcsv($handle, 1000, ",")) !== false) {
+                    $c = 0;
+                    foreach ($data as $k => $d) {
+                        if ($d !== null && $d !== '') {
+                            $columns[$c][] = $d;
+                        }
+                        $c++;
+                    }
+                }
+                fclose($handle);
+            }
+            ini_set('auto_detect_line_endings', false);
+        } catch (\Throwable $th) {
+            // throw $th;
+            // logger(__FILE__ . ':' . __LINE__ . ' $th ', [$th]);
+            // return $model;
+        }
+
+        if (is_array($conditions) && $columns) {
+            return $this->mGroupWithFile($model, $conditions, $columns);
+        }
+
+        return null;
+    }
+
+    private function mGroupWithFile(&$model, $conditions, $columns)
+    {
+        $q = $model->forNestedWhere();
+        $result = new stdClass;
+        $result->prevOperator = 'AND';
+
+        for ($i = 0; $i < count($conditions); $i++) {
+
+
+            $column     = $columns[$i];
+            $_condition = $conditions[$i];
+            $condition  = explode(' ', $_condition->c);
+            $cCount     = count($condition);
+
+            if ($cCount != 3) {
+                continue;
+            }
+
+            list($kOperatorStr, $kFieldStr, $kConditionalStr) = $condition;
+
+            if ($i == 0) {
+                $result->prevOperator = $kOperatorStr;
+            }
+
+
+            $qSub = $model->forNestedWhere();
+            if ($kConditionalStr == 'like') {
+                foreach ($column as $key) {
+                    $qSub->where($kFieldStr, $kConditionalStr, [$key], 'OR');
+                }
+            } else {
+                $isNot = $kConditionalStr === '!=';
+                $qSub->whereIn($kFieldStr, $column, $kOperatorStr, $isNot);
+            }
+
+            $q->addNestedWhereQuery($qSub->getQuery(), $kOperatorStr);
+        }
+
+        $result->query = $q->getQuery();
+
+        return $result;
     }
 
     public static function conditionz($conditions = [], $_kOperatorStrNested = '')
