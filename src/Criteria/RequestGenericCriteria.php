@@ -267,7 +267,7 @@ class RequestGenericCriteria implements CriteriaInterface
         $columns = [];
 
         if (!Storage::disk('public')->exists($path)) {
-            throw new NoSentryException("Archivo no encontrado: '{$this->event->data->massiveQueryFileNameOriginal}'");
+            throw new NoSentryException("Archivo no encontrado: '{$massiveQueryFileName}'");
         }
 
         try {
