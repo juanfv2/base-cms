@@ -141,12 +141,7 @@ class RequestGenericCriteria implements CriteriaInterface
     private function mGroup(&$model, $table, $kParent, $query = null, $_kOperatorStrParam = 'AND')
     {
 
-        $q                = $model->forNestedWhere();
-        $noValue          = '--false--';
-        $nullOrEmpty      = '---';
-        $_kOperatorStr    = 'AND';
-        $_kConditionalStr = '=';
-
+        $q = $model->forNestedWhere();
         foreach ($kParent as $k) {
             // logger(__FILE__ . ':' . __LINE__ . ' inner $k ', [$k]);
             if (is_array($k)) {
@@ -155,6 +150,10 @@ class RequestGenericCriteria implements CriteriaInterface
                 continue; // continuar con el siguiente.
             }
 
+            $noValue          = '--false--';
+            $nullOrEmpty      = '---';
+            $_kOperatorStr    = 'AND';
+            $_kConditionalStr = '=';
             $condition        = explode(' ', $k->c);
 
             switch (count($condition)) {
