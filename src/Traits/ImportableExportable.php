@@ -64,10 +64,12 @@ trait ImportableExportable
         $line         = 0;
         $data1        = [];
         $xHeadersTemp = fgetcsv($handle, 0, $delimiter);
+        $xHeadersTemp = \ForceUTF8\Encoding::fixUTF8($xHeadersTemp);
         while (($data = fgetcsv($handle, 0, $delimiter)) !== false) {
             $line++;
             try {
-                $data1       = $this->toUtf8($data);
+                $data1 = \ForceUTF8\Encoding::fixUTF8($data);
+                // logger(__FILE__ . ':' . __LINE__ . ' $in, $nIn ', [$data, $data1]);
                 $dataCombine = array_combine($xHeadersTemp, $data1);
 
                 if ($dataCombine) {
@@ -96,7 +98,7 @@ trait ImportableExportable
                 }
             } catch (\Throwable $th) {
                 $d = implode($delimiter, $data1);
-                BulkError::create(['queue' => $this->event->data->cQueue, 'payload' => "Línea: {$line} {$d} {$th->getMessage()}",]);
+                BulkError::create(['queue' => $this->event->data->cQueue, 'payload' => "{$d} $delimiter Línea: {$line} $delimiter {$th->getMessage()}",]);
             }
         }
 
@@ -197,7 +199,7 @@ trait ImportableExportable
 
     protected function export($table, $headers, $repo)
     {
-        $labels   = array_values($headers);
+        $labels   = \ForceUTF8\Encoding::fixUTF8($headers);
         $fNames   = array_keys($headers);
         $exporter = (new ExportDataService('csv', 'browser', $table . '.csv'))->getExporter();
 
@@ -231,24 +233,6 @@ trait ImportableExportable
         $exporter->finalize(); // writes the footer, flushes remaining data to browser.
 
         exit(); // all done
-    }
-
-    protected function toUtf8($in)
-    {
-        if (is_array($in)) {
-            foreach ($in as $key => $value) {
-                $out[$this->toUtf8($key)] = $this->toUtf8($value);
-            }
-        } elseif (is_string($in)) {
-            if (mb_detect_encoding($in) != 'UTF-8') {
-                return trim(utf8_encode($in));
-            } else {
-                return trim($in);
-            }
-        } else {
-            return trim($in);
-        }
-        return $out;
     }
 
     function getFileDelimiter($file, $checkLines = 2)

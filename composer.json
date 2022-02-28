@@ -11,7 +11,8 @@
   ],
   "minimum-stability": "dev",
   "require": {
-    "php": "^7.3|^8.0"
+    "php": "^7.3|^8.0",
+    "neitanod/forceutf8": "^2.0"
   },
   "extra": {
     "laravel": {
