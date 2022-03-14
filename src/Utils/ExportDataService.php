@@ -32,7 +32,7 @@ class ExportDataCSV extends ExportData
         foreach ($row as $key => $value) {
             // Escape inner quotes and wrap all contents in new quotes.
             // Note that we are using \" to escape double quote not ""
-            $row[$key] = '"' . str_replace('"', '\"', $value) . '"';
+            $row[$key] = '"' . str_replace('"', '""', $value) . '"';
         }
         return implode(",", $row) . "\n";
     }
