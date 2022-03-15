@@ -328,7 +328,7 @@ class RequestGenericCriteria implements CriteriaInterface
             $qSub = $model->forNestedWhere();
             if ($kConditionalStr == 'like') {
                 foreach ($column as $key) {
-                    $qSub->where($kFieldStr, $kConditionalStr, [$key], 'OR');
+                    $qSub->where($kFieldStr, $kConditionalStr, ["%$key%"], 'OR');
                 }
             } else {
                 $isNot = $kConditionalStr === '!=';
