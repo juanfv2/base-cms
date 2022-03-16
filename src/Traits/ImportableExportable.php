@@ -46,7 +46,7 @@ trait ImportableExportable
 
             if (($handle = fopen($massiveQueryFile, 'r')) !== false) {
 
-                $delimiter    = $this->getFileDelimiter($massiveQueryFile);
+                $delimiter    = _file_delimiter($massiveQueryFile);
 
                 $created = $this->importing($handle, $tableName, $primaryKeyName, $keys, $delimiter);
 
@@ -237,36 +237,8 @@ trait ImportableExportable
             }
         }
 
-
-
-
         $exporter->finalize(); // writes the footer, flushes remaining data to browser.
 
         exit(); // all done
-    }
-
-    function getFileDelimiter($file, $checkLines = 2)
-    {
-        $file = new \SplFileObject($file);
-        $delimiters = [',', '\t', ';', '|', ':'];
-        $results = array();
-        $i = 0;
-        while ($file->valid() && $i <= $checkLines) {
-            $line = $file->fgets();
-            foreach ($delimiters as $delimiter) {
-                $regExp = '/[' . $delimiter . ']/';
-                $fields = preg_split($regExp, $line);
-                if (count($fields) > 1) {
-                    if (!empty($results[$delimiter])) {
-                        $results[$delimiter]++;
-                    } else {
-                        $results[$delimiter] = 1;
-                    }
-                }
-            }
-            $i++;
-        }
-        $results = array_keys($results, max($results));
-        return $results[0];
     }
 }

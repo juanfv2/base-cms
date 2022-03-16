@@ -15,7 +15,6 @@ use stdClass;
  */
 class RequestGenericCriteria implements CriteriaInterface
 {
-
     /**
      * @var \Illuminate\Http\Request
      */
@@ -275,7 +274,10 @@ class RequestGenericCriteria implements CriteriaInterface
             $_versionsCsv_File = Storage::disk('public')->path($path);
 
             if (($handle = fopen($_versionsCsv_File, "r")) !== false) {
-                while (($data = fgetcsv($handle, 1000, ",")) !== false) {
+
+                $delimiter    = _file_delimiter($_versionsCsv_File);
+
+                while (($data = fgetcsv($handle, 1000, $delimiter)) !== false) {
                     $c = 0;
                     foreach ($data as $k => $d) {
                         if ($d !== null && $d !== '') {
