@@ -251,7 +251,7 @@ class RequestGenericCriteria implements CriteriaInterface
         $conditions           = isset($massiveQ['conditions']) ? $massiveQ['conditions'] : null;
         $conditions           = json_decode(urldecode($conditions));
         $massiveQueryFileName = isset($massiveQ['massiveWithFile']) ? $massiveQ['massiveWithFile'] : '';
-        $exactSearch          = isset($massiveQ['exactSearch']) ? $massiveQ['exactSearch'] : '';
+        $exactSearch          = isset($massiveQ['exactSearch']) ? ($massiveQ['exactSearch'] === 'true') : false;
         $rCountry             = $this->request->header('r-country', '');
         $basename             = basename($massiveQueryFileName);
         $fileTempName         = pathinfo($basename, PATHINFO_FILENAME);
