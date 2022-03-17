@@ -54,7 +54,7 @@ class RequestGenericCriteria implements CriteriaInterface
         // logger(__FILE__ . ':' . __LINE__ . ' $this->request ', [$this->request]);
 
         if (is_array($conditions)) {
-            $this->mGroup($model, $table, $conditions, '_ini_', 'and');
+            $this->mGroup($model, $table, $conditions, '_ini_', 'and', $this->request->has('mq.massiveWithFile'));
         }
 
         if (is_array($joins)) {
@@ -137,12 +137,12 @@ class RequestGenericCriteria implements CriteriaInterface
      * @param null $query
      * @param int $currentIndex
      */
-    private function mGroup(&$model, $table, $kParent, $query = null, $_kOperatorStrParam = 'AND')
+    private function mGroup(&$model, $table, $kParent, $query = null, $_kOperatorStrParam = 'AND', $hasMq = false)
     {
 
         $q = $model->forNestedWhere();
         foreach ($kParent as $k) {
-            // logger(__FILE__ . ':' . __LINE__ . ' inner $k ', [$k]);
+            logger(__FILE__ . ':' . __LINE__ . ' inner $k ', [$k]);
             if (is_array($k)) {
                 $qw = $this->mGroup($model, $table, $k, '_nested_', $_kOperatorStrParam);
                 $q->addNestedWhereQuery($qw->getQuery(), $_kOperatorStrParam);
@@ -230,13 +230,12 @@ class RequestGenericCriteria implements CriteriaInterface
         if ($query == '_nested_') {
             return $q;
         }
-        if ($this->request->has('mq.massiveWithFile')) {
+        if ($hasMq) {
             $qw = $this->applyWithFile($model);
             if (property_exists($qw, 'query')) {
                 $q->addNestedWhereQuery($qw->query, $qw->prevOperator);
             }
         }
-        // logger(__FILE__ . ':' . __LINE__ . ' $q->toSql() ', [$_kOperatorStrParam, $q->toSql()]);
 
         if ($query == '_ini_') {
             $model = $model->addNestedWhereQuery($q->getQuery());
@@ -252,6 +251,7 @@ class RequestGenericCriteria implements CriteriaInterface
         $conditions           = isset($massiveQ['conditions']) ? $massiveQ['conditions'] : null;
         $conditions           = json_decode(urldecode($conditions));
         $massiveQueryFileName = isset($massiveQ['massiveWithFile']) ? $massiveQ['massiveWithFile'] : '';
+        $exactSearch          = isset($massiveQ['exactSearch']) ? $massiveQ['exactSearch'] : '';
         $rCountry             = $this->request->header('r-country', '');
         $basename             = basename($massiveQueryFileName);
         $fileTempName         = pathinfo($basename, PATHINFO_FILENAME);
@@ -271,6 +271,7 @@ class RequestGenericCriteria implements CriteriaInterface
         try {
             ini_set('auto_detect_line_endings', true);
 
+            $dataCombined = [];
             $_versionsCsv_File = Storage::disk('public')->path($path);
 
             if (($handle = fopen($_versionsCsv_File, "r")) !== false) {
@@ -279,24 +280,46 @@ class RequestGenericCriteria implements CriteriaInterface
 
                 while (($data = fgetcsv($handle, 1000, $delimiter)) !== false) {
                     $c = 0;
-                    foreach ($data as $k => $d) {
-                        if ($d !== null && $d !== '') {
-                            $columns[$c][] = $d;
+                    if ($exactSearch) {
+                        // $dataCombined[] =  $conditions _array_combine($columns, $data);
+                        $temp = json_decode(json_encode($conditions));
+                        foreach ($data as $k => $d) {
+                            if ($d !== null && $d !== '') {
+                                $temp[$c]->v = $d;
+                            }
+                            $c++;
                         }
-                        $c++;
+                        $dataCombined[] = $temp;
+                    } else {
+                        foreach ($data as $k => $d) {
+                            if ($d !== null && $d !== '') {
+                                $columns[$c][] = $d;
+                            }
+                            $c++;
+                        }
                     }
                 }
                 fclose($handle);
             }
+
+            if ($exactSearch) {
+                // logger(__FILE__ . ':' . __LINE__ . ' $dataCombined ', [json_encode($dataCombined)]);
+                $result = new stdClass;
+                $result->prevOperator = 'OR';
+                $q = $this->mGroup($model, $table, $dataCombined, '_nested_', 'OR', false);
+                $result->query = $q->getQuery();
+
+                return $result;
+            }
+            if (is_array($conditions) && $columns) {
+                return $this->mGroupWithFile($model, $conditions, $columns);
+            }
+
             ini_set('auto_detect_line_endings', false);
         } catch (\Throwable $th) {
             // throw $th;
             // logger(__FILE__ . ':' . __LINE__ . ' $th ', [$th]);
             // return $model;
-        }
-
-        if (is_array($conditions) && $columns) {
-            return $this->mGroupWithFile($model, $conditions, $columns);
         }
 
         return null;

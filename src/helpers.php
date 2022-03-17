@@ -4,10 +4,11 @@ function _file_delimiter($file, $checkLines = 2)
 {
     $file = new \SplFileObject($file);
     $delimiters = [',', '\t', ';', '|', ':'];
-    $results = array();
+    $results = [];
     $i = 0;
     while ($file->valid() && $i <= $checkLines) {
         $line = $file->fgets();
+        // logger(__FILE__ . ':' . __LINE__ . ' $line ', [$line]);
         foreach ($delimiters as $delimiter) {
             $regExp = '/[' . $delimiter . ']/';
             $fields = preg_split($regExp, $line);
@@ -21,6 +22,21 @@ function _file_delimiter($file, $checkLines = 2)
         }
         $i++;
     }
-    $results = array_keys($results, max($results));
-    return $results[0];
+
+    if (count($results) > 0) {
+        $results = array_keys($results, max($results));
+        return $results[0];
+    }
+
+    return ',';
+}
+
+function _array_combine($keys, $values)
+{
+    $result = [];
+    foreach ($keys as $i => $k) {
+        $result[$k] = isset($values[$i]) ? $values[$i] : '';
+    }
+
+    return $result;
 }

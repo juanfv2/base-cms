@@ -70,7 +70,7 @@ trait ImportableExportable
             try {
                 $data1 = \ForceUTF8\Encoding::fixUTF8($data);
                 // logger(__FILE__ . ':' . __LINE__ . ' $in, $nIn ', [$data, $data1]);
-                $dataCombine = $this->combine($xHeadersTemp, $data1);
+                $dataCombine = _array_combine($xHeadersTemp, $data1);
 
                 if ($dataCombine) {
                     $data = $this->getDataToSave($xHeadersTemp, $dataCombine, $keys);
@@ -105,16 +105,6 @@ trait ImportableExportable
         fclose($handle);
 
         return $created;
-    }
-
-    public function combine($keys, $values)
-    {
-        $result = [];
-        foreach ($keys as $i => $k) {
-            $result[$k] = isset($values[$i]) ? $values[$i] : '';
-        }
-
-        return $result;
     }
 
     public function getDataToSave($headers, $data, $keys)
