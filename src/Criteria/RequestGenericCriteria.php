@@ -142,7 +142,7 @@ class RequestGenericCriteria implements CriteriaInterface
 
         $q = $model->forNestedWhere();
         foreach ($kParent as $k) {
-            logger(__FILE__ . ':' . __LINE__ . ' inner $k ', [$k]);
+            // logger(__FILE__ . ':' . __LINE__ . ' inner $k ', [$k]);
             if (is_array($k)) {
                 $qw = $this->mGroup($model, $table, $k, '_nested_', $_kOperatorStrParam);
                 $q->addNestedWhereQuery($qw->getQuery(), $_kOperatorStrParam);
