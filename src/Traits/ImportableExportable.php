@@ -53,7 +53,7 @@ trait ImportableExportable
                 return $this->sendResponse(['updated' => $created - 1], __('validation.model.list', ['model' => $tableName]),);
             } // end ($handle = fopen($massiveQueryFile, 'r')) !== false
         } catch (\Throwable $th) {
-            //throw $th;
+            // throw $th;
             return $this->sendError(['code' => $th->getCode(), 'message' => $th->getMessage(), 'updated' => $created,], 'Error en la linea ' . $created, 500);
         }
     }
@@ -97,8 +97,10 @@ trait ImportableExportable
                     $created++;
                 }
             } catch (\Throwable $th) {
+                // throw $th;
                 $d = implode($delimiter, $data1);
-                BulkError::create(['queue' => $this->event->data->cQueue, 'payload' => "{$d} $delimiter Línea: {$line} $delimiter {$th->getMessage()}",]);
+                $queue = property_exists($this, 'event') ? $this->event->data->cQueue : "__u___";
+                BulkError::create(['queue' => $queue, 'payload' => "{$d} $delimiter Línea: {$line} $delimiter {$th->getMessage()}",]);
             }
         }
 
