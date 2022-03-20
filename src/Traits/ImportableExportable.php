@@ -69,7 +69,6 @@ trait ImportableExportable
             $line++;
             try {
                 $data1 = \ForceUTF8\Encoding::fixUTF8($data);
-                // logger(__FILE__ . ':' . __LINE__ . ' $in, $nIn ', [$data, $data1]);
                 $dataCombine = _array_combine($xHeadersTemp, $data1);
 
                 if ($dataCombine) {
@@ -203,7 +202,7 @@ trait ImportableExportable
     {
         $labels   = \ForceUTF8\Encoding::fixUTF8($headers);
         $fNames   = array_keys($headers);
-        $exporter = (new ExportDataService('csv', 'browser', $table . '.csv'))->getExporter();
+        $exporter = ExportDataService::csv('browser', $table . '.csv');
 
         $exporter->initialize(); // starts streaming data to web browser
         $exporter->addRow($labels);

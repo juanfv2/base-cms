@@ -8,17 +8,18 @@ use Exception;
 
 class ExportDataService
 {
-    private $exporter;
-
-    public function __construct($type = 'csv', $exportTo = "browser", $filename = "exportdata")
+    public static function __callStatic($name, $arguments)
     {
-        $this->exporter = new ExportDataCSV($exportTo, $filename);
+        // Note: value of $name is case sensitive.
+        switch ($name) {
+            case 'tsv':
+                return new ExportDataTSV($arguments[0], $arguments[1]);
+            default:
+                return new ExportDataCSV($arguments[0], $arguments[1]);
+        }
+        // echo "Calling static method '$name' " . implode(', ', $arguments) . "\n";
     }
 
-    public function getExporter()
-    {
-        return $this->exporter;
-    }
 }
 
 /**

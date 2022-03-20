@@ -40,3 +40,18 @@ function _array_combine($keys, $values)
 
     return $result;
 }
+
+
+/**
+ *
+ * Remove characters that are illegal or don't make for good mysql names.
+ *
+ * @return string $name, with certain characters removed
+ *
+ * @param string $name
+ */
+function _sanitize($name)
+{
+    $name = Str::of($name)->lower()->snake()->ascii();
+    return str_replace([':', "'", "/", '\\', ".", '"', '?', '$', '-', '*', '`', '+', ','], '_', $name);
+}
