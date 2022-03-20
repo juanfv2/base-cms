@@ -4,6 +4,8 @@ namespace Tests;
 
 use App\Models\Auth\Role;
 use App\Models\Auth\User;
+use App\Models\Auth\Person;
+use App\Models\Auth\Account;
 
 trait ApiTestTrait
 {
@@ -13,27 +15,28 @@ trait ApiTestTrait
     public function getContent()
     {
         $this->responseContent = json_decode($this->response->getContent(), true);
+
+        return $this->responseContent;
     }
 
     public function assertApiModifications(array $actualData)
     {
         $this->assertApiSuccess();
+        $this->getContent();
 
-        $response = json_decode($this->response->getContent(), true);
-        $responseData = $response['data'];
+        $responseData = $this->responseContent['data'];
 
         $this->assertNotEmpty($responseData['id']);
     }
 
     public function assertApiResponse(array $actualData)
     {
-        $this->assertApiSuccess();
+        $this->getContent();
 
-        $response = json_decode($this->response->getContent(), true);
-        $responseData = $response['data'];
+        $responseData = $this->responseContent['data'];
 
         $this->assertNotEmpty($responseData['id']);
-        $this->assertModelData($actualData, $responseData);
+        $this->response->assertStatus(200)->assertJson(['success' => true, 'data' => $actualData]);
     }
 
     public function assertApiSuccess()
@@ -42,28 +45,34 @@ trait ApiTestTrait
         $this->response->assertJson(['success' => true]);
     }
 
-    public function assertModelData(array $actualData, array $expectedData)
-    {
-        foreach ($actualData as $key => $value) {
-            if (in_array($key, ['created_at', 'updated_at'])) {
-                continue;
-            }
-            $this->assertEquals($actualData[$key], $expectedData[$key]);
-        }
-    }
-
     /**
      * Return an admin user
      * @return User $admin
      */
     protected function admin($overrides = [])
     {
-        $admin = $this->user($overrides);
+        $person = Person::factory()->create($overrides);
+        $admin = $person->user;
         $admin->roles()->attach(
             Role::factory()->admin()->create()
         );
 
         return $admin;
+    }
+
+    /**
+     * Return an account user
+     * @return User $account
+     */
+    protected function account($overrides = [])
+    {
+        $person = Account::factory()->create($overrides);
+        $account = $person->user;
+        $account->roles()->attach(
+            Role::factory()->account()->create()
+        );
+
+        return $account;
     }
 
     /**
@@ -81,6 +90,16 @@ trait ApiTestTrait
     protected function actingAsAdmin($api = null)
     {
         $this->actingAs($this->admin(), $api);
+
+        return $this;
+    }
+
+    /**
+     * Acting as an account
+     */
+    protected function actingAsAccount($api = null)
+    {
+        $this->actingAs($this->account(), $api);
 
         return $this;
     }
