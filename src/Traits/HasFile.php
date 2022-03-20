@@ -7,13 +7,8 @@ trait HasFile
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function hasOneXFile($field, $fileDefault = null)
+    public function hasOneXFile($field, $file = '/storage/assets/images/logo.png')
     {
-        $file = '/storage/assets/images/logo.png';
-        if ($fileDefault) {
-            $file = $fileDefault;
-        }
-
         return $this->hasOne(\App\Models\Misc\XFile::class, 'entity_id')
             ->where('entity', $this->table)
             ->where('field', $field)
