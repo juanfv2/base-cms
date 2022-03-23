@@ -88,6 +88,9 @@ trait ControllerFiles
      */
     public function fileUpload(Request $request, $tableName, $fieldName, $id = 0, $color = false)
     {
+        if (!$request->hasFile($fieldName))
+            return $this->sendError(__('validation.file.required'));
+
         ini_set('upload_max_filesize', '-1');
         ini_set('memory_limit', '-1');
 
