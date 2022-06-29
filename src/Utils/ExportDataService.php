@@ -19,7 +19,6 @@ class ExportDataService
         }
         // echo "Calling static method '$name' " . implode(', ', $arguments) . "\n";
     }
-
 }
 
 /**
@@ -193,7 +192,7 @@ abstract class ExportData
 
     public $filename;        // file mode: the output file name; browser mode: file name for download; string mode: not used
 
-    public function __construct($exportTo = "browser", $filename = "exportdata")
+    public function __construct($exportTo = "browser", $filename = "export-data")
     {
         if (!in_array($exportTo, array('browser', 'file', 'string'))) {
             throw new Exception("$exportTo is not a valid ExportData export type");
@@ -213,7 +212,7 @@ abstract class ExportData
                 $this->stringData = '';
                 break;
             case 'file':
-                $this->tempFilename = tempnam(sys_get_temp_dir(), 'exportdata');
+                $this->tempFilename = tempnam(sys_get_temp_dir(), 'export-data');
                 $this->tempFile = fopen($this->tempFilename, "w");
                 break;
         }
@@ -237,11 +236,13 @@ abstract class ExportData
                 break;
             case 'string':
                 // do nothing
+                return $this->stringData;
                 break;
             case 'file':
                 // close temp file and move it to correct location
                 fclose($this->tempFile);
                 rename($this->tempFilename, $this->filename);
+                return $this->filename;
                 break;
         }
     }

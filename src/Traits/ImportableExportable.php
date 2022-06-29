@@ -87,6 +87,7 @@ trait ImportableExportable
 
                     if ($model_name) {
                         $r = $this->saveModel($model_name, $attrKeys, $data, $primaryKeys);
+                        // logger(__FILE__ . ':' . __LINE__ . ' $r ', [$r]);
                     } else {
                         $r = $this->saveArray($table, $attrKeys, $data);
                     }
@@ -226,11 +227,11 @@ trait ImportableExportable
         }
     }
 
-    protected function export($table, $headers, $repo)
+    protected function export($table, $headers, $repo, $type = 'browser')
     {
         $labels   = \ForceUTF8\Encoding::fixUTF8($headers);
         $fNames   = array_keys($headers);
-        $exporter = ExportDataService::csv('browser', $table . '.csv');
+        $exporter = ExportDataService::csv($type, $table . '.csv');
 
         $exporter->initialize(); // starts streaming data to web browser
         $exporter->addRow($labels);
@@ -256,8 +257,9 @@ trait ImportableExportable
             }
         }
 
-        $exporter->finalize(); // writes the footer, flushes remaining data to browser.
+        return $exporter->finalize(); // writes the footer, flushes remaining data to browser.
 
-        exit(); // all done
+        // exit(); // all done
+        // return '';
     }
 }
