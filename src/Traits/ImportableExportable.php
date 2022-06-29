@@ -58,7 +58,7 @@ trait ImportableExportable
         }
     }
 
-    public function importing($handle, $table, $primaryKeys, $keys, $delimiter, $callback = null)
+    public function importing($handle, $table, $primaryKeys, $keys, $delimiter, $model_name = '', $callback = null)
     {
         $created      = 0;
         $line         = 0;
@@ -85,7 +85,12 @@ trait ImportableExportable
                         $attrKeys = $this->getDataToSave($primaryKeys, $dataCombine, $keys);
                     }
 
-                    $r = $this->saveData($table, $attrKeys, $data, $created);
+                    if ($model_name) {
+                        $r = $this->saveModel($model_name, $attrKeys, $data, $primaryKeys);
+                    } else {
+                        $r = $this->saveArray($table, $attrKeys, $data);
+                    }
+
 
                     if ($callback && is_int($r) && $r > 0) {
                         $row = $data;
@@ -123,7 +128,7 @@ trait ImportableExportable
         return $dataToSave;
     }
 
-    public function saveData($table, $attrKeys, $data)
+    public function saveArray($table, $attrKeys, $data)
     {
         try {
             if (empty($attrKeys)) {
@@ -131,6 +136,29 @@ trait ImportableExportable
             }
 
             return DB::table($table)->updateOrInsert($attrKeys, $data);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+    public function saveModel($model_name, $attrKeys, $data, $primaryKeys)
+    {
+        try {
+            $res = $attrKeys + $data;
+
+            $model = new $model_name();
+
+            if (!empty($attrKeys)) {
+                $model = $model_name::where($attrKeys)->firstOrNew();
+            }
+
+            if (isset($data[$primaryKeys])) {
+                $model->$primaryKeys = $data[$primaryKeys];
+            }
+            $model->fill($res);
+            $model->save();
+
+            return $model->$primaryKeys;
         } catch (\Throwable $th) {
             throw $th;
         }
