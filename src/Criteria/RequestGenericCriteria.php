@@ -305,7 +305,7 @@ class RequestGenericCriteria implements CriteriaInterface
             if ($exactSearch) {
                 // logger(__FILE__ . ':' . __LINE__ . ' $dataCombined ', [json_encode($dataCombined)]);
                 $result = new stdClass;
-                $result->prevOperator = 'OR';
+                $result->prevOperator = 'AND';
                 $q = $this->mGroup($model, $table, $dataCombined, '_nested_', 'OR', false);
                 $result->query = $q->getQuery();
 
