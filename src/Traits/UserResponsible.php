@@ -13,6 +13,7 @@ trait UserResponsible
     {
         static::creating(function ($resource) {
             $resource->createdBy = auth()->id();
+            $resource->updatedBy = auth()->id();
         });
         static::updating(function ($resource) {
             $resource->updatedBy = auth()->id();

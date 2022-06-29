@@ -2,12 +2,12 @@
 
 namespace Juanfv2\BaseCms\Criteria;
 
+use stdClass;
 use Illuminate\Http\Request;
-use App\Exceptions\NoSentryException;
 use Illuminate\Support\Facades\Storage;
 use Juanfv2\BaseCms\Contracts\CriteriaInterface;
+use Juanfv2\BaseCms\Exceptions\NoReportException;
 use Juanfv2\BaseCms\Contracts\RepositoryInterface;
-use stdClass;
 
 /**
  * Class RequestGenericCriteria
@@ -265,7 +265,7 @@ class RequestGenericCriteria implements CriteriaInterface
         $columns = [];
 
         if (!Storage::disk('public')->exists($path)) {
-            throw new NoSentryException("Archivo no encontrado: '{$massiveQueryFileName}'");
+            throw new NoReportException("Archivo no encontrado: '{$massiveQueryFileName}'");
         }
 
         try {
