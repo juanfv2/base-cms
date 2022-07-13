@@ -58,7 +58,7 @@ trait ImportableExportable
         }
     }
 
-    public function importing($handle, $table, $primaryKeys, $keys, $delimiter, $model_name = '', $callback = null)
+    public function importing($handle, $table, $primaryKeys, $keys, $delimiter, $model_name = '', $extra_data = null, $callback = null)
     {
         $created      = 0;
         $line         = 0;
@@ -81,8 +81,13 @@ trait ImportableExportable
                             $attrKeys[$primaryKeys] = $data[$primaryKeys];
                         }
                     }
+
                     if (is_array($primaryKeys)) {
                         $attrKeys = $this->getDataToSave($primaryKeys, $dataCombine, $keys);
+                    }
+
+                    if ($extra_data) {
+                        $data = array_merge($data, $extra_data);
                     }
 
                     if ($model_name) {
@@ -91,7 +96,6 @@ trait ImportableExportable
                     } else {
                         $r = $this->saveArray($table, $attrKeys, $data);
                     }
-
 
                     if ($callback && is_int($r) && $r > 0) {
                         $row = $data;
@@ -102,7 +106,7 @@ trait ImportableExportable
                     $created++;
                 }
             } catch (\Throwable $th) {
-                // throw $th;
+                throw $th;
                 $d = implode($delimiter, $data1);
                 $queue = property_exists($this, 'event') ? $this->event->data->cQueue : "__u___";
                 BulkError::create(['queue' => $queue, 'payload' => "{$d} $delimiter Línea: {$line} $delimiter {$th->getMessage()}",]);
