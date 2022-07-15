@@ -106,7 +106,7 @@ trait ImportableExportable
                     $created++;
                 }
             } catch (\Throwable $th) {
-                throw $th;
+                // throw $th;
                 $d = implode($delimiter, $data1);
                 $queue = property_exists($this, 'event') ? $this->event->data->cQueue : "__u___";
                 BulkError::create(['queue' => $queue, 'payload' => "{$d} $delimiter Línea: {$line} $delimiter {$th->getMessage()}",]);
