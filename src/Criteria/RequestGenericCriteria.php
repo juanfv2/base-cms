@@ -6,7 +6,6 @@ use stdClass;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Juanfv2\BaseCms\Contracts\CriteriaInterface;
-use Juanfv2\BaseCms\Exceptions\NoReportException;
 use Juanfv2\BaseCms\Contracts\RepositoryInterface;
 
 /**
@@ -265,7 +264,7 @@ class RequestGenericCriteria implements CriteriaInterface
         $columns = [];
 
         if (!Storage::disk('public')->exists($path)) {
-            throw new NoReportException("Archivo no encontrado: '{$massiveQueryFileName}'");
+            throw new \Juanfv2\BaseCms\Exceptions\NoReportException("Archivo no encontrado: '{$massiveQueryFileName}'");
         }
 
         try {
