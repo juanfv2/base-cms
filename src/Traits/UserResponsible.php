@@ -22,22 +22,18 @@ trait UserResponsible
 
     public function getCreatedByPersonAttribute()
     {
-        $value = cache()->remember("createdBy-{$this->createdBy}", 3600, function () {
-            return DB::table('auth_users')
-                ->select('name')
-                ->where('id', $this->createdBy)
-                ->value('fullName');
+        $rCountry = session('r-country', request()->header('r-country', '.l.'));
+        $value = cache()->remember("$rCountry-createdBy-{$this->createdBy}", 3600, function () {
+            return DB::table('auth_users')->where('id', $this->createdBy)->value('name');
         });
         return $value;
     }
 
     public function getUpdatedByPersonAttribute()
     {
-        $value = cache()->remember("updatedBy-{$this->updatedBy}", 3600, function () {
-            return DB::table('auth_users')
-                ->select('name')
-                ->where('id', $this->createdBy)
-                ->value('fullName');
+        $rCountry = session('r-country', request()->header('r-country', '.l.'));
+        $value = cache()->remember("$rCountry-updatedBy-{$this->updatedBy}", 3600, function () {
+            return DB::table('auth_users')->where('id', $this->updatedBy)->value('name');
         });
         return $value;
     }
