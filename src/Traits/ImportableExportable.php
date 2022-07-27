@@ -91,7 +91,7 @@ trait ImportableExportable
                     }
 
                     if ($model_name) {
-                        $r = $this->saveModel($model_name, $attrKeys, $data, $primaryKeys);
+                        $r = $this->saveModel($model_name, $attrKeys, $data, $primaryKeys, $table);
                         // logger(__FILE__ . ':' . __LINE__ . ' $r ', [$r]);
                     } else {
                         $r = $this->saveArray($table, $attrKeys, $data);
@@ -146,15 +146,24 @@ trait ImportableExportable
         }
     }
 
-    public function saveModel($model_name, $attrKeys, $data, $primaryKeys)
+    public function saveModel($model_name, $attrKeys, $data, $primaryKeys, $tableName = '')
     {
+        // logger(__FILE__ . ':' . __LINE__ . ' $model_name, $attrKeys, $data, $primaryKeys, $tableName ', [$model_name, $attrKeys, $data, $primaryKeys, $tableName]);
         try {
             $res = $attrKeys + $data;
 
             $model = new $model_name();
 
+            if ($tableName) {
+                $model->setTable($tableName);
+            }
+
             if (!empty($attrKeys)) {
-                $model = $model_name::where($attrKeys)->firstOrNew();
+                $model = $model->where($attrKeys)->firstOrNew();
+            }
+
+            if (is_string($primaryKeys)) {
+                $model->primaryKey = $primaryKeys;
             }
 
             if (isset($data[$primaryKeys])) {
@@ -265,5 +274,85 @@ trait ImportableExportable
 
         // exit(); // all done
         // return '';
+    }
+
+    public function deleting($handle, $table, $primaryKeys, $keys, $delimiter, $model_name = '')
+    {
+        $created      = 0;
+        $line         = 0;
+        $data1        = [];
+        $xHeadersTemp = fgetcsv($handle, 0, $delimiter);
+        $xHeadersTemp = \ForceUTF8\Encoding::fixUTF8($xHeadersTemp);
+        while (($data = fgetcsv($handle, 0, $delimiter)) !== false) {
+            $line++;
+            try {
+                $data1 = \ForceUTF8\Encoding::fixUTF8($data);
+                $dataCombine = _array_combine($xHeadersTemp, $data1);
+
+                if ($dataCombine) {
+                    $data = $this->getDataToSave($xHeadersTemp, $dataCombine, $keys);
+
+                    $attrKeys = [];
+
+                    if (is_string($primaryKeys)) {
+                        if (isset($data[$primaryKeys])) {
+                            $attrKeys[$primaryKeys] = $data[$primaryKeys];
+                        }
+                    }
+
+                    if (is_array($primaryKeys)) {
+                        $attrKeys = $this->getDataToSave($primaryKeys, $dataCombine, $keys);
+                    }
+
+                    if ($model_name) {
+                        $r = $this->deleteModel($model_name, $attrKeys, $primaryKeys, $table);
+                    } else {
+                        $r = $this->deleteArray($table, $attrKeys);
+                    }
+
+                    $created++;
+                }
+            } catch (\Throwable $th) {
+                // throw $th;
+                $d = implode($delimiter, $data1);
+                $queue = property_exists($this, 'event') ? $this->event->data->cQueue : "__u___";
+                BulkError::create(['queue' => $queue, 'payload' => "{$d} $delimiter Línea: {$line} $delimiter {$th->getMessage()}",]);
+            }
+        }
+
+        fclose($handle);
+
+        return $created;
+    }
+
+    public function deleteArray($table, $attrKeys)
+    {
+        try {
+            return DB::table($table)->where($attrKeys)->delete();
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+    public function deleteModel($model_name, $attrKeys, $primaryKeys, $tableName)
+    {
+        try {
+
+            $model = new $model_name();
+
+            if ($tableName) {
+                $model->setTable($tableName);
+            }
+
+            if (is_string($primaryKeys)) {
+                $model->primaryKey = $primaryKeys;
+            }
+
+            $model = $model->where($attrKeys)->first();
+
+            return  $model->delete();
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 }
