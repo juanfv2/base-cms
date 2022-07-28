@@ -344,11 +344,11 @@ trait ImportableExportable
                 $model->setTable($tableName);
             }
 
+            $model = $model->where($attrKeys)->first();
+
             if (is_string($primaryKeys)) {
                 $model->primaryKey = $primaryKeys;
             }
-
-            $model = $model->where($attrKeys)->first();
 
             return  $model->delete();
         } catch (\Throwable $th) {
