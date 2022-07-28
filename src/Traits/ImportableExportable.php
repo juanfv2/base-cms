@@ -163,7 +163,7 @@ trait ImportableExportable
             }
 
             if (is_string($primaryKeys)) {
-                $model->primaryKey = $primaryKeys;
+                $model->setKeyName($primaryKeys);
             }
 
             if (isset($data[$primaryKeys])) {
@@ -347,7 +347,7 @@ trait ImportableExportable
             $model = $model->where($attrKeys)->first();
 
             if (is_string($primaryKeys)) {
-                $model->primaryKey = $primaryKeys;
+                $model->setKeyName($primaryKeys);
             }
 
             return  $model->delete();
