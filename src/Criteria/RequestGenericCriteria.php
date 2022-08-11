@@ -39,16 +39,17 @@ class RequestGenericCriteria implements CriteriaInterface
         $this->fieldsSearchable = $repository->getFieldsSearchable();
         $conditions             = $this->request->get('conditions', '');
         $joins                  = $this->request->get('joins', '');
-        $select                 = $this->request->get('select', '');
+        $select1                = $this->request->get('select', null);
         $sorts                  = $this->request->get('sorts', '');
         $withCount              = $this->request->get('withCount', '');
         $with                   = $this->request->get('with', '');
         $conditions             = json_decode(urldecode($conditions));
         $joins                  = json_decode(urldecode($joins));
-        $select                 = $select ? explode(',', urldecode($select)) : null;
         $sorts                  = json_decode(urldecode($sorts));
         $withCount              = json_decode(urldecode($withCount));
         $with                   = json_decode(urldecode($with));
+        $select2                = $select1 ? json_decode(urldecode($select1)) : null;
+        $select                 = $select2 ? $select2 : ($select1 ? explode(',', urldecode($select1)) : null);
 
         // logger(__FILE__ . ':' . __LINE__ . ' $this->request ', [$this->request]);
 
@@ -108,7 +109,15 @@ class RequestGenericCriteria implements CriteriaInterface
 
         if (is_array($select)) {
             foreach ($select as $k) {
-                $model = $model->addSelect($k);
+
+                if (is_string($k)) {
+                    $model = $model->addSelect($k);
+                } else {
+                    $model = $model->selectRaw($k->v);
+                    if ($k->c == 'GROUP-BY') {
+                        $model = $model->groupBy($k->v);
+                    }
+                }
             }
         } else {
             $model = $model->addSelect($table . '.*');
