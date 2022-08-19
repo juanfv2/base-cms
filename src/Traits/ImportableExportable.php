@@ -106,10 +106,10 @@ trait ImportableExportable
                     $created++;
                 }
             } catch (\Throwable $th) {
-                // throw $th;
                 $d = implode($delimiter, $data1);
                 $queue = property_exists($this, 'event') ? $this->event->data->cQueue : "__u___";
                 BulkError::create(['queue' => $queue, 'payload' => "{$d} $delimiter Línea: {$line} $delimiter {$th->getMessage()}",]);
+                throw $th;
             }
         }
 
@@ -152,6 +152,7 @@ trait ImportableExportable
         try {
             $res = $attrKeys + $data;
 
+            session(['z-table' => $tableName]);
             $model = new $model_name();
 
             if ($tableName) {
@@ -338,6 +339,7 @@ trait ImportableExportable
     {
         try {
 
+            session(['z-table' => $tableName]);
             $model = new $model_name();
 
             if ($tableName) {
