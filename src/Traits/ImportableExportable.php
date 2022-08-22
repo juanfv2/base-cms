@@ -68,7 +68,7 @@ trait ImportableExportable
         while (($data = fgetcsv($handle, 0, $delimiter)) !== false) {
             $line++;
             try {
-                $data1 = \ForceUTF8\Encoding::fixUTF8($data);
+                $data1       = \ForceUTF8\Encoding::fixUTF8($data);
                 $dataCombine = _array_combine($xHeadersTemp, $data1);
 
                 if ($dataCombine) {
@@ -91,6 +91,11 @@ trait ImportableExportable
                     }
 
                     if ($model_name) {
+                        if (isset($data['RECUPERAR']) && $data['RECUPERAR']) {
+                            $r = $this->restoreModel($model_name, $attrKeys, $primaryKeys, $table);
+                            unset($data['RECUPERAR']);
+                        }
+
                         $r = $this->saveModel($model_name, $attrKeys, $data, $primaryKeys, $table);
                         // logger(__FILE__ . ':' . __LINE__ . ' $r ', [$r]);
                     } else {
@@ -353,6 +358,28 @@ trait ImportableExportable
             }
 
             return  $model->delete();
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+    public function restoreModel($model_name, $attrKeys, $primaryKeys, $tableName)
+    {
+        try {
+            session(['z-table' => $tableName]);
+            $model = new $model_name();
+
+            if ($tableName) {
+                $model->setTable($tableName);
+            }
+
+            $model = $model->withTrashed()->where($attrKeys)->first();
+
+            if (is_string($primaryKeys)) {
+                $model->setKeyName($primaryKeys);
+            }
+
+            return  $model->restore();
         } catch (\Throwable $th) {
             throw $th;
         }
