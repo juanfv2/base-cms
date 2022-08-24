@@ -53,8 +53,6 @@ class RequestGenericCriteria implements CriteriaInterface
         $select                 = $select2 ? $select2 : ($select1 ? explode(',', urldecode($select1)) : null);
 
         // logger(__FILE__ . ':' . __LINE__ . ' $this->request ', [$this->request]);
-        logger(__FILE__ . ':' . __LINE__ . ' $onlyTrashed ', [$onlyTrashed]);
-
 
         if (is_array($conditions)) {
             $this->mGroup($model, $table, $conditions, '_ini_', 'and', $this->request->has('mq.massiveWithFile'));
