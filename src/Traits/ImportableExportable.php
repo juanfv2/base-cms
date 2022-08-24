@@ -13,51 +13,9 @@ use Juanfv2\BaseCms\Repositories\BaseRepository;
 trait ImportableExportable
 {
 
-    /**
-     * @param $table
-     * @param $primaryKeyName
-     * @param $massiveQueryFileName
-     * @param $keys
-     * @return array|\Illuminate\Http\JsonResponse
-     */
-    public function importCsv(Request $request)
-    {
-        $rCountry     = $request->header('r-country', '');
-        $tableName    = $request->get('table');
-        $fieldName    = $request->get('massiveQueryFieldName');
-        $fileName     = $request->get('massiveQueryFileName');
-        $fileTemp     = explode('.', $fileName);
-        $fileTempName = $fileTemp[0];
-        $baseAssets   = 'public/assets/adm/';
-        if ($rCountry) {
-            $baseAssets = $baseAssets . $rCountry . '/';
-        }
-
-        $strLocationFileSaved = "{$baseAssets}temporals/$fileTempName/$tableName/$fieldName/$fileName";
-        $exists               = Storage::exists($strLocationFileSaved);
-        $massiveQueryFile     = Storage::path($strLocationFileSaved);
-        $keys                 = $request->get('keys');
-        $primaryKeyName       = $request->get('primaryKeyName');
-        $created              = 0;
-
-        // logger(__FILE__ . ':' . __LINE__ . ' $exists ', [$exists, $strLocationFileSaved, $massiveQueryFile]);
-
-        try {
-
-            if (($handle = fopen($massiveQueryFile, 'r')) !== false) {
-
-                $delimiter    = _file_delimiter($massiveQueryFile);
-
-                $created = $this->importing($handle, $tableName, $primaryKeyName, $keys, $delimiter);
-
-                return $this->sendResponse(['updated' => $created - 1], __('validation.model.list', ['model' => $tableName]),);
-            } // end ($handle = fopen($massiveQueryFile, 'r')) !== false
-        } catch (\Throwable $th) {
-            // throw $th;
-            return $this->sendError(['code' => $th->getCode(), 'message' => $th->getMessage(), 'updated' => $created,], 'Error en la linea ' . $created, 500);
-        }
-    }
-
+    /* -------------------------------------------------------------------------- */
+    /* save                                                                       */
+    /* -------------------------------------------------------------------------- */
     public function importing($handle, $table, $primaryKeys, $keys, $delimiter, $model_name = '', $extra_data = null, $callback = null)
     {
         $created      = 0;
@@ -91,7 +49,8 @@ trait ImportableExportable
                     }
 
                     if ($model_name) {
-                        if (isset($data['RECUPERAR']) && $data['RECUPERAR']) {
+                        $recover = config('base-cms.recover');
+                        if (isset($data[$recover]) && $data[$recover]) {
                             $r = $this->restoreModel($model_name, $attrKeys, $primaryKeys, $table);
                             unset($data['RECUPERAR']);
                         }
@@ -184,104 +143,9 @@ trait ImportableExportable
         }
     }
 
-    public function importJson(Request $request)
-    {
-        try {
-            $updated = 0;
-
-            if ($request->has('tables')) {
-                $tables = $request->input('tables');
-
-                DB::beginTransaction();
-
-                foreach ($tables as $table) {
-                    $primaryKeyName = 'id';
-
-                    foreach ($table as $tableName => $objects) {
-                        if ($tableName == 'primaryKeyName') {
-                            $primaryKeyName = $objects;
-                            continue;
-                        }
-
-                        foreach ($objects as $object) {
-
-                            $exist = false;
-                            if (isset($object[$primaryKeyName])) {
-                                $r = DB::select("select count(*) as `aggregate` from $tableName where $primaryKeyName = ?", [$object[$primaryKeyName]]);
-                                $exist = $r[0]->aggregate > 0;
-                            }
-                            if ($exist) {
-                                DB::table('' . $tableName)
-                                    ->where('' . $primaryKeyName, $object[$primaryKeyName])
-                                    ->update($object);
-                            } else {
-                                DB::table('' . $tableName)->insert($object);
-                            }
-
-                            $updated++;
-                        } // end for objects
-                    } // end for table
-                } // end for tables
-
-                DB::commit();
-
-                return [
-                    'updated' => $updated,
-                    'success' => true,
-                ];
-            }
-        } catch (\Exception $e) {
-
-            DB::rollBack();
-
-            return $this->sendError(
-                'Error en la linea ' . $updated,
-                500,
-                [
-                    'code' => $e->getCode(),
-                    'message' => $e->getMessage(),
-                    'updated' => $updated,
-                ]
-            );
-        }
-    }
-
-    protected function export($table, $headers, $repo, $type = 'browser')
-    {
-        $labels   = \ForceUTF8\Encoding::fixUTF8($headers);
-        $fNames   = array_keys($headers);
-        $exporter = ExportDataService::csv($type, $table . '.csv');
-
-        $exporter->initialize(); // starts streaming data to web browser
-        $exporter->addRow($labels);
-
-
-        if ($repo instanceof BaseRepository) {
-            $repo->allForChunk()->chunk(10000, function ($items) use ($fNames, $exporter) {
-                foreach ($items as $listItem) {
-                    $i = [];
-                    foreach ($fNames as $key) {
-                        $i[$key] = $listItem->{$key};
-                    }
-                    $exporter->addRow($i);
-                }
-            });
-        } else {
-            foreach ($repo as $listItem) {
-                $i = [];
-                foreach ($fNames as $key) {
-                    $i[$key] = $listItem->{$key};
-                }
-                $exporter->addRow($i);
-            }
-        }
-
-        return $exporter->finalize(); // writes the footer, flushes remaining data to browser.
-
-        // exit(); // all done
-        // return '';
-    }
-
+    /* -------------------------------------------------------------------------- */
+    /* delete                                                                     */
+    /* -------------------------------------------------------------------------- */
     public function deleting($handle, $table, $primaryKeys, $keys, $delimiter, $model_name = '')
     {
         $created      = 0;
@@ -383,5 +247,149 @@ trait ImportableExportable
         } catch (\Throwable $th) {
             throw $th;
         }
+    }
+    /* -------------------------------------------------------------------------- */
+    /* utils                                                                      */
+    /* -------------------------------------------------------------------------- */
+    /**
+     * @param $table
+     * @param $primaryKeyName
+     * @param $massiveQueryFileName
+     * @param $keys
+     * @return array|\Illuminate\Http\JsonResponse
+     */
+    public function importCsv(Request $request)
+    {
+        $rCountry     = $request->header('r-country', '');
+        $tableName    = $request->get('table');
+        $fieldName    = $request->get('massiveQueryFieldName');
+        $fileName     = $request->get('massiveQueryFileName');
+        $fileTemp     = explode('.', $fileName);
+        $fileTempName = $fileTemp[0];
+        $baseAssets   = 'public/assets/adm/';
+        if ($rCountry) {
+            $baseAssets = $baseAssets . $rCountry . '/';
+        }
+
+        $strLocationFileSaved = "{$baseAssets}temporals/$fileTempName/$tableName/$fieldName/$fileName";
+        $exists               = Storage::exists($strLocationFileSaved);
+        $massiveQueryFile     = Storage::path($strLocationFileSaved);
+        $keys                 = $request->get('keys');
+        $primaryKeyName       = $request->get('primaryKeyName');
+        $created              = 0;
+
+        // logger(__FILE__ . ':' . __LINE__ . ' $exists ', [$exists, $strLocationFileSaved, $massiveQueryFile]);
+
+        try {
+
+            if (($handle = fopen($massiveQueryFile, 'r')) !== false) {
+
+                $delimiter    = _file_delimiter($massiveQueryFile);
+
+                $created = $this->importing($handle, $tableName, $primaryKeyName, $keys, $delimiter);
+
+                return $this->sendResponse(['updated' => $created - 1], __('validation.model.list', ['model' => $tableName]),);
+            } // end ($handle = fopen($massiveQueryFile, 'r')) !== false
+        } catch (\Throwable $th) {
+            // throw $th;
+            return $this->sendError(['code' => $th->getCode(), 'message' => $th->getMessage(), 'updated' => $created,], 'Error en la linea ' . $created, 500);
+        }
+    }
+    public function importJson(Request $request)
+    {
+        try {
+            $updated = 0;
+
+            if ($request->has('tables')) {
+                $tables = $request->input('tables');
+
+                DB::beginTransaction();
+
+                foreach ($tables as $table) {
+                    $primaryKeyName = 'id';
+
+                    foreach ($table as $tableName => $objects) {
+                        if ($tableName == 'primaryKeyName') {
+                            $primaryKeyName = $objects;
+                            continue;
+                        }
+
+                        foreach ($objects as $object) {
+
+                            $exist = false;
+                            if (isset($object[$primaryKeyName])) {
+                                $r = DB::select("select count(*) as `aggregate` from $tableName where $primaryKeyName = ?", [$object[$primaryKeyName]]);
+                                $exist = $r[0]->aggregate > 0;
+                            }
+                            if ($exist) {
+                                DB::table('' . $tableName)
+                                    ->where('' . $primaryKeyName, $object[$primaryKeyName])
+                                    ->update($object);
+                            } else {
+                                DB::table('' . $tableName)->insert($object);
+                            }
+
+                            $updated++;
+                        } // end for objects
+                    } // end for table
+                } // end for tables
+
+                DB::commit();
+
+                return [
+                    'updated' => $updated,
+                    'success' => true,
+                ];
+            }
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return $this->sendError(
+                'Error en la linea ' . $updated,
+                500,
+                [
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                    'updated' => $updated,
+                ]
+            );
+        }
+    }
+
+    protected function export($table, $headers, $repo, $type = 'browser')
+    {
+        $labels   = \ForceUTF8\Encoding::fixUTF8($headers);
+        $fNames   = array_keys($headers);
+        $exporter = ExportDataService::csv($type, $table . '.csv');
+
+        $exporter->initialize(); // starts streaming data to web browser
+        $exporter->addRow($labels);
+
+
+        if ($repo instanceof BaseRepository) {
+            $repo->allForChunk()->chunk(10000, function ($items) use ($fNames, $exporter) {
+                foreach ($items as $listItem) {
+                    $i = [];
+                    foreach ($fNames as $key) {
+                        $i[$key] = $listItem->{$key};
+                    }
+                    $exporter->addRow($i);
+                }
+            });
+        } else {
+            foreach ($repo as $listItem) {
+                $i = [];
+                foreach ($fNames as $key) {
+                    $i[$key] = $listItem->{$key};
+                }
+                $exporter->addRow($i);
+            }
+        }
+
+        return $exporter->finalize(); // writes the footer, flushes remaining data to browser.
+
+        // exit(); // all done
+        // return '';
     }
 }
