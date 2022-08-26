@@ -127,6 +127,10 @@ trait ImportableExportable
                 $model = $model->where($attrKeys)->firstOrNew();
             }
 
+            if (!$model) {
+                return false;
+            }
+
             if (is_string($primaryKeys)) {
                 $model->setKeyName($primaryKeys);
             }
