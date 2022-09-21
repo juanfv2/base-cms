@@ -53,7 +53,7 @@ class CheckRole
 
         // -- sql-server $menu = DB::select('execute sp_has_permission ?, ?;', [$this->id, $cRoute]);
 
-        // logger(__FILE__ . ':' . __LINE__ . ' $this->id ', [' . ' . $this->id . ' . ' . $cRoute . ' . \'' . $hasPermission . '\'']);
+        // logger(__FILE__ . ':' . __LINE__ . ' $this->id ', [' . ' . auth()->id() . ' . ' . $cRoute . ' . \'' . $hasPermission . '\'']);
 
         return $hasPermission;
     }
