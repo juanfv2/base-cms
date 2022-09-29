@@ -88,7 +88,7 @@ trait ImportableExportable
 
         foreach ($headers as $k) {
             if (isset($keys[$k])) {
-                if ($data[$k] !== '') {
+                if (!empty(trim($data[$k]))) {
                     $dataToSave[$keys[$k]] = $data[$k];
                 }
             }
