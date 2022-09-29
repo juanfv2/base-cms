@@ -244,7 +244,7 @@ class RequestGenericCriteria implements CriteriaInterface
         }
         if ($hasMq) {
             $qw = $this->applyWithFile($model);
-            if (property_exists($qw, 'query')) {
+            if ($qw && property_exists($qw, 'query')) {
                 $q->addNestedWhereQuery($qw->query, $qw->prevOperator);
             }
         }
