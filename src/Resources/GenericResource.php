@@ -31,15 +31,16 @@ class GenericResource extends JsonResource
      */
     public function toArray($request, $ownIncludes = null)
     {
-
         $data = parent::toArray($request);
 
         $this->includes = $ownIncludes ?: $this->includes;
 
         if ($request->has('includes')) {
             $arr = $request['includes'] = is_string($request['includes']) ? json_decode($request['includes'], true) : $request['includes'];
+
             // logger(__FILE__ . ':' . __LINE__ . ' $arr ', [$arr]);
             // logger(__FILE__ . ':' . __LINE__ . ' $this->includes ', [$this->includes]);
+
             if (is_array($this->includes)) {
                 $arr = $this->includes[0] == 'reset' ? null : $this->includes;
             }
@@ -48,7 +49,10 @@ class GenericResource extends JsonResource
 
             if ($arr && is_array($arr)) {
                 foreach ($arr as $kValue => $kProperty) {
-                    // $kClass = 'Juanfv2\BaseCms\Resources\GenericResource';
+
+                    if ($this->hidden && in_array($kProperty, $this->hidden)) {
+                        continue;
+                    }
 
                     $realProperty = $kProperty;
                     $includes = ['reset'];
@@ -57,25 +61,28 @@ class GenericResource extends JsonResource
                         $includes = $kProperty[$realProperty];
                     }
 
-                    // logger(__FILE__ . ':' . __LINE__ . '. $realProperty   .', [$realProperty]);
+                    // logger(__FILE__ . ':' . __LINE__ . '. $realProperty   .', [$this->id, $realProperty]);
+                    // logger(__FILE__ . ':' . __LINE__ . '. $kProperty      .', [$kProperty, $kValue]);
                     // logger(__FILE__ . ':' . __LINE__ . '. $this->resource .', [$this->resource]);
-                    // logger(__FILE__ . ':' . __LINE__ . '. $kProperty      .', [$kProperty]);
-                    // logger(__FILE__ . ':' . __LINE__ . '. $rValue         .', [$kValue]);
 
-                    $rValue = $this->{$realProperty};
-
-                    if ($rValue instanceof Model) {
-                        $data[$realProperty] = new GenericResource($rValue, $includes);
-                    } else if ($rValue instanceof Collection) {
-                        $data[$realProperty] = GenericResource::coll($rValue, $includes);
-                    } else if ($rValue) {
-                        $data[$realProperty] = $rValue;
-                    }
+                    $this->add2data($data, $realProperty, $includes);
                 }
             }
         }
 
         return $data;
+    }
+
+    private function add2data(&$data, $realProperty, $includes)
+    {
+        $rValue = $this->$realProperty;
+        if ($rValue instanceof Model) {
+            $data[$realProperty] = new GenericResource($rValue, $includes);
+        } else if ($rValue instanceof Collection) {
+            $data[$realProperty] = GenericResource::coll($rValue, $includes);
+        } else if ($rValue) {
+            $data[$realProperty] = $rValue;
+        }
     }
 
     /**

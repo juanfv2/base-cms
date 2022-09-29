@@ -24,12 +24,12 @@ class GenericResourceCollection extends AnonymousResourceCollection
     public function __construct($resource, $collects, $includes)
     {
         $this->collects = $collects;
-        
+
         $this->includes = $includes;
 
         parent::__construct($resource, $collects);
     }
-    
+
     /**
      * Transform the resource into a JSON array.
      *
