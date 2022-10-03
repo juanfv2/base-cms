@@ -11,6 +11,7 @@ use Illuminate\Container\Container as Application;
 use Juanfv2\BaseCms\Contracts\RepositoryInterface;
 
 /**
+ * @deprecated version
  *
  * MyBaseRepository
  *

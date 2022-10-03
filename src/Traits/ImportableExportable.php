@@ -8,7 +8,6 @@ use App\Models\Misc\BulkError;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Juanfv2\BaseCms\Utils\ExportDataService;
-use Juanfv2\BaseCms\Repositories\BaseRepository;
 
 trait ImportableExportable
 {
@@ -361,7 +360,7 @@ trait ImportableExportable
         }
     }
 
-    protected function export($table, $headers, $repo, $type = 'browser')
+    protected function export($table, $headers, $model, $type = 'browser')
     {
         $labels   = \ForceUTF8\Encoding::fixUTF8($headers);
         $fNames   = array_keys($headers);
@@ -370,9 +369,18 @@ trait ImportableExportable
         $exporter->initialize(); // starts streaming data to web browser
         $exporter->addRow($labels);
 
-
-        if ($repo instanceof BaseRepository) {
-            $repo->allForChunk()->chunk(10000, function ($items) use ($fNames, $exporter) {
+        if ($model instanceof \Juanfv2\BaseCms\Repositories\BaseRepository) {
+            $model->allForChunk()->chunk(10000, function ($items) use ($fNames, $exporter) {
+                foreach ($items as $listItem) {
+                    $i = [];
+                    foreach ($fNames as $key) {
+                        $i[$key] = $listItem->{$key};
+                    }
+                    $exporter->addRow($i);
+                }
+            });
+        } else if ($model instanceof \Illuminate\Database\Eloquent\Model) {
+            $model->mAllForChunk()->chunk(10000, function ($items) use ($fNames, $exporter) {
                 foreach ($items as $listItem) {
                     $i = [];
                     foreach ($fNames as $key) {
@@ -382,7 +390,7 @@ trait ImportableExportable
                 }
             });
         } else {
-            foreach ($repo as $listItem) {
+            foreach ($model as $listItem) {
                 $i = [];
                 foreach ($fNames as $key) {
                     $i[$key] = $listItem->{$key};
