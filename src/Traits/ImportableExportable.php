@@ -3,7 +3,6 @@
 namespace Juanfv2\BaseCms\Traits;
 
 use Illuminate\Http\Request;
-
 use App\Models\Misc\BulkError;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -72,7 +71,7 @@ trait ImportableExportable
                 $d = implode($delimiter, $data1);
                 $queue = property_exists($this, 'event') ? $this->event->data->cQueue : "__u___";
                 BulkError::create(['queue' => $queue, 'payload' => "{$d} $delimiter Línea: {$line} $delimiter {$th->getMessage()}",]);
-                throw $th;
+                // throw $th;
             }
         }
 
