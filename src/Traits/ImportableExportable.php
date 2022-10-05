@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Misc\BulkError;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Juanfv2\BaseCms\Utils\ExportDataService;
+use Juanfv2\BaseCms\Utils\BaseCmsExport;
 
 trait ImportableExportable
 {
@@ -360,14 +360,13 @@ trait ImportableExportable
         }
     }
 
-    protected function export($table, $headers, $model, $type = 'browser')
+    protected function export($title, $extension, $headers, $model)
     {
         $labels   = \ForceUTF8\Encoding::fixUTF8($headers);
         $fNames   = array_keys($headers);
-        $exporter = ExportDataService::csv($type, $table . '.csv');
+        $exporter = new BaseCmsExport($title, $extension);
 
-        $exporter->initialize(); // starts streaming data to web browser
-        $exporter->addRow($labels);
+        $exporter->initialize($labels);
 
         if ($model instanceof \Juanfv2\BaseCms\Repositories\BaseRepository) {
             $model->allForChunk()->chunk(10000, function ($items) use ($fNames, $exporter) {
@@ -399,9 +398,6 @@ trait ImportableExportable
             }
         }
 
-        return $exporter->finalize(); // writes the footer, flushes remaining data to browser.
-
-        // exit(); // all done
-        // return '';
+        return $exporter->finalize();
     }
 }

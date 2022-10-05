@@ -137,7 +137,7 @@ trait BaseCmsModel
      *
      * @return mixed
      */
-    public function mAllForChunk($columns = ['*'])
+    public function mAllForChunk()
     {
         $this->applyCriteria();
 
@@ -150,22 +150,22 @@ trait BaseCmsModel
 
 
 
-    public function mDistinct(array $where = ['*'], $columns = ['*'])
+    public function mDistinct()
     {
         $this->applyCriteria();
 
-        $results = $this->jQuery->distinct($where)->get($columns);
+        $results = $this->jQuery->distinct()->get();
 
         $this->setJQuery(null);
 
         return $results;
     }
 
-    public function mDistinctForChunk(array $where = ['*'], $columns = '*')
+    public function mDistinctForChunk()
     {
         $this->applyCriteria();
 
-        $results = $this->jQuery->distinct($where);
+        $results = $this->jQuery->distinct();
 
         $this->setJQuery(null);
 
@@ -180,13 +180,10 @@ trait BaseCmsModel
      *
      * @return int
      */
-    public function mCount(array $where = [], $columns = '*')
+    public function mCount($columns = '*')
     {
         $this->applyCriteria();
 
-        if ($where) {
-            $this->applyConditions($where);
-        }
         $result = $this->jQuery->count($columns);
 
         $this->setJQuery(null);

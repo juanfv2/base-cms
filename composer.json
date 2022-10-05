@@ -26,7 +26,7 @@
       "Juanfv2\\BaseCms\\": "src/"
     },
     "files": [
-        "src/helpers.php"
+      "src/helpers.php"
     ]
   }
 }
