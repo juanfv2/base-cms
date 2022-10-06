@@ -3,31 +3,30 @@
 namespace Juanfv2\BaseCms\Utils;
 
 use Exception;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 
 /**
- * ExportDataCSV - Exports to CSV (comma separated value) format.
+ * ExportDataCSV
+ * Exports to CSV (comma separated value) format.
  */
-class BaseCmsExportCSV
+class BaseCmsExportCSV implements BaseCmsExport
 {
-    const TO_BROWSER = 'browser';
-    const TO_FILE    = 'file';
-    const TO_STRING  = 'string';
-    private $file;
     protected $stringData;
     protected $exportTo;
-    public $filename;
+    protected $filename;
+    private $file;
 
-    public function __construct($filename = "export-data", $exportTo = "browser")
+    public function __construct($filename = "export-data", $extension = 'csv', $exportTo = self::TO_BROWSER)
     {
         if (!in_array($exportTo, array('browser', 'file', 'string'))) {
             throw new Exception("$exportTo is not a valid ExportData export type");
         }
         $this->exportTo = $exportTo;
-        $this->filename = $filename . '.csv';
+        $this->filename = $filename . '.' . Str::lower($extension);
     }
 
-    public function initialize()
+    public function initialize($headers)
     {
         switch ($this->exportTo) {
             case self::TO_STRING:
@@ -39,6 +38,8 @@ class BaseCmsExportCSV
                 $this->file = fopen('php://memory', 'wb');
                 break;
         }
+
+        $this->addRow($headers);
     }
 
     public function finalize()
@@ -58,6 +59,7 @@ class BaseCmsExportCSV
     public function addRow($row)
     {
         // $this->write($this->generateRow($row));
+        if (empty($row)) return;
 
         switch ($this->exportTo) {
             case self::TO_STRING:
@@ -71,9 +73,12 @@ class BaseCmsExportCSV
         }
     }
 
+    /* -------------------------------------------------------------------------- */
+    /* utils                                                                      */
+    /* -------------------------------------------------------------------------- */
     public function send2browser()
     {
-        $uid  = uuid_create();
+        $uid  = "csv-file-" . microtime(true);
         $path = "csv-temp/$uid";
 
         $this->send2file($path);
