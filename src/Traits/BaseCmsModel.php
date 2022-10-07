@@ -137,7 +137,7 @@ trait BaseCmsModel
      *
      * @return mixed
      */
-    public function mAllForChunk()
+    public function mQuery()
     {
         $this->applyCriteria();
 
