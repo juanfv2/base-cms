@@ -101,7 +101,9 @@ class CreateMenus extends Command
         $orderInMenu = $request['orderInMenu'];
 
         $permissionIndex = new Permission();
-        $permissionIndex->id = $id;
+        if ($id) {
+            $permissionIndex->id = $id;
+        }
         $permissionIndex->name = $namePlural;
         $permissionIndex->icon = $icon;
         $permissionIndex->urlBackEnd = 'api.' . $namePluralBackEnd . '.index';
