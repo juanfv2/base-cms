@@ -31,8 +31,10 @@ trait ImportableExportable
                     $data = $this->getDataToSave($xHeadersTemp, $dataCombine, $keys);
 
                     $attrKeys = [];
+                    $kName = '';
 
                     if (is_string($primaryKeys)) {
+                        $kName = $primaryKeys;
                         if (isset($data[$primaryKeys])) {
                             $attrKeys[$primaryKeys] = $data[$primaryKeys];
                         }
@@ -56,7 +58,7 @@ trait ImportableExportable
                         $r = $this->saveModel($model_name, $attrKeys, $data, $primaryKeys, $table);
                         // logger(__FILE__ . ':' . __LINE__ . ' $r ', [$r]);
                     } else {
-                        $r = $this->saveArray($table, $attrKeys, $data);
+                        $r = $this->saveArray($table, $attrKeys, $data, $kName);
                     }
 
                     if ($callback && is_int($r) && $r > 0) {
@@ -95,11 +97,11 @@ trait ImportableExportable
         return $dataToSave;
     }
 
-    public function saveArray($table, $attrKeys, $data)
+    public function saveArray($table, $attrKeys, $data, $kName)
     {
         try {
             if (empty($attrKeys)) {
-                return DB::table($table)->insertGetId($data);
+                return DB::table($table)->insertGetId($data, $kName);
             }
 
             return DB::table($table)->updateOrInsert($attrKeys, $data);
