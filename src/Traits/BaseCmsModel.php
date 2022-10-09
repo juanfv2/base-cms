@@ -137,7 +137,7 @@ trait BaseCmsModel
      *
      * @return mixed
      */
-    public function mQuery()
+    public function mQueryWithCriteria()
     {
         $this->applyCriteria();
 
@@ -147,8 +147,6 @@ trait BaseCmsModel
 
         return $results;
     }
-
-
 
     public function mDistinct()
     {
