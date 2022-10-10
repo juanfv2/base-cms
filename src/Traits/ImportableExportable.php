@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Misc\BulkError;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Juanfv2\BaseCms\Utils\BaseCmsExport;
+use Juanfv2\BaseCms\Utils\BaseCmsExportCSV;
 
 trait ImportableExportable
 {
@@ -365,7 +365,7 @@ trait ImportableExportable
     {
         $labels   = \ForceUTF8\Encoding::fixUTF8($headers);
         $fNames   = array_keys($headers);
-        $exporter = new BaseCmsExport($title, $extension);
+        $exporter = new BaseCmsExportCSV($title, $extension);
 
         $exporter->initialize($labels);
 
@@ -380,7 +380,7 @@ trait ImportableExportable
                 }
             });
         } else if ($model instanceof \Illuminate\Database\Eloquent\Model) {
-            $model->mAllForChunk()->chunk(10000, function ($items) use ($fNames, $exporter) {
+            $model->mQueryWithCriteria()->chunk(10000, function ($items) use ($fNames, $exporter) {
                 foreach ($items as $listItem) {
                     $i = [];
                     foreach ($fNames as $key) {
