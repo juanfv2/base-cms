@@ -159,17 +159,6 @@ trait BaseCmsModel
         return $results;
     }
 
-    public function mDistinctForChunk()
-    {
-        $this->applyCriteria();
-
-        $results = $this->jQuery->distinct();
-
-        $this->setJQuery(null);
-
-        return $results;
-    }
-
     /**
      * Count results of repository
      *
