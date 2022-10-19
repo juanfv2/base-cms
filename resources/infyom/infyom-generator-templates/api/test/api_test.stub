@@ -33,7 +33,7 @@ class $MODEL_NAME$ApiTest extends TestCase
         // $this->response->dump();
         // dd($this->response->json());
 
-        $this->assertJsonIndex($limit, $models[0);
+        $this->assertJsonIndex($limit, $models[0]);
     }
 
     /** @test */
