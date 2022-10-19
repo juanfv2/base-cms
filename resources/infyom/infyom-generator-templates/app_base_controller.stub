@@ -140,7 +140,7 @@ class AppBaseController extends Controller
             return $this->sendError(__('validation.model.not.found', ['model' => __("models.{$this->modelNameCamel}.name")]));
         }
 
-        $updated = $model->mSave($input);
+        $model = $this->model->mSave($input);
 
         // $model = new GenericResource({{CurrentModel}});
 
