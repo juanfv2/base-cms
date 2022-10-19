@@ -22,14 +22,16 @@ class PersonFactory extends Factory
      */
     public function definition()
     {
+        $user = User::factory()->create();
         return [
+            'id'           => $user->id,
+            'user_id'      => $user->id,
             'firstName'    => $this->faker->word,
             'lastName'     => $this->faker->word,
             'cellPhone'    => $this->faker->word,
             'birthDate'    => $this->faker->date(),
             'address'      => $this->faker->word,
             'neighborhood' => $this->faker->word,
-            'user_id'      => User::factory(),
         ];
     }
 }

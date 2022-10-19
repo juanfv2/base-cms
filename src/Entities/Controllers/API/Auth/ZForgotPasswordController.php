@@ -16,54 +16,12 @@ use App\Http\Controllers\AppBaseController;
  */
 class ZForgotPasswordController extends AppBaseController
 {
-
-    /**
-     * @param Request $request
-     * @return Response
-     *
-     * @SWG\Post(
-     *      path="/password/email",
-     *      summary=" Account forgot email",
-     *      tags={"Password"},
-     *      description="forgot email",
-     *      produces={"application/json"},
-     *      @SWG\Parameter(
-     *          name="body",
-     *          in="body",
-     *          description="Email",
-     *          required=false,
-     *          @SWG\Schema(
-     *              type="object",
-     *              @SWG\Property(
-     *                  property="email",
-     *                  type="string"
-     *              ),
-     *          )
-     *      ),
-     *      @SWG\Response(
-     *          response=200,
-     *          description="successful operation",
-     *          @SWG\Schema(
-     *              type="object",
-     *              @SWG\Property(
-     *                  property="success",
-     *                  type="boolean"
-     *              ),
-     *              @SWG\Property(
-     *                  property="message",
-     *                  type="string"
-     *              )
-     *          )
-     *      )
-     * )
-     */
     public function sendResetLinkEmail(Request $request)
     {
         $this->validate($request, ['email' => 'required|email']);
 
         $email = $request['email'];
-
-        $user = User::where('email', $email)->first();
+        $user  = User::where('email', $email)->first();
 
         if (is_null($user)) {
             return $this->sendError(__('passwords.user'));
@@ -71,7 +29,6 @@ class ZForgotPasswordController extends AppBaseController
         $resetTable = 'password_resets';
 
         $reset = DB::table($resetTable)->where('email', $email)->first();
-
 
         if ($reset) {
             $expire = 60; // min

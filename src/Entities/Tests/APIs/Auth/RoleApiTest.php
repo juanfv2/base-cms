@@ -2,12 +2,10 @@
 
 namespace Tests\APIs\Auth;
 
-use App\Models\Auth\Permission;
-use App\Models\Auth\Role;
-
 use Tests\TestCase;
 use Tests\ApiTestTrait;
-
+use App\Models\Auth\Role;
+use App\Models\Auth\Permission;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
@@ -17,7 +15,7 @@ class RoleApiTest extends TestCase
         WithoutMiddleware,
         DatabaseTransactions
         // RefreshDatabase
-        // ..
+        // ...
     ;
 
     /** @test */
@@ -84,6 +82,8 @@ class RoleApiTest extends TestCase
         $editedRole = Role::factory()->make()->toArray();
 
         $this->response = $this->actingAsAdmin('api')->json('PUT', route('api.roles.update', ['role' => $role->id]), $editedRole);
+
+        // dd($this->response->json());
 
         $this->assertJsonModifications();
     }

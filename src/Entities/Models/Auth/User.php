@@ -2,19 +2,15 @@
 
 namespace App\Models\Auth;
 
-use Illuminate\Support\Facades\DB;
+use App\Traits\BaseCmsModelUser;
 use Juanfv2\BaseCms\Traits\HasFile;
-use Illuminate\Auth\Authenticatable;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
-// use App\Notifications\ResetPasswordNotification;
+use Juanfv2\BaseCms\Traits\BaseCmsModel;
 use Juanfv2\BaseCms\Traits\UserResponsible;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Foundation\Auth\Access\Authorizable;
+use App\Notifications\ResetPasswordNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
-use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 /**
  * Class User
@@ -22,9 +18,15 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
  * @package App\Models
  * @version September 8, 2020, 4:57 pm UTC
  */
-class User extends Model implements AuthenticatableContract, AuthorizableContract
+class User extends Authenticatable
 {
-    use Authenticatable, Authorizable, Notifiable, SoftDeletes, HasFactory, UserResponsible, HasFile;
+    use SoftDeletes,
+        BaseCmsModel,
+        BaseCmsModelUser,
+        HasFactory,
+        UserResponsible,
+        HasFile,
+        Notifiable;
 
     public $table = 'auth_users';
 
@@ -52,6 +54,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
         'api_token',
         'remember_token',
+        'fcm_token',
     ];
 
     /**
@@ -74,6 +77,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'region_id' => 'integer',
         'city_id' => 'integer',
 
+        'fcm_token' => 'string',
         'api_token' => 'string',
         'remember_token' => 'string',
     ];
@@ -97,6 +101,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'region_id'         => 'nullable',
         'city_id'           => 'nullable',
 
+        'fcm_token'         => 'nullable|string',
         'api_token'         => 'nullable|string',
         'remember_token'    => 'nullable|string|max:191',
         'createdBy'         => 'nullable',
@@ -148,6 +153,14 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      **/
+    public function driver()
+    {
+        return $this->hasOne(\App\Models\Driver::class, 'user_id', 'id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     **/
     public function account()
     {
         return $this->hasOne(\App\Models\Auth\Account::class, 'user_id', 'id');
@@ -171,7 +184,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function verifyUser()
     {
-        return $this->hasOne(\App\Models\Auth\XUserVerified::class);
+        return $this->hasOne(\App\Models\Misc\XUserVerified::class);
     }
 
     /**
@@ -182,7 +195,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     public function sendPasswordResetNotification($token)
     {
-        // $this->notify(new ResetPasswordNotification($token));
+        $this->notify(new ResetPasswordNotification($token));
     }
 
     /**
@@ -197,6 +210,41 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      **/
     public function photo()
+    {
+        return $this->hasOneXFile(__FUNCTION__);
+    }
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     **/
+    public function carPicture()
+    {
+        return $this->hasOneXFile(__FUNCTION__);
+    }
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     **/
+    public function dui()
+    {
+        return $this->hasOneXFile(__FUNCTION__);
+    }
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     **/
+    public function license()
+    {
+        return $this->hasOneXFile(__FUNCTION__);
+    }
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     **/
+    public function solvency()
+    {
+        return $this->hasOneXFile(__FUNCTION__);
+    }
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     **/
+    public function antecedents()
     {
         return $this->hasOneXFile(__FUNCTION__);
     }

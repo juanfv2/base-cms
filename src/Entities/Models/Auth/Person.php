@@ -2,9 +2,10 @@
 
 namespace App\Models\Auth;
 
-use Juanfv2\BaseCms\Traits\UserResponsible;
-
 use Illuminate\Database\Eloquent\Model;
+
+use Juanfv2\BaseCms\Traits\BaseCmsModel;
+use Juanfv2\BaseCms\Traits\UserResponsible;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -16,7 +17,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  */
 class Person extends Model
 {
-    use SoftDeletes, HasFactory, UserResponsible;
+    use SoftDeletes,
+        BaseCmsModel,
+        HasFactory,
+        UserResponsible;
+
+    public $incrementing = false;
 
     public $table = 'auth_people';
 
@@ -29,6 +35,7 @@ class Person extends Model
 
 
     public $fillable = [
+        'id',
         'user_id',
         'firstName',
         'lastName',
@@ -62,6 +69,7 @@ class Person extends Model
      * @var array
      */
     public static $rules = [
+        'id'           => 'nullable',
         'user_id'      => 'nullable',
         'firstName'    => 'required|string|max:191',
         'lastName'     => 'required|string|max:191',

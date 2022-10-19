@@ -3,10 +3,8 @@
 namespace Tests\APIs\Auth;
 
 use Tests\TestCase;
-
 use Tests\ApiTestTrait;
 use App\Models\Auth\User;
-
 use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -15,7 +13,13 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class ZResetPasswordApiTest extends TestCase
 {
-    use ApiTestTrait, WithoutMiddleware, DatabaseTransactions; // , RefreshDatabase
+    use ApiTestTrait,
+        WithoutMiddleware,
+        DatabaseTransactions
+        // RefreshDatabase
+        // ...
+    ;
+
     /** @test */
     public function reset_password()
     {

@@ -2,9 +2,9 @@
 
 namespace App\Models\Auth;
 
-use Juanfv2\BaseCms\Traits\UserResponsible;
-
 use Illuminate\Database\Eloquent\Model;
+use Juanfv2\BaseCms\Traits\BaseCmsModel;
+use Juanfv2\BaseCms\Traits\UserResponsible;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -16,7 +16,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  */
 class Account extends Model
 {
-    use SoftDeletes, HasFactory, UserResponsible;
+    use SoftDeletes,
+        BaseCmsModel,
+        HasFactory,
+        UserResponsible;
+
+    public $incrementing = false;
 
     public $table = 'auth_accounts';
 
@@ -29,9 +34,11 @@ class Account extends Model
 
 
     public $fillable = [
+        'id',
         'user_id',
         'firstName',
         'lastName',
+        'imei',
         'cellPhone',
         'birthDate',
         'address',
@@ -62,10 +69,12 @@ class Account extends Model
      * @var array
      */
     public static $rules = [
-        'user_id'      => 'nullable', // <-- required ???
+        'id'           => 'nullable',
+        'user_id'      => 'nullable',
         'firstName'    => 'required|string|max:191',
         'lastName'     => 'required|string|max:191',
         'cellPhone'    => 'nullable|string|max:191',
+        'imei'         => 'required|string|max:191',
         'birthDate'    => 'nullable',
         'address'      => 'nullable|string|max:191',
         'neighborhood' => 'nullable|string|max:191',
@@ -74,12 +83,20 @@ class Account extends Model
         'created_at'   => 'nullable',
         'updated_at'   => 'nullable',
         'deleted_at'   => 'nullable',
-        'photoUrl'     => 'nullable', // <--
-        'images'       => 'nullable', // <--
+        'photo'        => 'nullable',                  // <--
+        'images'       => 'nullable',                  // <--
 
     ];
 
     public $hidden = [
         'createdBy', 'updatedBy', 'created_at', 'updated_at', 'deleted_at'
     ];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     **/
+    public function ratings()
+    {
+        return $this->hasMany(\App\Models\Rating::class, 'account_id');
+    }
 }

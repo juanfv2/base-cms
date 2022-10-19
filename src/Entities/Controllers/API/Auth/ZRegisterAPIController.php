@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 
 use App\Models\Auth\Account;
 use Illuminate\Http\Request;
-use App\Models\Auth\XUserVerified;
+use App\Models\Misc\XUserVerified;
 
 use App\Repositories\Auth\UserRepository;
 use App\Http\Controllers\AppBaseController;
@@ -21,28 +21,27 @@ use Juanfv2\BaseCms\Resources\GenericResource;
  */
 class ZRegisterAPIController extends AppBaseController
 {
+    /** @var  \App\Models\Auth\User */
+    private $model;
 
-    /** @var  UserRepository */
-    private $userRepository;
-    /** @var  User */
-    private $user;
-
-    function __construct(UserRepository $userRepo)
+    function __construct(User $model)
     {
-        $this->userRepository = $userRepo;
+        $this->model = $model;
     }
 
     function register(Request $request)
     {
-        $rules      = User::$rules + Account::$rules;
+        $rules       = User::$rules + Account::$rules;
         $rules['firstName'] = 'nullable';
         $rules['lastName']  = 'nullable';
         $rules['role_id']   = 'nullable';
         $rules['disabled']  = 'nullable|boolean';
+
         $this->validate($request, $rules);
 
         $input = $request->all();
 
+        // dd($input);
         if ($request->has('uid')) {
             return $this->registerUserByUid($input);
         }
@@ -59,46 +58,53 @@ class ZRegisterAPIController extends AppBaseController
      */
     function registerUser($input)
     {
-        $r = $this->createAccount($input);
+        $message = '';
+        switch (intval($input['role_id'])) {
+            case 3:
+                $r = $this->createDriver($input);
+                $message = __('messages.mail.verifyDriver', ['email' => $this->model->email]);
+                break;
+            case 4:
+                $r = $this->createAccount($input);
+                $message = __('messages.mail.verify', ['email' => $this->model->email]);
+                break;
+            default:
+                # code...
+                break;
+        }
         if ($r instanceof User) {
 
             // warning: show error
-            return $this->sendResponse(
-                [
-                    'id' => $this->user->account->id,
-                    'detail' => __('messages.mail.verifyTitle', ['email' => $this->user->email])
-                ],
-                __('messages.mail.verify', ['email' => $this->user->email])
-            );
+            return $this->sendResponse(['id' => $this->model->id, 'detail' => __('messages.mail.verifyTitle', ['email' => $this->model->email])], $message);
         }
         // warning: show error
         return $r;
     }
 
     /**
-     * Si uid tiene un valor el usuario viene de red social, ej. facebook
+     * Si uid tiene un valor el usuario viene de red social, ej. Facebook
      *
      * @param Array $request
      * @return $this|\Illuminate\Database\Eloquent\Model|null|static
      */
     function registerUserByUid($input)
     {
-        $this->user = User::where('uid', $input['uid'])->first();
+        $this->model = User::where('uid', $input['uid'])->first();
 
         // warning si el usuario no existe, crearlo
-        if (empty($this->user)) {
+        if (empty($this->model)) {
             $this->createAccount($input);
         }
 
-        if ($this->user instanceof User) {
-            $this->user->api_token = base64_encode(Str::random(40));
+        if ($this->model instanceof User) {
+            $this->model->api_token = base64_encode(Str::random(40));
 
-            $user = new GenericResource($this->user);
+            $this->model = new GenericResource($this->model);
 
-            return $this->sendResponse($user, __('user.welcome', ['email' => $user->email]));
+            return $this->sendResponse($this->model, __('user.welcome', ['email' => $this->model->email]));
         }
 
-        return $this->user;
+        return $this->model;
     }
 
     function verifyUser($token)
@@ -136,7 +142,7 @@ class ZRegisterAPIController extends AppBaseController
 
     public function createAccount($input)
     {
-        $roleId         = 3;
+        $roleId         = 4;
         $accountGroupId = 1;
 
         // user
@@ -144,7 +150,7 @@ class ZRegisterAPIController extends AppBaseController
         $input['roles']            = [$roleId];
         $input['role_id']          = $roleId;
         $input['disabled']         = !isset($input['uid']);
-        $input['account_group_id'] = $accountGroupId;
+        // $input['account_group_id'] = $accountGroupId;
         $input['firstName']        = $input['name'];
         $input['lastName']         = '';
 
@@ -156,10 +162,40 @@ class ZRegisterAPIController extends AppBaseController
         // -- // 3224       ss
         // -- // 2317133    ss
 
-        $model = $this->userRepository->auth_accounts_create_with($input, null);
+        $model = $this->model->auth_accounts_create_with($input, null);
 
-        $this->user = $model;
+        $this->model = $model;
 
-        return $this->user;
+        return $this->model;
+    }
+
+
+    public function createDriver($input)
+    {
+        $roleId         = 3;
+        $accountGroupId = 1;
+
+        // user
+        // $input['password']         = Hash::make($input['password']);
+        $input['roles']            = [$roleId];
+        $input['role_id']          = $roleId;
+        $input['disabled']         = !isset($input['uid']);
+        // $input['account_group_id'] = $accountGroupId;
+        $input['firstName']        = $input['name'];
+        $input['lastName']         = '';
+
+        // $input['country_id']   = 194;
+        // $input['region_id']    = 3224;
+        // $input['city_id']      = 2317133;
+
+        // -- // 194        sv
+        // -- // 3224       ss
+        // -- // 2317133    ss
+
+        $model = $this->model->drivers_create_with($input, null);
+
+        $this->model = $model;
+
+        return $this->model;
     }
 }

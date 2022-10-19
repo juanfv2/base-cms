@@ -3,9 +3,10 @@
 namespace App\Models\Auth;
 
 use Illuminate\Database\Eloquent\Model;
+use Juanfv2\BaseCms\Traits\BaseCmsModel;
+use Juanfv2\BaseCms\Traits\UserResponsible;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Juanfv2\BaseCms\Traits\UserResponsible;
 
 /**
  * Class Permission
@@ -26,7 +27,10 @@ use Juanfv2\BaseCms\Traits\UserResponsible;
  */
 class Permission extends Model
 {
-    use SoftDeletes, HasFactory, UserResponsible;
+    use SoftDeletes,
+        BaseCmsModel,
+        HasFactory,
+        UserResponsible;
 
     public $table = 'auth_permissions';
 

@@ -2,74 +2,69 @@
 
 namespace Tests\APIs\Auth;
 
-use App\Models\Auth\User;
-use App\Models\Auth\Person;
-
 use Tests\TestCase;
-use Tests\ApiTestTrait;
 
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Foundation\Testing\WithFaker;
+use Tests\ApiTestTrait;
+use App\Models\Auth\User;
+
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class ZLoginApiTest extends TestCase
 {
     use ApiTestTrait,
-        // WithoutMiddleware,
+        WithoutMiddleware,
         DatabaseTransactions
-        // , RefreshDatabase
+        // RefreshDatabase
         // ...
     ;
-
 
     /** @test */
     public function login_user_person()
     {
         $this->withoutExceptionHandling();
+        // $this->artisan('passport:install');
 
-        $user = User::factory()->create();
-
-        $p = '123456';
-
+        $user        = User::factory()->create();
+        $p           = '123456';
         $credentials = [
             'email' => $user->email,
             'password' => $p,
-            'includes' => ["person"],
+            'includes' => ['person'],
         ];
 
-        $this->response = $this->json('POST', route('api.login.login'), $credentials, ['r-country' => 'td']);
+        $this->response = $this->json('POST', route('api.login.login'), $credentials);
 
-        $this->assertApiResponse($user->toArray());
+        // dd($this->response->json());
+
+        $this->assertJsonModifications();
     }
 
     /** @test */
     public function logout_user()
     {
         $this->withoutExceptionHandling();
+        // $this->artisan('passport:install');
 
-        $user = User::factory()->create();
-
-        $p = '123456';
-
+        $user        = User::factory()->create(['disabled' => 0,]);
+        $p           = '123456';
         $credentials = [
             'email' => $user->email,
             'password' => $p,
-            'includes' => ['person', 'token']
+            'includes' => ['person', 'token'],
         ];
 
-        $this->response = $this->json('POST', route('api.login.login'), $credentials, ['r-country' => 'td']);
+        $this->response = $this->json('POST', route('api.login.login'), $credentials);
 
         $this->assertApiSuccess();
-        $this->getContent();
+        $this->responseContent = $this->response->json();
 
         // dd($this->responseContent);
 
-        $response = $this->responseContent;
+        $token = $this->responseContent['data']['token'];
 
-        $token = $response['data']['token'];
-
-        $this->response = $this->json('POST', route('api.login.logout'), [], ['Authorization' =>  'Bearer ' . $token, 'r-country' => 'td']);
+        $this->response = $this->actingAsAdmin()->json('POST', route('api.login.logout'), [], ['Authorization' => 'Bearer ' . $token]);
         // $this->response->dump();
 
         $this->response->assertNoContent();
@@ -80,20 +75,19 @@ class ZLoginApiTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $p = '123456';
-
+        $p           = '123456';
         $credentials = [
             'email' => '1admin@demo.com',
             'password' => $p,
-            'includes' => ["person"]
+            'includes' => ['person'],
         ];
-        $this->response = $this->json('POST', route('api.login.login'), $credentials, ['r-country' => 'td']);
+        $this->response = $this->json('POST', route('api.login.login'), $credentials);
 
         $this->response->assertStatus(404);
 
-        $response = json_decode($this->response->getContent(), true);
-        $actual   = $response['message'];
-        $expected = __('passwords.user');
+        $this->responseContent = $this->response->json();
+        $actual                = $this->responseContent['message'];
+        $expected              = __('passwords.user');
         $this->assertEquals($expected, $actual);
     }
 
@@ -102,23 +96,21 @@ class ZLoginApiTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $user = User::factory()->create();
-
-        $p = '123456.';
-
+        $user        = User::factory()->create();
+        $p           = '123456.';
         $credentials = [
             'email' => $user->email,
             'password' => $p,
-            'includes' => ["person"]
+            'includes' => ['person'],
         ];
-        $this->response = $this->json('POST', route('api.login.login'), $credentials, ['r-country' => 'td']);
+        $this->response = $this->json('POST', route('api.login.login'), $credentials);
 
         $this->response->assertStatus(422);
 
-        $response = json_decode($this->response->getContent(), true);
+        $this->responseContent = $this->response->json();
+        $actual                = $this->responseContent['message'];
+        $expected              = __('auth.failed');
 
-        $actual   = $response['message'];
-        $expected = __('auth.failed');
         $this->assertEquals($expected, $actual);
     }
 
@@ -127,26 +119,21 @@ class ZLoginApiTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $user = User::factory()->create();
-        // $u = $person->user;
-        $user->disabled = true;
-        $user->save();
-
-        $p = '123456';
-
+        $user        = User::factory()->create(['disabled' => 1,]);
+        $p           = '123456';
         $credentials = [
             'email' => $user->email,
             'password' => $p,
-            'includes' => ["person"]
+            'includes' => ['person'],
         ];
-        $this->response = $this->json('POST', route('api.login.login'), $credentials, ['r-country' => 'td']);
+        $this->response = $this->json('POST', route('api.login.login'), $credentials);
 
         $this->response->assertStatus(422);
 
-        $response = json_decode($this->response->getContent(), true);
+        $this->responseContent = $this->response->json();
+        $actual                = $this->responseContent['message'];
+        $expected              = __('auth.no.active');
 
-        $actual   = $response['message'];
-        $expected = __('auth.no.active');
         $this->assertEquals($expected, $actual);
     }
 }

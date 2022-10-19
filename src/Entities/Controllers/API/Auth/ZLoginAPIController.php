@@ -95,10 +95,14 @@ class ZLoginAPIController extends AppBaseController
     public function attemptLogout()
     {
         /** @var \App\Models\Auth\User $user */
-        $user = Auth::user();
-        $user->api_token = Str::random(70);
-        return $user->save();
+        $user = auth()->user();
 
+        if (!is_null($user)) {
+            $user->api_token = Str::random(70);
+            return $user->save();
+        }
         // return Auth::user()->token()->revoke();
+
+        return [];
     }
 }

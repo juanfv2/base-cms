@@ -2,12 +2,11 @@
 
 namespace Tests\APIs\Auth;
 
+use Tests\TestCase;
+use Tests\ApiTestTrait;
 use App\Models\Auth\Role;
 use App\Models\Auth\User;
 use App\Models\Auth\Account;
-use Tests\TestCase;
-use Tests\ApiTestTrait;
-
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -45,10 +44,10 @@ class UserAccountApiTest extends TestCase
 
         $this->response = $this->actingAsAdmin('api')->json('POST', route('api.users.store'), $account);
 
-        // dd($this->getContent());
         // $this->response->dump();
+        // dd($this->response->json());
 
-        $this->assertApiModifications($account);
+        $this->assertJsonModifications();
     }
     /** @test */
     public function api_create_account_with_image()
@@ -79,14 +78,16 @@ class UserAccountApiTest extends TestCase
         $this->response = $this->json('POST', route('api.users.store'), $account, ['r-country' => $rCountry]);
 
         // $this->response->dump();
-        $this->getContent();
+        $this->responseContent = $this->response->json();
+
         $iPath = "assets/adm/$rCountry/auth_users/photo/{$this->responseContent['data']['photo']['name']}";
+
         // logger(__FILE__ . ':' . __LINE__ . ' $this->responseContent, $file->hashName() ', [$this->responseContent, $iPath, $file->hashName()]);
         // dd($this->responseContent, $file->hashName());
 
         $this->assertIsNumeric($this->responseContent['data']['photo']['entity_id']);
         $this->assertIsNumeric($this->responseContent['data']['photo']['id']);
-        // Storage::disk('public')->assertExists($iPath);
+        Storage::disk('public')->assertExists($iPath);
     }
 
     /** @test */
@@ -96,9 +97,13 @@ class UserAccountApiTest extends TestCase
 
         $this->response = $this->actingAsAdmin('api')->json('GET', route('api.users.show',  ['user' => $account->user_id]));
 
-        // dd($account->toArray(), $this->getContent());
-        $user = User::find($account->user_id)->toArray();
-        $this->assertApiResponse($user);
+        // dd($this->response->json(), $model->user);
+        // dd($this->response->json());
+
+        // $user = User::find($model->id);
+        // $this->assertJsonShow($user);
+
+        $this->assertJsonModifications();
     }
 
     /** @test */
@@ -135,10 +140,9 @@ class UserAccountApiTest extends TestCase
 
         $this->response = $this->actingAsAdmin('api')->json('PUT', route('api.users.update',  ['user' => $account->user_id]), $editedAccount);
 
-        // dd($this->getContent());
-        // $this->response->dump();
+        // dd($this->response->json());
 
-        $this->assertApiModifications($editedAccount);
+        $this->assertJsonModifications();
     }
 
     /** @test */
@@ -146,10 +150,7 @@ class UserAccountApiTest extends TestCase
     {
         $account = Account::factory()->create();
 
-        $this->response = $this->actingAsAdmin('api')->json('DELETE', route('api.users.destroy',  [
-            'user' => $account->user_id,
-            'withEntity' => 'auth_accounts'
-        ]));
+        $this->response = $this->actingAsAdmin('api')->json('DELETE', route('api.users.destroy',  ['user' => $account->user_id,]));
 
         $this->assertApiSuccess();
 
