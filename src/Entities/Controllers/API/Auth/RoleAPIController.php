@@ -3,37 +3,29 @@
 namespace App\Http\Controllers\API\Auth;
 
 use App\Models\Auth\Role;
-
 use Illuminate\Http\Request;
+
+use App\Models\Auth\Permission;
 use App\Http\Controllers\AppBaseController;
-use App\Repositories\Auth\RoleRepository;
-use App\Repositories\Auth\PermissionRepository;
 
 /**
  * Class RoleController
- *
- * @package App\Http\Controllers\API\Auth
+ * @package App\Http\Controllers\API
  */
 class RoleAPIController extends AppBaseController
 {
-    /** @var  PermissionRepository */
-    private $permissionRepository;
+    /** @var  \App\Models\Auth\Role */
+    public $model;
+    public $modelNameCamel = 'role';
 
-    /** @var  RoleRepository */
-    public $modelRepository;
-    public $rules;
-    public $modelNameCamel = 'Role';
-
-    public function __construct(RoleRepository $modelRepo, PermissionRepository $pRepo)
+    public function __construct(Role $model)
     {
-        $this->permissionRepository = $pRepo;
-        $this->modelRepository = $modelRepo;
-        $this->rules = Role::$rules;
+        $this->model = $model;
     }
 
     public function permissions(Request $request)
     {
-        $this->modelRepository = $this->permissionRepository;
+        $this->model = new Permission();
 
         return $this->index($request);
     }

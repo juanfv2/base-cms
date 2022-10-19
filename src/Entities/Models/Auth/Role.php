@@ -2,21 +2,23 @@
 
 namespace App\Models\Auth;
 
-use Juanfv2\BaseCms\Traits\UserResponsible;
-
 use Illuminate\Database\Eloquent\Model;
+use Juanfv2\BaseCms\Traits\BaseCmsModel;
+use Juanfv2\BaseCms\Traits\UserResponsible;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * Class Role
- *
  * @package App\Models
- * @version October 22, 2021, 5:23 pm UTC
+ * @version September 8, 2020, 4:57 pm UTC
  */
 class Role extends Model
 {
-    use SoftDeletes, HasFactory, UserResponsible;
+    use SoftDeletes,
+        BaseCmsModel,
+        UserResponsible,
+        HasFactory;
 
     public $table = 'auth_roles';
 
@@ -52,8 +54,8 @@ class Role extends Model
      * @var array
      */
     public static $rules = [
-        'name'        => 'required|string|max:191',
-        'description' => 'required|string|max:191',
+        'name'        => 'required|string|max:255',
+        'description' => 'required|string|max:255',
         'createdBy'   => 'nullable',
         'updatedBy'   => 'nullable',
         'created_at'  => 'nullable',
@@ -65,14 +67,6 @@ class Role extends Model
     public $hidden = [
         'createdBy', 'updatedBy', 'created_at', 'updated_at', 'deleted_at'
     ];
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     **/
-    public function user()
-    {
-        return $this->hasMany(\App\Models\Auth\User::class, 'role_id');
-    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany

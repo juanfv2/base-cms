@@ -2,13 +2,12 @@
 
 namespace Tests\APIs\Auth;
 
-use App\Models\Auth\Role;
 use App\Models\Auth\Permission;
+use App\Models\Auth\Role;
 
 use Tests\TestCase;
 use Tests\ApiTestTrait;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
@@ -16,10 +15,28 @@ class RoleApiTest extends TestCase
 {
     use ApiTestTrait,
         WithoutMiddleware,
-        // DatabaseTransactions
-        RefreshDatabase
-        // ...
+        DatabaseTransactions
+        // RefreshDatabase
+        // ..
     ;
+
+    /** @test */
+    public function api_index_role()
+    {
+        $this->withoutExceptionHandling();
+
+        $created = 11;
+        $limit   = 10;
+        $offset  = 0;
+        $areas   = Role::factory($created)->create();
+
+        $this->response = $this->json('POST', route('api.roles.store', ['limit' => $limit, 'offset' => $offset, 'to_index' => 2]));
+
+        // $this->response->dump();
+        // dd($this->response->json());
+
+        $this->assertJsonIndex($limit, $areas[0]);
+    }
 
     /** @test */
     public function api_create_role()
@@ -32,8 +49,10 @@ class RoleApiTest extends TestCase
 
         $this->response = $this->actingAsAdmin('api')->json('POST', route('api.roles.store'), $role);
 
-        $this->getContent();
+        // $this->response->dump();
+        // dd($this->response->json());
 
+        $this->responseContent = $this->response->json();
         $rolePermissions = [];
 
         foreach ($permissions as $key) {
@@ -45,19 +64,17 @@ class RoleApiTest extends TestCase
         $this->assertDatabaseCount('auth_roles_has_permissions', 3);
         $this->assertDatabaseHas('auth_roles_has_permissions', $rolePermissions[0]);
 
-        // $this->response->dump();
-
-        $this->assertApiModifications($role);
+        $this->assertJsonModifications();
     }
 
     /** @test */
     public function api_read_role()
     {
-        $role = Role::factory()->create();
+        $model = Role::factory()->create();
 
-        $this->response = $this->actingAsAdmin('api')->json('GET', route('api.roles.show', ['role' => $role->id]));
+        $this->response = $this->actingAsAdmin('api')->json('GET', route('api.roles.show', ['role' => $model->id]));
 
-        $this->assertApiResponse($role->toArray());
+        $this->assertJsonShow($model);
     }
 
     /** @test */
@@ -68,7 +85,7 @@ class RoleApiTest extends TestCase
 
         $this->response = $this->actingAsAdmin('api')->json('PUT', route('api.roles.update', ['role' => $role->id]), $editedRole);
 
-        $this->assertApiModifications($editedRole);
+        $this->assertJsonModifications();
     }
 
     /** @test */
