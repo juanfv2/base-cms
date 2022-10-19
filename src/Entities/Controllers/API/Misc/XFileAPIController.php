@@ -3,9 +3,7 @@
 namespace App\Http\Controllers\API\Misc;
 
 use App\Models\Misc\XFile;
-
 use App\Http\Controllers\AppBaseController;
-use App\Repositories\Auth\XFileRepository;
 
 /**
  * Class XFileController
@@ -14,14 +12,14 @@ use App\Repositories\Auth\XFileRepository;
  */
 class XFileAPIController extends AppBaseController
 {
-    /** @var XFileRepository */
-    public $modelRepository;
+    /** @var App\Models\XFile */
+    public $model;
     public $rules;
-    public $modelNameCamel = 'xFile';
+    public $modelNameCamel = 'XFile';
 
-    public function __construct(XFileRepository $modelRepo)
+    public function __construct(XFile $model)
     {
-        $this->modelRepository = $modelRepo;
+        $this->model = $model;
         $this->rules = XFile::$rules;
     }
 }

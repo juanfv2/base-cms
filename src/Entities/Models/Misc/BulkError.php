@@ -3,24 +3,23 @@
 namespace App\Models\Misc;
 
 use Illuminate\Database\Eloquent\Model;
+use Juanfv2\BaseCms\Traits\BaseCmsModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * Class BulkError
  *
  * @package App\Models
- * @version November 4, 2021, 10:09 pm UTC
+ * @version October 19, 2022, 9:41 pm UTC
  */
 class BulkError extends Model
 {
-    use HasFactory;
+    use BaseCmsModel,
+        HasFactory;
 
     public $table = 'bulk_errors';
 
     public $timestamps = false;
-
-    protected $dates = ['deleted_at'];
-
 
 
     public $fillable = [
@@ -47,9 +46,9 @@ class BulkError extends Model
      * @var array
      */
     public static $rules = [
-        'payload' => 'required|string',
-        'queue' => 'required|string|max:191',
-        'container_id' => 'required',
-        'created_at' => 'required'
+        'payload'      => 'required|string',
+        'queue'        => 'required|string|max:191',
+        'container_id' => 'nullable',
+        'created_at'   => 'nullable',
     ];
 }

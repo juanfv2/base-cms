@@ -3,28 +3,24 @@
 namespace App\Models\Country;
 
 use Illuminate\Database\Eloquent\Model;
+use Juanfv2\BaseCms\Traits\BaseCmsModel;
+use Juanfv2\BaseCms\Traits\UserResponsible;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * Class City
  *
- * @package App\Models\Country
- * @version July 18, 2021, 1:48 am UTC
+ * @package App\Models
+ * @version October 19, 2022, 9:04 pm UTC
  */
 class City extends Model
 {
-    use HasFactory;
+    use BaseCmsModel,
+        HasFactory,
+        UserResponsible;
 
     public $table = 'cities';
-
-    public $timestamps = false;
-
-    const CREATED_AT = 'created_at';
-    const UPDATED_AT = 'updated_at';
-
-
-    protected $dates = ['deleted_at'];
-
 
 
     public $fillable = [
@@ -32,7 +28,9 @@ class City extends Model
         'latitude',
         'longitude',
         'country_id',
-        'region_id'
+        'region_id',
+        'createdBy',
+        'updatedBy'
     ];
 
     /**
@@ -46,7 +44,9 @@ class City extends Model
         'latitude' => 'decimal:8',
         'longitude' => 'decimal:8',
         'country_id' => 'integer',
-        'region_id' => 'integer'
+        'region_id' => 'integer',
+        'createdBy' => 'integer',
+        'updatedBy' => 'integer'
     ];
 
     /**
@@ -58,8 +58,12 @@ class City extends Model
         'name' => 'required|string|max:191',
         'latitude' => 'required|numeric',
         'longitude' => 'required|numeric',
-        'country_id' => 'required',
-        'region_id' => 'required'
+        'country_id' => 'nullable',
+        'region_id' => 'nullable',
+        'createdBy' => 'nullable',
+        'updatedBy' => 'nullable',
+        'created_at' => 'nullable',
+        'updated_at' => 'nullable'
     ];
 
     public $hidden = [
@@ -71,16 +75,18 @@ class City extends Model
      **/
     public function country()
     {
-        return $this->belongsTo(\App\Models\Country\Country::class, 'country_id');
+        return $this->belongsTo(Country::class, 'country_id');
     }
+
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      **/
     public function region()
     {
-        return $this->belongsTo(\App\Models\Country\Region::class, 'region_id');
+        return $this->belongsTo(Region::class, 'region_id');
     }
+
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

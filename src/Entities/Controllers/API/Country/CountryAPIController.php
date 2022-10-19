@@ -3,9 +3,7 @@
 namespace App\Http\Controllers\API\Country;
 
 use App\Models\Country\Country;
-
 use App\Http\Controllers\AppBaseController;
-use App\Repositories\Country\CountryRepository;
 
 /**
  * Class CountryController
@@ -14,14 +12,14 @@ use App\Repositories\Country\CountryRepository;
  */
 class CountryAPIController extends AppBaseController
 {
-    /** @var CountryRepository */
-    public $modelRepository;
+    /** @var \App\Models\Country */
+    public $model;
     public $rules;
     public $modelNameCamel = 'Country';
 
-    public function __construct(CountryRepository $modelRepo)
+    public function __construct(Country $model)
     {
-        $this->modelRepository = $modelRepo;
+        $this->model = $model;
         $this->rules = Country::$rules;
     }
 }

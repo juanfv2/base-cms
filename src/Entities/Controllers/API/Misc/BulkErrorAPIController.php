@@ -3,9 +3,7 @@
 namespace App\Http\Controllers\API\Misc;
 
 use App\Models\Misc\BulkError;
-
 use App\Http\Controllers\AppBaseController;
-use App\Repositories\Misc\BulkErrorRepository;
 
 /**
  * Class BulkErrorController
@@ -14,14 +12,14 @@ use App\Repositories\Misc\BulkErrorRepository;
  */
 class BulkErrorAPIController extends AppBaseController
 {
-    /** @var BulkErrorRepository */
-    public $modelRepository;
+    /** @var App\Models\BulkError */
+    public $model;
     public $rules;
     public $modelNameCamel = 'BulkError';
 
-    public function __construct(BulkErrorRepository $modelRepo)
+    public function __construct(BulkError $model)
     {
-        $this->modelRepository = $modelRepo;
+        $this->model = $model;
         $this->rules = BulkError::$rules;
     }
 }

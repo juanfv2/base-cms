@@ -3,33 +3,31 @@
 namespace App\Models\Country;
 
 use Illuminate\Database\Eloquent\Model;
+use Juanfv2\BaseCms\Traits\BaseCmsModel;
+use Juanfv2\BaseCms\Traits\UserResponsible;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * Class Country
  *
- * @package App\Models\Country
- * @version October 22, 2021, 4:44 pm UTC
+ * @package App\Models
+ * @version October 19, 2022, 8:27 pm UTC
  */
 class Country extends Model
 {
-    use HasFactory;
+    use BaseCmsModel,
+        HasFactory,
+        UserResponsible;
 
     public $table = 'countries';
-
-    public $timestamps = false;
-
-    const CREATED_AT = 'created_at';
-    const UPDATED_AT = 'updated_at';
-
-
-    protected $dates = ['deleted_at'];
-
 
 
     public $fillable = [
         'name',
-        'code'
+        'code',
+        'createdBy',
+        'updatedBy'
     ];
 
     /**
@@ -40,7 +38,9 @@ class Country extends Model
     protected $casts = [
         'id' => 'integer',
         'name' => 'string',
-        'code' => 'string'
+        'code' => 'string',
+        'createdBy' => 'integer',
+        'updatedBy' => 'integer'
     ];
 
     /**
@@ -50,7 +50,11 @@ class Country extends Model
      */
     public static $rules = [
         'name' => 'required|string|max:191',
-        'code' => 'required|string|max:10'
+        'code' => 'required|string|max:10',
+        'createdBy' => 'nullable',
+        'updatedBy' => 'nullable',
+        'created_at' => 'nullable',
+        'updated_at' => 'nullable'
     ];
 
     public $hidden = [
@@ -65,19 +69,21 @@ class Country extends Model
         return $this->hasMany(\App\Models\Auth\User::class, 'country_id');
     }
 
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      **/
     public function regions()
     {
-        return $this->hasMany(\App\Models\Country\Region::class, 'country_id');
+        return $this->hasMany(Region::class, 'country_id');
     }
+
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      **/
     public function cities()
     {
-        return $this->hasMany(\App\Models\Country\City::class, 'country_id');
+        return $this->hasMany(City::class, 'country_id');
     }
 }

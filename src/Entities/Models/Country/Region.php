@@ -3,34 +3,32 @@
 namespace App\Models\Country;
 
 use Illuminate\Database\Eloquent\Model;
+use Juanfv2\BaseCms\Traits\BaseCmsModel;
+use Juanfv2\BaseCms\Traits\UserResponsible;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * Class Region
  *
  * @package App\Models
- * @version October 22, 2021, 5:02 pm UTC
+ * @version October 19, 2022, 8:56 pm UTC
  */
 class Region extends Model
 {
-    use HasFactory;
+    use BaseCmsModel,
+        HasFactory,
+        UserResponsible;
 
     public $table = 'regions';
-
-    public $timestamps = false;
-
-    const CREATED_AT = 'created_at';
-    const UPDATED_AT = 'updated_at';
-
-
-    protected $dates = ['deleted_at'];
-
 
 
     public $fillable = [
         'name',
         'code',
-        'country_id'
+        'country_id',
+        'createdBy',
+        'updatedBy'
     ];
 
     /**
@@ -42,7 +40,9 @@ class Region extends Model
         'id' => 'integer',
         'name' => 'string',
         'code' => 'string',
-        'country_id' => 'integer'
+        'country_id' => 'integer',
+        'createdBy' => 'integer',
+        'updatedBy' => 'integer'
     ];
 
     /**
@@ -53,7 +53,11 @@ class Region extends Model
     public static $rules = [
         'name' => 'required|string|max:191',
         'code' => 'required|string|max:10',
-        'country_id' => 'required'
+        'country_id' => 'nullable',
+        'createdBy' => 'nullable',
+        'updatedBy' => 'nullable',
+        'created_at' => 'nullable',
+        'updated_at' => 'nullable'
     ];
 
     public $hidden = [
@@ -65,7 +69,7 @@ class Region extends Model
      **/
     public function country()
     {
-        return $this->belongsTo(\App\Models\Country\Country::class, 'country_id');
+        return $this->belongsTo(Country::class, 'country_id');
     }
 
     /**
@@ -73,7 +77,7 @@ class Region extends Model
      **/
     public function cities()
     {
-        return $this->hasMany(\App\Models\Country\City::class, 'region_id');
+        return $this->hasMany(City::class, 'region_id');
     }
 
     /**

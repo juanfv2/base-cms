@@ -2,29 +2,24 @@
 
 namespace App\Models\Misc;
 
-use Juanfv2\BaseCms\Traits\ControllerFiles;
-
 use Illuminate\Database\Eloquent\Model;
+use Juanfv2\BaseCms\Traits\BaseCmsModel;
+use Juanfv2\BaseCms\Traits\ControllerFiles;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * Class XFile
  *
  * @package App\Models
- * @version September 8, 2020, 4:56 pm UTC
+ * @version October 19, 2022, 9:29 pm UTC
  */
 class XFile extends Model
 {
-    use HasFactory, ControllerFiles;
+    use BaseCmsModel,
+        HasFactory,
+        ControllerFiles;
 
     public $table = 'auth_x_files';
-
-    const CREATED_AT = 'created_at';
-    const UPDATED_AT = 'updated_at';
-
-
-    protected $dates = ['deleted_at'];
-
 
 
     public $fillable = [
@@ -61,14 +56,14 @@ class XFile extends Model
      * @var array
      */
     public static $rules = [
-        'entity'       => 'required|string|max:255',
-        'entity_id'    => 'required|integer',
-        'field'        => 'required|string|max:255',
-        'name'         => 'required|string|max:255',
-        'nameOriginal' => 'required|string|max:255',
-        'publicPath'   => 'required|string|max:255',
+        'entity'       => 'required|string|max:191',
+        'entity_id'    => 'required',
+        'field'        => 'required|string|max:191',
+        'name'         => 'required|string|max:191',
+        'nameOriginal' => 'required|string|max:191',
+        'publicPath'   => 'required|string|max:191',
         'extension'    => 'required|string|max:10',
-        'data'         => 'nullable',
+        'data'         => 'nullable|string',
         'created_at'   => 'nullable',
         'updated_at'   => 'nullable'
     ];
