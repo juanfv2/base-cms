@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace $NAMESPACE_APP$\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -13,7 +13,7 @@ use Juanfv2\BaseCms\Criteria\LimitOffsetCriteriaModel;
 
 /**
  * @SWG\Swagger(
- *   basePath="/api/v1",
+ *   basePath="/$API_PREFIX$/$API_VERSION$",
  *   @SWG\Info(
  *     title="Laravel Generator APIs",
  *     version="1.0.0",
@@ -38,32 +38,19 @@ class AppBaseController extends Controller
         $action = $request->get('action', '');
         $limit  = $request->get('limit', -1);
 
-        $this->model->pushCriteria(new RequestCriteriaModel($request));
+        $this->modelRepository->pushCriteria(new RequestGenericCriteria($request));
 
         switch ($action) {
             case 'export':
-                $headers   = json_decode($request->get('fields'), true);
-                $zName     = $request->get('title', '-');
-                $extension = $request->get('ext', 'csv');
-
-                return $this->export($zName, $extension, $headers, $this->model);
-
-            case 'countable':
-                $items     = $this->model->mAll();
-                $itemCount = $items->count();
-
-                return $this->sendResponse(
-                    ['totalPages' => abs(ceil($itemCount / $limit)), 'totalElements' => $itemCount, 'content' => $items,],
-                    __('validation.model.list', ['model' => __("models.{$this->modelNameCamel}.plural")])
-                );
-                break;
-
+                $headers = json_decode($request->get('fields'), true);
+                $zname = $request->get('title', '-');
+                return $this->export($zname, $headers, $this->modelRepository);
             default:
-                $itemCount = $this->model->mCount();
+                $itemCount = $this->modelRepository->count();
 
-                $this->model->pushCriteria(new LimitOffsetCriteriaModel($request));
+                $this->modelRepository->pushCriteria(new LimitOffsetCriteria($request));
 
-                $items = $this->model->mAll();
+                $items = $this->modelRepository->all();
 
                 /* */
                 $items = GenericResource::collection($items);
@@ -85,17 +72,10 @@ class AppBaseController extends Controller
      */
     public function store(Request $request)
     {
-        if ($request->has('to_index')) {
-            return $this->index($request);
-        }
-
-        $input = $this->validate($request, $this->model::$rules);
+        $input = $this->validate($request, $this->rules);
         // $input = $request->all();
 
-        $model = $this->model->mSave($input);
-
-        // $model = new GenericResource($model);
-
+        $model = $this->modelRepository->create($input); // $model = new GenericResource($model);
         return $this->sendResponse(['id' => $model->id], __('validation.model.stored', ['model' => __("models.{$this->modelNameCamel}.name")]));
     }
 
@@ -110,12 +90,11 @@ class AppBaseController extends Controller
     public function show($id)
     {
         /** @var \App\Models\{{CurrentModel}} $model */
-        $model = $this->model->find($id);
+        $model = $this->modelRepository->findWithoutFail($id);
         if (empty($model)) {
             return $this->sendError(__('validation.model.not.found', ['model' => __("models.{$this->modelNameCamel}.name")]));
         }
         $model = new GenericResource($model);
-
         return $this->sendResponse($model, __('validation.model.showed', ['model' => __("models.{$this->modelNameCamel}.name")]));
     }
 
@@ -130,20 +109,16 @@ class AppBaseController extends Controller
      */
     public function update($id, Request $request)
     {
-        $input = $this->validate($request, $this->model::$rules);
+        $input = $this->validate($request, $this->rules);
         // $input = $request->all();
 
         /** @var \App\Models\{{CurrentModel}} $model */
-        $model = $this->model->find($id);
+        $model = $this->modelRepository->findWithoutFail($id);
 
         if (empty($model)) {
             return $this->sendError(__('validation.model.not.found', ['model' => __("models.{$this->modelNameCamel}.name")]));
         }
-
-        $model = $this->model->mSave($input);
-
-        // $model = new GenericResource({{CurrentModel}});
-
+        $model = $this->modelRepository->update($model, $input); // $model = new GenericResource({{CurrentModel}});
         return $this->sendResponse(['id' => $model->id], __('validation.model.updated', ['model' => __("models.{$this->modelNameCamel}.name")]));
     }
 
@@ -160,14 +135,14 @@ class AppBaseController extends Controller
     public function destroy($id)
     {
         /** @var \App\Models\{{CurrentModel}} $model */
-        $model = $this->model->find($id);
+        $model = $this->modelRepository->findWithoutFail($id);
 
         if (empty($model)) {
             return $this->sendError(__('validation.model.not.found', ['model' => __("models.{$this->modelNameCamel}.name")]));
         }
 
-        $resp = $model->delete();
+        $resp = $this->modelRepository->delete($id);
 
-        return $this->sendResponse(['id' => $model->id, 'success' => $resp], __('validation.model.deleted', ['model' => __("models.{$this->modelNameCamel}.name")]));
+        return $this->sendResponse(['id' => $id, 'success' => $resp], __('validation.model.deleted', ['model' => __("models.{$this->modelNameCamel}.name")]));
     }
 }

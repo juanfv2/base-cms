@@ -57,7 +57,7 @@ const mEvent = new JfLazyLoadEvent();
 mEvent.select = [
 $SEARCHABLE_FIELDS_2$
 ];
-mEvent.multiSortMeta = [new JfSort(`${this.labels.$MODEL_NAME_CAMEL$.$PRIMARY_KEY_NAME$.field}`, JfSort.asc)];
+mEvent.sorts = [new JfSort(`${this.labels.$MODEL_NAME_CAMEL$.$PRIMARY_KEY_NAME$.field}`, JfSort.asc)];
 mEvent.additional = [new JfCondition('cp', this.currentPage)];
 mEvent.conditions = conditions;
 // mEvent.rows = 10;
