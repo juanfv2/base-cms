@@ -8,6 +8,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Http;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 
@@ -252,6 +253,14 @@ trait ControllerFiles
         $exists                = Storage::exists($strLocationImageSaved);
         $strLocationImage2show = $exists ? $strLocationImageSaved : $strLocationImageNotFound;
         $temp                  = public_path($strLocationImageNotFound);
+
+        if (!file_exists($temp)) {
+
+            $response = Http::get('https://eu.ui-avatars.com/api', ['name' => config('app.name'), 'size' => 512]);
+            Storage::put('assets/images/image-not-found.png', $response->body());
+
+            $strLocationImage2show = $strLocationImageNotFound;
+        }
 
         // logger(__FILE__ . ':' . __LINE__ . ' $strLocationImageSaved ', [$strLocationImageSaved]);
 

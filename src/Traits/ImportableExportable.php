@@ -280,6 +280,7 @@ trait ImportableExportable
         $massiveQueryFile     = Storage::path($strLocationFileSaved);
         $keys                 = $request->get('keys');
         $primaryKeyName       = $request->get('primaryKeyName');
+        $cModel               = \Illuminate\Support\Str::replace('-', '\\', $request->get('cModel', ''));
         $created              = 0;
 
         // logger(__FILE__ . ':' . __LINE__ . ' $exists ', [$exists, $strLocationFileSaved, $massiveQueryFile]);
@@ -290,7 +291,7 @@ trait ImportableExportable
 
                 $delimiter    = _file_delimiter($massiveQueryFile);
 
-                $created = $this->importing($handle, $tableName, $primaryKeyName, $keys, $delimiter);
+                $created = $this->importing($handle, $tableName, $primaryKeyName, $keys, $delimiter, $cModel);
 
                 return $this->sendResponse(['updated' => $created - 1], __('validation.model.list', ['model' => $tableName]),);
             } // end ($handle = fopen($massiveQueryFile, 'r')) !== false
