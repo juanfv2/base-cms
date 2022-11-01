@@ -222,7 +222,7 @@ trait ControllerFiles
      */
     public function fileDown($tableName, $fieldName, $id, $w = 0, $h = 0, $imageName = '')
     {
-        $rCountry     = request()->get('rCountry', '');
+        $rCountry     = request()->get('rCountry', '00');
         if (!$imageName) {
             if ($rCountry) {
                 config()->set('database.default', config('base-cms.default_prefix') . $rCountry);
@@ -240,24 +240,23 @@ trait ControllerFiles
             }
         }
 
-        $w                        = (int) $w;
-        $h                        = (int) $h;
-        $baseAssets               = 'public/assets/adm/';
-        $strLocationImageNotFound = 'assets/images/image-not-found.png';
+        $w          = (int) $w;
+        $h          = (int) $h;
+        $baseAssets = 'public/assets/adm';
 
         if ($rCountry) {
-            $baseAssets = $baseAssets . $rCountry . '/';
+            $baseAssets = $baseAssets . '/' . $rCountry;
         }
 
-        $strLocationImageSaved = "$baseAssets$tableName/$fieldName/$imageName";
-        $exists                = Storage::exists($strLocationImageSaved);
-        $strLocationImage2show = $exists ? $strLocationImageSaved : $strLocationImageNotFound;
-        $temp                  = public_path($strLocationImageNotFound);
+        $strLocationImageNotFound = 'assets/images/image-not-found.png';
+        $strLocationImageSaved    = "$baseAssets/$tableName/$fieldName/$imageName";
+        $strLocationImage2show    = Storage::exists($strLocationImageSaved) ? $strLocationImageSaved : $strLocationImageNotFound;
+        $exists                   = Storage::exists($strLocationImage2show);
 
-        if (!file_exists($temp)) {
+        if (!$exists) {
 
             $response = Http::get('https://eu.ui-avatars.com/api', ['name' => config('app.name'), 'size' => 512]);
-            Storage::put('assets/images/image-not-found.png', $response->body());
+            Storage::put($strLocationImageNotFound, $response->body());
 
             $strLocationImage2show = $strLocationImageNotFound;
         }
@@ -266,33 +265,30 @@ trait ControllerFiles
 
         ini_set('memory_limit', '-1');
 
-        if ($strLocationImage2show) {
-            $temp = storage_path("app/$strLocationImage2show");
+        $temp = Storage::path("$strLocationImage2show");
 
-            if ($w || $h) {
+        if ($w || $h) {
 
-                $basename                 = basename($strLocationImage2show);
-                $ext                      = pathinfo($basename, PATHINFO_EXTENSION);
-                $strLocationImage2showNew = Str::replaceLast(".{$ext}", "-{$w}x{$h}.{$ext}", $strLocationImage2show);
-                $exists                   = Storage::exists($strLocationImage2showNew);
+            $basename                 = basename($strLocationImage2show);
+            $ext                      = pathinfo($basename, PATHINFO_EXTENSION);
+            $strLocationImage2showNew = Str::replaceLast(".{$ext}", "-{$w}x{$h}.{$ext}", $strLocationImage2show);
+            $exists                   = Storage::exists($strLocationImage2showNew);
 
-                if ($strLocationImage2show != $strLocationImageNotFound) {
-                    $temp = storage_path("app/$strLocationImage2show");
-                }
-                // logger(__FILE__ . ':' . __LINE__ . ' $temp ', [$temp, $strLocationImage2showNew]);
-                if (!$exists) {
-                    // use jpg format and quality of 100
-                    $resized_image = Image::make($temp)->resize($w > 0 ? $w : null, $h > 0 ? $h : null, function ($constraint) use ($w, $h) {
+            // logger(__FILE__ . ':' . __LINE__ . ' $temp ', [$temp, $strLocationImage2showNew]);
+            if (!$exists) {
+                // use jpg format and quality of 100
+                $resized_image = Image::make($temp)
+                    ->resize($w > 0 ? $w : null, $h > 0 ? $h : null, function ($constraint) use ($w, $h) {
                         if (!($w > 0 && $h > 0)) {
                             $constraint->aspectRatio();
                         }
-                    })->stream($ext, 100);
-                    // then use Illuminate\Support\Facades\Storage
-                    Storage::put($strLocationImage2showNew, $resized_image);
-                }
-
-                $temp = storage_path("app/$strLocationImage2showNew");
+                    })
+                    ->stream($ext, 100);
+                // then use Illuminate\Support\Facades\Storage
+                Storage::put($strLocationImage2showNew, $resized_image);
             }
+
+            $temp = storage_path("app/$strLocationImage2showNew");
         }
 
         return response()->file($temp);
