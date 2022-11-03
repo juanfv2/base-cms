@@ -162,6 +162,7 @@ class RequestCriteriaModel implements CriteriaInterfaceModel
                         $q->addNestedWhereQuery($qSub->getQuery(), $_kOperatorStr);
 
                         break;
+                    case 'null':
                     case 'is-null':
                     case 'not-null':
                         $isNot = $_kConditionalStr === 'not-null';
