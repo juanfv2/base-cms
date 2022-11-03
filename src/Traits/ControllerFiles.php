@@ -222,7 +222,7 @@ trait ControllerFiles
      */
     public function fileDown($tableName, $fieldName, $id, $w = 0, $h = 0, $imageName = '')
     {
-        $rCountry     = request()->get('rCountry', '00');
+        $rCountry     = request()->get('rCountry', '');
         if (!$imageName) {
             if ($rCountry) {
                 config()->set('database.default', config('base-cms.default_prefix') . $rCountry);
