@@ -5,7 +5,7 @@ namespace Tests\Repositories\Country;
 use App\Models\Country\Region;
 
 use Tests\TestCase;
-use Tests\ApiTestTrait;
+use Juanfv2\BaseCms\Traits\ApiTestTrait;
 
 use Illuminate\Support\Facades\App;
 use App\Repositories\Country\RegionRepository;

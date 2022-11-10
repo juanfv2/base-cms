@@ -5,7 +5,7 @@ namespace Tests\Repositories\Auth;
 use App\Models\Auth\Account;
 
 use Tests\TestCase;
-use Tests\ApiTestTrait;
+use Juanfv2\BaseCms\Traits\ApiTestTrait;
 
 use Illuminate\Support\Facades\App;
 use App\Repositories\Auth\AccountRepository;

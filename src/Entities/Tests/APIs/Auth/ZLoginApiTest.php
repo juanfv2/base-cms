@@ -4,7 +4,7 @@ namespace Tests\APIs\Auth;
 
 use Tests\TestCase;
 
-use Tests\ApiTestTrait;
+use Juanfv2\BaseCms\Traits\ApiTestTrait;
 use App\Models\Auth\User;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;

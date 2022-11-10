@@ -3,7 +3,7 @@
 namespace Tests\APIs;
 
 use Tests\TestCase;
-use Tests\ApiTestTrait;
+use Juanfv2\BaseCms\Traits\ApiTestTrait;
 use App\Models\Country\City;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;

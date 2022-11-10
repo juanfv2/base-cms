@@ -3,7 +3,7 @@
 namespace Tests\APIs\Misc;
 
 use Tests\TestCase;
-use Tests\ApiTestTrait;
+use Juanfv2\BaseCms\Traits\ApiTestTrait;
 use App\Models\Misc\BulkError;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;

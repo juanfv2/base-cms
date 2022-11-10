@@ -4,7 +4,7 @@ namespace Tests\Repositories\Auth;
 
 use App\Models\Auth\Role;
 
-use Tests\ApiTestTrait;
+use Juanfv2\BaseCms\Traits\ApiTestTrait;
 use Tests\TestCase;
 
 use Illuminate\Support\Facades\App;

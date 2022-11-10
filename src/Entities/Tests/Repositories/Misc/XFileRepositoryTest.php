@@ -5,7 +5,7 @@ namespace Tests\Repositories\Misc;
 use App\Models\Misc\XFile;
 
 use Tests\TestCase;
-use Tests\ApiTestTrait;
+use Juanfv2\BaseCms\Traits\ApiTestTrait;
 
 use Illuminate\Support\Facades\App;
 use App\Repositories\Misc\XFileRepository;
