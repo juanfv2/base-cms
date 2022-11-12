@@ -3,13 +3,12 @@
 namespace $NAMESPACE_APP$\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use Juanfv2\BaseCms\Traits\ControllerFiles;
+use Juanfv2\BaseCms\Criteria\LimitOffsetCriteriaModel;
+use Juanfv2\BaseCms\Criteria\RequestCriteriaModel;
 use Juanfv2\BaseCms\Resources\GenericResource;
+use Juanfv2\BaseCms\Traits\ControllerFiles;
 use Juanfv2\BaseCms\Traits\ControllerResponses;
 use Juanfv2\BaseCms\Traits\ImportableExportable;
-use Juanfv2\BaseCms\Criteria\RequestCriteriaModel;
-use Juanfv2\BaseCms\Criteria\LimitOffsetCriteriaModel;
 
 /**
  * @SWG\Swagger(
@@ -30,7 +29,7 @@ class AppBaseController extends Controller
      * Display a listing of the {{CurrentModel}}.
      * GET|HEAD /{model}
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return Response
      */
     public function index(Request $request)
@@ -79,7 +78,7 @@ class AppBaseController extends Controller
      * Store a newly created {{CurrentModel}} in storage.
      * POST /{model}
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return Response
      */
     public function store(Request $request)
@@ -102,7 +101,7 @@ class AppBaseController extends Controller
      * Display the specified {{CurrentModel}}.
      * GET|HEAD /{model}/{id}
      *
-     * @param int $id
+     * @param  int  $id
      * @return Response
      */
     public function show($id)
@@ -127,8 +126,8 @@ class AppBaseController extends Controller
      * Update the specified {{CurrentModel}} in storage.
      * PUT/PATCH /{model}/{id}
      *
-     * @param int $id
-     * @param Request $request
+     * @param  int  $id
+     * @param  Request  $request
      * @return Response
      */
     public function update($id, Request $request)
@@ -154,7 +153,7 @@ class AppBaseController extends Controller
      * Remove the specified {{CurrentModel}} from storage.
      * DELETE /{model}/{id}
      *
-     * @param int $id
+     * @param  int  $id
      * @return Response
      */
     public function destroy($id)
