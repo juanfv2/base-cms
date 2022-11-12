@@ -30,30 +30,30 @@ class AppBaseController extends Controller
      * Display a listing of the {{CurrentModel}}.
      * GET|HEAD /{model}
      *
-     * @param Request $request
+     * @param \Illuminate\Http\Request $request
      * @return Response
      */
     public function index(Request $request)
     {
         $action = $request->get('action', '');
-        $limit  = $request->get('limit', -1);
+        $limit = $request->get('limit', -1);
 
         $this->model->pushCriteria(new RequestCriteriaModel($request));
 
         switch ($action) {
             case 'export':
-                $headers   = json_decode($request->get('fields'), true);
-                $zName     = $request->get('title', '-');
+                $headers = json_decode($request->get('fields'), true);
+                $zName = $request->get('title', '-');
                 $extension = $request->get('ext', 'csv');
 
                 return $this->export($zName, $extension, $headers, $this->model);
 
             case 'countable':
-                $items     = $this->model->mAll();
+                $items = $this->model->mAll();
                 $itemCount = $items->count();
 
                 return $this->sendResponse(
-                    ['totalPages' => abs(ceil($itemCount / $limit)), 'totalElements' => $itemCount, 'content' => $items,],
+                    ['totalPages' => abs(ceil($itemCount / $limit)), 'totalElements' => $itemCount, 'content' => $items],
                     __('validation.model.list', ['model' => __("models.{$this->modelNameCamel}.plural")])
                 );
                 break;
@@ -69,7 +69,7 @@ class AppBaseController extends Controller
                 $items = GenericResource::collection($items);
                 /* */
                 return $this->sendResponse(
-                    ['totalPages' => abs(ceil($itemCount / $limit)), 'totalElements' => $itemCount, 'content' => $items,],
+                    ['totalPages' => abs(ceil($itemCount / $limit)), 'totalElements' => $itemCount, 'content' => $items],
                     __('validation.model.list', ['model' => __("models.{$this->modelNameCamel}.plural")])
                 );
         }
@@ -79,8 +79,7 @@ class AppBaseController extends Controller
      * Store a newly created {{CurrentModel}} in storage.
      * POST /{model}
      *
-     * @param Create{{CurrentModel}}APIRequest $request
-     *
+     * @param \Illuminate\Http\Request $request
      * @return Response
      */
     public function store(Request $request)
@@ -104,16 +103,21 @@ class AppBaseController extends Controller
      * GET|HEAD /{model}/{id}
      *
      * @param int $id
-     *
      * @return Response
      */
     public function show($id)
     {
+        $with = json_decode(urldecode(request('with', '')));
+
         /** @var \App\Models\{{CurrentModel}} $model */
-        $model = $this->model->find($id);
+        $model = $with ?
+            $this->model->with($with)->find($id) :
+            $this->model->find($id);
+
         if (empty($model)) {
             return $this->sendError(__('validation.model.not.found', ['model' => __("models.{$this->modelNameCamel}.name")]));
         }
+
         $model = new GenericResource($model);
 
         return $this->sendResponse($model, __('validation.model.showed', ['model' => __("models.{$this->modelNameCamel}.name")]));
@@ -124,8 +128,7 @@ class AppBaseController extends Controller
      * PUT/PATCH /{model}/{id}
      *
      * @param int $id
-     * @param Update{{CurrentModel}}APIRequest $request
-     *
+     * @param Request $request
      * @return Response
      */
     public function update($id, Request $request)
@@ -152,9 +155,6 @@ class AppBaseController extends Controller
      * DELETE /{model}/{id}
      *
      * @param int $id
-     *
-     * @throws \Exception
-     *
      * @return Response
      */
     public function destroy($id)

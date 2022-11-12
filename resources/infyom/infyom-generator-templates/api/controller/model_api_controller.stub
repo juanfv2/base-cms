@@ -10,12 +10,11 @@ class $MODEL_NAME$APIController extends AppBaseController
 {
     /** @var $NAMESPACE_MODEL$\$MODEL_NAME$ */
     public $model;
-    public $rules;
+
     public $modelNameCamel = '$MODEL_NAME$';
 
     public function __construct($MODEL_NAME$ $model)
     {
         $this->model = $model;
-        $this->rules = $MODEL_NAME$::$rules;
     }
 }
