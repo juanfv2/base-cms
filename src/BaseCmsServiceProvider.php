@@ -37,7 +37,7 @@ class BaseCmsServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/Entities/Controllers'   => app_path('Http/Controllers'),
             __DIR__ . '/Entities/Models'        => app_path('Models'),
-            // __DIR__ . '/Entities/Repositories'  => app_path('Repositories'),
+            __DIR__ . '/Entities/Repositories'  => app_path('Repositories'),
             __DIR__ . '/Entities/Notifications' => app_path('Notifications'),
             __DIR__ . '/Entities/Tests'         => base_path('tests'),
         ], 'base-cms-entities');

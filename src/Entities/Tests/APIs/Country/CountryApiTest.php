@@ -81,7 +81,7 @@ class CountryApiTest extends TestCase
 
         $this->assertApiSuccess();
 
-        $this->response = $this->actingAsAdmin('api')->json('GET', route('api.countries.show', ['country' => $model->id]));
+        $this->response = $this->actingAsAdmin('api')->json('DELETE', route('api.countries.destroy', ['country' => $model->id]));
 
         $this->response->assertStatus(404);
     }

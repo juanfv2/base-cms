@@ -14,12 +14,11 @@ class BulkErrorAPIController extends AppBaseController
 {
     /** @var App\Models\BulkError */
     public $model;
-    public $rules;
+
     public $modelNameCamel = 'BulkError';
 
     public function __construct(BulkError $model)
     {
         $this->model = $model;
-        $this->rules = BulkError::$rules;
     }
 }

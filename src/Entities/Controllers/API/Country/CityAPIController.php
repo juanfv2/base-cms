@@ -12,14 +12,13 @@ use App\Http\Controllers\AppBaseController;
  */
 class CityAPIController extends AppBaseController
 {
-    /** @var  */
+    /** @var  \App\Models\Country\City */
     public $model;
-    public $rules;
+
     public $modelNameCamel = 'City';
 
     public function __construct(City $model)
     {
         $this->model = $model;
-        $this->rules = City::$rules;
     }
 }

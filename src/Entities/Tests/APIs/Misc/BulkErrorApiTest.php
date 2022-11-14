@@ -81,7 +81,7 @@ class BulkErrorApiTest extends TestCase
 
         $this->assertApiSuccess();
 
-        $this->response = $this->actingAsAdmin('api')->json('GET', route('api.bulk_errors.show', ['bulk_error' => $model->id]));
+        $this->response = $this->actingAsAdmin('api')->json('DELETE', route('api.bulk_errors.destroy', ['bulk_error' => $model->id]));
 
         $this->response->assertStatus(404);
     }

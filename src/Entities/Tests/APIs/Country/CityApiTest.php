@@ -81,7 +81,7 @@ class CityApiTest extends TestCase
 
         $this->assertApiSuccess();
 
-        $this->response = $this->actingAsAdmin('api')->json('GET', route('api.cities.show', ['city' => $model->id]));
+        $this->response = $this->actingAsAdmin('api')->json('DELETE', route('api.cities.destroy', ['city' => $model->id]));
 
         $this->response->assertStatus(404);
     }

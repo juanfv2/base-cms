@@ -153,14 +153,6 @@ class User extends Authenticatable
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      **/
-    public function driver()
-    {
-        return $this->hasOne(\App\Models\Driver::class, 'user_id', 'id');
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     **/
     public function account()
     {
         return $this->hasOne(\App\Models\Auth\Account::class, 'user_id', 'id');
@@ -210,41 +202,6 @@ class User extends Authenticatable
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      **/
     public function photo()
-    {
-        return $this->hasOneXFile(__FUNCTION__);
-    }
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
-     **/
-    public function carPicture()
-    {
-        return $this->hasOneXFile(__FUNCTION__);
-    }
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
-     **/
-    public function dui()
-    {
-        return $this->hasOneXFile(__FUNCTION__);
-    }
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
-     **/
-    public function license()
-    {
-        return $this->hasOneXFile(__FUNCTION__);
-    }
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
-     **/
-    public function solvency()
-    {
-        return $this->hasOneXFile(__FUNCTION__);
-    }
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
-     **/
-    public function antecedents()
     {
         return $this->hasOneXFile(__FUNCTION__);
     }

@@ -14,12 +14,11 @@ class XFileAPIController extends AppBaseController
 {
     /** @var App\Models\XFile */
     public $model;
-    public $rules;
+
     public $modelNameCamel = 'XFile';
 
     public function __construct(XFile $model)
     {
         $this->model = $model;
-        $this->rules = XFile::$rules;
     }
 }

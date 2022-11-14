@@ -97,7 +97,7 @@ class RoleApiTest extends TestCase
 
         $this->assertApiSuccess();
 
-        $this->response = $this->actingAsAdmin('api')->json('GET', route('api.roles.show', ['role' => $role->id]));
+        $this->response = $this->actingAsAdmin('api')->json('DELETE', route('api.roles.destroy', ['role' => $role->id]));
 
         $this->response->assertStatus(404);
     }

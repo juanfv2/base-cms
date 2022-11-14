@@ -16,7 +16,8 @@ class RoleAPIController extends AppBaseController
 {
     /** @var  \App\Models\Auth\Role */
     public $model;
-    public $modelNameCamel = 'role';
+
+    public $modelNameCamel = 'Role';
 
     public function __construct(Role $model)
     {

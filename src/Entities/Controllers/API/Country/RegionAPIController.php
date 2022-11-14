@@ -12,14 +12,13 @@ use App\Http\Controllers\AppBaseController;
  */
 class RegionAPIController extends AppBaseController
 {
-    /** @var Region */
+    /** @var \App\Models\Country\Region */
     public $model;
-    public $rules;
+
     public $modelNameCamel = 'Region';
 
     public function __construct(Region $model)
     {
         $this->model = $model;
-        $this->rules = Region::$rules;
     }
 }

@@ -14,12 +14,11 @@ class CountryAPIController extends AppBaseController
 {
     /** @var \App\Models\Country */
     public $model;
-    public $rules;
+
     public $modelNameCamel = 'Country';
 
     public function __construct(Country $model)
     {
         $this->model = $model;
-        $this->rules = Country::$rules;
     }
 }
