@@ -73,7 +73,7 @@ trait ImportableExportable
                 $d = implode($delimiter, $data1);
                 $queue = property_exists($this, 'event') ? $this->event->data->cQueue : "__u___";
                 VisorLogError::create(['queue' => $queue, 'payload' => "{$d} $delimiter Línea: {$line} $delimiter {$th->getMessage()}",]);
-                throw $th;
+                // throw $th;
             }
         }
 
@@ -187,10 +187,10 @@ trait ImportableExportable
                     $created++;
                 }
             } catch (\Throwable $th) {
-                // throw $th;
                 $d = implode($delimiter, $data1);
                 $queue = property_exists($this, 'event') ? $this->event->data->cQueue : "__u___";
                 VisorLogError::create(['queue' => $queue, 'payload' => "{$d} $delimiter Línea: {$line} $delimiter {$th->getMessage()}",]);
+                // throw $th;
             }
         }
 
