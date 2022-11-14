@@ -2,8 +2,8 @@
 
 namespace Juanfv2\BaseCms\Traits;
 
+use App\Models\Misc\VisorLogError;
 use Illuminate\Http\Request;
-use App\Models\Misc\BulkError;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Juanfv2\BaseCms\Utils\BaseCmsExportCSV;
@@ -72,8 +72,8 @@ trait ImportableExportable
             } catch (\Throwable $th) {
                 $d = implode($delimiter, $data1);
                 $queue = property_exists($this, 'event') ? $this->event->data->cQueue : "__u___";
-                BulkError::create(['queue' => $queue, 'payload' => "{$d} $delimiter Línea: {$line} $delimiter {$th->getMessage()}",]);
-                // throw $th;
+                VisorLogError::create(['queue' => $queue, 'payload' => "{$d} $delimiter Línea: {$line} $delimiter {$th->getMessage()}",]);
+                throw $th;
             }
         }
 
@@ -190,7 +190,7 @@ trait ImportableExportable
                 // throw $th;
                 $d = implode($delimiter, $data1);
                 $queue = property_exists($this, 'event') ? $this->event->data->cQueue : "__u___";
-                BulkError::create(['queue' => $queue, 'payload' => "{$d} $delimiter Línea: {$line} $delimiter {$th->getMessage()}",]);
+                VisorLogError::create(['queue' => $queue, 'payload' => "{$d} $delimiter Línea: {$line} $delimiter {$th->getMessage()}",]);
             }
         }
 
@@ -242,6 +242,10 @@ trait ImportableExportable
             }
 
             $model = $model->withTrashed()->where($attrKeys)->first();
+
+            if (! $model) {
+                return false;
+            }
 
             if (is_string($primaryKeys)) {
                 $model->setKeyName($primaryKeys);
