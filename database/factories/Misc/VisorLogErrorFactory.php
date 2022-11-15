@@ -2,17 +2,16 @@
 
 namespace Database\Factories\Misc;
 
-use App\Models\Misc\BulkError;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class BulkErrorFactory extends Factory
+class VisorLogErrorFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = BulkError::class;
+    protected $model = \App\Models\Misc\VisorLogError::class;
 
     /**
      * Define the model's default state.
@@ -24,7 +23,7 @@ class BulkErrorFactory extends Factory
         return [
             'payload' => $this->faker->text,
             'queue' => $this->faker->word,
-            'created_at' => $this->faker->date('Y-m-d H:i:s')
+            'container_id' => 1,
         ];
     }
 }
