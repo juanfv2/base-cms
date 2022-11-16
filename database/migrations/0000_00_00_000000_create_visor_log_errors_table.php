@@ -1,11 +1,10 @@
 <?php
 
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-class CreateBulkErrorsTable extends Migration
+class CreateVisorLogErrorsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,12 +13,12 @@ class CreateBulkErrorsTable extends Migration
      */
     public function up()
     {
-        Schema::create('bulk_errors', function (Blueprint $table) {
+        Schema::create('visor_log_errors', function (Blueprint $table) {
             $table->id();
             $table->longText('payload');
             $table->string('queue')->index();
             $table->unsignedBigInteger('container_id')->default(0);
-            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('created_at')->nullable();
         });
     }
 
@@ -30,6 +29,6 @@ class CreateBulkErrorsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('bulk_errors');
+        Schema::dropIfExists('visor_log_errors');
     }
 }
