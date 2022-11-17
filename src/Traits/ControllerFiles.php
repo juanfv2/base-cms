@@ -265,7 +265,7 @@ trait ControllerFiles
 
         ini_set('memory_limit', '-1');
 
-        $temp = Storage::path("$strLocationImage2show");
+        $temp                     = Storage::path("$strLocationImage2show");
 
         if ($w || $h) {
 
@@ -273,9 +273,16 @@ trait ControllerFiles
             $ext                      = pathinfo($basename, PATHINFO_EXTENSION);
             $strLocationImage2showNew = Str::replaceLast(".{$ext}", "-{$w}x{$h}.{$ext}", $strLocationImage2show);
             $exists                   = Storage::exists($strLocationImage2showNew);
+            $supported_image          = ['gif', 'jpg', 'jpeg', 'png'];
 
             // logger(__FILE__ . ':' . __LINE__ . ' $temp ', [$temp, $strLocationImage2showNew]);
             if (!$exists) {
+
+                if (!in_array($ext, $supported_image)) {
+                    $temp = $strLocationImageNotFound;
+                    return response()->file($temp);
+                }
+
                 // use jpg format and quality of 100
                 $resized_image = Image::make($temp)
                     ->resize($w > 0 ? $w : null, $h > 0 ? $h : null, function ($constraint) use ($w, $h) {

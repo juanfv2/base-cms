@@ -13,7 +13,7 @@ trait HasFile
             ->where('entity', $this->table)
             ->where('field', $field)
             ->withDefault([
-                'id' => 1,
+                'id' => -1,
                 'name' => 'logo.png',
                 'field' => $field,
                 'entity' => $this->table,
