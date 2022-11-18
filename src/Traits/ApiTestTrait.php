@@ -54,7 +54,7 @@ trait ApiTestTrait
         );
     }
 
-    public function assertJsonModifications()
+    public function assertJsonModifications($_type = 'integer')
     {
         $this->assertApiSuccess();
 
@@ -62,7 +62,7 @@ trait ApiTestTrait
             fn (AssertableJson $json) => $json
                 ->has('message')
                 ->has('success')
-                ->whereType('data.id', 'integer')
+                ->whereType('data.id', $_type)
                 ->etc()
 
         );
