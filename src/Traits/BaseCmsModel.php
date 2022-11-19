@@ -46,6 +46,7 @@ trait BaseCmsModel
         }
         if (is_null($this->jQuery)) {
             $this->jQuery = $this->query();
+            $this->jQuery->setModel($this);
         }
         $this->criteria->push($criteria);
 
