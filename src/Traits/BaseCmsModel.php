@@ -265,8 +265,11 @@ trait BaseCmsModel
                             $related = get_class($this->$key()->getRelated());
                             foreach ($new_values as $val) {
                                 $rel = $related::find($val);
-                                $rel->$model_key = $this->id;
-                                $rel->save();
+                                // logger(__FILE__ . ':' . __LINE__ . ' $rel ', [$this->id, $this->getTable(), $key, $val, $related, $rel]);
+                                if ($rel) {
+                                    $rel->$model_key = $this->id;
+                                    $rel->save();
+                                }
                             }
                         }
                         break;
