@@ -265,7 +265,7 @@ trait ControllerFiles
 
         ini_set('memory_limit', '-1');
 
-        $temp                     = Storage::path("$strLocationImage2show");
+        $temp                     = Storage::path($strLocationImage2show);
 
         if ($w || $h) {
 
