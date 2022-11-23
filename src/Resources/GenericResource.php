@@ -23,12 +23,6 @@ class GenericResource extends JsonResource
         parent::__construct($resource);
     }
 
-    /**
-     * Transform the resource into an array.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
-     */
     public function toArray($request, $ownIncludes = null)
     {
         $data = parent::toArray($request);
@@ -36,7 +30,7 @@ class GenericResource extends JsonResource
         $this->includes = $ownIncludes ?: $this->includes;
 
         if ($request->has('includes')) {
-            $arr = $request['includes'] = is_string($request['includes']) ? json_decode($request['includes'], true) : $request['includes'];
+            $arr = $request['includes'] = is_string($request->get('includes', null)) ? json_decode($request->get('includes', '[]'), true, 512, JSON_THROW_ON_ERROR) : $request['includes'];
 
             // logger(__FILE__ . ':' . __LINE__ . ' $arr ', [$arr]);
             // logger(__FILE__ . ':' . __LINE__ . ' $this->includes ', [$this->includes]);
@@ -92,6 +86,6 @@ class GenericResource extends JsonResource
      */
     public static function coll($resource, $includes)
     {
-        return new GenericResourceCollection($resource, get_called_class(), $includes);
+        return new GenericResourceCollection($resource, static::class, $includes);
     }
 }

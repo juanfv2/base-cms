@@ -35,10 +35,11 @@ class GenericResourceCollection extends AnonymousResourceCollection
      * Transform the resource into a JSON array.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return array
+     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
      */
     public function toArray($request)
     {
+        /** var \Juanfv2\BaseCms\Resources\GenericResource[] */
         return $this->collection->map->toArray($request, $this->includes)->all();
     }
 }

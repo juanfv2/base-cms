@@ -9,11 +9,11 @@ use stdClass;
 
 interface Trashed
 {
-    const Without = 0;
+    public const Without = 0;
 
-    const Only = 1;
+    public const Only = 1;
 
-    const With = 2;
+    public const With = 2;
 }
 
 /**
@@ -43,20 +43,20 @@ class RequestCriteriaModel implements CriteriaInterfaceModel
     public function apply(&$model)
     {
         $this->model = $model;
-        $conditions = $this->request->get('conditions', '');
-        $joins = $this->request->get('joins', '');
-        $select1 = $this->request->get('select', null);
-        $sorts = $this->request->get('sorts', '');
-        $withCount = $this->request->get('withCount', '');
-        $with = $this->request->get('with', '');
+        $conditions = $this->request->get('conditions', '[]');
+        $joins = $this->request->get('joins', '[]');
+        $select1 = $this->request->get('select', '');
+        $sorts = $this->request->get('sorts', '[]');
+        $withCount = $this->request->get('withCount', '[]');
+        $with = $this->request->get('with', '[]');
         $onlyTrashed = (int) $this->request->get('trashed', Trashed::Without);
-        $conditions = json_decode(urldecode($conditions));
-        $joins = json_decode(urldecode($joins));
-        $sorts = json_decode(urldecode($sorts));
-        $withCount = json_decode(urldecode($withCount));
-        $with = json_decode(urldecode($with));
-        $select2 = $select1 ? json_decode(urldecode($select1)) : null;
-        $select = $select2 ? $select2 : ($select1 ? explode(',', urldecode($select1)) : null);
+        $conditions = json_decode(urldecode($conditions), null, 512, JSON_THROW_ON_ERROR);
+        $joins = json_decode(urldecode($joins), null, 512, JSON_THROW_ON_ERROR);
+        $sorts = json_decode(urldecode($sorts), null, 512, JSON_THROW_ON_ERROR);
+        $withCount = json_decode(urldecode($withCount), null, 512, JSON_THROW_ON_ERROR);
+        $with = json_decode(urldecode($with), null, 512, JSON_THROW_ON_ERROR);
+        $select2 = _isJson($select1) ? json_decode(urldecode($select1), null, 512, JSON_THROW_ON_ERROR) : null;
+        $select = $select2 ?: ($select1 ? explode(',', urldecode($select1)) : null);
 
         // logger(__FILE__ . ':' . __LINE__ . ' $this->request ', [$this->request]);
 
@@ -288,9 +288,9 @@ class RequestCriteriaModel implements CriteriaInterfaceModel
     {
         $this->model = $model;
         $massiveQ = $this->request->get('mq');
-        $conditions = isset($massiveQ['conditions']) ? $massiveQ['conditions'] : null;
-        $conditions = json_decode(urldecode($conditions));
-        $massiveQueryFileName = isset($massiveQ['massiveWithFile']) ? $massiveQ['massiveWithFile'] : '';
+        $conditions = $massiveQ['conditions'] ?? null;
+        $conditions = json_decode(urldecode($conditions), null, 512, JSON_THROW_ON_ERROR);
+        $massiveQueryFileName = $massiveQ['massiveWithFile'] ?? '';
         $exactSearch = isset($massiveQ['exactSearch']) ? ($massiveQ['exactSearch'] === 'true') : false;
         $rCountry = $this->request->header('r-country', '');
         $basename = basename($massiveQueryFileName);
@@ -321,7 +321,7 @@ class RequestCriteriaModel implements CriteriaInterfaceModel
                     $c = 0;
                     if ($exactSearch) {
                         // $dataCombined[] =  $conditions _array_combine($columns, $data);
-                        $temp = json_decode(json_encode($conditions));
+                        $temp = json_decode(json_encode($conditions, JSON_THROW_ON_ERROR), null, 512, JSON_THROW_ON_ERROR);
                         foreach ($data as $k => $d) {
                             if ($d !== null && $d !== '') {
                                 $temp[$c]->v = $d;
@@ -370,7 +370,7 @@ class RequestCriteriaModel implements CriteriaInterfaceModel
         $result = new stdClass;
         $result->prevOperator = 'AND';
 
-        for ($i = 0; $i < count($conditions); $i++) {
+        for ($i = 0; $i < (is_countable($conditions) ? count($conditions) : 0); $i++) {
             $column = $columns[$i];
             $_condition = $conditions[$i];
             $condition = explode(' ', $_condition->c);
