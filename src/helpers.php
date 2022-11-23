@@ -55,3 +55,9 @@ function _sanitize($name)
     $name = Str::of($name)->lower()->snake()->ascii();
     return str_replace([':', "'", "/", '\\', ".", '"', '?', '$', '-', '*', '`', '+', ','], '_', $name);
 }
+
+function _isJson($string)
+{
+    json_decode($string);
+    return json_last_error() === JSON_ERROR_NONE;
+}
