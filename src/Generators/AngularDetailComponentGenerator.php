@@ -9,17 +9,13 @@ use InfyOm\Generator\Utils\FileUtil;
 
 class AngularDetailComponentGenerator extends BaseGenerator
 {
-    /** @var CommandData */
-    private $commandData;
+    private \InfyOm\Generator\Common\CommandData $commandData;
 
-    /** @var string */
-    private $path;
+    private string $path;
 
-    /** @var string */
-    private $fileName;
+    private string $fileName;
 
-    /** @var string */
-    private $primaryKey;
+    private string $primaryKey;
 
     public function __construct(CommandData $commandData)
     {
@@ -106,8 +102,8 @@ class AngularDetailComponentGenerator extends BaseGenerator
         $relations1 = [$this->commandData->config->mName];
         $relations2 = [];
         foreach ($this->commandData->relations as $relation) {
-            $type = (isset($relation->type)) ? $relation->type : null;
-            $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
+            $type = $relation->type ?? null;
+            $field = $relation->inputs[0] ?? null;
             $fieldCamel = Str::camel($field);
             $relations2[] = "'$fieldCamel'";
 
@@ -124,8 +120,8 @@ class AngularDetailComponentGenerator extends BaseGenerator
     {
         $relations = [];
         foreach ($this->commandData->relations as $relation) {
-            $type = (isset($relation->type)) ? $relation->type : null;
-            $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
+            $type = $relation->type ?? null;
+            $field = $relation->inputs[0] ?? null;
 
             $fieldCamel = Str::camel($field);
             $fieldCamelPlural = Str::plural($fieldCamel);
@@ -155,8 +151,8 @@ class AngularDetailComponentGenerator extends BaseGenerator
         $relations1 = [];
         $relations2 = [];
         foreach ($this->commandData->relations as $relation) {
-            $type = (isset($relation->type)) ? $relation->type : null;
-            $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
+            $type = $relation->type ?? null;
+            $field = $relation->inputs[0] ?? null;
 
             if ($type != 'mtm') {
                 continue;
@@ -316,8 +312,8 @@ class AngularDetailComponentGenerator extends BaseGenerator
     {
         $relations = [];
         foreach ($this->commandData->relations as $relation) {
-            $type = (isset($relation->type)) ? $relation->type : null;
-            $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
+            $type = $relation->type ?? null;
+            $field = $relation->inputs[0] ?? null;
             if ($type != 'mt1') {
                 continue;
             }
@@ -354,8 +350,8 @@ class AngularDetailComponentGenerator extends BaseGenerator
         $relations .= '    <nav ngbNav #nav="ngbNav" class="nav-tabs">';
 
         foreach ($this->commandData->relations as $relation) {
-            $type = (isset($relation->type)) ? $relation->type : null;
-            $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
+            $type = $relation->type ?? null;
+            $field = $relation->inputs[0] ?? null;
             /* AngularDetailComponentGenerator::htmlRelations_1tm(); */
             /* AngularDetailComponentGenerator::htmlRelations_mtm(); */
             if (method_exists($this, "htmlRelations_$type")) {
@@ -450,8 +446,8 @@ class AngularDetailComponentGenerator extends BaseGenerator
         }
 
         foreach ($this->commandData->relations as $relation) {
-            $type = (isset($relation->type)) ? $relation->type : null;
-            $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
+            $type = $relation->type ?? null;
+            $field = $relation->inputs[0] ?? null;
             $fieldCamel = Str::camel($field);
             $fields[] = "{$fieldCamel}Name: string;// $type";
             switch ($type) {
@@ -506,8 +502,8 @@ class AngularDetailComponentGenerator extends BaseGenerator
         }
 
         foreach ($this->commandData->relations as $relation) {
-            $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
-            $fieldFk = (isset($relation->inputs[1])) ? $relation->inputs[1] : null;
+            $field = $relation->inputs[0] ?? null;
+            $fieldFk = $relation->inputs[1] ?? null;
 
             $title = Str::title($field);
             $fieldCamel = Str::camel($field);

@@ -87,6 +87,7 @@ trait ControllerFiles
      */
     public function fileUpload(Request $request, $tableName, $fieldName, $id = 0, $color = false)
     {
+        $data = [];
         if (! $request->hasFile($fieldName)) {
             return $this->sendError(__('validation.file.required'));
         }
@@ -166,9 +167,9 @@ trait ControllerFiles
                 $xFile = XFile::firstOrNew(['entity_id' => $id, 'entity' => $tableName, 'field' => $fieldName]);
 
                 if ($xFile->id) {
-                    $temp = $this->getPathFileName($strLocation, $xFile->name);
+                    $temp = static::getPathFileName($strLocation, $xFile->name);
 
-                    $this->deleteFileWithGlob("{$temp}*");
+                    static::deleteFileWithGlob("{$temp}*");
                 }
 
                 $parts = explode('/', $path);

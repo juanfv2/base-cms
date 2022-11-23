@@ -116,7 +116,7 @@ class UserAPIController extends AppBaseController
             return $this->sendError(__('validation.model.not.found', ['model' => __("models.{$this->modelNameCamel}.name")]));
         }
 
-        $resp = $model->deleteAuthUser($input);
+        $resp = $model->deleteAuthUser();
 
         return $this->sendResponse(['id' => $id, 'success' => $resp], __('validation.model.deleted', ['model' => __("models.{$this->modelNameCamel}.name")]));
     }

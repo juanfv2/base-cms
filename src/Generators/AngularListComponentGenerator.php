@@ -9,17 +9,13 @@ use InfyOm\Generator\Utils\FileUtil;
 
 class AngularListComponentGenerator extends BaseGenerator
 {
-    /** @var CommandData */
-    private $commandData;
+    private \InfyOm\Generator\Common\CommandData $commandData;
 
-    /** @var string */
-    private $path;
+    private string $path;
 
-    /** @var string */
-    private $fileName;
+    private string $fileName;
 
-    /** @var string */
-    private $primaryKey;
+    private ?string $primaryKey = null;
 
     public function __construct(CommandData $commandData)
     {
@@ -143,8 +139,8 @@ class AngularListComponentGenerator extends BaseGenerator
         $relations = [$this->commandData->config->mName];
 
         foreach ($this->commandData->relations as $relation) {
-            $type = (isset($relation->type)) ? $relation->type : null;
-            $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
+            $type = $relation->type ?? null;
+            $field = $relation->inputs[0] ?? null;
             if ($type != 'mt1') {
                 continue;
             }
@@ -167,8 +163,8 @@ class AngularListComponentGenerator extends BaseGenerator
     {
         $relations = [];
         foreach ($this->commandData->relations as $relation) {
-            $type = (isset($relation->type)) ? $relation->type : null;
-            $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
+            $type = $relation->type ?? null;
+            $field = $relation->inputs[0] ?? null;
 
             if ($type != 'mt1') {
                 continue;
@@ -194,8 +190,8 @@ class AngularListComponentGenerator extends BaseGenerator
     {
         $relations = [];
         foreach ($this->commandData->relations as $relation) {
-            $type = (isset($relation->type)) ? $relation->type : null;
-            $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
+            $type = $relation->type ?? null;
+            $field = $relation->inputs[0] ?? null;
 
             if ($type != 'mt1') {
                 continue;
@@ -210,8 +206,8 @@ class AngularListComponentGenerator extends BaseGenerator
     {
         $relations = [];
         foreach ($this->commandData->relations as $relation) {
-            $type = (isset($relation->type)) ? $relation->type : null;
-            $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
+            $type = $relation->type ?? null;
+            $field = $relation->inputs[0] ?? null;
 
             if ($type != 'mt1') {
                 continue;
@@ -229,9 +225,9 @@ class AngularListComponentGenerator extends BaseGenerator
         $count = 1;
         $fieldsArr = [];
         foreach ($this->commandData->relations as $relation) {
-            $type = (isset($relation->type)) ? $relation->type : null;
-            $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
-            $fieldFK = (isset($relation->inputs[1])) ? $relation->inputs[1] : null;
+            $type = $relation->type ?? null;
+            $field = $relation->inputs[0] ?? null;
+            $fieldFK = $relation->inputs[1] ?? null;
 
             if ($type != 'mt1') {
                 continue;
@@ -255,9 +251,9 @@ class AngularListComponentGenerator extends BaseGenerator
     {
         $relations = [];
         foreach ($this->commandData->relations as $relation) {
-            $type = (isset($relation->type)) ? $relation->type : null;
-            $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
-            $fieldFK = (isset($relation->inputs[1])) ? $relation->inputs[1] : null;
+            $type = $relation->type ?? null;
+            $field = $relation->inputs[0] ?? null;
+            $fieldFK = $relation->inputs[1] ?? null;
 
             if ($type != 'mt1') {
                 continue;
@@ -281,8 +277,8 @@ class AngularListComponentGenerator extends BaseGenerator
     {
         $relations = [];
         foreach ($this->commandData->relations as $relation) {
-            $type = (isset($relation->type)) ? $relation->type : null;
-            $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
+            $type = $relation->type ?? null;
+            $field = $relation->inputs[0] ?? null;
 
             if ($type != 'mt1') {
                 continue;
@@ -311,8 +307,8 @@ class AngularListComponentGenerator extends BaseGenerator
     {
         $relations = [];
         foreach ($this->commandData->relations as $relation) {
-            $type = (isset($relation->type)) ? $relation->type : null;
-            $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
+            $type = $relation->type ?? null;
+            $field = $relation->inputs[0] ?? null;
 
             if ($type != 'mt1') {
                 continue;
@@ -436,8 +432,8 @@ class AngularListComponentGenerator extends BaseGenerator
     {
         $relations = [];
         foreach ($this->commandData->relations as $relation) {
-            $type = (isset($relation->type)) ? $relation->type : null;
-            $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
+            $type = $relation->type ?? null;
+            $field = $relation->inputs[0] ?? null;
 
             if ($type != 'mt1') {
                 continue;
@@ -461,8 +457,8 @@ class AngularListComponentGenerator extends BaseGenerator
     {
         $relations = [];
         foreach ($this->commandData->relations as $relation) {
-            $type = (isset($relation->type)) ? $relation->type : null;
-            $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
+            $type = $relation->type ?? null;
+            $field = $relation->inputs[0] ?? null;
 
             if ($type != 'mt1') {
                 continue;

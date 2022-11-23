@@ -211,7 +211,7 @@ trait BaseCmsModel
             ) {
                 $methodClass = get_class($this->$key($key));
                 switch ($methodClass) {
-                    case 'Illuminate\Database\Eloquent\Relations\BelongsToMany':
+                    case \Illuminate\Database\Eloquent\Relations\BelongsToMany::class:
                         $new_values = Arr::get($attributes, $key, []);
                         if ($new_values && is_array($new_values[0]) && count($new_values) > 0) {
                             $data = [];
@@ -226,17 +226,17 @@ trait BaseCmsModel
                             $this->$key()->sync(array_values($new_values));
                         }
                         break;
-                    case 'Illuminate\Database\Eloquent\Relations\BelongsTo':
+                    case \Illuminate\Database\Eloquent\Relations\BelongsTo::class:
                         $model_key = $this->$key()->getQualifiedForeignKeyName();
                         $new_value = Arr::get($attributes, $key, null);
                         $new_value = $new_value == '' ? null : $new_value;
                         $this->$model_key = $new_value;
                         break;
-                    case 'Illuminate\Database\Eloquent\Relations\HasOne':
+                    case \Illuminate\Database\Eloquent\Relations\HasOne::class:
                         break;
-                    case 'Illuminate\Database\Eloquent\Relations\HasOneOrMany':
+                    case \Illuminate\Database\Eloquent\Relations\HasOneOrMany::class:
                         break;
-                    case 'Illuminate\Database\Eloquent\Relations\HasMany':
+                    case \Illuminate\Database\Eloquent\Relations\HasMany::class:
                         $new_values = Arr::get($attributes, $key, []);
                         if (array_search('', $new_values) !== false) {
                             unset($new_values[array_search('', $new_values)]);

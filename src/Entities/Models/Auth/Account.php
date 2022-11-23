@@ -15,20 +15,14 @@ use Juanfv2\BaseCms\Traits\UserResponsible;
  */
 class Account extends Model
 {
-    use SoftDeletes,
-        BaseCmsModel,
+    use BaseCmsModel,
+        UserResponsible,
         HasFactory,
-        UserResponsible;
+        SoftDeletes;
 
     public $incrementing = false;
 
     public $table = 'auth_accounts';
-
-    const CREATED_AT = 'created_at';
-
-    const UPDATED_AT = 'updated_at';
-
-    protected $dates = ['deleted_at'];
 
     public $fillable = [
         'id',

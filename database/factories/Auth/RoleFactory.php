@@ -32,11 +32,9 @@ class RoleFactory extends Factory
      */
     public function admin(): Factory
     {
-        return $this->state(function () {
-            return [
-                'name' => 'admin',
-                'description' => $this->faker->word,
-            ];
-        });
+        return $this->state(fn () => [
+            'name' => 'admin',
+            'description' => $this->faker->word,
+        ]);
     }
 }

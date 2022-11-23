@@ -40,6 +40,7 @@ class CreateMenus extends Command
      */
     public function handle()
     {
+        $results = [];
         $paths = $this->argument('paths');
         $truncate = $this->option('truncate');
         $admin = $this->option('admin');
@@ -56,7 +57,7 @@ class CreateMenus extends Command
         foreach ($paths as $path) {
             $jsonString = file_get_contents(base_path($path));
 
-            $permissions = json_decode($jsonString, true);
+            $permissions = json_decode($jsonString, true, 512, JSON_THROW_ON_ERROR);
 
             // echo $path;
 
@@ -89,7 +90,7 @@ class CreateMenus extends Command
             return 'ok';
         }
 
-        $id = isset($request['id']) ? $request['id'] : null;
+        $id = $request['id'] ?? null;
         $isGroup = isset($request['isGroup']);
         $nameSingular = $request['name'];
         $namePlural = $request['namePlural'];

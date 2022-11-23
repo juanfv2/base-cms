@@ -26,9 +26,7 @@ trait UserResponsible
             return '';
         }
         $rCountry = session('r-country', request()->header('r-country', '.l.'));
-        $value = cache()->remember("$rCountry-createdBy-{$this->createdBy}", 3600, function () {
-            return DB::table('auth_users')->where('id', $this->createdBy)->value('name');
-        });
+        $value = cache()->remember("$rCountry-createdBy-{$this->createdBy}", 3600, fn () => DB::table('auth_users')->where('id', $this->createdBy)->value('name'));
 
         return $value;
     }
@@ -39,9 +37,7 @@ trait UserResponsible
             return '';
         }
         $rCountry = session('r-country', request()->header('r-country', '.l.'));
-        $value = cache()->remember("$rCountry-updatedBy-{$this->updatedBy}", 3600, function () {
-            return DB::table('auth_users')->where('id', $this->updatedBy)->value('name');
-        });
+        $value = cache()->remember("$rCountry-updatedBy-{$this->updatedBy}", 3600, fn () => DB::table('auth_users')->where('id', $this->updatedBy)->value('name'));
 
         return $value;
     }

@@ -28,7 +28,7 @@ trait BaseCmsModelUser
     {
         return DB::transaction(function () use ($input) {
             $input['password'] = Hash::make($input['password']);
-            $input['roles'] = is_string($input['roles']) ? json_decode($input['roles']) : $input['roles'];
+            $input['roles'] = is_string($input['roles']) ? json_decode($input['roles'], null, 512, JSON_THROW_ON_ERROR) : $input['roles'];
             $user = $this->mSave($input);
 
             $input['id'] = $user->id;
@@ -78,7 +78,7 @@ trait BaseCmsModelUser
     {
         return DB::transaction(function () use ($input) {
             $input['password'] = Hash::make($input['password']);
-            $input['roles'] = is_string($input['roles']) ? json_decode($input['roles']) : $input['roles'];
+            $input['roles'] = is_string($input['roles']) ? json_decode($input['roles'], null, 512, JSON_THROW_ON_ERROR) : $input['roles'];
             $user = $this->mSave($input);
 
             $input['id'] = $user->id;
@@ -133,7 +133,7 @@ trait BaseCmsModelUser
     {
         return DB::transaction(function () use ($input) {
             $input['password'] = Hash::make($input['password']);
-            $input['roles'] = is_string($input['roles']) ? json_decode($input['roles']) : $input['roles'];
+            $input['roles'] = is_string($input['roles']) ? json_decode($input['roles'], null, 512, JSON_THROW_ON_ERROR) : $input['roles'];
             $user = $this->mSave($input);
 
             $input['id'] = $user->id;

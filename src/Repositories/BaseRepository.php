@@ -397,9 +397,9 @@ abstract class BaseRepository implements RepositoryInterface
             ) {
                 $methodClass = get_class($model->$key($key));
                 switch ($methodClass) {
-                    case 'Illuminate\Database\Eloquent\Relations\BelongsToMany':
+                    case \Illuminate\Database\Eloquent\Relations\BelongsToMany::class:
                         $new_values = Arr::get($attributes, $key, []);
-                        if ($new_values && is_array($new_values[0]) && count($new_values) > 0) {
+                        if ($new_values && is_array($new_values[0]) && (is_countable($new_values) ? count($new_values) : 0) > 0) {
                             $data = [];
                             foreach ($new_values as $val) {
                                 $data[$val[$model->$key()->getRelatedPivotKeyName()]] = $val;
@@ -412,17 +412,17 @@ abstract class BaseRepository implements RepositoryInterface
                             $model->$key()->sync(array_values($new_values));
                         }
                         break;
-                    case 'Illuminate\Database\Eloquent\Relations\BelongsTo':
+                    case \Illuminate\Database\Eloquent\Relations\BelongsTo::class:
                         $model_key = $model->$key()->getQualifiedForeignKeyName();
                         $new_value = Arr::get($attributes, $key, null);
                         $new_value = $new_value == '' ? null : $new_value;
                         $model->$model_key = $new_value;
                         break;
-                    case 'Illuminate\Database\Eloquent\Relations\HasOne':
+                    case \Illuminate\Database\Eloquent\Relations\HasOne::class:
                         break;
-                    case 'Illuminate\Database\Eloquent\Relations\HasOneOrMany':
+                    case \Illuminate\Database\Eloquent\Relations\HasOneOrMany::class:
                         break;
-                    case 'Illuminate\Database\Eloquent\Relations\HasMany':
+                    case \Illuminate\Database\Eloquent\Relations\HasMany::class:
                         $new_values = Arr::get($attributes, $key, []);
                         if (array_search('', $new_values) !== false) {
                             unset($new_values[array_search('', $new_values)]);
@@ -438,7 +438,7 @@ abstract class BaseRepository implements RepositoryInterface
                             unset($new_values[array_search($rel->id, $new_values)]);
                         }
 
-                        if (count($new_values) > 0) {
+                        if ((is_countable($new_values) ? count($new_values) : 0) > 0) {
                             $related = get_class($model->$key()->getRelated());
                             foreach ($new_values as $val) {
                                 $rel = $related::find($val);

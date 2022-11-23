@@ -12,7 +12,7 @@ function _file_delimiter($file, $checkLines = 2)
         foreach ($delimiters as $delimiter) {
             $regExp = '/['.$delimiter.']/';
             $fields = preg_split($regExp, $line);
-            if (count($fields) > 1) {
+            if ((is_countable($fields) ? count($fields) : 0) > 1) {
                 if (! empty($results[$delimiter])) {
                     $results[$delimiter]++;
                 } else {
@@ -36,7 +36,7 @@ function _array_combine($keys, $values)
 {
     $result = [];
     foreach ($keys as $i => $k) {
-        $result[$k] = isset($values[$i]) ? $values[$i] : '';
+        $result[$k] = $values[$i] ?? '';
     }
 
     return $result;

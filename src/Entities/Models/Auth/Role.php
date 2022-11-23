@@ -17,16 +17,10 @@ class Role extends Model
 {
     use SoftDeletes,
         BaseCmsModel,
-        UserResponsible,
-        HasFactory;
+        HasFactory,
+        UserResponsible;
 
     public $table = 'auth_roles';
-
-    const CREATED_AT = 'created_at';
-
-    const UPDATED_AT = 'updated_at';
-
-    protected $dates = ['deleted_at'];
 
     public $fillable = [
         'name',

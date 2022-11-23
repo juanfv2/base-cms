@@ -15,8 +15,8 @@ use Juanfv2\BaseCms\Traits\ControllerFiles;
 class XFile extends Model
 {
     use BaseCmsModel,
-        HasFactory,
-        ControllerFiles;
+        ControllerFiles,
+        HasFactory;
 
     public $table = 'auth_x_files';
 

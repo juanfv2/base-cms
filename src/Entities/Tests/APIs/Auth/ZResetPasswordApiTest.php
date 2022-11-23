@@ -48,7 +48,7 @@ class ZResetPasswordApiTest extends TestCase
 
         // $response1->dump();
 
-        $response = json_decode($response1->getContent(), true);
+        $response = json_decode($response1->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         // dd($response);
 
@@ -81,7 +81,7 @@ class ZResetPasswordApiTest extends TestCase
 
         $response1 = $this->json('POST', route('api.password.reset'), $credentials);
 
-        $response = json_decode($response1->getContent(), true);
+        $response = json_decode($response1->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         // dd($response);
 
@@ -120,7 +120,7 @@ class ZResetPasswordApiTest extends TestCase
         // dump($response1);
         // $response1->dump();
 
-        $response = json_decode($response1->getContent(), true);
+        $response = json_decode($response1->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         // dd($response);
 

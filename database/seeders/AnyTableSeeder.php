@@ -58,7 +58,7 @@ class AnyTableSeeder extends Seeder
         ini_set('memory_limit', '-1');
 
         $json = File::get("database/data/{$table}.json");
-        $data = json_decode($json, true);
+        $data = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
 
         DB::table($tableN)->insert($data);
     }

@@ -26,7 +26,7 @@ class ZForgotPasswordApiTest extends TestCase
 
         $this->assertApiSuccess();
 
-        $responseData = json_decode($this->response->getContent(), true);
+        $responseData = json_decode($this->response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         $actual = $responseData['message'];
         $expected = __('passwords.sent');
@@ -49,7 +49,7 @@ class ZForgotPasswordApiTest extends TestCase
 
         $this->response->assertStatus(404);
 
-        $response = json_decode($this->response->getContent(), true);
+        $response = json_decode($this->response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         $actual = $response['message'];
         $expected = __('passwords.user');
@@ -77,7 +77,7 @@ class ZForgotPasswordApiTest extends TestCase
 
         // $response1->dump();
 
-        $response = json_decode($response1->getContent(), true);
+        $response = json_decode($response1->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         // dd($response);
 

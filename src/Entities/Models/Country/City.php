@@ -15,8 +15,8 @@ use Juanfv2\BaseCms\Traits\UserResponsible;
 class City extends Model
 {
     use BaseCmsModel,
-        HasFactory,
-        UserResponsible;
+        UserResponsible,
+        HasFactory;
 
     public $table = 'cities';
 

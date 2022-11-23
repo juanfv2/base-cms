@@ -41,7 +41,7 @@ class AdminController extends Controller
             // echo '<br>php artisan view:clear...';
             $parameters = request('params', '[]');
 
-            $params = json_decode($parameters, true);
+            $params = json_decode($parameters, true, 512, JSON_THROW_ON_ERROR);
 
             \Illuminate\Support\Facades\Artisan::call($k, $params);
 

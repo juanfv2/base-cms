@@ -54,6 +54,7 @@ class ZRegisterAPIController extends AppBaseController
      */
     public function registerUser($input)
     {
+        $r = null;
         $message = '';
         switch (intval($input['role_id'])) {
             case 3:
@@ -156,7 +157,7 @@ class ZRegisterAPIController extends AppBaseController
         // -- // 3224       ss
         // -- // 2317133    ss
 
-        $model = $this->model->auth_accounts_create_with($input, null);
+        $model = $this->model->auth_accounts_create_with($input);
 
         $this->model = $model;
 

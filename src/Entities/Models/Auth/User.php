@@ -19,21 +19,15 @@ use Juanfv2\BaseCms\Traits\UserResponsible;
  */
 class User extends Authenticatable
 {
-    use SoftDeletes,
-        BaseCmsModel,
+    use BaseCmsModel,
         BaseCmsModelUser,
-        HasFactory,
         UserResponsible,
         HasFile,
+        SoftDeletes,
+        HasFactory,
         Notifiable;
 
     public $table = 'auth_users';
-
-    const CREATED_AT = 'created_at';
-
-    const UPDATED_AT = 'updated_at';
-
-    protected $dates = ['deleted_at'];
 
     public $fillable = [
         'name',

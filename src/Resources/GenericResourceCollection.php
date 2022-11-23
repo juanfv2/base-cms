@@ -39,7 +39,7 @@ class GenericResourceCollection extends AnonymousResourceCollection
      */
     public function toArray($request)
     {
-        /** var \Juanfv2\BaseCms\Resources\GenericResource[] */
+        /** var \Juanfv2\BaseCms\Resources\GenericResource[] collection */
         return $this->collection->map->toArray($request, $this->includes)->all();
     }
 }
