@@ -16,6 +16,13 @@ class GenericResourceCollection extends AnonymousResourceCollection
     public $collects;
 
     /**
+     * The mapped collection instance.
+     *
+     * @var \Juanfv2\BaseCms\Resources\GenericResource
+     */
+    public $collection;
+
+    /**
      * Create a new anonymous resource collection.
      *
      * @param  mixed  $resource
@@ -39,7 +46,6 @@ class GenericResourceCollection extends AnonymousResourceCollection
      */
     public function toArray($request)
     {
-        /** var \Juanfv2\BaseCms\Resources\GenericResource[] collection */
         return $this->collection->map->toArray($request, $this->includes)->all();
     }
 }
