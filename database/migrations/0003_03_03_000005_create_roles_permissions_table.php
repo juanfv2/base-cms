@@ -14,7 +14,6 @@ class CreateRolesPermissionsTable extends Migration
     public function up()
     {
         Schema::create('auth_roles_has_permissions', function (Blueprint $table) {
-
             $table->foreignId('role_id')->constrained('auth_roles');
             $table->foreignId('permission_id')->constrained('auth_permissions');
 

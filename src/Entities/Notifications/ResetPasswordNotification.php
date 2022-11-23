@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notification;
 class ResetPasswordNotification extends Notification
 {
     use Queueable;
+
     /**
      * The password reset token.
      *
@@ -19,7 +20,7 @@ class ResetPasswordNotification extends Notification
     /**
      * Create a notification instance.
      *
-     * @param  string $token
+     * @param  string  $token
      * @return void
      */
     public function __construct($token)
@@ -30,7 +31,7 @@ class ResetPasswordNotification extends Notification
     /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed $notifiable
+     * @param  mixed  $notifiable
      * @return array
      */
     public function via($notifiable)
@@ -41,12 +42,12 @@ class ResetPasswordNotification extends Notification
     /**
      * Get the mail representation of the notification.
      *
-     * @param  mixed $notifiable
+     * @param  mixed  $notifiable
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
     public function toMail($notifiable)
     {
-        $urlStr = (config('base.welcome_page') == '' ? url('/') : config('base.welcome_page')) . '/base/password/?t=' . $this->token . '&e=' . urlencode($notifiable->email);
+        $urlStr = (config('base.welcome_page') == '' ? url('/') : config('base.welcome_page')).'/base/password/?t='.$this->token.'&e='.urlencode($notifiable->email);
 
         return (new MailMessage)
             ->subject(__('auth.password.reset'))
@@ -62,7 +63,7 @@ class ResetPasswordNotification extends Notification
     /**
      * Get the array representation of the notification.
      *
-     * @param  mixed $notifiable
+     * @param  mixed  $notifiable
      * @return array
      */
     public function toArray($notifiable)

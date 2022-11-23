@@ -42,7 +42,6 @@ class DatabaseSeeder extends Seeder
 
     public function truncateTables(array $tables)
     {
-
         // sql server
         // foreach ($tables as $table) {
         //     DB::statement('DELETE FROM ' . $table);

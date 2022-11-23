@@ -3,9 +3,9 @@
 namespace Juanfv2\BaseCms\Generators;
 
 use Illuminate\Support\Str;
-use InfyOm\Generator\Utils\FileUtil;
 use InfyOm\Generator\Common\CommandData;
 use InfyOm\Generator\Generators\BaseGenerator;
+use InfyOm\Generator\Utils\FileUtil;
 
 class AngularDetailComponentGenerator extends BaseGenerator
 {
@@ -26,17 +26,16 @@ class AngularDetailComponentGenerator extends BaseGenerator
         $this->commandData = $commandData;
         // dd($this->commandData);
         $mPath = config('infyom.laravel_generator.path.angular', 'angular/');
-        $this->path = $mPath . $this->commandData->config->mDashed . '/';
-        $name = $this->commandData->config->mDashed . '-detail.component.';
-        $this->fileName = $name . 'ts';
-        $this->fileNameSpec = $name . 'spec.ts';
-        $this->fileNameScss = $name . 'scss';
-        $this->fileNameHtml = $name . 'html';
+        $this->path = $mPath.$this->commandData->config->mDashed.'/';
+        $name = $this->commandData->config->mDashed.'-detail.component.';
+        $this->fileName = $name.'ts';
+        $this->fileNameSpec = $name.'spec.ts';
+        $this->fileNameScss = $name.'scss';
+        $this->fileNameHtml = $name.'html';
     }
 
     public function generate()
     {
-
         $this->generateScss();
         $this->generateSpec();
         $this->generateHtml();
@@ -45,7 +44,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
 
     public function generateTs()
     {
-        $templateData = get_template("angular.detail_component", 'laravel-generator');
+        $templateData = get_template('angular.detail_component', 'laravel-generator');
         $templateData = $this->fillTemplate($templateData);
 
         FileUtil::createFile($this->path, $this->fileName, $templateData);
@@ -56,7 +55,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
 
     public function generateScss()
     {
-        $templateData = get_template("angular.detail_component_scss", 'laravel-generator');
+        $templateData = get_template('angular.detail_component_scss', 'laravel-generator');
         $templateData = $this->fillTemplate($templateData);
 
         FileUtil::createFile($this->path, $this->fileNameScss, $templateData);
@@ -67,7 +66,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
 
     public function generateSpec()
     {
-        $templateData = get_template("angular.detail_component_spec", 'laravel-generator');
+        $templateData = get_template('angular.detail_component_spec', 'laravel-generator');
         $templateData = fill_template($this->commandData->dynamicVars, $templateData);
 
         FileUtil::createFile($this->path, $this->fileNameSpec, $templateData);
@@ -78,7 +77,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
 
     public function generateHtml()
     {
-        $templateData = get_template("angular.detail_component_html", 'laravel-generator');
+        $templateData = get_template('angular.detail_component_html', 'laravel-generator');
         $templateData = $this->fillTemplateHtml($templateData);
 
         FileUtil::createFile($this->path, $this->fileNameHtml, $templateData);
@@ -90,14 +89,15 @@ class AngularDetailComponentGenerator extends BaseGenerator
     private function fillTemplate($templateData)
     {
         $templateData = fill_template($this->commandData->dynamicVars, $templateData);
-        list($related1, $related2) = $this->tsRelations_mtm();
-        list($relatedNames1, $relatedNames2) = $this->generateRelationModelNames();
-        $templateData = str_replace('$RELATION_MODEL_CAMEL_NAMES_1$',                   implode(',', $relatedNames1), $templateData);
-        $templateData = str_replace('$RELATION_MODEL_CAMEL_NAMES_2$',                   implode(',', $relatedNames2), $templateData);
-        $templateData = str_replace('$RELATIONS_AS_FIELDS$',                            implode("\n", $this->generateRelationsFields()), $templateData);
-        $templateData = str_replace('$RELATED_1$',                                      implode("\n", $related1), $templateData);
-        $templateData = str_replace('$RELATED_2$',                                      implode("\n", $related2), $templateData);
-        $templateData = str_replace('$_MODEL_INFO_$',                                   implode("\n", $this->tsModel()), $templateData);
+        [$related1, $related2] = $this->tsRelations_mtm();
+        [$relatedNames1, $relatedNames2] = $this->generateRelationModelNames();
+        $templateData = str_replace('$RELATION_MODEL_CAMEL_NAMES_1$', implode(',', $relatedNames1), $templateData);
+        $templateData = str_replace('$RELATION_MODEL_CAMEL_NAMES_2$', implode(',', $relatedNames2), $templateData);
+        $templateData = str_replace('$RELATIONS_AS_FIELDS$', implode("\n", $this->generateRelationsFields()), $templateData);
+        $templateData = str_replace('$RELATED_1$', implode("\n", $related1), $templateData);
+        $templateData = str_replace('$RELATED_2$', implode("\n", $related2), $templateData);
+        $templateData = str_replace('$_MODEL_INFO_$', implode("\n", $this->tsModel()), $templateData);
+
         return $templateData;
     }
 
@@ -106,7 +106,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
         $relations1 = [$this->commandData->config->mName];
         $relations2 = [];
         foreach ($this->commandData->relations as $relation) {
-            $type  = (isset($relation->type))      ? $relation->type      : null;
+            $type = (isset($relation->type)) ? $relation->type : null;
             $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
             $fieldCamel = Str::camel($field);
             $relations2[] = "'$fieldCamel'";
@@ -116,6 +116,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
                 $relations1[] = "$fieldUcFirst";
             }
         }
+
         return [$relations1, $relations2];
     }
 
@@ -123,8 +124,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
     {
         $relations = [];
         foreach ($this->commandData->relations as $relation) {
-
-            $type  = (isset($relation->type))      ? $relation->type      : null;
+            $type = (isset($relation->type)) ? $relation->type : null;
             $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
 
             $fieldCamel = Str::camel($field);
@@ -155,8 +155,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
         $relations1 = [];
         $relations2 = [];
         foreach ($this->commandData->relations as $relation) {
-
-            $type  = (isset($relation->type))      ? $relation->type      : null;
+            $type = (isset($relation->type)) ? $relation->type : null;
             $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
 
             if ($type != 'mtm') {
@@ -193,9 +192,9 @@ class AngularDetailComponentGenerator extends BaseGenerator
     {
         $templateData = fill_template($this->commandData->dynamicVars, $templateData);
 
-        $templateData = str_replace('$INPUT_FIELDS$', implode("\n",          $this->generateHtmlInputFields()), $templateData);
-        $templateData = str_replace('$INPUT_FIELDS_RELATED$', implode("\n",  $this->generateHtmlInputFieldsRelated()), $templateData);
-        $templateData = str_replace('$LISTS_RELATED$', implode("\n",        [$this->generateHtmlRelated()]), $templateData);
+        $templateData = str_replace('$INPUT_FIELDS$', implode("\n", $this->generateHtmlInputFields()), $templateData);
+        $templateData = str_replace('$INPUT_FIELDS_RELATED$', implode("\n", $this->generateHtmlInputFieldsRelated()), $templateData);
+        $templateData = str_replace('$LISTS_RELATED$', implode("\n", [$this->generateHtmlRelated()]), $templateData);
 
         return $templateData;
     }
@@ -204,7 +203,6 @@ class AngularDetailComponentGenerator extends BaseGenerator
     {
         $relations = [];
         foreach ($this->commandData->fields as $field) {
-
             if ($field->name == 'createdBy' || $field->name == 'updatedBy') {
                 continue;
             }
@@ -310,6 +308,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
                 $relations[] = $relationText;
             }
         }
+
         return $relations;
     }
 
@@ -317,8 +316,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
     {
         $relations = [];
         foreach ($this->commandData->relations as $relation) {
-
-            $type  = (isset($relation->type))      ? $relation->type      : null;
+            $type = (isset($relation->type)) ? $relation->type : null;
             $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
             if ($type != 'mt1') {
                 continue;
@@ -349,22 +347,24 @@ class AngularDetailComponentGenerator extends BaseGenerator
 
         return $relations;
     }
+
     private function generateHtmlRelated()
     {
         $relations = "<div *ngIf=\"{$this->commandData->config->mCamel}?.id\">";
-        $relations .= "    <nav ngbNav #nav=\"ngbNav\" class=\"nav-tabs\">";
+        $relations .= '    <nav ngbNav #nav="ngbNav" class="nav-tabs">';
 
         foreach ($this->commandData->relations as $relation) {
-            $type  = (isset($relation->type))      ? $relation->type      : null;
+            $type = (isset($relation->type)) ? $relation->type : null;
             $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
             /* AngularDetailComponentGenerator::htmlRelations_1tm(); */
             /* AngularDetailComponentGenerator::htmlRelations_mtm(); */
             if (method_exists($this, "htmlRelations_$type")) {
-                $relations .= "\n{$this->{'htmlRelations_' .$type}($field)}";
+                $relations .= "\n{$this->{'htmlRelations_'.$type}($field)}";
             }
         }
 
         $relations .= "\n</nav><div [ngbNavOutlet]=\"nav\" class=\"bg-white\"></div></div>";
+
         return $relations;
     }
 
@@ -423,9 +423,9 @@ class AngularDetailComponentGenerator extends BaseGenerator
     {
         $mPrimaryKey = '';
         $fields = [];
-        $fields[] =  "/**";
-        $fields[] =  "// admin-angular/src/app/models/_models.ts\n";
-        $fields[] =  "export interface {$this->commandData->config->mName} {";
+        $fields[] = '/**';
+        $fields[] = "// admin-angular/src/app/models/_models.ts\n";
+        $fields[] = "export interface {$this->commandData->config->mName} {";
         foreach ($this->commandData->fields as $field) {
             $fieldText = '';
             $fieldText .= $field->name;
@@ -446,38 +446,38 @@ class AngularDetailComponentGenerator extends BaseGenerator
                     $fieldText .= ': string;';
                     break;
             }
-            $fields[] =  $fieldText;
+            $fields[] = $fieldText;
         }
 
         foreach ($this->commandData->relations as $relation) {
-            $type  = (isset($relation->type))      ? $relation->type      : null;
+            $type = (isset($relation->type)) ? $relation->type : null;
             $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
             $fieldCamel = Str::camel($field);
-            $fields[] =  "{$fieldCamel}Name: string;// $type";
+            $fields[] = "{$fieldCamel}Name: string;// $type";
             switch ($type) {
                 case 'mtm':
                 case '1tm':
                     $fieldCamel = Str::pluralStudly($fieldCamel);
-                    $fields[] =  "$fieldCamel: {$field}[]; ";
+                    $fields[] = "$fieldCamel: {$field}[]; ";
                     break;
 
                 default:
-                    $fields[] =  "$fieldCamel: $field; ";
+                    $fields[] = "$fieldCamel: $field; ";
                     break;
             }
         }
 
-        $fields[] =  "}\n";
+        $fields[] = "}\n";
 
-        $fields[] =  "// admin-angular/src/environments/k.ts>routes\n";
-        $fields[] =  "{$this->commandData->config->mCamelPlural}: '{$this->commandData->config->mSnakePlural}',\n";
+        $fields[] = "// admin-angular/src/environments/k.ts>routes\n";
+        $fields[] = "{$this->commandData->config->mCamelPlural}: '{$this->commandData->config->mSnakePlural}',\n";
 
-        $fields[] =  "// admin-angular/src/environments/l.ts\n";
-        $fields[] =  "{$this->commandData->config->mCamel}: {";
-        $fields[] =  "tablePK: '{$mPrimaryKey}',";
-        $fields[] =  "tableName: '{$this->commandData->config->tableName}',";
-        $fields[] =  "ownName: '{$this->commandData->config->mName}',";
-        $fields[] =  "ownNamePlural: '{$this->commandData->config->mPlural}',";
+        $fields[] = "// admin-angular/src/environments/l.ts\n";
+        $fields[] = "{$this->commandData->config->mCamel}: {";
+        $fields[] = "tablePK: '{$mPrimaryKey}',";
+        $fields[] = "tableName: '{$this->commandData->config->tableName}',";
+        $fields[] = "ownName: '{$this->commandData->config->mName}',";
+        $fields[] = "ownNamePlural: '{$this->commandData->config->mPlural}',";
 
         foreach ($this->commandData->fields as $field) {
             $converted = Str::title($field->name);
@@ -502,7 +502,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
                     $fieldText .= " 'string'),";
                     break;
             }
-            $fields[] =  $fieldText;
+            $fields[] = $fieldText;
         }
 
         foreach ($this->commandData->relations as $relation) {
@@ -512,29 +512,30 @@ class AngularDetailComponentGenerator extends BaseGenerator
             $title = Str::title($field);
             $fieldCamel = Str::camel($field);
 
-            $fields[] =  "";
-            $fields[] =  "{$fieldFk}: new DBType(`$title #`, '$fieldCamel.$fieldFk', 'number'),";
-            $fields[] =  "{$fieldCamel}Name: new DBType(`$title`, '{$fieldCamel}Name', 'string', true, false),";
+            $fields[] = '';
+            $fields[] = "{$fieldFk}: new DBType(`$title #`, '$fieldCamel.$fieldFk', 'number'),";
+            $fields[] = "{$fieldCamel}Name: new DBType(`$title`, '{$fieldCamel}Name', 'string', true, false),";
         }
 
-        $fields[] =  "},\n";
+        $fields[] = "},\n";
 
-        $fields[] =  "// admin-angular/src/app/core/modules/main/main.module.ts\n";
-        $fields[] =  "{$this->commandData->config->mName}ListComponent,";
-        $fields[] =  "{$this->commandData->config->mName}DetailComponent,";
-        $fields[] =  "{$this->commandData->config->mName}AutoCompleteComponent,\n";
-        $fields[] =  "// admin-angular/src/app/core/modules/main/main-routing.module.ts\n";
-        $fields[] =  "{ path: `\${k.routes.{$this->commandData->config->mCamelPlural}}/:id`, component: {$this->commandData->config->mName}DetailComponent },";
-        $fields[] =  "{ path: k.routes.{$this->commandData->config->mCamelPlural}, component: {$this->commandData->config->mName}ListComponent },";
+        $fields[] = "// admin-angular/src/app/core/modules/main/main.module.ts\n";
+        $fields[] = "{$this->commandData->config->mName}ListComponent,";
+        $fields[] = "{$this->commandData->config->mName}DetailComponent,";
+        $fields[] = "{$this->commandData->config->mName}AutoCompleteComponent,\n";
+        $fields[] = "// admin-angular/src/app/core/modules/main/main-routing.module.ts\n";
+        $fields[] = "{ path: `\${k.routes.{$this->commandData->config->mCamelPlural}}/:id`, component: {$this->commandData->config->mName}DetailComponent },";
+        $fields[] = "{ path: k.routes.{$this->commandData->config->mCamelPlural}, component: {$this->commandData->config->mName}ListComponent },";
 
-        $fields[] =  "*/";
+        $fields[] = '*/';
+
         return $fields;
     }
 
     public function rollback()
     {
         if ($this->rollbackFile($this->path, $this->fileName)) {
-            $this->commandData->commandComment('API Controller file deleted: ' . $this->fileName);
+            $this->commandData->commandComment('API Controller file deleted: '.$this->fileName);
         }
     }
 }

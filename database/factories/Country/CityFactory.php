@@ -3,8 +3,8 @@
 namespace Database\Factories\Country;
 
 use App\Models\Country\City;
-use App\Models\Country\Region;
 use App\Models\Country\Country;
+use App\Models\Country\Region;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CityFactory extends Factory

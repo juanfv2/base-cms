@@ -2,16 +2,14 @@
 
 namespace App\Models\Country;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Juanfv2\BaseCms\Traits\BaseCmsModel;
 use Juanfv2\BaseCms\Traits\UserResponsible;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * Class Region
  *
- * @package App\Models
  * @version October 19, 2022, 8:56 pm UTC
  */
 class Region extends Model
@@ -22,13 +20,12 @@ class Region extends Model
 
     public $table = 'regions';
 
-
     public $fillable = [
         'name',
         'code',
         'country_id',
         'createdBy',
-        'updatedBy'
+        'updatedBy',
     ];
 
     /**
@@ -42,7 +39,7 @@ class Region extends Model
         'code' => 'string',
         'country_id' => 'integer',
         'createdBy' => 'integer',
-        'updatedBy' => 'integer'
+        'updatedBy' => 'integer',
     ];
 
     /**
@@ -57,11 +54,11 @@ class Region extends Model
         'createdBy' => 'nullable',
         'updatedBy' => 'nullable',
         'created_at' => 'nullable',
-        'updated_at' => 'nullable'
+        'updated_at' => 'nullable',
     ];
 
     public $hidden = [
-        'createdBy', 'updatedBy', 'created_at', 'updated_at', 'deleted_at'
+        'createdBy', 'updatedBy', 'created_at', 'updated_at', 'deleted_at',
     ];
 
     /**

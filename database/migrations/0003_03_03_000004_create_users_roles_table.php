@@ -14,7 +14,6 @@ class CreateUsersRolesTable extends Migration
     public function up()
     {
         Schema::create('auth_users_has_roles', function (Blueprint $table) {
-
             $table->foreignId('user_id')->constrained('auth_users');
             $table->foreignId('role_id')->constrained('auth_roles');
 

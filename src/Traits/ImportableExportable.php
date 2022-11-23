@@ -10,21 +10,20 @@ use Juanfv2\BaseCms\Utils\BaseCmsExportCSV;
 
 trait ImportableExportable
 {
-
     /* -------------------------------------------------------------------------- */
     /* save                                                                       */
     /* -------------------------------------------------------------------------- */
     public function importing($handle, $table, $primaryKeys, $keys, $delimiter, $model_name = '', $extra_data = null, $callback = null)
     {
-        $created      = 0;
-        $line         = 0;
-        $data1        = [];
+        $created = 0;
+        $line = 0;
+        $data1 = [];
         $xHeadersTemp = fgetcsv($handle, 0, $delimiter);
         $xHeadersTemp = \ForceUTF8\Encoding::fixUTF8($xHeadersTemp);
         while (($data = fgetcsv($handle, 0, $delimiter)) !== false) {
             $line++;
             try {
-                $data1       = \ForceUTF8\Encoding::fixUTF8($data);
+                $data1 = \ForceUTF8\Encoding::fixUTF8($data);
                 $dataCombine = _array_combine($xHeadersTemp, $data1);
 
                 if ($dataCombine) {
@@ -56,7 +55,7 @@ trait ImportableExportable
                         }
 
                         $r = $this->saveModel($model_name, $attrKeys, $data, $primaryKeys, $table);
-                        // logger(__FILE__ . ':' . __LINE__ . ' $r ', [$r]);
+                    // logger(__FILE__ . ':' . __LINE__ . ' $r ', [$r]);
                     } else {
                         $r = $this->saveArray($table, $attrKeys, $data, $kName);
                     }
@@ -71,8 +70,8 @@ trait ImportableExportable
                 }
             } catch (\Throwable $th) {
                 $d = implode($delimiter, $data1);
-                $queue = property_exists($this, 'event') ? $this->event->data->cQueue : "__u___";
-                VisorLogError::create(['queue' => $queue, 'payload' => "{$d} $delimiter Línea: {$line} $delimiter {$th->getMessage()}",]);
+                $queue = property_exists($this, 'event') ? $this->event->data->cQueue : '__u___';
+                VisorLogError::create(['queue' => $queue, 'payload' => "{$d} $delimiter Línea: {$line} $delimiter {$th->getMessage()}"]);
                 // throw $th;
             }
         }
@@ -88,7 +87,7 @@ trait ImportableExportable
 
         foreach ($headers as $k) {
             if (isset($keys[$k])) {
-                if (!empty(trim($data[$k]))) {
+                if (! empty(trim($data[$k]))) {
                     $dataToSave[$keys[$k]] = $data[$k];
                 }
             }
@@ -123,11 +122,11 @@ trait ImportableExportable
                 $model->setTable($tableName);
             }
 
-            if (!empty($attrKeys)) {
+            if (! empty($attrKeys)) {
                 $model = $model->where($attrKeys)->firstOrNew();
             }
 
-            if (!$model) {
+            if (! $model) {
                 return false;
             }
 
@@ -152,9 +151,9 @@ trait ImportableExportable
     /* -------------------------------------------------------------------------- */
     public function deleting($handle, $table, $primaryKeys, $keys, $delimiter, $model_name = '')
     {
-        $created      = 0;
-        $line         = 0;
-        $data1        = [];
+        $created = 0;
+        $line = 0;
+        $data1 = [];
         $xHeadersTemp = fgetcsv($handle, 0, $delimiter);
         $xHeadersTemp = \ForceUTF8\Encoding::fixUTF8($xHeadersTemp);
         while (($data = fgetcsv($handle, 0, $delimiter)) !== false) {
@@ -188,8 +187,8 @@ trait ImportableExportable
                 }
             } catch (\Throwable $th) {
                 $d = implode($delimiter, $data1);
-                $queue = property_exists($this, 'event') ? $this->event->data->cQueue : "__u___";
-                VisorLogError::create(['queue' => $queue, 'payload' => "{$d} $delimiter Línea: {$line} $delimiter {$th->getMessage()}",]);
+                $queue = property_exists($this, 'event') ? $this->event->data->cQueue : '__u___';
+                VisorLogError::create(['queue' => $queue, 'payload' => "{$d} $delimiter Línea: {$line} $delimiter {$th->getMessage()}"]);
                 // throw $th;
             }
         }
@@ -211,7 +210,6 @@ trait ImportableExportable
     public function deleteModel($model_name, $attrKeys, $primaryKeys, $tableName)
     {
         try {
-
             session(['z-table' => $tableName]);
             $model = new $model_name();
 
@@ -256,6 +254,7 @@ trait ImportableExportable
             throw $th;
         }
     }
+
     /* -------------------------------------------------------------------------- */
     /* utils                                                                      */
     /* -------------------------------------------------------------------------- */
@@ -268,42 +267,41 @@ trait ImportableExportable
      */
     public function importCsv(Request $request)
     {
-        $rCountry     = $request->header('r-country', '');
-        $tableName    = $request->get('table');
-        $fieldName    = $request->get('massiveQueryFieldName');
-        $fileName     = $request->get('massiveQueryFileName');
-        $fileTemp     = explode('.', $fileName);
+        $rCountry = $request->header('r-country', '');
+        $tableName = $request->get('table');
+        $fieldName = $request->get('massiveQueryFieldName');
+        $fileName = $request->get('massiveQueryFileName');
+        $fileTemp = explode('.', $fileName);
         $fileTempName = $fileTemp[0];
-        $baseAssets   = 'public/assets/adm/';
+        $baseAssets = 'public/assets/adm/';
         if ($rCountry) {
-            $baseAssets = $baseAssets . $rCountry . '/';
+            $baseAssets = $baseAssets.$rCountry.'/';
         }
 
         $strLocationFileSaved = "{$baseAssets}temporals/$fileTempName/$tableName/$fieldName/$fileName";
-        $exists               = Storage::exists($strLocationFileSaved);
-        $massiveQueryFile     = Storage::path($strLocationFileSaved);
-        $keys                 = $request->get('keys');
-        $primaryKeyName       = $request->get('primaryKeyName');
-        $cModel               = \Illuminate\Support\Str::replace('-', '\\', $request->get('cModel', ''));
-        $created              = 0;
+        $exists = Storage::exists($strLocationFileSaved);
+        $massiveQueryFile = Storage::path($strLocationFileSaved);
+        $keys = $request->get('keys');
+        $primaryKeyName = $request->get('primaryKeyName');
+        $cModel = \Illuminate\Support\Str::replace('-', '\\', $request->get('cModel', ''));
+        $created = 0;
 
         // logger(__FILE__ . ':' . __LINE__ . ' $exists ', [$exists, $strLocationFileSaved, $massiveQueryFile]);
 
         try {
-
             if (($handle = fopen($massiveQueryFile, 'r')) !== false) {
-
-                $delimiter    = _file_delimiter($massiveQueryFile);
+                $delimiter = _file_delimiter($massiveQueryFile);
 
                 $created = $this->importing($handle, $tableName, $primaryKeyName, $keys, $delimiter, $cModel);
 
-                return $this->sendResponse(['updated' => $created - 1], __('validation.model.list', ['model' => $tableName]),);
+                return $this->sendResponse(['updated' => $created - 1], __('validation.model.list', ['model' => $tableName]));
             } // end ($handle = fopen($massiveQueryFile, 'r')) !== false
         } catch (\Throwable $th) {
             // throw $th;
-            return $this->sendError(['code' => $th->getCode(), 'message' => $th->getMessage(), 'updated' => $created,], 'Error en la linea ' . $created, 500);
+            return $this->sendError(['code' => $th->getCode(), 'message' => $th->getMessage(), 'updated' => $created], 'Error en la linea '.$created, 500);
         }
     }
+
     public function importJson(Request $request)
     {
         try {
@@ -320,22 +318,22 @@ trait ImportableExportable
                     foreach ($table as $tableName => $objects) {
                         if ($tableName == 'primaryKeyName') {
                             $primaryKeyName = $objects;
+
                             continue;
                         }
 
                         foreach ($objects as $object) {
-
                             $exist = false;
                             if (isset($object[$primaryKeyName])) {
                                 $r = DB::select("select count(*) as `aggregate` from $tableName where $primaryKeyName = ?", [$object[$primaryKeyName]]);
                                 $exist = $r[0]->aggregate > 0;
                             }
                             if ($exist) {
-                                DB::table('' . $tableName)
-                                    ->where('' . $primaryKeyName, $object[$primaryKeyName])
+                                DB::table(''.$tableName)
+                                    ->where(''.$primaryKeyName, $object[$primaryKeyName])
                                     ->update($object);
                             } else {
-                                DB::table('' . $tableName)->insert($object);
+                                DB::table(''.$tableName)->insert($object);
                             }
 
                             $updated++;
@@ -351,11 +349,10 @@ trait ImportableExportable
                 ];
             }
         } catch (\Exception $e) {
-
             DB::rollBack();
 
             return $this->sendError(
-                'Error en la linea ' . $updated,
+                'Error en la linea '.$updated,
                 500,
                 [
                     'code' => $e->getCode(),
@@ -368,8 +365,8 @@ trait ImportableExportable
 
     protected function export($title, $extension, $headers, $model)
     {
-        $labels   = \ForceUTF8\Encoding::fixUTF8($headers);
-        $fNames   = array_keys($headers);
+        $labels = \ForceUTF8\Encoding::fixUTF8($headers);
+        $fNames = array_keys($headers);
         $exporter = new BaseCmsExportCSV($title, $extension);
 
         $exporter->initialize($labels);
@@ -384,7 +381,7 @@ trait ImportableExportable
                     $exporter->addRow($i);
                 }
             });
-        } else if ($model instanceof \Illuminate\Database\Eloquent\Model) {
+        } elseif ($model instanceof \Illuminate\Database\Eloquent\Model) {
             $model->mQueryWithCriteria()->chunk(10000, function ($items) use ($fNames, $exporter) {
                 foreach ($items as $listItem) {
                     $i = [];

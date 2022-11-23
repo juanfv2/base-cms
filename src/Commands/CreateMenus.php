@@ -2,8 +2,8 @@
 
 namespace Juanfv2\BaseCms\Commands;
 
-use App\Models\Auth\Role;
 use App\Models\Auth\Permission;
+use App\Models\Auth\Role;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Schema;
 
@@ -40,10 +40,9 @@ class CreateMenus extends Command
      */
     public function handle()
     {
-
-        $paths    = $this->argument('paths');
+        $paths = $this->argument('paths');
         $truncate = $this->option('truncate');
-        $admin    = $this->option('admin');
+        $admin = $this->option('admin');
         if ($truncate) {
             Schema::disableForeignKeyConstraints();
             Permission::truncate();
@@ -78,14 +77,15 @@ class CreateMenus extends Command
         }
 
         $this->info("Menus creados: {$r}");
+
         return count($results);
     }
 
     public function createMenus($request)
     {
-
         if (isset($request['individual'])) {
             Permission::create($request);
+
             return 'ok';
         }
 
@@ -106,8 +106,8 @@ class CreateMenus extends Command
         }
         $permissionIndex->name = $namePlural;
         $permissionIndex->icon = $icon;
-        $permissionIndex->urlBackEnd = 'api.' . $namePluralBackEnd . '.index';
-        $permissionIndex->urlFrontEnd = '/' . $namePluralBackEnd;
+        $permissionIndex->urlBackEnd = 'api.'.$namePluralBackEnd.'.index';
+        $permissionIndex->urlFrontEnd = '/'.$namePluralBackEnd;
         $permissionIndex->isSection = $isSection;
         $permissionIndex->isVisible = $isVisible;
         $permissionIndex->permission_id = $permission_id;
@@ -115,12 +115,11 @@ class CreateMenus extends Command
         $permissionIndex->save();
 
         if ($isGroup) {
-
             $permissionShow = new Permission();
-            $permissionShow->name = 'Mostrar ' . $nameSingular;
+            $permissionShow->name = 'Mostrar '.$nameSingular;
             $permissionShow->icon = $icon;
-            $permissionShow->urlBackEnd = 'api.' . $namePluralBackEnd . '.show';
-            $permissionShow->urlFrontEnd = '/' . $namePluralBackEnd . '/show';
+            $permissionShow->urlBackEnd = 'api.'.$namePluralBackEnd.'.show';
+            $permissionShow->urlFrontEnd = '/'.$namePluralBackEnd.'/show';
             $permissionShow->isSection = 0;
             $permissionShow->isVisible = 0;
             $permissionShow->permission_id = $permissionIndex->id;
@@ -128,10 +127,10 @@ class CreateMenus extends Command
             $permissionShow->save();
 
             $permissionCreate = new Permission();
-            $permissionCreate->name = 'Crear ' . $nameSingular;
+            $permissionCreate->name = 'Crear '.$nameSingular;
             $permissionCreate->icon = $icon;
-            $permissionCreate->urlBackEnd = 'api.' . $namePluralBackEnd . '.store';
-            $permissionCreate->urlFrontEnd = '/' . $namePluralBackEnd . '/new';
+            $permissionCreate->urlBackEnd = 'api.'.$namePluralBackEnd.'.store';
+            $permissionCreate->urlFrontEnd = '/'.$namePluralBackEnd.'/new';
             $permissionCreate->isSection = 0;
             $permissionCreate->isVisible = 0;
             $permissionCreate->permission_id = $permissionIndex->id;
@@ -139,10 +138,10 @@ class CreateMenus extends Command
             $permissionCreate->save();
 
             $permissionUpdate = new Permission();
-            $permissionUpdate->name = 'Actualizar ' . $nameSingular;
+            $permissionUpdate->name = 'Actualizar '.$nameSingular;
             $permissionUpdate->icon = $icon;
-            $permissionUpdate->urlBackEnd = 'api.' . $namePluralBackEnd . '.update';
-            $permissionUpdate->urlFrontEnd = '/' . $namePluralBackEnd . '/edit';
+            $permissionUpdate->urlBackEnd = 'api.'.$namePluralBackEnd.'.update';
+            $permissionUpdate->urlFrontEnd = '/'.$namePluralBackEnd.'/edit';
             $permissionUpdate->isSection = 0;
             $permissionUpdate->isVisible = 0;
             $permissionUpdate->permission_id = $permissionIndex->id;
@@ -150,10 +149,10 @@ class CreateMenus extends Command
             $permissionUpdate->save();
 
             $permissionDelete = new Permission();
-            $permissionDelete->name = 'Borrar ' . $nameSingular;
+            $permissionDelete->name = 'Borrar '.$nameSingular;
             $permissionDelete->icon = $icon;
-            $permissionDelete->urlBackEnd = 'api.' . $namePluralBackEnd . '.destroy';
-            $permissionDelete->urlFrontEnd = '/' . $namePluralBackEnd . '/delete';
+            $permissionDelete->urlBackEnd = 'api.'.$namePluralBackEnd.'.destroy';
+            $permissionDelete->urlFrontEnd = '/'.$namePluralBackEnd.'/delete';
             $permissionDelete->isSection = 0;
             $permissionDelete->isVisible = 0;
             $permissionDelete->permission_id = $permissionIndex->id;

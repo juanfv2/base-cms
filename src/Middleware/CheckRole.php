@@ -10,7 +10,7 @@ class CheckRole
 {
     /**
      * @param $request
-     * @param Closure $next
+     * @param  Closure  $next
      * @return mixed
      */
     public function handle($request, Closure $next)
@@ -20,7 +20,7 @@ class CheckRole
             \Debugbar::enable();
         }
 
-        if (!$this->userHasPermission()) {
+        if (! $this->userHasPermission()) {
             // Redirect...
             return response()->json(['message' => __('auth.no.auth')], 401);
             //abort(401);

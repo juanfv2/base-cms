@@ -2,20 +2,19 @@
 
 namespace App\Models\Auth;
 
+use App\Notifications\ResetPasswordNotification;
 use App\Traits\BaseCmsModelUser;
-use Juanfv2\BaseCms\Traits\HasFile;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Juanfv2\BaseCms\Traits\BaseCmsModel;
+use Juanfv2\BaseCms\Traits\HasFile;
 use Juanfv2\BaseCms\Traits\UserResponsible;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Notifications\ResetPasswordNotification;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 
 /**
  * Class User
  *
- * @package App\Models
  * @version September 8, 2020, 4:57 pm UTC
  */
 class User extends Authenticatable
@@ -31,12 +30,10 @@ class User extends Authenticatable
     public $table = 'auth_users';
 
     const CREATED_AT = 'created_at';
+
     const UPDATED_AT = 'updated_at';
 
-
     protected $dates = ['deleted_at'];
-
-
 
     public $fillable = [
         'name',
@@ -88,34 +85,34 @@ class User extends Authenticatable
      * @var array
      */
     public static $rules = [
-        'name'              => 'required|string|max:191',
-        'email'             => 'required|string|max:191|unique:auth_users',
-        'password'          => 'required|string|max:191',
+        'name' => 'required|string|max:191',
+        'email' => 'required|string|max:191|unique:auth_users',
+        'password' => 'required|string|max:191',
         'email_verified_at' => 'nullable',
-        'disabled'          => 'required|boolean',
-        'phoneNumber'       => 'nullable|string|max:191',
-        'uid'               => 'nullable|string|max:191',
+        'disabled' => 'required|boolean',
+        'phoneNumber' => 'nullable|string|max:191',
+        'uid' => 'nullable|string|max:191',
 
-        'role_id'           => 'required',
-        'country_id'        => 'nullable',
-        'region_id'         => 'nullable',
-        'city_id'           => 'nullable',
+        'role_id' => 'required',
+        'country_id' => 'nullable',
+        'region_id' => 'nullable',
+        'city_id' => 'nullable',
 
-        'fcm_token'         => 'nullable|string',
-        'api_token'         => 'nullable|string',
-        'remember_token'    => 'nullable|string|max:191',
-        'createdBy'         => 'nullable',
-        'updatedBy'         => 'nullable',
-        'created_at'        => 'nullable',
-        'updated_at'        => 'nullable',
-        'deleted_at'        => 'nullable',
+        'fcm_token' => 'nullable|string',
+        'api_token' => 'nullable|string',
+        'remember_token' => 'nullable|string|max:191',
+        'createdBy' => 'nullable',
+        'updatedBy' => 'nullable',
+        'created_at' => 'nullable',
+        'updated_at' => 'nullable',
+        'deleted_at' => 'nullable',
 
-        'withEntity'        => 'nullable', // <<<
-        'roles'             => 'nullable',
+        'withEntity' => 'nullable', // <<<
+        'roles' => 'nullable',
     ];
 
     public $hidden = [
-        'remember_token', 'api_token', 'password', 'createdBy', 'updatedBy', 'created_at', 'updated_at', 'deleted_at'
+        'remember_token', 'api_token', 'password', 'createdBy', 'updatedBy', 'created_at', 'updated_at', 'deleted_at',
     ];
 
     /**

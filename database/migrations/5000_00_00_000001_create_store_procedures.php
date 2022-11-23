@@ -1,9 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
 class CreateStoreProcedures extends Migration
 {
@@ -14,6 +12,6 @@ class CreateStoreProcedures extends Migration
      */
     public function up()
     {
-        DB::unprepared(file_get_contents(__DIR__ . '/sql-files/mysql-store_procedures.sql'));
+        DB::unprepared(file_get_contents(__DIR__.'/sql-files/mysql-store_procedures.sql'));
     }
 }

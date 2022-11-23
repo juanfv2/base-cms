@@ -3,9 +3,9 @@
 namespace Juanfv2\BaseCms\Generators;
 
 use Illuminate\Support\Str;
-use InfyOm\Generator\Utils\FileUtil;
 use InfyOm\Generator\Common\CommandData;
 use InfyOm\Generator\Generators\BaseGenerator;
+use InfyOm\Generator\Utils\FileUtil;
 
 class AngularAutoCompleteComponentGenerator extends BaseGenerator
 {
@@ -17,6 +17,7 @@ class AngularAutoCompleteComponentGenerator extends BaseGenerator
 
     /** @var string */
     private $fileName;
+
     /** @var string */
     private $primaryKey;
 
@@ -25,9 +26,9 @@ class AngularAutoCompleteComponentGenerator extends BaseGenerator
         $this->commandData = $commandData;
         // dd($this->commandData);
         $mPath = config('infyom.laravel_generator.path.angular', 'angular/');
-        $this->path = $mPath . $this->commandData->config->mDashed . '/';
-        $name = $this->commandData->config->mDashed . '-auto-complete.component.';
-        $this->fileName = $name . 'ts';
+        $this->path = $mPath.$this->commandData->config->mDashed.'/';
+        $name = $this->commandData->config->mDashed.'-auto-complete.component.';
+        $this->fileName = $name.'ts';
     }
 
     public function generate()
@@ -37,7 +38,7 @@ class AngularAutoCompleteComponentGenerator extends BaseGenerator
 
     public function generateTs()
     {
-        $templateData = get_template("angular.auto_complete_list_component", 'laravel-generator');
+        $templateData = get_template('angular.auto_complete_list_component', 'laravel-generator');
         $templateData = $this->fillTemplate($templateData);
 
         FileUtil::createFile($this->path, $this->fileName, $templateData);
@@ -50,11 +51,11 @@ class AngularAutoCompleteComponentGenerator extends BaseGenerator
     {
         $templateData = fill_template($this->commandData->dynamicVars, $templateData);
 
-        list($searchables1, $searchables2) = $this->getSearchables();
+        [$searchables1, $searchables2] = $this->getSearchables();
 
-        $templateData = str_replace('$SEARCHABLE_FIELDS_1$',  implode(infy_nl_tab(1, 2), $searchables1), $templateData);
-        $templateData = str_replace('$SEARCHABLE_FIELDS_2$',  implode(',' . infy_nl_tab(1, 2), $searchables2), $templateData);
-        $templateData = str_replace('$RELATION_MODEL_NAMES$', implode(',',  $this->generateRelationModelNames()), $templateData);
+        $templateData = str_replace('$SEARCHABLE_FIELDS_1$', implode(infy_nl_tab(1, 2), $searchables1), $templateData);
+        $templateData = str_replace('$SEARCHABLE_FIELDS_2$', implode(','.infy_nl_tab(1, 2), $searchables2), $templateData);
+        $templateData = str_replace('$RELATION_MODEL_NAMES$', implode(',', $this->generateRelationModelNames()), $templateData);
         $templateData = str_replace('$RELATIONS_AS_FIELDS_1$', implode("\n", $this->generateRelationsFields()), $templateData);
         $templateData = str_replace('$RELATIONS_AS_FIELDS_2$', implode("\n", $this->generateRelationsFields2()), $templateData);
 
@@ -93,7 +94,7 @@ class AngularAutoCompleteComponentGenerator extends BaseGenerator
         $relations = [];
 
         foreach ($this->commandData->relations as $relation) {
-            $type  = (isset($relation->type))      ? $relation->type      : null;
+            $type = (isset($relation->type)) ? $relation->type : null;
             $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
             if ($type != 'mt1') {
                 continue;
@@ -101,7 +102,7 @@ class AngularAutoCompleteComponentGenerator extends BaseGenerator
 
             $relationShipText = $field;
 
-            if (!empty($relationsOpts)) {
+            if (! empty($relationsOpts)) {
                 if (in_array($field, $relationsOpts)) {
                     $relations[] = $relationShipText;
                 }
@@ -117,8 +118,7 @@ class AngularAutoCompleteComponentGenerator extends BaseGenerator
     {
         $relations = [];
         foreach ($this->commandData->relations as $relation) {
-
-            $type  = (isset($relation->type))      ? $relation->type      : null;
+            $type = (isset($relation->type)) ? $relation->type : null;
             $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
 
             if ($type != 'mt1') {
@@ -144,8 +144,7 @@ class AngularAutoCompleteComponentGenerator extends BaseGenerator
     {
         $relations = [];
         foreach ($this->commandData->relations as $relation) {
-
-            $type  = (isset($relation->type))      ? $relation->type      : null;
+            $type = (isset($relation->type)) ? $relation->type : null;
             $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
             $fieldFK = (isset($relation->inputs[1])) ? $relation->inputs[1] : null;
 
@@ -168,7 +167,7 @@ class AngularAutoCompleteComponentGenerator extends BaseGenerator
     public function rollback()
     {
         if ($this->rollbackFile($this->path, $this->fileName)) {
-            $this->commandData->commandComment('API Controller file deleted: ' . $this->fileName);
+            $this->commandData->commandComment('API Controller file deleted: '.$this->fileName);
         }
     }
 }

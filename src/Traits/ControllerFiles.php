@@ -3,23 +3,22 @@
 namespace Juanfv2\BaseCms\Traits;
 
 use App\Models\Misc\XFile;
-
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
-use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Intervention\Image\Facades\Image;
 
 trait ControllerFiles
 {
     public function updateXfile($id, Request $request)
     {
         $input = $request->all();
-        $f     = XFile::find($id);
+        $f = XFile::find($id);
 
-        if (!$f) {
+        if (! $f) {
             return $this->sendError(__('validation.model.not.found', ['model' => 'Archivo']));
         }
 
@@ -33,7 +32,7 @@ trait ControllerFiles
     {
         $f = XFile::find($id);
 
-        if (!$f) {
+        if (! $f) {
             return $this->sendError(__('validation.model.not.found', ['model' => 'Archivo']));
         }
 
@@ -42,9 +41,9 @@ trait ControllerFiles
 
     public static function getPathFileName($location, $name)
     {
-        $names          = explode('.', $name);
+        $names = explode('.', $name);
         $nameWithoutExt = Arr::first($names);
-        $temp           = storage_path("app/{$location}/{$nameWithoutExt}");
+        $temp = storage_path("app/{$location}/{$nameWithoutExt}");
 
         return $temp;
     }
@@ -73,7 +72,6 @@ trait ControllerFiles
     }
 
     /**
-     *
      * Header: isMulti = true
      * If the file being uploaded is part of several uploads always saved
      * Header: isMulti = false
@@ -83,54 +81,54 @@ trait ControllerFiles
      *
      * @param $tableName
      * @param $fieldName
-     * @param int $id
-     * @param boolean $color
+     * @param  int  $id
+     * @param  bool  $color
      * @return \Illuminate\Http\JsonResponse
      */
     public function fileUpload(Request $request, $tableName, $fieldName, $id = 0, $color = false)
     {
-        if (!$request->hasFile($fieldName))
+        if (! $request->hasFile($fieldName)) {
             return $this->sendError(__('validation.file.required'));
+        }
 
         ini_set('upload_max_filesize', '-1');
         ini_set('memory_limit', '-1');
 
-        $xFile                = new XFile();
-        $columns              = 0;
-        $isMulti              = $request->header('isMulti', 0);
-        $isTemporal           = strpos($fieldName, 'massive') !== false;
-        $baseAssets           = 'public/assets/adm/';
+        $xFile = new XFile();
+        $columns = 0;
+        $isMulti = $request->header('isMulti', 0);
+        $isTemporal = strpos($fieldName, 'massive') !== false;
+        $baseAssets = 'public/assets/adm/';
 
-        $rCountry             = $request->header('r-country', '');
+        $rCountry = $request->header('r-country', '');
 
         if ($rCountry) {
-            $baseAssets = $baseAssets . $rCountry . '/';
+            $baseAssets = $baseAssets.$rCountry.'/';
         }
 
-        $time                 = now()->format('Y_m_d_H_i_s_u');
-        $strLocation          = "$baseAssets$tableName/$fieldName";
-        $originalName         = $request->$fieldName->getClientOriginalName();
-        $fileExtension        = $request->$fieldName->extension();
-        $fileNamePrefix       = $tableName . '-' . $id;
-        $newName              = "$fileNamePrefix-$time";
-        $newNameWithExtension = $newName . '.' . $fileExtension;
+        $time = now()->format('Y_m_d_H_i_s_u');
+        $strLocation = "$baseAssets$tableName/$fieldName";
+        $originalName = $request->$fieldName->getClientOriginalName();
+        $fileExtension = $request->$fieldName->extension();
+        $fileNamePrefix = $tableName.'-'.$id;
+        $newName = "$fileNamePrefix-$time";
+        $newNameWithExtension = $newName.'.'.$fileExtension;
 
         /**
          * Si el nombre del archivo trae la palabra "massive"
          * se guarda en una carpeta temporal
          */
         if ($isTemporal) {
-            $strLocation         = "$baseAssets/temporals/$newName/$tableName/$fieldName";
-            $path                = $request->$fieldName->storeAs($strLocation, $newNameWithExtension);
-            $parts               = explode('/', $path);
-            $name                = Arr::last($parts);
-            $_versionsCsv_File   = storage_path("app/$path");
-            $xFile->name         = $name;
+            $strLocation = "$baseAssets/temporals/$newName/$tableName/$fieldName";
+            $path = $request->$fieldName->storeAs($strLocation, $newNameWithExtension);
+            $parts = explode('/', $path);
+            $name = Arr::last($parts);
+            $_versionsCsv_File = storage_path("app/$path");
+            $xFile->name = $name;
             $xFile->nameOriginal = $originalName;
 
-            if (($fileExtension == 'csv' || $fileExtension == 'txt') && ($handle = fopen($_versionsCsv_File, "r")) !== false) {
-
-                $delimiter    = _file_delimiter($_versionsCsv_File);
+            if (($fileExtension == 'csv' || $fileExtension == 'txt') && ($handle = fopen($_versionsCsv_File, 'r')) !== false) {
+                $delimiter = _file_delimiter($_versionsCsv_File);
 
                 while (($data = fgetcsv($handle, 1000, $delimiter)) !== false) {
                     $columns = count($data);
@@ -145,49 +143,43 @@ trait ControllerFiles
         // logger(__FILE__ . ':' . __LINE__ . ' $file ', [$file]);
 
         if ($id) {
-
             if ($isMulti) {
+                $parts = explode('/', $path);
+                $name = Arr::last($parts);
 
-                $parts               = explode('/', $path);
-                $name                = Arr::last($parts);
-
-                $xFile->entity_id    = $id;
-                $xFile->entity       = $tableName;
-                $xFile->field        = $fieldName;
-                $xFile->name         = $name;
+                $xFile->entity_id = $id;
+                $xFile->entity = $tableName;
+                $xFile->field = $fieldName;
+                $xFile->name = $name;
                 $xFile->nameOriginal = $originalName;
-                $xFile->extension    = $fileExtension;
-                $xFile->publicPath   = Storage::url($path);
+                $xFile->extension = $fileExtension;
+                $xFile->publicPath = Storage::url($path);
 
                 if ($color && class_exists('\ColorThief\ColorThief')) {
-
-                    $colors            = $this->getColor($path);
-                    $data['colors']    = $colors;
-                    $xFile->data       = $data;
+                    $colors = $this->getColor($path);
+                    $data['colors'] = $colors;
+                    $xFile->data = $data;
                 }
 
                 $xFile->save();
             } else {
-
-                $xFile = XFile::firstOrNew(['entity_id' => $id, 'entity' => $tableName, 'field' => $fieldName,]);
+                $xFile = XFile::firstOrNew(['entity_id' => $id, 'entity' => $tableName, 'field' => $fieldName]);
 
                 if ($xFile->id) {
-
                     $temp = $this->getPathFileName($strLocation, $xFile->name);
 
                     $this->deleteFileWithGlob("{$temp}*");
                 }
 
-                $parts               = explode('/', $path);
-                $name                = Arr::last($parts);
+                $parts = explode('/', $path);
+                $name = Arr::last($parts);
 
-                $xFile->name         = $name;
+                $xFile->name = $name;
                 $xFile->nameOriginal = $originalName;
-                $xFile->extension    = $fileExtension;
-                $xFile->publicPath   = Storage::url($path);
+                $xFile->extension = $fileExtension;
+                $xFile->publicPath = Storage::url($path);
 
                 if ($color && class_exists('\ColorThief\ColorThief')) {
-
                     $colors = $this->getColor($path);
 
                     $data = $xFile->data ?? [];
@@ -222,10 +214,10 @@ trait ControllerFiles
      */
     public function fileDown($tableName, $fieldName, $id, $w = 0, $h = 0, $imageName = '')
     {
-        $rCountry     = request()->get('rCountry', '');
-        if (!$imageName) {
+        $rCountry = request()->get('rCountry', '');
+        if (! $imageName) {
             if ($rCountry) {
-                config()->set('database.default', config('base-cms.default_prefix') . $rCountry);
+                config()->set('database.default', config('base-cms.default_prefix').$rCountry);
             }
 
             $imageName = '-';
@@ -236,25 +228,24 @@ trait ControllerFiles
                 ->first();
 
             if ($f) {
-                $imageName    = $f->name;
+                $imageName = $f->name;
             }
         }
 
-        $w          = (int) $w;
-        $h          = (int) $h;
+        $w = (int) $w;
+        $h = (int) $h;
         $baseAssets = 'public/assets/adm';
 
         if ($rCountry) {
-            $baseAssets = $baseAssets . '/' . $rCountry;
+            $baseAssets = $baseAssets.'/'.$rCountry;
         }
 
         $strLocationImageNotFound = 'assets/images/image-not-found.png';
-        $strLocationImageSaved    = "$baseAssets/$tableName/$fieldName/$imageName";
-        $strLocationImage2show    = Storage::exists($strLocationImageSaved) ? $strLocationImageSaved : $strLocationImageNotFound;
-        $exists                   = Storage::exists($strLocationImage2show);
+        $strLocationImageSaved = "$baseAssets/$tableName/$fieldName/$imageName";
+        $strLocationImage2show = Storage::exists($strLocationImageSaved) ? $strLocationImageSaved : $strLocationImageNotFound;
+        $exists = Storage::exists($strLocationImage2show);
 
-        if (!$exists) {
-
+        if (! $exists) {
             $response = Http::get('https://eu.ui-avatars.com/api', ['name' => config('app.name'), 'size' => 512]);
             Storage::put($strLocationImageNotFound, $response->body());
 
@@ -265,28 +256,27 @@ trait ControllerFiles
 
         ini_set('memory_limit', '-1');
 
-        $temp                     = Storage::path($strLocationImage2show);
+        $temp = Storage::path($strLocationImage2show);
 
         if ($w || $h) {
-
-            $basename                 = basename($strLocationImage2show);
-            $ext                      = pathinfo($basename, PATHINFO_EXTENSION);
+            $basename = basename($strLocationImage2show);
+            $ext = pathinfo($basename, PATHINFO_EXTENSION);
             $strLocationImage2showNew = Str::replaceLast(".{$ext}", "-{$w}x{$h}.{$ext}", $strLocationImage2show);
-            $exists                   = Storage::exists($strLocationImage2showNew);
-            $supported_image          = ['gif', 'jpg', 'jpeg', 'png'];
+            $exists = Storage::exists($strLocationImage2showNew);
+            $supported_image = ['gif', 'jpg', 'jpeg', 'png'];
 
             // logger(__FILE__ . ':' . __LINE__ . ' $temp ', [$temp, $strLocationImage2showNew]);
-            if (!$exists) {
-
-                if (!in_array($ext, $supported_image)) {
+            if (! $exists) {
+                if (! in_array($ext, $supported_image)) {
                     $temp = $strLocationImageNotFound;
+
                     return response()->file($temp);
                 }
 
                 // use jpg format and quality of 100
                 $resized_image = Image::make($temp)
                     ->resize($w > 0 ? $w : null, $h > 0 ? $h : null, function ($constraint) use ($w, $h) {
-                        if (!($w > 0 && $h > 0)) {
+                        if (! ($w > 0 && $h > 0)) {
                             $constraint->aspectRatio();
                         }
                     })
@@ -303,11 +293,9 @@ trait ControllerFiles
 
     /**
      * https://github.com/ksubileau/color-thief-php
-     *
      */
     public function getColor($sourceImage)
     {
-
         ini_set('memory_limit', '-1');
         // $colors = \ColorPalette::getPalette($sourceImage);
         $colors = \ColorThief\ColorThief::getPalette(storage_path("app/$sourceImage"));

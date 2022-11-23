@@ -4,10 +4,8 @@ namespace Tests\APIs\Auth;
 
 use App\Models\Auth\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Tests\TestCase;
 use Juanfv2\BaseCms\Traits\ApiTestTrait;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class ZForgotPasswordApiTest extends TestCase
 {
@@ -21,7 +19,7 @@ class ZForgotPasswordApiTest extends TestCase
         $account = User::factory()->create();
 
         $credentials = [
-            'email' => $account->email
+            'email' => $account->email,
         ];
 
         $this->response = $this->json('POST', route('api.password.email'), $credentials);
@@ -30,7 +28,7 @@ class ZForgotPasswordApiTest extends TestCase
 
         $responseData = json_decode($this->response->getContent(), true);
 
-        $actual   = $responseData['message'];
+        $actual = $responseData['message'];
         $expected = __('passwords.sent');
 
         $this->assertEquals($expected, $actual);
@@ -44,7 +42,7 @@ class ZForgotPasswordApiTest extends TestCase
         $e = 'juanfv2@gmail.com';
 
         $credentials = [
-            'email' => $e //$account->email
+            'email' => $e, //$account->email
         ];
 
         $this->response = $this->json('POST', route('api.password.email'), $credentials);
@@ -53,7 +51,7 @@ class ZForgotPasswordApiTest extends TestCase
 
         $response = json_decode($this->response->getContent(), true);
 
-        $actual   = $response['message'];
+        $actual = $response['message'];
         $expected = __('passwords.user');
 
         $this->assertEquals($expected, $actual);
@@ -67,7 +65,7 @@ class ZForgotPasswordApiTest extends TestCase
         $account = User::factory()->create();
 
         $credentials = [
-            'email' => $account->email
+            'email' => $account->email,
         ];
 
         $response = $this->json('POST', route('api.password.email'), $credentials);
@@ -85,7 +83,7 @@ class ZForgotPasswordApiTest extends TestCase
 
         $response1->assertStatus(401);
 
-        $actual   = $response['message'];
+        $actual = $response['message'];
         $expected = __('passwords.throttled');
 
         $this->assertEquals($expected, $actual);

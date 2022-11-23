@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers\API\Country;
 
-use App\Models\Country\Region;
 use App\Http\Controllers\AppBaseController;
+use App\Models\Country\Region;
 
 /**
  * Class RegionController
- *
- * @package App\Http\Controllers\API
  */
 class RegionAPIController extends AppBaseController
 {

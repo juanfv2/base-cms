@@ -2,14 +2,13 @@
 
 namespace Tests\APIs\Auth;
 
-use Tests\TestCase;
-use Juanfv2\BaseCms\Traits\ApiTestTrait;
 use App\Models\Auth\User;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\DB;
+use Juanfv2\BaseCms\Traits\ApiTestTrait;
+use Tests\TestCase;
 
 class ZResetPasswordApiTest extends TestCase
 {
@@ -18,7 +17,7 @@ class ZResetPasswordApiTest extends TestCase
         DatabaseTransactions
         // RefreshDatabase
         // ...
-    ;
+;
 
     /** @test */
     public function reset_password()
@@ -28,7 +27,7 @@ class ZResetPasswordApiTest extends TestCase
         $account = User::factory()->create();
 
         $credentials = [
-            'email' => $account->email
+            'email' => $account->email,
         ];
 
         $response = $this->json('POST', route('api.password.email'), $credentials);
@@ -66,7 +65,7 @@ class ZResetPasswordApiTest extends TestCase
         $account = User::factory()->create();
 
         $credentials = [
-            'email' => $account->email
+            'email' => $account->email,
         ];
 
         $response = $this->json('POST', route('api.password.email'), $credentials);
@@ -99,13 +98,12 @@ class ZResetPasswordApiTest extends TestCase
         $account = User::factory()->create();
 
         $credentials = [
-            'email' => $account->email
+            'email' => $account->email,
         ];
 
         $response = $this->json('POST', route('api.password.email'), $credentials);
 
         $response->assertOk();
-
 
         $resetTable = 'password_resets';
         $reset = DB::table($resetTable)->where('email', $account->email)->first();

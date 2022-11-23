@@ -2,16 +2,14 @@
 
 namespace App\Http\Controllers\API\Auth;
 
+use App\Http\Controllers\AppBaseController;
 use App\Models\Auth\User;
 use Illuminate\Http\Request;
-
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use App\Http\Controllers\AppBaseController;
 
 class ZResetPasswordController extends AppBaseController
 {
-
     /**
      * Reset the given user's password.
      *
@@ -35,7 +33,6 @@ class ZResetPasswordController extends AppBaseController
         $isValid = $reset && $reset->token == $input['token'];
 
         if ($isValid) {
-
             DB::delete("delete from `$resetTable` where email = ?", [$email]);
 
             $user->password = Hash::make($input['password']);

@@ -3,32 +3,36 @@
 namespace Juanfv2\BaseCms\Utils;
 
 use Exception;
-use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
-use Maatwebsite\Excel\Concerns\WithHeadings;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithHeadings;
 
 /**
  * BaseCmsExportCSV
  * Maatwebsite\Excel "required"
- *
  */
 class BaseCmsExportExcel implements BaseCmsExport, FromCollection, WithHeadings
 {
     protected $stringData;
+
     protected $exportTo;
+
     protected $filename;
+
     private $collection;
+
     private $headers;
+
     private $extension;
 
-    public function __construct($filename = "export-data", $extension = 'csv', $exportTo = self::TO_BROWSER)
+    public function __construct($filename = 'export-data', $extension = 'csv', $exportTo = self::TO_BROWSER)
     {
-        if (!in_array($exportTo, array('browser', 'file', 'string'))) {
+        if (! in_array($exportTo, ['browser', 'file', 'string'])) {
             throw new Exception("$exportTo is not a valid ExportData export type");
         }
-        $this->exportTo  = $exportTo;
-        $this->filename  = $filename;
+        $this->exportTo = $exportTo;
+        $this->filename = $filename;
         $this->extension = Str::ucfirst(Str::lower($extension));
     }
 
@@ -50,7 +54,6 @@ class BaseCmsExportExcel implements BaseCmsExport, FromCollection, WithHeadings
 
     public function finalize()
     {
-
         $ext = Str::lower($this->extension);
         switch ($this->exportTo) {
             case self::TO_STRING:

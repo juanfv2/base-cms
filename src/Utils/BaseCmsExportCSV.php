@@ -3,8 +3,8 @@
 namespace Juanfv2\BaseCms\Utils;
 
 use Exception;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 /**
  * ExportDataCSV
@@ -13,17 +13,20 @@ use Illuminate\Support\Facades\Storage;
 class BaseCmsExportCSV implements BaseCmsExport
 {
     protected $stringData;
+
     protected $exportTo;
+
     protected $filename;
+
     private $file;
 
-    public function __construct($filename = "export-data", $extension = 'csv', $exportTo = self::TO_BROWSER)
+    public function __construct($filename = 'export-data', $extension = 'csv', $exportTo = self::TO_BROWSER)
     {
-        if (!in_array($exportTo, array('browser', 'file', 'string'))) {
+        if (! in_array($exportTo, ['browser', 'file', 'string'])) {
             throw new Exception("$exportTo is not a valid ExportData export type");
         }
         $this->exportTo = $exportTo;
-        $this->filename = $filename . '.' . Str::lower($extension);
+        $this->filename = $filename.'.'.Str::lower($extension);
     }
 
     public function initialize($headers)
@@ -59,7 +62,9 @@ class BaseCmsExportCSV implements BaseCmsExport
     public function addRow($row)
     {
         // $this->write($this->generateRow($row));
-        if (empty($row)) return;
+        if (empty($row)) {
+            return;
+        }
 
         switch ($this->exportTo) {
             case self::TO_STRING:
@@ -78,7 +83,7 @@ class BaseCmsExportCSV implements BaseCmsExport
     /* -------------------------------------------------------------------------- */
     public function send2browser()
     {
-        $uid  = "csv-file-" . microtime(true);
+        $uid = 'csv-file-'.microtime(true);
         $path = "csv-temp/$uid";
 
         $this->send2file($path);
@@ -89,7 +94,7 @@ class BaseCmsExportCSV implements BaseCmsExport
             ->download($p, $this->filename)
             ->deleteFileAfterSend(true)
             // ..
-        ;
+;
     }
 
     public function send2file($pathCsv)
@@ -104,8 +109,9 @@ class BaseCmsExportCSV implements BaseCmsExport
         foreach ($row as $key => $value) {
             // Escape inner quotes and wrap all contents in new quotes.
             // Note that we are using \" to escape double quote not ""
-            $row[$key] = '"' . str_replace('"', '""', $value) . '"';
+            $row[$key] = '"'.str_replace('"', '""', $value).'"';
         }
-        return implode(",", $row) . "\n";
+
+        return implode(',', $row)."\n";
     }
 }

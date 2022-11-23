@@ -2,12 +2,12 @@
 
 namespace Tests\APIs;
 
-use Tests\TestCase;
-use Juanfv2\BaseCms\Traits\ApiTestTrait;
 use App\Models\Country\City;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Juanfv2\BaseCms\Traits\ApiTestTrait;
+use Tests\TestCase;
 
 class CityApiTest extends TestCase
 {
@@ -16,7 +16,7 @@ class CityApiTest extends TestCase
         DatabaseTransactions
         // RefreshDatabase
         // ...
-    ;
+;
 
     /** @test */
     public function api_index_city()
@@ -24,9 +24,9 @@ class CityApiTest extends TestCase
         $this->withoutExceptionHandling();
 
         $created = 11;
-        $limit   = 10;
-        $offset  = 0;
-        $models  = City::factory($created)->create();
+        $limit = 10;
+        $offset = 0;
+        $models = City::factory($created)->create();
 
         $this->response = $this->json('POST', route('api.cities.store', ['limit' => $limit, 'offset' => $offset, 'to_index' => 2]));
 

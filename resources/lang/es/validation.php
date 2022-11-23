@@ -1,6 +1,5 @@
 <?php
 
-
 return [
 
     // /framework/src/Illuminate/Validation/ValidationException.php
@@ -141,13 +140,13 @@ return [
     ],
 
     'model' => [
-        'list'      => 'Lista de [:model]',
-        'showed'   => ':model',
-        'stored'   => ':model guardado',
-        'updated'   => ':model actualizado',
-        'deleted'   => ':model borrado',
+        'list' => 'Lista de [:model]',
+        'showed' => ':model',
+        'stored' => ':model guardado',
+        'updated' => ':model actualizado',
+        'deleted' => ':model borrado',
         'not.found' => ':model no encontrado',
-        'error'     => 'Error inesperado, :model',
+        'error' => 'Error inesperado, :model',
     ],
 
     'columns.no.match' => 'El número de columnas no coincide <br/>requeridas: <b>:required</b> <br/>enviadas: <b>:sent</b>',

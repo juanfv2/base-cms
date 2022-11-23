@@ -2,12 +2,12 @@
 
 namespace Tests\APIs\Auth;
 
-use Tests\TestCase;
-use Juanfv2\BaseCms\Traits\ApiTestTrait;
-use App\Models\Auth\Role;
 use App\Models\Auth\Permission;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
+use App\Models\Auth\Role;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Juanfv2\BaseCms\Traits\ApiTestTrait;
+use Tests\TestCase;
 
 class RoleApiTest extends TestCase
 {
@@ -16,7 +16,7 @@ class RoleApiTest extends TestCase
         DatabaseTransactions
         // RefreshDatabase
         // ...
-    ;
+;
 
     /** @test */
     public function api_index_role()
@@ -24,9 +24,9 @@ class RoleApiTest extends TestCase
         $this->withoutExceptionHandling();
 
         $created = 11;
-        $limit   = 10;
-        $offset  = 0;
-        $areas   = Role::factory($created)->create();
+        $limit = 10;
+        $offset = 0;
+        $areas = Role::factory($created)->create();
 
         $this->response = $this->json('POST', route('api.roles.store', ['limit' => $limit, 'offset' => $offset, 'to_index' => 2]));
 
@@ -56,7 +56,7 @@ class RoleApiTest extends TestCase
         foreach ($permissions as $key) {
             $rolePermissions[] = [
                 'role_id' => $this->responseContent['data']['id'],
-                'permission_id' => $key
+                'permission_id' => $key,
             ];
         }
         $this->assertDatabaseCount('auth_roles_has_permissions', 3);

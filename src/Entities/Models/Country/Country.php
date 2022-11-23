@@ -2,16 +2,14 @@
 
 namespace App\Models\Country;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Juanfv2\BaseCms\Traits\BaseCmsModel;
 use Juanfv2\BaseCms\Traits\UserResponsible;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * Class Country
  *
- * @package App\Models
  * @version October 19, 2022, 8:27 pm UTC
  */
 class Country extends Model
@@ -22,12 +20,11 @@ class Country extends Model
 
     public $table = 'countries';
 
-
     public $fillable = [
         'name',
         'code',
         'createdBy',
-        'updatedBy'
+        'updatedBy',
     ];
 
     /**
@@ -40,7 +37,7 @@ class Country extends Model
         'name' => 'string',
         'code' => 'string',
         'createdBy' => 'integer',
-        'updatedBy' => 'integer'
+        'updatedBy' => 'integer',
     ];
 
     /**
@@ -54,11 +51,11 @@ class Country extends Model
         'createdBy' => 'nullable',
         'updatedBy' => 'nullable',
         'created_at' => 'nullable',
-        'updated_at' => 'nullable'
+        'updated_at' => 'nullable',
     ];
 
     public $hidden = [
-        'createdBy', 'updatedBy', 'created_at', 'updated_at', 'deleted_at'
+        'createdBy', 'updatedBy', 'created_at', 'updated_at', 'deleted_at',
     ];
 
     /**
@@ -69,7 +66,6 @@ class Country extends Model
         return $this->hasMany(\App\Models\Auth\User::class, 'country_id');
     }
 
-
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      **/
@@ -77,7 +73,6 @@ class Country extends Model
     {
         return $this->hasMany(Region::class, 'country_id');
     }
-
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

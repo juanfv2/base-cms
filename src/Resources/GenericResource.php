@@ -2,8 +2,8 @@
 
 namespace Juanfv2\BaseCms\Resources;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class GenericResource extends JsonResource
@@ -49,7 +49,6 @@ class GenericResource extends JsonResource
 
             if ($arr && is_array($arr)) {
                 foreach ($arr as $kValue => $kProperty) {
-
                     if ($this->hidden && in_array($kProperty, $this->hidden)) {
                         continue;
                     }
@@ -78,9 +77,9 @@ class GenericResource extends JsonResource
         $rValue = $this->$realProperty;
         if ($rValue instanceof Model) {
             $data[$realProperty] = new GenericResource($rValue, $includes);
-        } else if ($rValue instanceof Collection) {
+        } elseif ($rValue instanceof Collection) {
             $data[$realProperty] = GenericResource::coll($rValue, $includes);
-        } else if ($rValue) {
+        } elseif ($rValue) {
             $data[$realProperty] = $rValue;
         }
     }

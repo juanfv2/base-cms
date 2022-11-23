@@ -2,15 +2,14 @@
 
 namespace Tests\APIs\Auth;
 
-use Tests\TestCase;
-use Juanfv2\BaseCms\Traits\ApiTestTrait;
 use App\Models\Auth\Role;
 use App\Models\Auth\User;
 use App\Models\Misc\XUserVerified;
-use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Juanfv2\BaseCms\Traits\ApiTestTrait;
+use Tests\TestCase;
 
 class ZRegisterAccountApiTest extends TestCase
 {
@@ -19,25 +18,25 @@ class ZRegisterAccountApiTest extends TestCase
         DatabaseTransactions
         // RefreshDatabase
         // ...
-    ;
+;
 
     /** @test */
     public function api_create_an_account()
     {
         $this->withoutExceptionHandling();
 
-        $role    = Role::factory()->create(['id' => 4]);
+        $role = Role::factory()->create(['id' => 4]);
         $e = 'juanfv2@gmail.com';
         $p = '123456';
 
         $credentials = [
-            'email'                 => $e,
-            'name'                  => 'juanfv2',
-            'password'              => $p,
+            'email' => $e,
+            'name' => 'juanfv2',
+            'password' => $p,
             'password_confirmation' => $p,
-            'cellPhone'             => $p,
-            'imei'                  => $p,
-            'role_id'               => $role->id,
+            'cellPhone' => $p,
+            'imei' => $p,
+            'role_id' => $role->id,
         ];
 
         // Artisan::call('passport:install', ['-vvv' => true]);
@@ -61,17 +60,17 @@ class ZRegisterAccountApiTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $role    = Role::factory()->create(['id' => 4]);
+        $role = Role::factory()->create(['id' => 4]);
         $p = '123456';
         $e = 'juanfv2@gmail.com';
 
         $credentials = [
-            'email'                 => $e,
-            'name'                  => 'juanfv2',
-            'password'              => $p,
+            'email' => $e,
+            'name' => 'juanfv2',
+            'password' => $p,
             'password_confirmation' => $p,
-            'imei'                  => $p,
-            'role_id'               => $role->id,
+            'imei' => $p,
+            'role_id' => $role->id,
         ];
 
         $response = $this->json('POST', route('api.register.register'), $credentials);
@@ -81,7 +80,7 @@ class ZRegisterAccountApiTest extends TestCase
         $user = User::where('email', $e)->first();
         $userV = XUserVerified::where('user_id', $user->id)->first();
 
-        $this->response = $this->json('POST', route('api.register.verifyUser', ['token' =>  $userV->token]));
+        $this->response = $this->json('POST', route('api.register.verifyUser', ['token' => $userV->token]));
 
         $this->response->assertOk();
 
@@ -89,7 +88,7 @@ class ZRegisterAccountApiTest extends TestCase
 
         // dump($response);
         // $response->dump();
-        $resp = "Su correo electrónico está verificado. Ahora puede iniciar sesión.";
+        $resp = 'Su correo electrónico está verificado. Ahora puede iniciar sesión.';
         $this->assertEquals($resp, $response['data']['description']);
     }
 }

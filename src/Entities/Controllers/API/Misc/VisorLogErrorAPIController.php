@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\API\Misc;
 
-use App\Models\Misc\VisorLogError;
 use App\Http\Controllers\AppBaseController;
+use App\Models\Misc\VisorLogError;
 
 /**
  * Class VisorLogErrorController

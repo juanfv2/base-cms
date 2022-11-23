@@ -6,20 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class UserVerified
- * @package App\Models
+ *
  * @version February 7, 2019, 12:50 am UTC
  *
  * @property \Illuminate\Database\Eloquent\Collection authRolesHasPermissions
  * @property \Illuminate\Database\Eloquent\Collection authUsersHasRoles
- * @property integer user_id
+ * @property int user_id
  * @property string token
  */
 class XUserVerified extends Model
 {
-
     public $table = 'auth_users_verified';
 
     const CREATED_AT = 'created_at';
+
     const UPDATED_AT = 'updated_at';
 
     public $fillable = [

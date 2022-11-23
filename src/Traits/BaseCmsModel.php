@@ -5,18 +5,12 @@ namespace Juanfv2\BaseCms\Traits;
 use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Builder;
-use Juanfv2\BaseCms\Contracts\RepositoryInterface;
 
 /**
- *
  * MyBaseRepository
- *
- * @package namespace App\Repositories;
  */
 trait BaseCmsModel
 {
-
     /**
      * Collection of Criteria
      *
@@ -35,8 +29,8 @@ trait BaseCmsModel
      * Push Criteria for filter the query
      *
      * @param $criteria
-     *
      * @return $this
+     *
      * @throws \Prettus\Repository\Exceptions\RepositoryException
      */
     public function pushCriteria($criteria)
@@ -76,14 +70,14 @@ trait BaseCmsModel
     /**
      * Applies the given where conditions to the model.
      *
-     * @param array $where
+     * @param  array  $where
      * @return void
      */
     protected function applyConditions(array $where)
     {
         foreach ($where as $field => $value) {
             if (is_array($value)) {
-                list($field, $condition, $val) = $value;
+                [$field, $condition, $val] = $value;
                 $this->model = $this->model->where($field, $condition, $val);
             } else {
                 $this->model = $this->model->where($field, '=', $value);
@@ -116,8 +110,7 @@ trait BaseCmsModel
     /**
      * Retrieve all data of repository
      *
-     * @param array $columns
-     *
+     * @param  array  $columns
      * @return mixed
      */
     public function mAll($columns = ['*'])
@@ -134,8 +127,7 @@ trait BaseCmsModel
     /**
      * Retrieve all data of repository
      *
-     * @param array $columns
-     *
+     * @param  array  $columns
      * @return mixed
      */
     public function mQueryWithCriteria()
@@ -163,9 +155,8 @@ trait BaseCmsModel
     /**
      * Count results of repository
      *
-     * @param array $where
-     * @param string $columns
-     *
+     * @param  array  $where
+     * @param  string  $columns
      * @return int
      */
     public function mCount($columns = '*')
@@ -251,10 +242,10 @@ trait BaseCmsModel
                             unset($new_values[array_search('', $new_values)]);
                         }
 
-                        list($temp, $model_key) = explode('.', $this->$key($key)->getQualifiedForeignKeyName());
+                        [$temp, $model_key] = explode('.', $this->$key($key)->getQualifiedForeignKeyName());
 
                         foreach ($this->$key as $rel) {
-                            if (!in_array($rel->id, $new_values)) {
+                            if (! in_array($rel->id, $new_values)) {
                                 $rel->$model_key = null;
                                 $rel->save();
                             }

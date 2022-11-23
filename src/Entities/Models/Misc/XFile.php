@@ -2,15 +2,14 @@
 
 namespace App\Models\Misc;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Juanfv2\BaseCms\Traits\BaseCmsModel;
 use Juanfv2\BaseCms\Traits\ControllerFiles;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * Class XFile
  *
- * @package App\Models
  * @version October 19, 2022, 9:29 pm UTC
  */
 class XFile extends Model
@@ -21,7 +20,6 @@ class XFile extends Model
 
     public $table = 'auth_x_files';
 
-
     public $fillable = [
         'entity',
         'entity_id',
@@ -30,7 +28,7 @@ class XFile extends Model
         'nameOriginal',
         'publicPath',
         'extension',
-        'data'
+        'data',
     ];
 
     /**
@@ -39,15 +37,15 @@ class XFile extends Model
      * @var array
      */
     protected $casts = [
-        'id'           => 'integer',
-        'entity'       => 'string',
-        'entity_id'    => 'integer',
-        'field'        => 'string',
-        'name'         => 'string',
+        'id' => 'integer',
+        'entity' => 'string',
+        'entity_id' => 'integer',
+        'field' => 'string',
+        'name' => 'string',
         'nameOriginal' => 'string',
-        'publicPath'   => 'string',
-        'extension'    => 'string',
-        'data'         => 'json'
+        'publicPath' => 'string',
+        'extension' => 'string',
+        'data' => 'json',
     ];
 
     /**
@@ -56,20 +54,20 @@ class XFile extends Model
      * @var array
      */
     public static $rules = [
-        'entity'       => 'required|string|max:191',
-        'entity_id'    => 'required',
-        'field'        => 'required|string|max:191',
-        'name'         => 'required|string|max:191',
+        'entity' => 'required|string|max:191',
+        'entity_id' => 'required',
+        'field' => 'required|string|max:191',
+        'name' => 'required|string|max:191',
         'nameOriginal' => 'required|string|max:191',
-        'publicPath'   => 'required|string|max:191',
-        'extension'    => 'required|string|max:10',
-        'data'         => 'nullable|string',
-        'created_at'   => 'nullable',
-        'updated_at'   => 'nullable'
+        'publicPath' => 'required|string|max:191',
+        'extension' => 'required|string|max:10',
+        'data' => 'nullable|string',
+        'created_at' => 'nullable',
+        'updated_at' => 'nullable',
     ];
 
     public $hidden = [
-        'created_at', 'updated_at'
+        'created_at', 'updated_at',
     ];
 
     protected static function boot()

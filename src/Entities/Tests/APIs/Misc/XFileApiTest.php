@@ -2,12 +2,12 @@
 
 namespace Tests\APIs\Misc;
 
-use Tests\TestCase;
-use Juanfv2\BaseCms\Traits\ApiTestTrait;
 use App\Models\Misc\XFile;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Juanfv2\BaseCms\Traits\ApiTestTrait;
+use Tests\TestCase;
 
 class XFileApiTest extends TestCase
 {
@@ -16,7 +16,7 @@ class XFileApiTest extends TestCase
         DatabaseTransactions
         // RefreshDatabase
         // ...
-    ;
+;
 
     /** @test */
     public function api_index_x_file()
@@ -24,9 +24,9 @@ class XFileApiTest extends TestCase
         $this->withoutExceptionHandling();
 
         $created = 11;
-        $limit   = 10;
-        $offset  = 0;
-        $models  = XFile::factory($created)->create();
+        $limit = 10;
+        $offset = 0;
+        $models = XFile::factory($created)->create();
 
         $this->response = $this->json('POST', route('api.x_files.store', ['limit' => $limit, 'offset' => $offset, 'to_index' => 2]));
 

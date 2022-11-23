@@ -8,7 +8,6 @@ use Juanfv2\BaseCms\Contracts\RepositoryInterface;
 
 /**
  * Class LimitOffsetCriteria
- * @package namespace Juanfv2\BaseCms\Criteria
  */
 class LimitOffsetCriteria implements CriteriaInterface
 {
@@ -26,8 +25,7 @@ class LimitOffsetCriteria implements CriteriaInterface
      * Apply criteria in query repository.
      *
      * @param $model
-     * @param \Prettus\Repository\Contracts\RepositoryInterface $repository
-     *
+     * @param  \Prettus\Repository\Contracts\RepositoryInterface  $repository
      * @return mixed
      */
     public function apply($model, RepositoryInterface $repository)

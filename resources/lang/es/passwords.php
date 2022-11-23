@@ -13,11 +13,11 @@ return [
     |
     */
 
-    'password'  => 'La contraseña debe tener al menos 8 caracteres y coincidir con la confirmación.',
-    'reset'     => '¡Su contraseña ha sido reestablecida!',
+    'password' => 'La contraseña debe tener al menos 8 caracteres y coincidir con la confirmación.',
+    'reset' => '¡Su contraseña ha sido reestablecida!',
     'throttled' => 'Espere antes de volver a intentarlo.',
-    'sent'      => '¡Recordatorio de contraseña enviado!',
-    'token'     => 'Este token de reestablecimiento de contraseña es inválido.',
-    'user'      => 'No se ha encontrado un usuario con esa dirección de correo.',
+    'sent' => '¡Recordatorio de contraseña enviado!',
+    'token' => 'Este token de reestablecimiento de contraseña es inválido.',
+    'user' => 'No se ha encontrado un usuario con esa dirección de correo.',
 
 ];

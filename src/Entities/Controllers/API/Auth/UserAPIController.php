@@ -7,7 +7,6 @@ use App\Models\Auth\Account;
 use App\Models\Auth\Person;
 use App\Models\Auth\User;
 use Illuminate\Http\Request;
-use Juanfv2\BaseCms\Utils\BaseCmsExportCSV;
 
 /**
  * Class PersonController
@@ -80,7 +79,7 @@ class UserAPIController extends AppBaseController
                 break;
         }
 
-        $this->rules['email'] = 'required|string|max:191|unique:auth_users,email,' . $id;
+        $this->rules['email'] = 'required|string|max:191|unique:auth_users,email,'.$id;
         $this->rules['password'] = 'min:6|confirmed';
 
         $input = $this->validate($request, $this->rules);

@@ -2,33 +2,29 @@
 
 namespace App\Http\Controllers\API\Auth;
 
-use Carbon\Carbon;
+use App\Http\Controllers\AppBaseController;
 use App\Models\Auth\User;
-use Illuminate\Support\Str;
-
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Crypt;
-
-use App\Http\Controllers\AppBaseController;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Juanfv2\BaseCms\Resources\GenericResource;
 
 /**
  * Class LoginAPIController
- * @package App\Http\Controllers\Auth
  */
 class ZLoginAPIController extends AppBaseController
 {
-
     public function login(Request $request)
     {
         $data = $this->validate($request, ['password' => 'required', 'email' => 'required|email']);
         $user = $this->attemptLogin($data);
 
         if ($user instanceof User) {
-
             $user = new GenericResource($user);
+
             return $this->sendResponse($user, __('user.welcome'));
         }
 
@@ -61,7 +57,7 @@ class ZLoginAPIController extends AppBaseController
             return $this->sendError(__('passwords.user'));
         }
 
-        if (!Hash::check($password, $user->password)) {
+        if (! Hash::check($password, $user->password)) {
             return $this->sendError(__('auth.failed'), [], 422);
         }
 
@@ -79,7 +75,6 @@ class ZLoginAPIController extends AppBaseController
         // todo: get >>> $decrypted = Crypt::decryptString($user->api_token);
 
         if ($user->api_token) {
-
             $user->save();
 
             return $user;
@@ -97,8 +92,9 @@ class ZLoginAPIController extends AppBaseController
         /** @var \App\Models\Auth\User $user */
         $user = auth()->user();
 
-        if (!is_null($user)) {
+        if (! is_null($user)) {
             $user->api_token = Str::random(70);
+
             return $user->save();
         }
         // return Auth::user()->token()->revoke();

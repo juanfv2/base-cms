@@ -2,17 +2,15 @@
 
 namespace App\Http\Controllers\API\Auth;
 
-use Carbon\Carbon;
-use App\Models\Auth\User;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
-
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\AppBaseController;
+use App\Models\Auth\User;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 /**
  * Class ZRegisterAPIController
- * @package App\Controllers\Auth
  */
 class ZForgotPasswordController extends AppBaseController
 {
@@ -21,7 +19,7 @@ class ZForgotPasswordController extends AppBaseController
         $this->validate($request, ['email' => 'required|email']);
 
         $email = $request['email'];
-        $user  = User::where('email', $email)->first();
+        $user = User::where('email', $email)->first();
 
         if (is_null($user)) {
             return $this->sendError(__('passwords.user'));
@@ -49,7 +47,7 @@ class ZForgotPasswordController extends AppBaseController
         DB::insert("insert into `$resetTable` (`email`, `token`, `created_at`) values (?, ?, ?)", [
             $email,
             $token,
-            Carbon::now()
+            Carbon::now(),
         ]);
 
         $user->sendPasswordResetNotification($token);

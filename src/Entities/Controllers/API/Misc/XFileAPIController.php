@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers\API\Misc;
 
-use App\Models\Misc\XFile;
 use App\Http\Controllers\AppBaseController;
+use App\Models\Misc\XFile;
 
 /**
  * Class XFileController
- *
- * @package App\Http\Controllers\API\Auth
  */
 class XFileAPIController extends AppBaseController
 {

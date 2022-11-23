@@ -2,16 +2,14 @@
 
 namespace App\Models\Country;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Juanfv2\BaseCms\Traits\BaseCmsModel;
 use Juanfv2\BaseCms\Traits\UserResponsible;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * Class City
  *
- * @package App\Models
  * @version October 19, 2022, 9:04 pm UTC
  */
 class City extends Model
@@ -22,7 +20,6 @@ class City extends Model
 
     public $table = 'cities';
 
-
     public $fillable = [
         'name',
         'latitude',
@@ -30,7 +27,7 @@ class City extends Model
         'country_id',
         'region_id',
         'createdBy',
-        'updatedBy'
+        'updatedBy',
     ];
 
     /**
@@ -46,7 +43,7 @@ class City extends Model
         'country_id' => 'integer',
         'region_id' => 'integer',
         'createdBy' => 'integer',
-        'updatedBy' => 'integer'
+        'updatedBy' => 'integer',
     ];
 
     /**
@@ -63,11 +60,11 @@ class City extends Model
         'createdBy' => 'nullable',
         'updatedBy' => 'nullable',
         'created_at' => 'nullable',
-        'updated_at' => 'nullable'
+        'updated_at' => 'nullable',
     ];
 
     public $hidden = [
-        'createdBy', 'updatedBy', 'created_at', 'updated_at', 'deleted_at'
+        'createdBy', 'updatedBy', 'created_at', 'updated_at', 'deleted_at',
     ];
 
     /**
@@ -78,7 +75,6 @@ class City extends Model
         return $this->belongsTo(Country::class, 'country_id');
     }
 
-
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      **/
@@ -86,7 +82,6 @@ class City extends Model
     {
         return $this->belongsTo(Region::class, 'region_id');
     }
-
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

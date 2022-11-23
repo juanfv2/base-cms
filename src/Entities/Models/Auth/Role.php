@@ -2,15 +2,15 @@
 
 namespace App\Models\Auth;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Juanfv2\BaseCms\Traits\BaseCmsModel;
 use Juanfv2\BaseCms\Traits\UserResponsible;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * Class Role
- * @package App\Models
+ *
  * @version September 8, 2020, 4:57 pm UTC
  */
 class Role extends Model
@@ -23,12 +23,10 @@ class Role extends Model
     public $table = 'auth_roles';
 
     const CREATED_AT = 'created_at';
+
     const UPDATED_AT = 'updated_at';
 
-
     protected $dates = ['deleted_at'];
-
-
 
     public $fillable = [
         'name',
@@ -45,7 +43,7 @@ class Role extends Model
         'name' => 'string',
         'description' => 'string',
         'createdBy' => 'integer',
-        'updatedBy' => 'integer'
+        'updatedBy' => 'integer',
     ];
 
     /**
@@ -54,18 +52,18 @@ class Role extends Model
      * @var array
      */
     public static $rules = [
-        'name'        => 'required|string|max:255',
+        'name' => 'required|string|max:255',
         'description' => 'required|string|max:255',
-        'createdBy'   => 'nullable',
-        'updatedBy'   => 'nullable',
-        'created_at'  => 'nullable',
-        'updated_at'  => 'nullable',
-        'deleted_at'  => 'nullable',
+        'createdBy' => 'nullable',
+        'updatedBy' => 'nullable',
+        'created_at' => 'nullable',
+        'updated_at' => 'nullable',
+        'deleted_at' => 'nullable',
         'permissions' => 'nullable', // <<
     ];
 
     public $hidden = [
-        'createdBy', 'updatedBy', 'created_at', 'updated_at', 'deleted_at'
+        'createdBy', 'updatedBy', 'created_at', 'updated_at', 'deleted_at',
     ];
 
     /**
@@ -121,6 +119,7 @@ class Role extends Model
         foreach ($menus as $menu) {
             $menu->subMenus = $this->inRoleSubMenus($menu->id);
         }
+
         return $menus;
     }
 

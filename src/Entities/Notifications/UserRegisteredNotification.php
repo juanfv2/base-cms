@@ -3,13 +3,13 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
-
+use Illuminate\Notifications\Notification;
 
 class UserRegisteredNotification extends Notification
 {
     use Queueable;
+
     /**
      * undocumented class variable
      *
@@ -30,7 +30,7 @@ class UserRegisteredNotification extends Notification
     /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed $notifiable
+     * @param  mixed  $notifiable
      * @return array
      */
     public function via($notifiable)
@@ -41,12 +41,12 @@ class UserRegisteredNotification extends Notification
     /**
      * Get the mail representation of the notification.
      *
-     * @param  mixed $notifiable
+     * @param  mixed  $notifiable
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
     public function toMail($notifiable)
     {
-        $urlStr = (config('base.welcome_page') == '' ? url('/') : config('base.welcome_page')) . '/base/welcome/?t=' . $this->user->verifyUser->token;
+        $urlStr = (config('base.welcome_page') == '' ? url('/') : config('base.welcome_page')).'/base/welcome/?t='.$this->user->verifyUser->token;
 
         // logger(__FILE__ . ':' . __LINE__ . ' $urlStr ', [$urlStr]);
 
@@ -63,7 +63,7 @@ class UserRegisteredNotification extends Notification
     /**
      * Get the array representation of the notification.
      *
-     * @param  mixed $notifiable
+     * @param  mixed  $notifiable
      * @return array
      */
     public function toArray($notifiable)

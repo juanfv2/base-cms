@@ -2,14 +2,14 @@
 
 namespace App\Traits;
 
-use App\Models\Driver;
-use App\Models\Auth\Person;
-use Illuminate\Support\Str;
 use App\Models\Auth\Account;
+use App\Models\Auth\Person;
+use App\Models\Driver;
 use App\Models\Misc\XUserVerified;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 
 trait BaseCmsModelUser
 {
@@ -28,12 +28,13 @@ trait BaseCmsModelUser
     {
         return DB::transaction(function () use ($input) {
             $input['password'] = Hash::make($input['password']);
-            $input['roles']    = is_string($input['roles']) ? json_decode($input['roles']) : $input['roles'];
+            $input['roles'] = is_string($input['roles']) ? json_decode($input['roles']) : $input['roles'];
             $user = $this->mSave($input);
 
             $input['id'] = $user->id;
             $input['user_id'] = $user->id;
             Person::create($input);
+
             return $user;
         });
     }
@@ -59,7 +60,7 @@ trait BaseCmsModelUser
     public function auth_people_delete_with()
     {
         return DB::transaction(function () {
-            $this->email = $this->email . '-deleted-' . $this->id . '-' . time();
+            $this->email = $this->email.'-deleted-'.$this->id.'-'.time();
             $this->save();
             if ($this->person) {
                 $this->person->delete();
@@ -77,14 +78,14 @@ trait BaseCmsModelUser
     {
         return DB::transaction(function () use ($input) {
             $input['password'] = Hash::make($input['password']);
-            $input['roles']    = is_string($input['roles']) ? json_decode($input['roles']) : $input['roles'];
+            $input['roles'] = is_string($input['roles']) ? json_decode($input['roles']) : $input['roles'];
             $user = $this->mSave($input);
 
             $input['id'] = $user->id;
             $input['user_id'] = $user->id;
             Account::create($input);
 
-            if (!isset($input['uid'])) {
+            if (! isset($input['uid'])) {
                 XUserVerified::create(['user_id' => $user->id, 'token' => Str::random(40)]);
                 $user->notify(new \App\Notifications\UserRegisteredNotification($user));
             }
@@ -114,7 +115,7 @@ trait BaseCmsModelUser
     public function auth_accounts_delete_with()
     {
         return DB::transaction(function () {
-            $this->email = $this->email . '-deleted-' . $this->id . '-' . time();
+            $this->email = $this->email.'-deleted-'.$this->id.'-'.time();
             $this->save();
             if ($this->account) {
                 $this->account->delete();
@@ -132,7 +133,7 @@ trait BaseCmsModelUser
     {
         return DB::transaction(function () use ($input) {
             $input['password'] = Hash::make($input['password']);
-            $input['roles']    = is_string($input['roles']) ? json_decode($input['roles']) : $input['roles'];
+            $input['roles'] = is_string($input['roles']) ? json_decode($input['roles']) : $input['roles'];
             $user = $this->mSave($input);
 
             $input['id'] = $user->id;
@@ -169,7 +170,7 @@ trait BaseCmsModelUser
     public function drivers_delete_with()
     {
         return DB::transaction(function () {
-            $this->email = $this->email . '-deleted-' . $this->id . '-' . time();
+            $this->email = $this->email.'-deleted-'.$this->id.'-'.time();
             $this->save();
             if ($this->driver) {
                 $this->driver->delete();

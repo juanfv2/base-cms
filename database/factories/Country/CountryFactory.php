@@ -23,7 +23,7 @@ class CountryFactory extends Factory
     {
         return [
             'name' => $this->faker->country,
-            'code' => $this->faker->countryCode
+            'code' => $this->faker->countryCode,
         ];
     }
 }

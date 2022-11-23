@@ -3,19 +3,17 @@
 namespace Juanfv2\BaseCms\Repositories;
 
 use Exception;
+use Illuminate\Container\Container as Application;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Container\Container as Application;
 use Juanfv2\BaseCms\Contracts\RepositoryInterface;
 
 /**
  * @deprecated version
  *
  * MyBaseRepository
- *
- * @package namespace App\Repositories;
  */
 abstract class BaseRepository implements RepositoryInterface
 {
@@ -30,10 +28,11 @@ abstract class BaseRepository implements RepositoryInterface
      * @var bool
      */
     protected $skipCriteria = false;
+
     protected $table = '';
 
     /**
-     * @param Application $app
+     * @param  Application  $app
      */
     public function __construct(Application $app)
     {
@@ -45,16 +44,16 @@ abstract class BaseRepository implements RepositoryInterface
     }
 
     /**
-     * @param null $presenter
-     *
+     * @param  null  $presenter
      * @return PresenterInterface
+     *
      * @throws RepositoryException
      */
     public function makePresenter($presenter = null)
     {
-        $presenter = !is_null($presenter) ? $presenter : $this->presenter();
+        $presenter = ! is_null($presenter) ? $presenter : $this->presenter();
 
-        if (!is_null($presenter)) {
+        if (! is_null($presenter)) {
             $this->presenter = is_string($presenter) ? $this->app->make($presenter) : $presenter;
 
             //    if (!$this->presenter instanceof PresenterInterface) {
@@ -77,9 +76,6 @@ abstract class BaseRepository implements RepositoryInterface
         return null;
     }
 
-    /**
-     *
-     */
     public function boot()
     {
         //
@@ -87,6 +83,7 @@ abstract class BaseRepository implements RepositoryInterface
 
     /**
      * @return Model
+     *
      * @throws Exception
      */
     public function makeModel()
@@ -95,7 +92,7 @@ abstract class BaseRepository implements RepositoryInterface
         if ($this->table) {
             $model->setTable($this->table);
         }
-        if (!$model instanceof Model) {
+        if (! $model instanceof Model) {
             throw new \Exception("Class {$this->model()} must be an instance of Illuminate\\Database\\Eloquent\\Model");
         }
 
@@ -137,8 +134,8 @@ abstract class BaseRepository implements RepositoryInterface
      * Push Criteria for filter the query
      *
      * @param $criteria
-     *
      * @return $this
+     *
      * @throws \Prettus\Repository\Exceptions\RepositoryException
      */
     public function pushCriteria($criteria)
@@ -151,14 +148,14 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Applies the given where conditions to the model.
      *
-     * @param array $where
+     * @param  array  $where
      * @return void
      */
     protected function applyConditions(array $where)
     {
         foreach ($where as $field => $value) {
             if (is_array($value)) {
-                list($field, $condition, $val) = $value;
+                [$field, $condition, $val] = $value;
                 $this->model = $this->model->where($field, $condition, $val);
             } else {
                 $this->model = $this->model->where($field, '=', $value);
@@ -214,8 +211,7 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Retrieve all data of repository
      *
-     * @param array $columns
-     *
+     * @param  array  $columns
      * @return mixed
      */
     public function all($columns = ['*'])
@@ -251,8 +247,7 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Retrieve all data of repository
      *
-     * @param array $columns
-     *
+     * @param  array  $columns
      * @return mixed
      */
     public function allForChunk($columns = ['*'])
@@ -271,9 +266,8 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Count results of repository
      *
-     * @param array $where
-     * @param string $columns
-     *
+     * @param  array  $where
+     * @param  string  $columns
      * @return int
      */
     public function count(array $where = [], $columns = '*')
@@ -304,9 +298,8 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Find data by id
      *
-     * @param       $id
-     * @param array $columns
-     *
+     * @param    $id
+     * @param  array  $columns
      * @return mixed
      */
     public function find($id, $columns = ['*'])
@@ -331,9 +324,8 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Find data by multiple fields
      *
-     * @param array $where
-     * @param array $columns
-     *
+     * @param  array  $where
+     * @param  array  $columns
      * @return mixed
      */
     public function findWhere(array $where, $columns = ['*'])
@@ -381,12 +373,10 @@ abstract class BaseRepository implements RepositoryInterface
      * Delete a entity in repository by id
      *
      * @param $id
-     *
      * @return int
      */
     public function delete($id)
     {
-
         $model = $this->find($id);
         $originalModel = clone $model;
 
@@ -438,10 +428,10 @@ abstract class BaseRepository implements RepositoryInterface
                             unset($new_values[array_search('', $new_values)]);
                         }
 
-                        list($temp, $model_key) = explode('.', $model->$key($key)->getQualifiedForeignKeyName());
+                        [$temp, $model_key] = explode('.', $model->$key($key)->getQualifiedForeignKeyName());
 
                         foreach ($model->$key as $rel) {
-                            if (!in_array($rel->id, $new_values)) {
+                            if (! in_array($rel->id, $new_values)) {
                                 $rel->$model_key = null;
                                 $rel->save();
                             }
@@ -467,12 +457,12 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Update or Create an entity in repository
      *
-     * @throws ValidatorException
      *
-     * @param array $attributes
-     * @param array $values
-     *
+     * @param  array  $attributes
+     * @param  array  $values
      * @return mixed
+     *
+     * @throws ValidatorException
      */
     public function updateOrCreate(array $attributes, array $values = [])
     {

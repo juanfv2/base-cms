@@ -2,11 +2,11 @@
 
 namespace Juanfv2\BaseCms\Commands;
 
-use InfyOm\Generator\Common\CommandData;
 use InfyOm\Generator\Commands\BaseCommand;
-use Juanfv2\BaseCms\Generators\AngularListComponentGenerator;
+use InfyOm\Generator\Common\CommandData;
 use Juanfv2\BaseCms\Generators\AngularAutoCompleteComponentGenerator;
 use Juanfv2\BaseCms\Generators\AngularDetailComponentGenerator;
+use Juanfv2\BaseCms\Generators\AngularListComponentGenerator;
 
 class AngularCommand extends BaseCommand
 {
@@ -42,7 +42,6 @@ class AngularCommand extends BaseCommand
     public function handle()
     {
         parent::handle();
-
 
         $controllerGenerator = new AngularDetailComponentGenerator($this->commandData);
         $controllerGenerator->generate();

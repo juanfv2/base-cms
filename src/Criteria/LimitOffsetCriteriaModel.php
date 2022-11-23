@@ -7,7 +7,6 @@ use Juanfv2\BaseCms\Contracts\CriteriaInterfaceModel;
 
 /**
  * Class LimitOffsetCriteria
- * @package namespace Juanfv2\BaseCms\Criteria
  */
 class LimitOffsetCriteriaModel implements CriteriaInterfaceModel
 {
@@ -25,12 +24,11 @@ class LimitOffsetCriteriaModel implements CriteriaInterfaceModel
      * Apply criteria in query repository.
      *
      * @param $model
-     *
      * @return void
      */
     public function apply(&$model)
     {
-        $limit  = (int) $this->request->get('limit', null);
+        $limit = (int) $this->request->get('limit', null);
         $offset = (int) $this->request->get('offset', null);
 
         if ($limit) {

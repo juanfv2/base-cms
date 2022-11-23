@@ -2,17 +2,15 @@
 
 namespace App\Http\Controllers\API\Country;
 
-use App\Models\Country\City;
 use App\Http\Controllers\AppBaseController;
+use App\Models\Country\City;
 
 /**
  * Class CityController
- *
- * @package App\Http\Controllers\API
  */
 class CityAPIController extends AppBaseController
 {
-    /** @var  \App\Models\Country\City */
+    /** @var \App\Models\Country\City */
     public $model;
 
     public $modelNameCamel = 'City';

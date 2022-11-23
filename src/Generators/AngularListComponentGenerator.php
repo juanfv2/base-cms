@@ -3,9 +3,9 @@
 namespace Juanfv2\BaseCms\Generators;
 
 use Illuminate\Support\Str;
-use InfyOm\Generator\Utils\FileUtil;
 use InfyOm\Generator\Common\CommandData;
 use InfyOm\Generator\Generators\BaseGenerator;
+use InfyOm\Generator\Utils\FileUtil;
 
 class AngularListComponentGenerator extends BaseGenerator
 {
@@ -17,6 +17,7 @@ class AngularListComponentGenerator extends BaseGenerator
 
     /** @var string */
     private $fileName;
+
     /** @var string */
     private $primaryKey;
 
@@ -26,17 +27,16 @@ class AngularListComponentGenerator extends BaseGenerator
 
         // dd($this->commandData);
         $mPath = config('infyom.laravel_generator.path.angular', 'angular/');
-        $this->path = $mPath . $this->commandData->config->mDashed . '/';
-        $name = $this->commandData->config->mDashed . '-list.component.';
-        $this->fileName = $name . 'ts';
-        $this->fileNameSpec = $name . 'spec.ts';
-        $this->fileNameScss = $name . 'scss';
-        $this->fileNameHtml = $name . 'html';
+        $this->path = $mPath.$this->commandData->config->mDashed.'/';
+        $name = $this->commandData->config->mDashed.'-list.component.';
+        $this->fileName = $name.'ts';
+        $this->fileNameSpec = $name.'spec.ts';
+        $this->fileNameScss = $name.'scss';
+        $this->fileNameHtml = $name.'html';
     }
 
     public function generate()
     {
-
         $this->generateScss();
         $this->generateSpec();
         $this->generateHtml();
@@ -45,7 +45,7 @@ class AngularListComponentGenerator extends BaseGenerator
 
     public function generateTs()
     {
-        $templateData = get_template("angular.list_component", 'laravel-generator');
+        $templateData = get_template('angular.list_component', 'laravel-generator');
         $templateData = $this->fillTemplate($templateData);
 
         FileUtil::createFile($this->path, $this->fileName, $templateData);
@@ -56,7 +56,7 @@ class AngularListComponentGenerator extends BaseGenerator
 
     public function generateScss()
     {
-        $templateData = get_template("angular.list_component_scss", 'laravel-generator');
+        $templateData = get_template('angular.list_component_scss', 'laravel-generator');
         $templateData = $this->fillTemplate($templateData);
 
         FileUtil::createFile($this->path, $this->fileNameScss, $templateData);
@@ -67,7 +67,7 @@ class AngularListComponentGenerator extends BaseGenerator
 
     public function generateSpec()
     {
-        $templateData = get_template("angular.list_component_spec", 'laravel-generator');
+        $templateData = get_template('angular.list_component_spec', 'laravel-generator');
         $templateData = fill_template($this->commandData->dynamicVars, $templateData);
 
         FileUtil::createFile($this->path, $this->fileNameSpec, $templateData);
@@ -78,7 +78,7 @@ class AngularListComponentGenerator extends BaseGenerator
 
     public function generateHtml()
     {
-        $templateData = get_template("angular.list_component_html", 'laravel-generator');
+        $templateData = get_template('angular.list_component_html', 'laravel-generator');
         $templateData = $this->fillTemplateHtml($templateData);
 
         FileUtil::createFile($this->path, $this->fileNameHtml, $templateData);
@@ -102,15 +102,15 @@ class AngularListComponentGenerator extends BaseGenerator
             }
         }
 
-        $templateData = str_replace('$NAME_PK$',                        $primary, $templateData);
-        $templateData = str_replace('$SEARCHABLE_FIELDS$',              implode(',' . infy_nl_tab(1, 2), $searchables), $templateData);
-        $templateData = str_replace('$RELATION_MODEL_NAMES$',           implode(',', $this->generateRelationModelNames()), $templateData);
-        $templateData = str_replace('$RELATIONS_AS_FIELDS$',            implode("\n", $this->generateRelationsFields()), $templateData);
-        $templateData = str_replace('$RELATIONS_AS_INIT_SEARCH_MODEL$', implode(',' . infy_nl_tab(1, 2), $this->generateRelationsInitSearchModel()), $templateData);
-        $templateData = str_replace('$RELATIONS_AS_INIT_SEARCH$',       implode(infy_nl_tab(1, 2), $this->generateRelationsInitSearch()), $templateData);
-        $templateData = str_replace('$RELATIONS_AS_ON_LAZY_LOAD$',      implode("\n", $this->generateRelationsOnLazyLoad()), $templateData);
-        $templateData = str_replace('$RELATIONS_AS_ON_LAZY_LOAD2$',     implode("\n", $this->generateRelationsOnLazyLoad2()), $templateData);
-        $templateData = str_replace('$RELATIONS_AS_ADD_NEW$',           implode(',' . infy_nl_tab(1, 2), $this->generateRelationsAddNew()), $templateData);
+        $templateData = str_replace('$NAME_PK$', $primary, $templateData);
+        $templateData = str_replace('$SEARCHABLE_FIELDS$', implode(','.infy_nl_tab(1, 2), $searchables), $templateData);
+        $templateData = str_replace('$RELATION_MODEL_NAMES$', implode(',', $this->generateRelationModelNames()), $templateData);
+        $templateData = str_replace('$RELATIONS_AS_FIELDS$', implode("\n", $this->generateRelationsFields()), $templateData);
+        $templateData = str_replace('$RELATIONS_AS_INIT_SEARCH_MODEL$', implode(','.infy_nl_tab(1, 2), $this->generateRelationsInitSearchModel()), $templateData);
+        $templateData = str_replace('$RELATIONS_AS_INIT_SEARCH$', implode(infy_nl_tab(1, 2), $this->generateRelationsInitSearch()), $templateData);
+        $templateData = str_replace('$RELATIONS_AS_ON_LAZY_LOAD$', implode("\n", $this->generateRelationsOnLazyLoad()), $templateData);
+        $templateData = str_replace('$RELATIONS_AS_ON_LAZY_LOAD2$', implode("\n", $this->generateRelationsOnLazyLoad2()), $templateData);
+        $templateData = str_replace('$RELATIONS_AS_ADD_NEW$', implode(','.infy_nl_tab(1, 2), $this->generateRelationsAddNew()), $templateData);
 
         return $templateData;
     }
@@ -143,7 +143,7 @@ class AngularListComponentGenerator extends BaseGenerator
         $relations = [$this->commandData->config->mName];
 
         foreach ($this->commandData->relations as $relation) {
-            $type  = (isset($relation->type))      ? $relation->type      : null;
+            $type = (isset($relation->type)) ? $relation->type : null;
             $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
             if ($type != 'mt1') {
                 continue;
@@ -151,7 +151,7 @@ class AngularListComponentGenerator extends BaseGenerator
 
             $relationShipText = $field;
 
-            if (!empty($relationsOpts)) {
+            if (! empty($relationsOpts)) {
                 if (in_array($field, $relationsOpts)) {
                     $relations[] = $relationShipText;
                 }
@@ -167,8 +167,7 @@ class AngularListComponentGenerator extends BaseGenerator
     {
         $relations = [];
         foreach ($this->commandData->relations as $relation) {
-
-            $type  = (isset($relation->type))      ? $relation->type      : null;
+            $type = (isset($relation->type)) ? $relation->type : null;
             $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
 
             if ($type != 'mt1') {
@@ -195,8 +194,7 @@ class AngularListComponentGenerator extends BaseGenerator
     {
         $relations = [];
         foreach ($this->commandData->relations as $relation) {
-
-            $type  = (isset($relation->type))      ? $relation->type      : null;
+            $type = (isset($relation->type)) ? $relation->type : null;
             $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
 
             if ($type != 'mt1') {
@@ -212,8 +210,7 @@ class AngularListComponentGenerator extends BaseGenerator
     {
         $relations = [];
         foreach ($this->commandData->relations as $relation) {
-
-            $type  = (isset($relation->type))      ? $relation->type      : null;
+            $type = (isset($relation->type)) ? $relation->type : null;
             $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
 
             if ($type != 'mt1') {
@@ -232,8 +229,7 @@ class AngularListComponentGenerator extends BaseGenerator
         $count = 1;
         $fieldsArr = [];
         foreach ($this->commandData->relations as $relation) {
-
-            $type  = (isset($relation->type))      ? $relation->type      : null;
+            $type = (isset($relation->type)) ? $relation->type : null;
             $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
             $fieldFK = (isset($relation->inputs[1])) ? $relation->inputs[1] : null;
 
@@ -259,8 +255,7 @@ class AngularListComponentGenerator extends BaseGenerator
     {
         $relations = [];
         foreach ($this->commandData->relations as $relation) {
-
-            $type  = (isset($relation->type))      ? $relation->type      : null;
+            $type = (isset($relation->type)) ? $relation->type : null;
             $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
             $fieldFK = (isset($relation->inputs[1])) ? $relation->inputs[1] : null;
 
@@ -286,8 +281,7 @@ class AngularListComponentGenerator extends BaseGenerator
     {
         $relations = [];
         foreach ($this->commandData->relations as $relation) {
-
-            $type  = (isset($relation->type))      ? $relation->type      : null;
+            $type = (isset($relation->type)) ? $relation->type : null;
             $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
 
             if ($type != 'mt1') {
@@ -304,11 +298,11 @@ class AngularListComponentGenerator extends BaseGenerator
     {
         $templateData = fill_template($this->commandData->dynamicVars, $templateData);
 
-        $templateData = str_replace('$RELATIONS_AS_SEARCH_FIELDS$',           implode("\n", $this->generateRelationsHtmlSearchFields()), $templateData);
-        $templateData = str_replace('$COLUMN_FIELDS$',                        implode("\n", $this->generateHtmlColumnFields()), $templateData);
-        $templateData = str_replace('$COLUMN_FIELDS_RELATIONS$',              implode("\n", $this->generateHtmlColumnRelationsFields()), $templateData);
-        $templateData = str_replace('$COLUMN_VALUES$',                        implode("\n", $this->generateHtmlColumnValues()), $templateData);
-        $templateData = str_replace('$COLUMN_VALUES_RELATIONS$',              implode("\n", $this->generateHtmlColumnRelationsValues()), $templateData);
+        $templateData = str_replace('$RELATIONS_AS_SEARCH_FIELDS$', implode("\n", $this->generateRelationsHtmlSearchFields()), $templateData);
+        $templateData = str_replace('$COLUMN_FIELDS$', implode("\n", $this->generateHtmlColumnFields()), $templateData);
+        $templateData = str_replace('$COLUMN_FIELDS_RELATIONS$', implode("\n", $this->generateHtmlColumnRelationsFields()), $templateData);
+        $templateData = str_replace('$COLUMN_VALUES$', implode("\n", $this->generateHtmlColumnValues()), $templateData);
+        $templateData = str_replace('$COLUMN_VALUES_RELATIONS$', implode("\n", $this->generateHtmlColumnRelationsValues()), $templateData);
 
         return $templateData;
     }
@@ -317,8 +311,7 @@ class AngularListComponentGenerator extends BaseGenerator
     {
         $relations = [];
         foreach ($this->commandData->relations as $relation) {
-
-            $type  = (isset($relation->type))      ? $relation->type      : null;
+            $type = (isset($relation->type)) ? $relation->type : null;
             $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
 
             if ($type != 'mt1') {
@@ -435,6 +428,7 @@ class AngularListComponentGenerator extends BaseGenerator
                 $relations[] = $relationText;
             }
         }
+
         return $relations;
     }
 
@@ -442,8 +436,7 @@ class AngularListComponentGenerator extends BaseGenerator
     {
         $relations = [];
         foreach ($this->commandData->relations as $relation) {
-
-            $type  = (isset($relation->type))      ? $relation->type      : null;
+            $type = (isset($relation->type)) ? $relation->type : null;
             $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
 
             if ($type != 'mt1') {
@@ -468,8 +461,7 @@ class AngularListComponentGenerator extends BaseGenerator
     {
         $relations = [];
         foreach ($this->commandData->relations as $relation) {
-
-            $type  = (isset($relation->type))      ? $relation->type      : null;
+            $type = (isset($relation->type)) ? $relation->type : null;
             $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
 
             if ($type != 'mt1') {
@@ -491,7 +483,7 @@ class AngularListComponentGenerator extends BaseGenerator
     public function rollback()
     {
         if ($this->rollbackFile($this->path, $this->fileName)) {
-            $this->commandData->commandComment('API Controller file deleted: ' . $this->fileName);
+            $this->commandData->commandComment('API Controller file deleted: '.$this->fileName);
         }
     }
 }

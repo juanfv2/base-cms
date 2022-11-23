@@ -4,11 +4,10 @@ namespace Juanfv2\BaseCms\Traits;
 
 trait IsPivot
 {
-
     /**
      * Scope a query to only include "ID"
      *
-     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeId($query, $id)
@@ -18,6 +17,7 @@ trait IsPivot
         foreach ($this->primaryKey as $k => $value) {
             $pks[$value] = $pkValues[$k];
         }
+
         return $query->where($pks);
     }
 
@@ -43,6 +43,7 @@ trait IsPivot
         foreach ($this->primaryKey as $value) {
             $pks[] = $this->$value;
         }
+
         return implode('_', $pks);
     }
 
@@ -55,7 +56,7 @@ trait IsPivot
     protected function setKeysForSaveQuery($query)
     {
         $keys = $this->getKeyName();
-        if (!is_array($keys)) {
+        if (! is_array($keys)) {
             return parent::setKeysForSaveQuery($query);
         }
 
@@ -69,7 +70,7 @@ trait IsPivot
     /**
      * Get the primary key value for a save query.
      *
-     * @param mixed $keyName
+     * @param  mixed  $keyName
      * @return mixed
      */
     protected function getKeyForSaveQuery($keyName = null)
@@ -81,6 +82,7 @@ trait IsPivot
         if (isset($this->original[$keyName])) {
             return $this->original[$keyName];
         }
+
         return $this->getAttribute($keyName);
     }
 }

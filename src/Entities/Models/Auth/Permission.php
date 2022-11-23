@@ -2,15 +2,15 @@
 
 namespace App\Models\Auth;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Juanfv2\BaseCms\Traits\BaseCmsModel;
 use Juanfv2\BaseCms\Traits\UserResponsible;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * Class Permission
- * @package App\Models
+ *
  * @version September 8, 2020, 4:57 pm UTC
  *
  * @property \Illuminate\Database\Eloquent\Collection $authRoles
@@ -18,12 +18,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string $name
  * @property string $urlBackEnd
  * @property string $urlFrontEnd
- * @property boolean $isSection
- * @property boolean $isVisible
- * @property integer $orderInMenu
- * @property integer $permission_id
- * @property integer $createdBy
- * @property integer $updatedBy
+ * @property bool $isSection
+ * @property bool $isVisible
+ * @property int $orderInMenu
+ * @property int $permission_id
+ * @property int $createdBy
+ * @property int $updatedBy
  */
 class Permission extends Model
 {
@@ -35,12 +35,10 @@ class Permission extends Model
     public $table = 'auth_permissions';
 
     const CREATED_AT = 'created_at';
+
     const UPDATED_AT = 'updated_at';
 
-
     protected $dates = ['deleted_at'];
-
-
 
     public $fillable = [
         'icon',
@@ -52,7 +50,7 @@ class Permission extends Model
         'orderInMenu',
         'permission_id',
         'createdBy',
-        'updatedBy'
+        'updatedBy',
     ];
 
     /**
@@ -71,7 +69,7 @@ class Permission extends Model
         'orderInMenu' => 'integer',
         'permission_id' => 'integer',
         'createdBy' => 'integer',
-        'updatedBy' => 'integer'
+        'updatedBy' => 'integer',
     ];
 
     /**
@@ -92,11 +90,11 @@ class Permission extends Model
         'updatedBy' => 'nullable',
         'created_at' => 'nullable',
         'updated_at' => 'nullable',
-        'deleted_at' => 'nullable'
+        'deleted_at' => 'nullable',
     ];
 
     public $hidden = [
-        'createdBy', 'updatedBy', 'created_at', 'updated_at', 'deleted_at'
+        'createdBy', 'updatedBy', 'created_at', 'updated_at', 'deleted_at',
     ];
 
     /**
@@ -131,6 +129,6 @@ class Permission extends Model
             ->orderBy('orderInMenu')
             ->orderBy('name')
             //->orderBy('permission_id')
-        ;
+;
     }
 }

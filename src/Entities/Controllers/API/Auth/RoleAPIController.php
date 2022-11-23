@@ -2,19 +2,17 @@
 
 namespace App\Http\Controllers\API\Auth;
 
+use App\Http\Controllers\AppBaseController;
+use App\Models\Auth\Permission;
 use App\Models\Auth\Role;
 use Illuminate\Http\Request;
 
-use App\Models\Auth\Permission;
-use App\Http\Controllers\AppBaseController;
-
 /**
  * Class RoleController
- * @package App\Http\Controllers\API
  */
 class RoleAPIController extends AppBaseController
 {
-    /** @var  \App\Models\Auth\Role */
+    /** @var \App\Models\Auth\Role */
     public $model;
 
     public $modelNameCamel = 'Role';

@@ -2,16 +2,15 @@
 
 namespace App\Models\Auth;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Juanfv2\BaseCms\Traits\BaseCmsModel;
 use Juanfv2\BaseCms\Traits\UserResponsible;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * Class Account
  *
- * @package App\Models\Auth
  * @version April 1, 2021, 10:54 pm UTC
  */
 class Account extends Model
@@ -26,12 +25,10 @@ class Account extends Model
     public $table = 'auth_accounts';
 
     const CREATED_AT = 'created_at';
+
     const UPDATED_AT = 'updated_at';
 
-
     protected $dates = ['deleted_at'];
-
-
 
     public $fillable = [
         'id',
@@ -51,16 +48,16 @@ class Account extends Model
      * @var array
      */
     protected $casts = [
-        'id'           => 'integer',
-        'user_id'      => 'integer',
-        'firstName'    => 'string',
-        'lastName'     => 'string',
-        'cellPhone'    => 'string',
-        'birthDate'    => 'date',
-        'address'      => 'string',
+        'id' => 'integer',
+        'user_id' => 'integer',
+        'firstName' => 'string',
+        'lastName' => 'string',
+        'cellPhone' => 'string',
+        'birthDate' => 'date',
+        'address' => 'string',
         'neighborhood' => 'string',
-        'createdBy'    => 'integer',
-        'updatedBy'    => 'integer'
+        'createdBy' => 'integer',
+        'updatedBy' => 'integer',
     ];
 
     /**
@@ -69,27 +66,27 @@ class Account extends Model
      * @var array
      */
     public static $rules = [
-        'id'           => 'nullable',
-        'user_id'      => 'nullable',
-        'firstName'    => 'required|string|max:191',
-        'lastName'     => 'required|string|max:191',
-        'cellPhone'    => 'nullable|string|max:191',
-        'imei'         => 'required|string|max:191',
-        'birthDate'    => 'nullable',
-        'address'      => 'nullable|string|max:191',
+        'id' => 'nullable',
+        'user_id' => 'nullable',
+        'firstName' => 'required|string|max:191',
+        'lastName' => 'required|string|max:191',
+        'cellPhone' => 'nullable|string|max:191',
+        'imei' => 'required|string|max:191',
+        'birthDate' => 'nullable',
+        'address' => 'nullable|string|max:191',
         'neighborhood' => 'nullable|string|max:191',
-        'createdBy'    => 'nullable',
-        'updatedBy'    => 'nullable',
-        'created_at'   => 'nullable',
-        'updated_at'   => 'nullable',
-        'deleted_at'   => 'nullable',
-        'photo'        => 'nullable',                  // <--
-        'images'       => 'nullable',                  // <--
+        'createdBy' => 'nullable',
+        'updatedBy' => 'nullable',
+        'created_at' => 'nullable',
+        'updated_at' => 'nullable',
+        'deleted_at' => 'nullable',
+        'photo' => 'nullable',                  // <--
+        'images' => 'nullable',                  // <--
 
     ];
 
     public $hidden = [
-        'createdBy', 'updatedBy', 'created_at', 'updated_at', 'deleted_at'
+        'createdBy', 'updatedBy', 'created_at', 'updated_at', 'deleted_at',
     ];
 
     /**

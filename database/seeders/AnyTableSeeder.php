@@ -35,7 +35,6 @@ class AnyTableSeeder extends Seeder
             'auth/auth_users_has_roles',
             'auth/auth_x_files',
 
-
             // entities
 
             // '/entities/accounts',
@@ -47,9 +46,9 @@ class AnyTableSeeder extends Seeder
         }
     }
 
-    function inserts($table)
+    public function inserts($table)
     {
-        logger(__FILE__ . ':' . __LINE__ . ' "database/data/{$table}.json" ', ["database/data/{$table}.json"]);
+        logger(__FILE__.':'.__LINE__.' "database/data/{$table}.json" ', ["database/data/{$table}.json"]);
         // Allowed memory size of 134217728 bytes exhausted (tried to allocate
         $table1 = explode('/', $table);
         $table2 = end($table1);

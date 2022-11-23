@@ -7,6 +7,7 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 class GenericResourceCollection extends AnonymousResourceCollection
 {
     public $includes;
+
     /**
      * The name of the resource being collected.
      *

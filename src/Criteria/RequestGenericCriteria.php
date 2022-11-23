@@ -2,15 +2,14 @@
 
 namespace Juanfv2\BaseCms\Criteria;
 
-use stdClass;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Juanfv2\BaseCms\Contracts\CriteriaInterface;
 use Juanfv2\BaseCms\Contracts\RepositoryInterface;
+use stdClass;
 
 /**
  * Class RequestGenericCriteria
- * @package namespace Juanfv2\BaseCms\Criteria
  */
 class RequestGenericCriteria implements CriteriaInterface
 {
@@ -18,6 +17,7 @@ class RequestGenericCriteria implements CriteriaInterface
      * @var \Illuminate\Http\Request
      */
     protected $request;
+
     protected $fieldsSearchable;
 
     public function __construct(Request $request)
@@ -28,29 +28,28 @@ class RequestGenericCriteria implements CriteriaInterface
     /**
      * Apply criteria in query repository
      *
-     * @param                     $model
-     * @param RepositoryInterface $repository
-     *
+     * @param    $model
+     * @param  RepositoryInterface  $repository
      * @return mixed
      */
     public function apply($model, RepositoryInterface $repository)
     {
-        $table                  = $model->getModel()->getTable();
+        $table = $model->getModel()->getTable();
         $this->fieldsSearchable = $repository->getFieldsSearchable();
-        $conditions             = $this->request->get('conditions', '');
-        $joins                  = $this->request->get('joins', '');
-        $select1                = $this->request->get('select', null);
-        $sorts                  = $this->request->get('sorts', '');
-        $withCount              = $this->request->get('withCount', '');
-        $with                   = $this->request->get('with', '');
-        $onlyTrashed            = $this->request->get('onlyTrashed', '');
-        $conditions             = json_decode(urldecode($conditions));
-        $joins                  = json_decode(urldecode($joins));
-        $sorts                  = json_decode(urldecode($sorts));
-        $withCount              = json_decode(urldecode($withCount));
-        $with                   = json_decode(urldecode($with));
-        $select2                = $select1 ? json_decode(urldecode($select1)) : null;
-        $select                 = $select2 ? $select2 : ($select1 ? explode(',', urldecode($select1)) : null);
+        $conditions = $this->request->get('conditions', '');
+        $joins = $this->request->get('joins', '');
+        $select1 = $this->request->get('select', null);
+        $sorts = $this->request->get('sorts', '');
+        $withCount = $this->request->get('withCount', '');
+        $with = $this->request->get('with', '');
+        $onlyTrashed = $this->request->get('onlyTrashed', '');
+        $conditions = json_decode(urldecode($conditions));
+        $joins = json_decode(urldecode($joins));
+        $sorts = json_decode(urldecode($sorts));
+        $withCount = json_decode(urldecode($withCount));
+        $with = json_decode(urldecode($with));
+        $select2 = $select1 ? json_decode(urldecode($select1)) : null;
+        $select = $select2 ? $select2 : ($select1 ? explode(',', urldecode($select1)) : null);
 
         // logger(__FILE__ . ':' . __LINE__ . ' $this->request ', [$this->request]);
 
@@ -66,39 +65,39 @@ class RequestGenericCriteria implements CriteriaInterface
                 }
 
                 $joinType = '';
-                $joinTable  = $split[0];
+                $joinTable = $split[0];
                 $foreignKey = $split[1];
 
                 switch (count($split)) {
                     case 5:
-                        $ownTable   = $split[2];
-                        $ownerKey   = $split[3];
-                        $joinType   = $split[4];
+                        $ownTable = $split[2];
+                        $ownerKey = $split[3];
+                        $joinType = $split[4];
                         break;
                     case 4:
-                        $ownTable   = $split[2];
-                        $ownerKey   = $split[3];
+                        $ownTable = $split[2];
+                        $ownerKey = $split[3];
                         if (strlen($split[3]) == 1) {
-                            $joinType   = $split[3];
+                            $joinType = $split[3];
                         }
                         break;
                     default:
-                        $ownTable   = $table;
-                        $ownerKey   = $split[2];
+                        $ownTable = $table;
+                        $ownerKey = $split[2];
 
                         break;
                 }
 
                 switch ($joinType) {
                     case '<':
-                        $model = $model->leftJoin($joinTable, $joinTable . '.' . $foreignKey, '=', $ownTable . '.' . $ownerKey);
+                        $model = $model->leftJoin($joinTable, $joinTable.'.'.$foreignKey, '=', $ownTable.'.'.$ownerKey);
                         break;
                     case '>':
-                        $model = $model->leftJoin($joinTable, $joinTable . '.' . $foreignKey, '=', $ownTable . '.' . $ownerKey);
+                        $model = $model->leftJoin($joinTable, $joinTable.'.'.$foreignKey, '=', $ownTable.'.'.$ownerKey);
                         break;
 
                     default:
-                        $model = $model->join($joinTable, $joinTable . '.' . $foreignKey, '=', $ownTable . '.' . $ownerKey);
+                        $model = $model->join($joinTable, $joinTable.'.'.$foreignKey, '=', $ownTable.'.'.$ownerKey);
                         break;
                 }
 
@@ -110,7 +109,6 @@ class RequestGenericCriteria implements CriteriaInterface
 
         if (is_array($select)) {
             foreach ($select as $k) {
-
                 if (is_string($k)) {
                     $model = $model->addSelect($k);
                 } else {
@@ -121,7 +119,7 @@ class RequestGenericCriteria implements CriteriaInterface
                 }
             }
         } else {
-            $model = $model->addSelect($table . '.*');
+            $model = $model->addSelect($table.'.*');
         }
 
         if ($sorts) {
@@ -141,51 +139,53 @@ class RequestGenericCriteria implements CriteriaInterface
         if ($onlyTrashed) {
             $model = $model->onlyTrashed();
         }
+
         return $model;
     }
 
     /**
      * @param $k
-     * @param null $query
-     * @param int $currentIndex
+     * @param  null  $query
+     * @param  int  $currentIndex
      */
     private function mGroup(&$model, $table, $kParent, $query = null, $_kOperatorStrParam = 'AND', $hasMq = false)
     {
-
         $q = $model->forNestedWhere();
         foreach ($kParent as $k) {
             // logger(__FILE__ . ':' . __LINE__ . ' inner $k ', [$k]);
             if (is_array($k)) {
                 $qw = $this->mGroup($model, $table, $k, '_nested_', $_kOperatorStrParam);
                 $q->addNestedWhereQuery($qw->getQuery(), $_kOperatorStrParam);
+
                 continue; // continuar con el siguiente.
             }
 
-            $noValue          = '--false--';
-            $nullOrEmpty      = '---';
-            $_kOperatorStr    = 'AND';
+            $noValue = '--false--';
+            $nullOrEmpty = '---';
+            $_kOperatorStr = 'AND';
             $_kConditionalStr = '=';
-            $condition        = explode(' ', $k->c);
+            $condition = explode(' ', $k->c);
 
             switch (count($condition)) {
                 case 3:
-                    list($_kOperatorStr, $_kFieldStr, $_kConditionalStr) = $condition;
+                    [$_kOperatorStr, $_kFieldStr, $_kConditionalStr] = $condition;
                     break;
                 case 2:
-                    list($_kOperatorStr, $_kFieldStr) = $condition;
+                    [$_kOperatorStr, $_kFieldStr] = $condition;
                     break;
                 default:
-                    list($_kFieldStr) = $condition;
+                    [$_kFieldStr] = $condition;
             }
             if ($_kFieldStr === 'OR') {
                 $_kOperatorStrParam = 'OR';
+
                 continue; // next
             }
 
-            $_kValue              = property_exists($k, 'v') ? $k->v : $noValue;
-            $_kValueIsOptionNull  = strpos($_kConditionalStr, 'null') !== false;
+            $_kValue = property_exists($k, 'v') ? $k->v : $noValue;
+            $_kValueIsOptionNull = strpos($_kConditionalStr, 'null') !== false;
             $_kValueIsOptionEmpty = strpos($_kConditionalStr, 'empty') !== false;
-            $kFieldStrK           = str_replace("$table.", '', $_kFieldStr);
+            $kFieldStrK = str_replace("$table.", '', $_kFieldStr);
 
             if ($_kValueIsOptionNull || $_kValueIsOptionEmpty) {
                 $_kValue = $nullOrEmpty;
@@ -200,15 +200,15 @@ class RequestGenericCriteria implements CriteriaInterface
             }
 
             if ($_kConditionalStr === 'like') {
-                $_kValue = '%' . $_kValue . '%';
+                $_kValue = '%'.$_kValue.'%';
             }
             if ($_kConditionalStr === 'like>') {
                 $_kConditionalStr = 'like';
-                $_kValue = $_kValue . '%';
+                $_kValue = $_kValue.'%';
             }
             if ($_kConditionalStr === '<like') {
                 $_kConditionalStr = 'like';
-                $_kValue = '%' . $_kValue;
+                $_kValue = '%'.$_kValue;
             }
 
             switch ($_kConditionalStr) {
@@ -254,29 +254,27 @@ class RequestGenericCriteria implements CriteriaInterface
         }
     }
 
-
     public function applyWithFile(&$model)
     {
-
-        $table                = $model->getModel()->getTable();
-        $massiveQ             = $this->request->get('mq');
-        $conditions           = isset($massiveQ['conditions']) ? $massiveQ['conditions'] : null;
-        $conditions           = json_decode(urldecode($conditions));
+        $table = $model->getModel()->getTable();
+        $massiveQ = $this->request->get('mq');
+        $conditions = isset($massiveQ['conditions']) ? $massiveQ['conditions'] : null;
+        $conditions = json_decode(urldecode($conditions));
         $massiveQueryFileName = isset($massiveQ['massiveWithFile']) ? $massiveQ['massiveWithFile'] : '';
-        $exactSearch          = isset($massiveQ['exactSearch']) ? ($massiveQ['exactSearch'] === 'true') : false;
-        $rCountry             = $this->request->header('r-country', '');
-        $basename             = basename($massiveQueryFileName);
-        $fileTempName         = pathinfo($basename, PATHINFO_FILENAME);
-        $baseAssets           = 'assets/adm';
+        $exactSearch = isset($massiveQ['exactSearch']) ? ($massiveQ['exactSearch'] === 'true') : false;
+        $rCountry = $this->request->header('r-country', '');
+        $basename = basename($massiveQueryFileName);
+        $fileTempName = pathinfo($basename, PATHINFO_FILENAME);
+        $baseAssets = 'assets/adm';
 
         if ($rCountry) {
-            $baseAssets = $baseAssets . '/' . $rCountry;
+            $baseAssets = $baseAssets.'/'.$rCountry;
         }
 
-        $path    = "$baseAssets/temporals/$fileTempName/$table/massive-with-file/$massiveQueryFileName";
+        $path = "$baseAssets/temporals/$fileTempName/$table/massive-with-file/$massiveQueryFileName";
         $columns = [];
 
-        if (!Storage::disk('public')->exists($path)) {
+        if (! Storage::disk('public')->exists($path)) {
             throw new \Juanfv2\BaseCms\Exceptions\NoReportException("Archivo no encontrado: '{$massiveQueryFileName}'");
         }
 
@@ -286,9 +284,8 @@ class RequestGenericCriteria implements CriteriaInterface
             $dataCombined = [];
             $_versionsCsv_File = Storage::disk('public')->path($path);
 
-            if (($handle = fopen($_versionsCsv_File, "r")) !== false) {
-
-                $delimiter    = _file_delimiter($_versionsCsv_File);
+            if (($handle = fopen($_versionsCsv_File, 'r')) !== false) {
+                $delimiter = _file_delimiter($_versionsCsv_File);
 
                 while (($data = fgetcsv($handle, 1000, $delimiter)) !== false) {
                     $c = 0;
@@ -344,23 +341,20 @@ class RequestGenericCriteria implements CriteriaInterface
         $result->prevOperator = 'AND';
 
         for ($i = 0; $i < count($conditions); $i++) {
-
-
-            $column     = $columns[$i];
+            $column = $columns[$i];
             $_condition = $conditions[$i];
-            $condition  = explode(' ', $_condition->c);
-            $cCount     = count($condition);
+            $condition = explode(' ', $_condition->c);
+            $cCount = count($condition);
 
             if ($cCount != 3) {
                 continue;
             }
 
-            list($kOperatorStr, $kFieldStr, $kConditionalStr) = $condition;
+            [$kOperatorStr, $kFieldStr, $kConditionalStr] = $condition;
 
             if ($i == 0) {
                 $result->prevOperator = $kOperatorStr;
             }
-
 
             $qSub = $model->forNestedWhere();
             if ($kConditionalStr == 'like') {
@@ -383,14 +377,12 @@ class RequestGenericCriteria implements CriteriaInterface
     public static function conditionz($conditions = [], $_kOperatorStrNested = '')
     {
         if ($conditions) {
-
             // $_kOperatorStrNested = null; // $kOperator AND, OR ...
 
             $where = $_kOperatorStr = '';
             $_kConditionalStr = '='; // $kConditional =, LIKE, >, <, =>, ...
 
             foreach ($conditions as $index => $k) {
-
                 $_kOperatorStr = $_kOperatorStr == '' ? 'AND' : $_kOperatorStr;
                 $_kOperatorStrNested = $_kOperatorStrNested == '' ? 'AND' : $_kOperatorStrNested;
 
@@ -399,23 +391,25 @@ class RequestGenericCriteria implements CriteriaInterface
                 }
 
                 if (is_array($k)) {
-                    $where .= " $_kOperatorStrNested (" . RequestGenericCriteria::conditionz($k, 'OR') . ')';
+                    $where .= " $_kOperatorStrNested (".RequestGenericCriteria::conditionz($k, 'OR').')';
+
                     continue; // continuar con el siguiente.
                 }
                 $condition = explode(' ', $k->c);
 
                 switch (count($condition)) {
                     case 3:
-                        list($_kOperatorStr, $kFieldStr, $_kConditionalStr) = $condition;
+                        [$_kOperatorStr, $kFieldStr, $_kConditionalStr] = $condition;
                         break;
                     case 2:
-                        list($_kOperatorStr, $kFieldStr) = $condition;
+                        [$_kOperatorStr, $kFieldStr] = $condition;
                         break;
                     default:
-                        list($kFieldStr) = $condition;
+                        [$kFieldStr] = $condition;
                 }
                 if ($kFieldStr === 'OR') {
                     $_kOperatorStrNested = 'OR';
+
                     continue; // next
                 }
                 if ($index == 0) {
@@ -425,20 +419,20 @@ class RequestGenericCriteria implements CriteriaInterface
                 $_kValue = property_exists($k, 'v') ? $k->v : $noValue;
                 $_kValueIsOptionNull = strpos($_kConditionalStr, 'null') !== false;
 
-                if (!$_kValueIsOptionNull && $_kValue === $noValue) {
+                if (! $_kValueIsOptionNull && $_kValue === $noValue) {
                     continue;
                 }
 
                 if ($_kConditionalStr === 'like') {
-                    $_kValue = '%' . $_kValue . '%';
+                    $_kValue = '%'.$_kValue.'%';
                 }
                 if ($_kConditionalStr === 'like>') {
                     $_kConditionalStr = 'like';
-                    $_kValue = $_kValue . '%';
+                    $_kValue = $_kValue.'%';
                 }
                 if ($_kConditionalStr === '<like') {
                     $_kConditionalStr = 'like';
-                    $_kValue = '%' . $_kValue;
+                    $_kValue = '%'.$_kValue;
                 }
 
                 if ($_kValueIsOptionNull) {
