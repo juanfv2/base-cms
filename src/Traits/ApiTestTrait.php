@@ -68,7 +68,7 @@ trait ApiTestTrait
         );
     }
 
-    public function jsonValidate($json, Model|array $currentModel)
+    public function jsonValidate($json, $currentModel)
     {
         $cModel = [];
         $hidden = [];
