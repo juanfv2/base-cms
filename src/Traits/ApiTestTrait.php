@@ -4,6 +4,8 @@ namespace Juanfv2\BaseCms\Traits;
 
 use App\Models\Auth\Role;
 use App\Models\Auth\User;
+use App\Models\Auth\Person;
+use App\Models\Auth\Account;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Testing\Fluent\AssertableJson;
 
@@ -114,12 +116,31 @@ trait ApiTestTrait
      */
     protected function admin($overrides = [])
     {
-        $admin = $this->user($overrides);
-        $admin->roles()->attach(
+        $person = Person::factory()->create();
+        $user = User::find($person->user_id);
+
+        $user->roles()->attach(
             Role::factory()->admin()->create()
         );
 
-        return $admin;
+        return $user;
+    }
+
+    /**
+     * Return an user
+     *
+     * @return User
+     */
+    protected function account($overrides = [])
+    {
+        $account = Account::factory()->create();
+        $user = User::find($account->user_id);
+
+        $user->roles()->attach(
+            Role::factory()->account()->create()
+        );
+
+        return $user;
     }
 
     /**
@@ -145,9 +166,9 @@ trait ApiTestTrait
     /**
      * Acting as an user
      */
-    protected function actingAsUser($api = null)
+    protected function actingAsAccount($api = null)
     {
-        $this->actingAs($this->user(), $api);
+        $this->actingAs($this->account(), $api);
 
         return $this;
     }
