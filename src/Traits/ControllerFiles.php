@@ -259,7 +259,7 @@ trait ControllerFiles
 
         $temp = Storage::path($strLocationImage2show);
 
-        if ($w || $h) {
+        if (class_exists('Imagick') && ($w || $h)) {
             $basename = basename($strLocationImage2show);
             $ext = pathinfo($basename, PATHINFO_EXTENSION);
             $strLocationImage2showNew = Str::replaceLast(".{$ext}", "-{$w}x{$h}.{$ext}", $strLocationImage2show);
