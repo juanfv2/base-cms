@@ -17,7 +17,7 @@ return [
     'throttle' => 'Demasiados intentos de inicio de sesión. Vuelva a intentarlo en :seconds segundos.',
 
     'session' => [
-        'out' =>  'Token Invalido.',
+        'out' => 'Token Invalido.',
     ],
     'no' => [
         'active' => 'Usuario inactivo.',
@@ -31,7 +31,7 @@ return [
             'line' => [
                 '1' => 'Usted está recibiendo este correo electrónico porque recibimos una solicitud de restablecimiento de contraseña para su cuenta. Haga clic en el siguiente botón para restablecer su contraseña:',
                 '2' => 'Si no solicitó restablecer la contraseña, no se requieren más acciones.',
-            ]
-        ]
-    ]
+            ],
+        ],
+    ],
 ];

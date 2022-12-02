@@ -2,10 +2,10 @@
 
 namespace Juanfv2\BaseCms\Traits;
 
+use App\Models\Auth\Account;
+use App\Models\Auth\Person;
 use App\Models\Auth\Role;
 use App\Models\Auth\User;
-use App\Models\Auth\Person;
-use App\Models\Auth\Account;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Testing\Fluent\AssertableJson;
 
