@@ -477,7 +477,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
 
         foreach ($this->commandData->fields as $field) {
             $converted = Str::title($field->name);
-            $fieldText = "$field->name: new DBType('{$converted}', '{$this->commandData->config->tableName}.$field->name', ";
+            $fieldText = "$field->name: new DBType({label: '{$converted}', field: '{$this->commandData->config->tableName}.$field->name', ";
 
             if ($field->isPrimary) {
                 $mPrimaryKey = $field->name;
@@ -485,17 +485,17 @@ class AngularDetailComponentGenerator extends BaseGenerator
             switch ($field->fieldType) {
                 case 'integer':
                 case 'bigInteger':
-                    $fieldText .= " 'number'),";
+                    $fieldText .= "type: 'number'}),";
                     break;
                 case 'date':
                 case 'datetime':
-                    $fieldText .= " 'date'),";
+                    $fieldText .= "type: 'date'}),";
                     break;
                 case 'boolean':
-                    $fieldText .= " 'boolean'),";
+                    $fieldText .= "type: 'boolean'}),";
                     break;
                 default:
-                    $fieldText .= " 'string'),";
+                    $fieldText .= "type: 'string'}),";
                     break;
             }
             $fields[] = $fieldText;
@@ -509,8 +509,8 @@ class AngularDetailComponentGenerator extends BaseGenerator
             $fieldCamel = Str::camel($field);
 
             $fields[] = '';
-            $fields[] = "{$fieldFk}: new DBType(`$title #`, '$fieldCamel.$fieldFk', 'number'),";
-            $fields[] = "{$fieldCamel}Name: new DBType(`$title`, '{$fieldCamel}Name', 'string', true, false),";
+            $fields[] = "{$fieldFk}: new DBType({label: `$title #`,field: '$fieldCamel.$fieldFk',type: 'number'}),";
+            $fields[] = "{$fieldCamel}Name: new DBType({label: `$title`, '{$fieldCamel}Name', field: 'string', allowExport: true, allowImport:false}),";
         }
 
         $fields[] = "},\n";
