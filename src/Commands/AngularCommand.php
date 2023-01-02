@@ -3,7 +3,6 @@
 namespace Juanfv2\BaseCms\Commands;
 
 use InfyOm\Generator\Commands\BaseCommand;
-use InfyOm\Generator\Common\CommandData;
 use Juanfv2\BaseCms\Generators\AngularAutoCompleteComponentGenerator;
 use Juanfv2\BaseCms\Generators\AngularDetailComponentGenerator;
 use Juanfv2\BaseCms\Generators\AngularListComponentGenerator;
@@ -25,16 +24,6 @@ class AngularCommand extends BaseCommand
     protected $description = 'Create an angular item command';
 
     /**
-     * Create a new command instance.
-     */
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->commandData = new CommandData($this, CommandData::$COMMAND_TYPE_API);
-    }
-
-    /**
      * Execute the command.
      *
      * @return void
@@ -43,13 +32,16 @@ class AngularCommand extends BaseCommand
     {
         parent::handle();
 
-        $controllerGenerator = new AngularDetailComponentGenerator($this->commandData);
+        /** @var AngularDetailComponentGenerator $controllerGenerator */
+        $controllerGenerator = app(AngularDetailComponentGenerator::class);
         $controllerGenerator->generate();
 
-        $controllerGenerator = new AngularListComponentGenerator($this->commandData);
+        /** @var AngularListComponentGenerator $controllerGenerator */
+        $controllerGenerator = app(AngularListComponentGenerator::class);
         $controllerGenerator->generate();
 
-        $controllerGenerator = new AngularAutoCompleteComponentGenerator($this->commandData);
+        /** @var AngularAutoCompleteComponentGenerator $controllerGenerator */
+        $controllerGenerator = app(AngularAutoCompleteComponentGenerator::class);
         $controllerGenerator->generate();
 
         $this->performPostActions();
