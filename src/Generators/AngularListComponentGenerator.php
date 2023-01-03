@@ -9,26 +9,33 @@ use InfyOm\Generator\Utils\FileUtil;
 
 class AngularListComponentGenerator extends BaseGenerator
 {
-    private \InfyOm\Generator\Common\CommandData $commandData;
 
-    private string $path;
+    public string $path;
 
     private string $fileName;
 
-    private ?string $primaryKey = null;
+    private string $fileNameSpec;
 
-    public function __construct(CommandData $commandData)
+    private string $fileNameScss;
+
+    private string $fileNameHtml;
+
+    public function __construct()
     {
-        $this->commandData = $commandData;
+        parent::__construct();
 
-        // dd($this->commandData);
-        $mPath = config('infyom.laravel_generator.path.angular', 'angular/');
-        $this->path = $mPath.$this->commandData->config->mDashed.'/';
-        $name = $this->commandData->config->mDashed.'-list.component.';
-        $this->fileName = $name.'ts';
-        $this->fileNameSpec = $name.'spec.ts';
-        $this->fileNameScss = $name.'scss';
-        $this->fileNameHtml = $name.'html';
+        $mPath = config('laravel_generator.path.angular', 'angular/');
+        $this->path = $mPath . $this->config->modelNames->dashed . '/';
+        $name = $this->config->modelNames->dashed . '-list.component.';
+        $this->fileName = $name . 'ts';
+        $this->fileNameSpec = $name . 'spec.ts';
+        $this->fileNameScss = $name . 'scss';
+        $this->fileNameHtml = $name . 'html';
+    }
+
+    public function variables(): array
+    {
+        return array_merge([], $this->docsVariables());
     }
 
     public function generate()
@@ -41,93 +48,58 @@ class AngularListComponentGenerator extends BaseGenerator
 
     public function generateTs()
     {
-        $templateData = get_template('angular.list_component', 'laravel-generator');
-        $templateData = $this->fillTemplate($templateData);
+        $viewName = 'list_component';
+        $templateData = view('laravel-generator::angular.' . $viewName, $this->variables())->render();
 
-        FileUtil::createFile($this->path, $this->fileName, $templateData);
+        g_filesystem()->createFile($this->path . $this->fileName, $templateData);
 
-        $this->commandData->commandComment("\nAPI ListComponent created: ");
-        $this->commandData->commandInfo($this->fileName);
+        $this->config->commandComment("Detail.ts Component created: ");
+        $this->config->commandInfo($this->fileName);
     }
 
     public function generateScss()
     {
-        $templateData = get_template('angular.list_component_scss', 'laravel-generator');
-        $templateData = $this->fillTemplate($templateData);
+        $viewName = 'list_component_scss';
+        $templateData = view('laravel-generator::angular.' . $viewName, $this->variables())->render();
 
-        FileUtil::createFile($this->path, $this->fileNameScss, $templateData);
+        g_filesystem()->createFile($this->path . $this->fileNameScss, $templateData);
 
-        $this->commandData->commandComment("\nAPI ListComponent created: ");
-        $this->commandData->commandInfo($this->fileNameScss);
+        $this->config->commandComment("Detail.scss Component created: ");
+        $this->config->commandInfo($this->fileNameScss);
     }
 
     public function generateSpec()
     {
-        $templateData = get_template('angular.list_component_spec', 'laravel-generator');
-        $templateData = fill_template($this->commandData->dynamicVars, $templateData);
+        $viewName = 'list_component_spec';
+        $templateData = view('laravel-generator::angular.' . $viewName, $this->variables())->render();
 
-        FileUtil::createFile($this->path, $this->fileNameSpec, $templateData);
+        g_filesystem()->createFile($this->path . $this->fileNameSpec, $templateData);
 
-        $this->commandData->commandComment("\nAPI ListComponent created: ");
-        $this->commandData->commandInfo($this->fileNameSpec);
+        $this->config->commandComment("Detail.spec Component created: ");
+        $this->config->commandInfo($this->fileNameSpec);
     }
 
     public function generateHtml()
     {
-        $templateData = get_template('angular.list_component_html', 'laravel-generator');
-        $templateData = $this->fillTemplateHtml($templateData);
+        $viewName = 'list_component_html';
+        $templateData = view('laravel-generator::angular.' . $viewName, $this->variables())->render();
 
-        FileUtil::createFile($this->path, $this->fileNameHtml, $templateData);
+        g_filesystem()->createFile($this->path . $this->fileNameHtml, $templateData);
 
-        $this->commandData->commandComment("\nAPI ListComponent created: ");
-        $this->commandData->commandInfo($this->fileNameHtml);
-    }
-
-    private function fillTemplate($templateData)
-    {
-        $templateData = fill_template($this->commandData->dynamicVars, $templateData);
-
-        $searchables = $this->getSearchables();
-
-        if ($this->commandData->getOption('primary')) {
-            $primary = $this->commandData->getOption('primary');
-        } else {
-            $primary = '';
-            if ($this->commandData->getOption('fieldsFile') && $this->primaryKey != 'id') {
-                $primary = $this->primaryKey;
-            }
-        }
-
-        $templateData = str_replace('$NAME_PK$', $primary, $templateData);
-        $templateData = str_replace('$SEARCHABLE_FIELDS$', implode(','.infy_nl_tab(1, 2), $searchables), $templateData);
-        $templateData = str_replace('$RELATION_MODEL_NAMES$', implode(',', $this->generateRelationModelNames()), $templateData);
-        $templateData = str_replace('$RELATIONS_AS_FIELDS$', implode("\n", $this->generateRelationsFields()), $templateData);
-        $templateData = str_replace('$RELATIONS_AS_INIT_SEARCH_MODEL$', implode(','.infy_nl_tab(1, 2), $this->generateRelationsInitSearchModel()), $templateData);
-        $templateData = str_replace('$RELATIONS_AS_INIT_SEARCH$', implode(infy_nl_tab(1, 2), $this->generateRelationsInitSearch()), $templateData);
-        $templateData = str_replace('$RELATIONS_AS_ON_LAZY_LOAD$', implode("\n", $this->generateRelationsOnLazyLoad()), $templateData);
-        $templateData = str_replace('$RELATIONS_AS_ON_LAZY_LOAD2$', implode("\n", $this->generateRelationsOnLazyLoad2()), $templateData);
-        $templateData = str_replace('$RELATIONS_AS_ADD_NEW$', implode(','.infy_nl_tab(1, 2), $this->generateRelationsAddNew()), $templateData);
-
-        return $templateData;
+        $this->config->commandComment("Detail.html Component created: ");
+        $this->config->commandInfo($this->fileNameHtml);
     }
 
     private function getSearchables()
     {
         $searchables = [];
-        $this->primaryKey = 'id';
 
-        foreach ($this->commandData->fields as $field) {
-            if (
-                $field->name == 'createdBy' ||
-                $field->name == 'updatedBy'
-            ) {
+        foreach ($this->config->fields as $field) {
+            if ($field->name == 'created_by' || $field->name == 'updated_by') {
                 continue;
             }
             if ($field->isSearchable) {
-                $searchables[] = "this.labels.{$this->commandData->config->mCamel}.{$field->name}";
-            }
-            if ($field->isPrimary) {
-                $this->primaryKey = $field->name;
+                $searchables[] = "this.labels.{$this->config->modelNames->camel}.{$field->name}";
             }
         }
 
@@ -136,9 +108,9 @@ class AngularListComponentGenerator extends BaseGenerator
 
     private function generateRelationModelNames()
     {
-        $relations = [$this->commandData->config->mName];
+        $relations = [$this->config->modelNames->name];
 
-        foreach ($this->commandData->relations as $relation) {
+        foreach ($this->config->relations as $relation) {
             $type = $relation->type ?? null;
             $field = $relation->inputs[0] ?? null;
             if ($type != 'mt1') {
@@ -147,7 +119,7 @@ class AngularListComponentGenerator extends BaseGenerator
 
             $relationShipText = $field;
 
-            if (! empty($relationsOpts)) {
+            if (!empty($relationsOpts)) {
                 if (in_array($field, $relationsOpts)) {
                     $relations[] = $relationShipText;
                 }
@@ -162,7 +134,7 @@ class AngularListComponentGenerator extends BaseGenerator
     private function generateRelationsFields()
     {
         $relations = [];
-        foreach ($this->commandData->relations as $relation) {
+        foreach ($this->config->relations as $relation) {
             $type = $relation->type ?? null;
             $field = $relation->inputs[0] ?? null;
 
@@ -189,7 +161,7 @@ class AngularListComponentGenerator extends BaseGenerator
     private function generateRelationsInitSearchModel()
     {
         $relations = [];
-        foreach ($this->commandData->relations as $relation) {
+        foreach ($this->config->relations as $relation) {
             $type = $relation->type ?? null;
             $field = $relation->inputs[0] ?? null;
 
@@ -205,7 +177,7 @@ class AngularListComponentGenerator extends BaseGenerator
     private function generateRelationsInitSearch()
     {
         $relations = [];
-        foreach ($this->commandData->relations as $relation) {
+        foreach ($this->config->relations as $relation) {
             $type = $relation->type ?? null;
             $field = $relation->inputs[0] ?? null;
 
@@ -224,7 +196,7 @@ class AngularListComponentGenerator extends BaseGenerator
 
         $count = 1;
         $fieldsArr = [];
-        foreach ($this->commandData->relations as $relation) {
+        foreach ($this->config->relations as $relation) {
             $type = $relation->type ?? null;
             $field = $relation->inputs[0] ?? null;
             $fieldFK = $relation->inputs[1] ?? null;
@@ -237,7 +209,7 @@ class AngularListComponentGenerator extends BaseGenerator
             nextOperator = JfUtils.x2one({
                 conditions,
                 conditionModel: this.modelSearch.condition$field,
-                foreignKName: `\${this.labels.{$this->commandData->config->mCamel}.tableName}.$fieldFK`,
+                foreignKName: `\${this.labels.{$this->config->modelNames->camel}.tableName}.$fieldFK`,
                 primaryKName: 'id',
                 nextOperator
               });";
@@ -250,7 +222,7 @@ class AngularListComponentGenerator extends BaseGenerator
     private function generateRelationsOnLazyLoad2()
     {
         $relations = [];
-        foreach ($this->commandData->relations as $relation) {
+        foreach ($this->config->relations as $relation) {
             $type = $relation->type ?? null;
             $field = $relation->inputs[0] ?? null;
             $fieldFK = $relation->inputs[1] ?? null;
@@ -276,7 +248,7 @@ class AngularListComponentGenerator extends BaseGenerator
     private function generateRelationsAddNew()
     {
         $relations = [];
-        foreach ($this->commandData->relations as $relation) {
+        foreach ($this->config->relations as $relation) {
             $type = $relation->type ?? null;
             $field = $relation->inputs[0] ?? null;
 
@@ -292,7 +264,7 @@ class AngularListComponentGenerator extends BaseGenerator
 
     private function fillTemplateHtml($templateData)
     {
-        $templateData = fill_template($this->commandData->dynamicVars, $templateData);
+        // $templateData = fill_template($this->dynamicVars, $templateData);
 
         $templateData = str_replace('$RELATIONS_AS_SEARCH_FIELDS$', implode("\n", $this->generateRelationsHtmlSearchFields()), $templateData);
         $templateData = str_replace('$COLUMN_FIELDS$', implode("\n", $this->generateHtmlColumnFields()), $templateData);
@@ -306,7 +278,7 @@ class AngularListComponentGenerator extends BaseGenerator
     private function generateRelationsHtmlSearchFields()
     {
         $relations = [];
-        foreach ($this->commandData->relations as $relation) {
+        foreach ($this->config->relations as $relation) {
             $type = $relation->type ?? null;
             $field = $relation->inputs[0] ?? null;
 
@@ -368,7 +340,7 @@ class AngularListComponentGenerator extends BaseGenerator
     private function generateHtmlColumnFields()
     {
         $relations = [];
-        foreach ($this->commandData->fields as $field) {
+        foreach ($this->config->fields as $field) {
             if (
                 $field->name == 'createdBy' ||
                 $field->name == 'updatedBy'
@@ -377,11 +349,11 @@ class AngularListComponentGenerator extends BaseGenerator
             }
             if ($field->inIndex) {
                 $relationText = <<<EOF
-                <th [jfMultiSortMeta]="labels.{$this->commandData->config->mCamel}.$field->name.field!"
+                <th [jfMultiSortMeta]="labels.{$this->config->modelNames->camel}.$field->name.field!"
                     [sorts]="modelSearch.lazyLoadEvent.sorts"
                     (sort)="onSort(\$event)"
                     scope="col">
-                    {{ labels.{$this->commandData->config->mCamel}.$field->name.label }}
+                    {{ labels.{$this->config->modelNames->camel}.$field->name.label }}
                 </th>
                 EOF;
                 $relations[] = $relationText;
@@ -394,7 +366,7 @@ class AngularListComponentGenerator extends BaseGenerator
     private function generateHtmlColumnValues()
     {
         $relations = [];
-        foreach ($this->commandData->fields as $field) {
+        foreach ($this->config->fields as $field) {
             if (
                 $field->name == 'createdBy' ||
                 $field->name == 'updatedBy'
@@ -404,7 +376,7 @@ class AngularListComponentGenerator extends BaseGenerator
             if ($field->inIndex) {
                 $relationText = <<<EOF
                 <td>
-                    <strong class="d-block d-md-none">{{ labels.{$this->commandData->config->mCamel}.$field->name.label }}</strong>
+                    <strong class="d-block d-md-none">{{ labels.{$this->config->modelNames->camel}.$field->name.label }}</strong>
                     {{ model.$field->name }}
                 </td>
                 EOF;
@@ -431,7 +403,7 @@ class AngularListComponentGenerator extends BaseGenerator
     private function generateHtmlColumnRelationsFields()
     {
         $relations = [];
-        foreach ($this->commandData->relations as $relation) {
+        foreach ($this->config->relations as $relation) {
             $type = $relation->type ?? null;
             $field = $relation->inputs[0] ?? null;
 
@@ -440,11 +412,11 @@ class AngularListComponentGenerator extends BaseGenerator
             }
             $fieldCamel = Str::camel($field);
             $relationText = <<<EOF
-            <th [jfMultiSortMeta]="labels.{$this->commandData->config->mCamel}.{$fieldCamel}Name.field!"
+            <th [jfMultiSortMeta]="labels.{$this->config->modelNames->camel}.{$fieldCamel}Name.field!"
                 [sorts]="modelSearch.lazyLoadEvent.sorts"
                 (sort)="onSort(\$event)"
                 scope="col">
-                {{ labels.{$this->commandData->config->mCamel}.{$fieldCamel}Name.label }}
+                {{ labels.{$this->config->modelNames->camel}.{$fieldCamel}Name.label }}
             </th>
             EOF;
             $relations[] = $relationText;
@@ -456,7 +428,7 @@ class AngularListComponentGenerator extends BaseGenerator
     private function generateHtmlColumnRelationsValues()
     {
         $relations = [];
-        foreach ($this->commandData->relations as $relation) {
+        foreach ($this->config->relations as $relation) {
             $type = $relation->type ?? null;
             $field = $relation->inputs[0] ?? null;
 
@@ -476,10 +448,39 @@ class AngularListComponentGenerator extends BaseGenerator
         return $relations;
     }
 
+    protected function docsVariables(): array
+    {
+        $variables = [];
+        $searchables1 = $this->getSearchables();
+
+        $variables['searchable_1']                       = implode(infy_nl_tab().',', $searchables1);
+        $variables['relation_model_names']               = implode(',', $this->generateRelationModelNames());
+        $variables['relations_fields']                   = implode(infy_nl_tab(), $this->generateRelationsFields());
+        $variables['relations_fields_init_search_model'] = implode(infy_nl_tab().',', $this->generateRelationsInitSearchModel());
+        $variables['relations_fields_init_search']       = implode(infy_nl_tab().',', $this->generateRelationsInitSearch());
+        $variables['relations_fields_on_lazy_load_1']    = implode(infy_nl_tab(), $this->generateRelationsOnLazyLoad());
+        $variables['relations_fields_on_lazy_load_2']    = implode(infy_nl_tab(), $this->generateRelationsOnLazyLoad2());
+        $variables['relations_fields_add_new']           = implode(infy_nl_tab(), $this->generateRelationsAddNew());
+
+        $variables['relations_search_fields'] = implode(infy_nl_tab(), $this->generateRelationsHtmlSearchFields());
+        $variables['column_fields']           = implode(infy_nl_tab(), $this->generateHtmlColumnFields());
+        $variables['column_fields_relations'] = implode(infy_nl_tab(), $this->generateHtmlColumnRelationsFields());
+        $variables['column_values'] = implode(infy_nl_tab(), $this->generateHtmlColumnValues());
+        $variables['column_values_relations'] = implode(infy_nl_tab(), $this->generateHtmlColumnRelationsValues());
+
+        // $templateData = str_replace('$RELATIONS_AS_SEARCH_FIELDS$', implode("\n", $this->generateRelationsHtmlSearchFields()), $templateData);
+        // $templateData = str_replace('$COLUMN_FIELDS$', implode("\n", $this->generateHtmlColumnFields()), $templateData);
+        // $templateData = str_replace('$COLUMN_FIELDS_RELATIONS$', implode("\n", $this->generateHtmlColumnRelationsFields()), $templateData);
+        // $templateData = str_replace('$COLUMN_VALUES$', implode("\n", $this->generateHtmlColumnValues()), $templateData);
+        // $templateData = str_replace('$COLUMN_VALUES_RELATIONS$', implode("\n", $this->generateHtmlColumnRelationsValues()), $templateData);
+
+        return $variables;
+    }
+
     public function rollback()
     {
         if ($this->rollbackFile($this->path, $this->fileName)) {
-            $this->commandData->commandComment('API Controller file deleted: '.$this->fileName);
+            $this->config->commandComment('API Controller file deleted: ' . $this->fileName);
         }
     }
 }

@@ -3,28 +3,26 @@
 namespace Juanfv2\BaseCms\Generators;
 
 use Illuminate\Support\Str;
-use InfyOm\Generator\Common\CommandData;
 use InfyOm\Generator\Generators\BaseGenerator;
-use InfyOm\Generator\Utils\FileUtil;
 
 class AngularAutoCompleteComponentGenerator extends BaseGenerator
 {
-    private \InfyOm\Generator\Common\CommandData $commandData;
-
-    private string $path;
-
     private string $fileName;
 
-    private ?string $primaryKey = null;
-
-    public function __construct(CommandData $commandData)
+    public function __construct()
     {
-        $this->commandData = $commandData;
-        // dd($this->commandData);
-        $mPath = config('infyom.laravel_generator.path.angular', 'angular/');
-        $this->path = $mPath.$this->commandData->config->mDashed.'/';
-        $name = $this->commandData->config->mDashed.'-auto-complete.component.';
+        parent::__construct();
+
+        $mPath = config('laravel_generator.path.angular', 'angular/');
+        $this->path = $mPath.$this->config->modelNames->dashed.'/';
+
+        $name = $this->config->modelNames->dashed.'-auto-complete.component.';
         $this->fileName = $name.'ts';
+    }
+
+    public function variables(): array
+    {
+        return array_merge([], $this->docsVariables());
     }
 
     public function generate()
@@ -34,51 +32,31 @@ class AngularAutoCompleteComponentGenerator extends BaseGenerator
 
     public function generateTs()
     {
-        $templateData = get_template('angular.auto_complete_list_component', 'laravel-generator');
-        $templateData = $this->fillTemplate($templateData);
+        $viewName = 'auto_complete_component';
+        $templateData = view('laravel-generator::angular.'.$viewName, $this->variables())->render();
 
-        FileUtil::createFile($this->path, $this->fileName, $templateData);
+        g_filesystem()->createFile($this->path.$this->fileName, $templateData);
 
-        $this->commandData->commandComment("\nAPI ListComponent created: ");
-        $this->commandData->commandInfo($this->fileName);
-    }
-
-    private function fillTemplate($templateData)
-    {
-        $templateData = fill_template($this->commandData->dynamicVars, $templateData);
-
-        [$searchables1, $searchables2] = $this->getSearchables();
-
-        $templateData = str_replace('$SEARCHABLE_FIELDS_1$', implode(infy_nl_tab(1, 2), $searchables1), $templateData);
-        $templateData = str_replace('$SEARCHABLE_FIELDS_2$', implode(','.infy_nl_tab(1, 2), $searchables2), $templateData);
-        $templateData = str_replace('$RELATION_MODEL_NAMES$', implode(',', $this->generateRelationModelNames()), $templateData);
-        $templateData = str_replace('$RELATIONS_AS_FIELDS_1$', implode("\n", $this->generateRelationsFields()), $templateData);
-        $templateData = str_replace('$RELATIONS_AS_FIELDS_2$', implode("\n", $this->generateRelationsFields2()), $templateData);
-
-        return $templateData;
+        $this->config->commandComment("AutoComplete Component created: ");
+        $this->config->commandInfo($this->fileName);
     }
 
     private function getSearchables()
     {
         $searchables1 = [];
         $searchables2 = [];
-        $this->primaryKey = 'id';
 
-        foreach ($this->commandData->fields as $field) {
-            if (
-                $field->name == 'createdBy' ||
-                $field->name == 'updatedBy'
-            ) {
+        foreach ($this->config->fields as $field) {
+            if ($field->name == 'created_by' || $field->name == 'updated_by') {
                 continue;
             }
             if ($field->isSearchable) {
-                $searchables1[] = "g.push(new JfCondition(`OR \${this.labels.{$this->commandData->config->mCamel}.{$field->name}.field} like`, term));";
-                $searchables2[] = "`\${this.labels.{$this->commandData->config->mCamel}.{$field->name}.field}`";
+                $searchables1[] = "g.push(new JfCondition(`OR \${this.labels.{$this->config->modelNames->camel}.{$field->name}.field} like`, term));";
+                $searchables2[] = "`\${this.labels.{$this->config->modelNames->camel}.{$field->name}.field}`,";
             }
             if ($field->isPrimary) {
-                $searchables1[] = "g.push(new JfCondition(`OR \${this.labels.{$this->commandData->config->mCamel}.{$field->name}.field} like`, term));";
-                $searchables2[] = "`\${this.labels.{$this->commandData->config->mCamel}.{$field->name}.field}`";
-                $this->primaryKey = $field->name;
+                $searchables1[] = "g.push(new JfCondition(`OR \${this.labels.{$this->config->modelNames->camel}.{$field->name}.field} like`, term));";
+                $searchables2[] = "`\${this.labels.{$this->config->modelNames->camel}.{$field->name}.field}`,";
             }
         }
 
@@ -89,7 +67,7 @@ class AngularAutoCompleteComponentGenerator extends BaseGenerator
     {
         $relations = [];
 
-        foreach ($this->commandData->relations as $relation) {
+        foreach ($this->config->relations as $relation) {
             $type = $relation->type ?? null;
             $field = $relation->inputs[0] ?? null;
             if ($type != 'mt1') {
@@ -113,7 +91,7 @@ class AngularAutoCompleteComponentGenerator extends BaseGenerator
     private function generateRelationsFields()
     {
         $relations = [];
-        foreach ($this->commandData->relations as $relation) {
+        foreach ($this->config->relations as $relation) {
             $type = $relation->type ?? null;
             $field = $relation->inputs[0] ?? null;
 
@@ -139,7 +117,7 @@ class AngularAutoCompleteComponentGenerator extends BaseGenerator
     private function generateRelationsFields2()
     {
         $relations = [];
-        foreach ($this->commandData->relations as $relation) {
+        foreach ($this->config->relations as $relation) {
             $type = $relation->type ?? null;
             $field = $relation->inputs[0] ?? null;
             $fieldFK = $relation->inputs[1] ?? null;
@@ -151,7 +129,7 @@ class AngularAutoCompleteComponentGenerator extends BaseGenerator
             $fieldSnape = Str::camel($field);
             $relationText = <<<EOF
             if (this.m$field) {
-                conditions.push(new JfCondition(`\${this.labels.{$this->commandData->config->mCamel}.tableName}.$fieldFK`, this.m$field.id));
+                conditions.push(new JfCondition(`\${this.labels.{$this->config->modelNames->camel}.tableName}.$fieldFK`, this.m$field.id));
             }
             EOF;
             $relations[] = $relationText;
@@ -160,10 +138,24 @@ class AngularAutoCompleteComponentGenerator extends BaseGenerator
         return $relations;
     }
 
+    protected function docsVariables(): array
+    {
+        $variables = [];
+        [$searchables1, $searchables2] = $this->getSearchables();
+
+        $variables['searchable_1'] = implode(infy_nl_tab(), $searchables1);
+        $variables['searchable_2'] = implode(infy_nl_tab(), $searchables2);
+        $variables['relation_model_names'] = implode(',', $this->generateRelationModelNames());
+        $variables['relations_1'] = implode(',', $this->generateRelationsFields());
+        $variables['relations_2'] = implode(',', $this->generateRelationsFields2());
+
+        return $variables;
+    }
+
     public function rollback()
     {
         if ($this->rollbackFile($this->path, $this->fileName)) {
-            $this->commandData->commandComment('API Controller file deleted: '.$this->fileName);
+            $this->config->commandComment('API Controller file deleted: '.$this->fileName);
         }
     }
 }
