@@ -246,7 +246,7 @@ trait BaseCmsModel
                         [$temp, $model_key] = explode('.', $this->$key($key)->getQualifiedForeignKeyName());
 
                         foreach ($this->$key as $rel) {
-                            if (!in_array($rel->id, $new_values)) {
+                            if (! in_array($rel->id, $new_values)) {
                                 $rel->$model_key = null;
                                 $rel->save();
                             }
