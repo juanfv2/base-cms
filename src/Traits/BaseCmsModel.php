@@ -6,9 +6,6 @@ use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
-/**
- * MyBaseRepository
- */
 trait BaseCmsModel
 {
     /**
@@ -30,8 +27,6 @@ trait BaseCmsModel
      *
      * @param $criteria
      * @return $this
-     *
-     * @throws \Prettus\Repository\Exceptions\RepositoryException
      */
     public function pushCriteria($criteria)
     {
@@ -207,7 +202,7 @@ trait BaseCmsModel
             if (
                 isset($this) &&
                 method_exists($this, $key) &&
-                is_a(@$this->$key(), Illuminate\Database\Eloquent\Relations\Relation::class)
+                is_a(@$this->$key(), \Illuminate\Database\Eloquent\Relations\Relation::class)
             ) {
                 $methodClass = get_class($this->$key($key));
                 switch ($methodClass) {

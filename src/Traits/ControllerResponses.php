@@ -5,7 +5,7 @@ namespace  Juanfv2\BaseCms\Traits;
 trait ControllerResponses
 {
     /**
-     * @param  array|string  $data
+     * @param  object|array|string  $data
      * @param  string  $message
      * @param  bool  $isSuccess
      * @param  int  $responseCode
