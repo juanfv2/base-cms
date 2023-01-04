@@ -207,7 +207,7 @@ trait BaseCmsModel
             if (
                 isset($this) &&
                 method_exists($this, $key) &&
-                is_a(@$this->$key(), 'Illuminate\Database\Eloquent\Relations\Relation')
+                is_a(@$this->$key(), Illuminate\Database\Eloquent\Relations\Relation::class)
             ) {
                 $methodClass = get_class($this->$key($key));
                 switch ($methodClass) {
