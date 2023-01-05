@@ -216,6 +216,10 @@ trait BaseCmsModel
                                     $data[$val['pivot'][$this->$key()->getRelatedPivotKeyName()]] = $val['pivot'];
                                     $sync = true;
                                 }
+                                if (isset($val[$this->$key()->getRelatedPivotKeyName()])) {
+                                    $data[$val[$this->$key()->getRelatedPivotKeyName()]] = $val;
+                                    $sync = true;
+                                }
                             }
                             if ($sync) {
                                 $this->$key()->sync($data);
