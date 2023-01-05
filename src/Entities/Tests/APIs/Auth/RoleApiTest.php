@@ -50,12 +50,12 @@ class RoleApiTest extends TestCase
         // $this->response->dump();
         // dd($this->response->json());
 
-        $this->responseContent = $this->response->json();
+        $responseContent = $this->response->json();
         $rolePermissions = [];
 
         foreach ($permissions as $key) {
             $rolePermissions[] = [
-                'role_id' => $this->responseContent['data']['id'],
+                'role_id' => $responseContent['data']['id'],
                 'permission_id' => $key,
             ];
         }

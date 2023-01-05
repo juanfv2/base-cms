@@ -78,15 +78,15 @@ class UserPersonApiTest extends TestCase
         $this->response = $this->json('POST', route('api.users.store'), $person, ['r-country' => $rCountry]);
 
         // $this->response->dump();
-        $this->responseContent = $this->response->json();
+        $responseContent = $this->response->json();
 
-        $iPath = "assets/adm/$rCountry/auth_users/photo/{$this->responseContent['data']['photo']['name']}";
+        $iPath = "assets/adm/$rCountry/auth_users/photo/{$responseContent['data']['photo']['name']}";
 
-        // logger(__FILE__ . ':' . __LINE__ . ' $this->responseContent, $file->hashName() ', [$this->responseContent, $file->hashName()]);
-        // dd($this->responseContent, $file->hashName());
+        // logger(__FILE__ . ':' . __LINE__ . ' $responseContent, $file->hashName() ', [$responseContent, $file->hashName()]);
+        // dd($responseContent, $file->hashName());
 
-        $this->assertIsNumeric($this->responseContent['data']['photo']['entity_id']);
-        $this->assertIsNumeric($this->responseContent['data']['photo']['id']);
+        $this->assertIsNumeric($responseContent['data']['photo']['entity_id']);
+        $this->assertIsNumeric($responseContent['data']['photo']['id']);
         Storage::disk('public')->assertExists($iPath);
     }
 
