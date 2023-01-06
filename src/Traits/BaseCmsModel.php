@@ -6,9 +6,6 @@ use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
-/**
- * MyBaseRepository
- */
 trait BaseCmsModel
 {
     /**
@@ -30,8 +27,6 @@ trait BaseCmsModel
      *
      * @param $criteria
      * @return $this
-     *
-     * @throws \Prettus\Repository\Exceptions\RepositoryException
      */
     public function pushCriteria($criteria)
     {
@@ -207,18 +202,28 @@ trait BaseCmsModel
             if (
                 isset($this) &&
                 method_exists($this, $key) &&
-                is_a(@$this->$key(), 'Illuminate\Database\Eloquent\Relations\Relation')
+                is_a(@$this->$key(), \Illuminate\Database\Eloquent\Relations\Relation::class)
             ) {
                 $methodClass = get_class($this->$key($key));
                 switch ($methodClass) {
                     case \Illuminate\Database\Eloquent\Relations\BelongsToMany::class:
                         $new_values = Arr::get($attributes, $key, []);
-                        if ($new_values && is_array($new_values[0]) && count($new_values) > 0) {
+                        if ($new_values && count($new_values) > 0 && is_array($new_values[0])) {
                             $data = [];
+                            $sync = false;
                             foreach ($new_values as $val) {
-                                $data[$val[$this->$key()->getRelatedPivotKeyName()]] = $val;
+                                if (isset($val['pivot'])) {
+                                    $data[$val['pivot'][$this->$key()->getRelatedPivotKeyName()]] = $val['pivot'];
+                                    $sync = true;
+                                }
+                                if (isset($val[$this->$key()->getRelatedPivotKeyName()])) {
+                                    $data[$val[$this->$key()->getRelatedPivotKeyName()]] = $val;
+                                    $sync = true;
+                                }
                             }
-                            $this->$key()->sync($data);
+                            if ($sync) {
+                                $this->$key()->sync($data);
+                            }
                         } else {
                             if (array_search('', $new_values) !== false) {
                                 unset($new_values[array_search('', $new_values)]);
