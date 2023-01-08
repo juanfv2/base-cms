@@ -95,7 +95,7 @@ class AngularListComponentGenerator extends BaseGenerator
         $searchables = [];
 
         foreach ($this->config->fields as $field) {
-            if ($field->name == 'created_by' || $field->name == 'updated_by') {
+            if ($field->name == '' || $field->name == 'created_by' || $field->name == 'updated_by') {
                 continue;
             }
             if ($field->isSearchable) {
@@ -341,10 +341,7 @@ class AngularListComponentGenerator extends BaseGenerator
     {
         $relations = [];
         foreach ($this->config->fields as $field) {
-            if (
-                $field->name == 'createdBy' ||
-                $field->name == 'updatedBy'
-            ) {
+            if ($field->name == '' || $field->name == 'created_by' || $field->name == 'updated_by') {
                 continue;
             }
             if ($field->inIndex) {
@@ -367,10 +364,7 @@ class AngularListComponentGenerator extends BaseGenerator
     {
         $relations = [];
         foreach ($this->config->fields as $field) {
-            if (
-                $field->name == 'createdBy' ||
-                $field->name == 'updatedBy'
-            ) {
+            if ($field->name == '' || $field->name == 'created_by' || $field->name == 'updated_by') {
                 continue;
             }
             if ($field->inIndex) {

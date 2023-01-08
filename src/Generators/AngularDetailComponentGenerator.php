@@ -111,7 +111,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
     {
         $relations = [];
         foreach ($this->config->fields as $field) {
-            if ($field->name == 'created_by' || $field->name == 'updated_by') {
+            if ($field->name == '' || $field->name == 'created_by' || $field->name == 'updated_by') {
                 continue;
             }
             if ($field->inForm) {
@@ -402,6 +402,9 @@ class AngularDetailComponentGenerator extends BaseGenerator
         $fields[] = "// admin-angular/src/app/models/_models.ts\n";
         $fields[] = "export interface {$this->config->modelNames->name} {";
         foreach ($this->config->fields as $field) {
+            if ($field->name == '' || $field->name == 'created_by' || $field->name == 'updated_by') {
+                continue;
+            }
             $fieldText = '';
             $fieldText .= $field->name;
 
@@ -455,6 +458,9 @@ class AngularDetailComponentGenerator extends BaseGenerator
         $fields[] = "ownNamePlural: `{$this->config->modelNames->plural}`,";
 
         foreach ($this->config->fields as $field) {
+            if(!$field->name) {
+                continue;
+            }
             $converted = Str::title($field->name);
             $fieldText = "$field->name: new DBType({label: `{$converted}`, field: `{$this->config->tableName}.$field->name`, ";
 
