@@ -94,6 +94,8 @@ class AngularListComponentGenerator extends BaseGenerator
     {
         $searchables = [];
 
+        $searchables[] = "this.labels.{$this->config->modelNames->camel}.{$this->config->primaryName}";
+
         foreach ($this->config->fields as $field) {
             if ($field->name == '' || $field->name == 'created_by' || $field->name == 'updated_by') {
                 continue;
@@ -104,6 +106,24 @@ class AngularListComponentGenerator extends BaseGenerator
         }
 
         return $searchables;
+    }
+    private function getSearchablesRelations()
+    {
+        $relations = [];
+        foreach ($this->config->relations as $relation) {
+            $type = $relation->type ?? null;
+            $field = $relation->inputs[0] ?? null;
+
+            if ($type != 'mt1') {
+                continue;
+            }
+
+            $fieldCamel = Str::camel($field);
+
+            $relations[] = "this.labels.{$this->config->modelNames->camel}.{$fieldCamel}Name";
+        }
+
+        return $relations;
     }
 
     private function generateRelationModelNames()
@@ -205,12 +225,13 @@ class AngularListComponentGenerator extends BaseGenerator
                 continue;
             }
 
+            $fieldCamel = Str::camel($field);
             $relationText = "
             nextOperator = JfUtils.x2one({
                 conditions,
                 conditionModel: this.modelSearch.condition$field,
-                foreignKName: `\${this.labels.{$this->config->modelNames->camel}.tableName}.$fieldFK`,
-                primaryKName: 'id',
+                foreignKName: this.labels.{$this->config->modelNames->camel}.{$fieldFK}.field,
+                primaryKName: this.labels.{$fieldCamel}.id.name,
                 nextOperator
               });";
             $relations[] = $relationText;
@@ -446,8 +467,10 @@ class AngularListComponentGenerator extends BaseGenerator
     {
         $variables = [];
         $searchables1 = $this->getSearchables();
+        $searchables2 = $this->getSearchablesRelations();
 
         $variables['searchable_1']                       = implode(infy_nl_tab().',', $searchables1);
+        $variables['searchable_2']                       = implode(infy_nl_tab().',', $searchables2);
         $variables['relation_model_names']               = implode(',', $this->generateRelationModelNames());
         $variables['relations_fields']                   = implode(infy_nl_tab(), $this->generateRelationsFields());
         $variables['relations_fields_init_search_model'] = implode(infy_nl_tab().',', $this->generateRelationsInitSearchModel());

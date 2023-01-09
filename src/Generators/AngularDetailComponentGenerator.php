@@ -399,7 +399,8 @@ class AngularDetailComponentGenerator extends BaseGenerator
         $mPrimaryKey = '';
         $fields = [];
         $fields[] = '/**';
-        $fields[] = "// admin-angular/src/app/models/_models.ts\n";
+        $fields[] = "// admin-angular/src/app/models/_models.ts";
+        $fields[] = "";
         $fields[] = "export interface {$this->config->modelNames->name} {";
         foreach ($this->config->fields as $field) {
             if ($field->name == '' || $field->name == 'created_by' || $field->name == 'updated_by') {
@@ -450,7 +451,8 @@ class AngularDetailComponentGenerator extends BaseGenerator
         $fields[] = "// admin-angular/src/environments/k.ts>routes\n";
         $fields[] = "{$this->config->modelNames->camelPlural}: '{$this->config->modelNames->snakePlural}',\n";
 
-        $fields[] = "// admin-angular/src/environments/l.ts\n";
+        $fields[] = "// admin-angular/src/environments/l.ts";
+        $fields[] = "";
         $fields[] = "{$this->config->modelNames->camel}: {";
         $fields[] = "tablePK: `{$mPrimaryKey}`,";
         $fields[] = "tableName: `{$this->config->tableName}`,";
@@ -462,7 +464,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
                 continue;
             }
             $converted = Str::title($field->name);
-            $fieldText = "$field->name: new DBType({label: `{$converted}`, field: `{$this->config->tableName}.$field->name`, ";
+            $fieldText = "$field->name: new DBType({name: `$field->name`, label: `{$converted}`, field: `{$this->config->tableName}.$field->name`, ";
 
             if ($field->isPrimary) {
                 $mPrimaryKey = $field->name;
@@ -470,17 +472,17 @@ class AngularDetailComponentGenerator extends BaseGenerator
             switch ($field->dbType) {
                 case 'integer':
                 case 'bigInteger':
-                    $fieldText .= "type: `number`}),";
+                    $fieldText .= "type: `number`} as DBType),";
                     break;
                 case 'date':
                 case 'datetime':
-                    $fieldText .= "type: `date`}),";
+                    $fieldText .= "type: `date`} as DBType),";
                     break;
                 case 'boolean':
-                    $fieldText .= "type: `boolean`}),";
+                    $fieldText .= "type: `boolean`} as DBType),";
                     break;
                 default:
-                    $fieldText .= "type: `string`}),";
+                    $fieldText .= "type: `string`} as DBType),";
                     break;
             }
             $fields[] = $fieldText;
@@ -493,18 +495,21 @@ class AngularDetailComponentGenerator extends BaseGenerator
             $title = Str::title($field);
             $fieldCamel = Str::camel($field);
 
-            $fields[] = '';
-            $fields[] = "{$fieldFk}:        new DBType({label: `$title #`,field: `$fieldCamel.$fieldFk`,type: `number`}),";
-            $fields[] = "{$fieldCamel}Name: new DBType({label: `$title`  ,field: `{$fieldCamel}Name`,   type: `string`, allowExport: true, allowImport:false}),";
+            $fields[] = "{$fieldFk}:        new DBType({name: `$fieldFk`, label: `$title #`,field: `$fieldCamel.$fieldFk`,type: `number`} as DBType),";
+            $fields[] = "{$fieldCamel}Name: new DBType({name: `$fieldFk`, label: `$title`, field: `{$fieldCamel}Name`,   type: `string`, allowExport: true, allowImport:false} as DBType),";
         }
 
-        $fields[] = "},\n";
+        $fields[] = "},";
+        $fields[] = "";
+        $fields[] = "// admin-angular/src/app/core/modules/main/main.module.ts";
+        $fields[] = "";
 
-        $fields[] = "// admin-angular/src/app/core/modules/main/main.module.ts\n";
         $fields[] = "{$this->config->modelNames->name}ListComponent,";
         $fields[] = "{$this->config->modelNames->name}DetailComponent,";
-        $fields[] = "{$this->config->modelNames->name}AutoCompleteComponent,\n";
-        $fields[] = "// admin-angular/src/app/core/modules/main/main-routing.module.ts\n";
+        $fields[] = "{$this->config->modelNames->name}AutoCompleteComponent,";
+        $fields[] = "";
+        $fields[] = "// admin-angular/src/app/core/modules/main/main-routing.module.ts";
+        $fields[] = "";
         $fields[] = "{ path: `\${k.routes.{$this->config->modelNames->camelPlural}}/:id`, component: {$this->config->modelNames->name}DetailComponent },";
         $fields[] = "{ path: k.routes.{$this->config->modelNames->camelPlural}, component: {$this->config->modelNames->name}ListComponent },";
 
