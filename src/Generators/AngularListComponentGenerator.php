@@ -474,10 +474,10 @@ class AngularListComponentGenerator extends BaseGenerator
         $variables['relation_model_names']               = implode(',', $this->generateRelationModelNames());
         $variables['relations_fields']                   = implode(infy_nl_tab(), $this->generateRelationsFields());
         $variables['relations_fields_init_search_model'] = implode(infy_nl_tab().',', $this->generateRelationsInitSearchModel());
-        $variables['relations_fields_init_search']       = implode(infy_nl_tab().',', $this->generateRelationsInitSearch());
+        $variables['relations_fields_init_search']       = implode(infy_nl_tab(), $this->generateRelationsInitSearch());
         $variables['relations_fields_on_lazy_load_1']    = implode(infy_nl_tab(), $this->generateRelationsOnLazyLoad());
         $variables['relations_fields_on_lazy_load_2']    = implode(infy_nl_tab(), $this->generateRelationsOnLazyLoad2());
-        $variables['relations_fields_add_new']           = implode(infy_nl_tab(), $this->generateRelationsAddNew());
+        $variables['relations_fields_add_new']           = implode(infy_nl_tab().',', $this->generateRelationsAddNew());
 
         $variables['relations_search_fields'] = implode(infy_nl_tab(), $this->generateRelationsHtmlSearchFields());
         $variables['column_fields']           = implode(infy_nl_tab(), $this->generateHtmlColumnFields());

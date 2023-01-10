@@ -146,8 +146,8 @@ class AngularAutoCompleteComponentGenerator extends BaseGenerator
         $variables['searchable_1'] = implode(infy_nl_tab(), $searchables1);
         $variables['searchable_2'] = implode(infy_nl_tab(), $searchables2);
         $variables['relation_model_names'] = implode(',', $this->generateRelationModelNames());
-        $variables['relations_1'] = implode(',', $this->generateRelationsFields());
-        $variables['relations_2'] = implode(',', $this->generateRelationsFields2());
+        $variables['relations_1'] = implode(infy_nl_tab(), $this->generateRelationsFields());
+        $variables['relations_2'] = implode(infy_nl_tab(), $this->generateRelationsFields2());
 
         return $variables;
     }

@@ -464,7 +464,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
                 continue;
             }
             $converted = Str::title($field->name);
-            $fieldText = "$field->name: new DBType({name: `$field->name`, label: `{$converted}`, field: `{$this->config->tableName}.$field->name`, ";
+            $fieldText = "$field->name: new DBType({label: '{$converted}', name: '$field->name', field: '{$this->config->tableName}.$field->name', ";
 
             if ($field->isPrimary) {
                 $mPrimaryKey = $field->name;
@@ -472,17 +472,17 @@ class AngularDetailComponentGenerator extends BaseGenerator
             switch ($field->dbType) {
                 case 'integer':
                 case 'bigInteger':
-                    $fieldText .= "type: `number`} as DBType),";
+                    $fieldText .= "type: 'number'} as DBType),";
                     break;
                 case 'date':
                 case 'datetime':
-                    $fieldText .= "type: `date`} as DBType),";
+                    $fieldText .= "type: 'date'} as DBType),";
                     break;
                 case 'boolean':
-                    $fieldText .= "type: `boolean`} as DBType),";
+                    $fieldText .= "type: 'boolean'} as DBType),";
                     break;
                 default:
-                    $fieldText .= "type: `string`} as DBType),";
+                    $fieldText .= "type: 'string'} as DBType),";
                     break;
             }
             $fields[] = $fieldText;
@@ -495,8 +495,8 @@ class AngularDetailComponentGenerator extends BaseGenerator
             $title = Str::title($field);
             $fieldCamel = Str::camel($field);
 
-            $fields[] = "{$fieldFk}:        new DBType({name: `$fieldFk`, label: `$title #`,field: `$fieldCamel.$fieldFk`,type: `number`} as DBType),";
-            $fields[] = "{$fieldCamel}Name: new DBType({name: `$fieldFk`, label: `$title`, field: `{$fieldCamel}Name`,   type: `string`, allowExport: true, allowImport:false} as DBType),";
+            $fields[] = "{$fieldFk}:        new DBType({name: '$fieldFk', label: '$title #',field: '$fieldCamel.id',type: 'number'} as DBType),";
+            $fields[] = "{$fieldCamel}Name: new DBType({name: '$fieldFk', label: '$title', field: '{$fieldCamel}Name',   type: 'string', allowExport: true, allowImport:false} as DBType),";
         }
 
         $fields[] = "},";
