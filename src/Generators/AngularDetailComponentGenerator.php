@@ -396,7 +396,6 @@ class AngularDetailComponentGenerator extends BaseGenerator
 
     private function tsModel()
     {
-        $mPrimaryKey = '';
         $fields = [];
         $fields[] = '/**';
         $fields[] = "// admin-angular/src/app/models/_models.ts";
@@ -410,8 +409,9 @@ class AngularDetailComponentGenerator extends BaseGenerator
             $fieldText .= $field->name;
 
             if ($field->isPrimary) {
-                $mPrimaryKey = $field->name;
-                $fieldText .= '?';
+                $fieldText .= '?: number;';
+                $fields[] = $fieldText;
+                continue;
             }
             switch ($field->dbType) {
                 case 'integer':
@@ -454,10 +454,10 @@ class AngularDetailComponentGenerator extends BaseGenerator
         $fields[] = "// admin-angular/src/environments/l.ts";
         $fields[] = "";
         $fields[] = "{$this->config->modelNames->camel}: {";
-        $fields[] = "tablePK: `{$mPrimaryKey}`,";
-        $fields[] = "tableName: `{$this->config->tableName}`,";
-        $fields[] = "ownName: `{$this->config->modelNames->name}`,";
-        $fields[] = "ownNamePlural: `{$this->config->modelNames->plural}`,";
+        $fields[] = "tablePK: '{$this->config->primaryName}',";
+        $fields[] = "tableName: '{$this->config->tableName}',";
+        $fields[] = "ownName: '{$this->config->modelNames->name}',";
+        $fields[] = "ownNamePlural: '{$this->config->modelNames->plural}',";
 
         foreach ($this->config->fields as $field) {
             if(!$field->name) {
