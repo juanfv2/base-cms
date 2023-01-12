@@ -94,14 +94,14 @@ class AngularListComponentGenerator extends BaseGenerator
     {
         $searchables = [];
 
-        $searchables[] = "this.labels.{$this->config->modelNames->camel}.{$this->config->primaryName}";
+        $searchables[] = "this.itemLabels.{$this->config->primaryName}";
 
         foreach ($this->config->fields as $field) {
             if ($field->name == '' || $field->name == 'created_by' || $field->name == 'updated_by') {
                 continue;
             }
             if ($field->isSearchable) {
-                $searchables[] = "this.labels.{$this->config->modelNames->camel}.{$field->name}";
+                $searchables[] = "this.itemLabels.{$field->name}";
             }
         }
 
@@ -120,7 +120,7 @@ class AngularListComponentGenerator extends BaseGenerator
 
             $fieldCamel = Str::camel($field);
 
-            $relations[] = "this.labels.{$this->config->modelNames->camel}.{$fieldCamel}Name";
+            $relations[] = "this.itemLabels.{$fieldCamel}Name";
         }
 
         return $relations;
@@ -214,8 +214,6 @@ class AngularListComponentGenerator extends BaseGenerator
     {
         $relations = [];
 
-        $count = 1;
-        $fieldsArr = [];
         foreach ($this->config->relations as $relation) {
             $type = $relation->type ?? null;
             $field = $relation->inputs[0] ?? null;
@@ -230,7 +228,7 @@ class AngularListComponentGenerator extends BaseGenerator
             nextOperator = JfUtils.x2one({
                 conditions,
                 conditionModel: this.modelSearch.condition$field,
-                foreignKName: this.labels.{$this->config->modelNames->camel}.{$fieldFK}.field,
+                foreignKName: this.itemLabels.{$fieldFK}.field,
                 primaryKName: this.labels.{$fieldCamel}.id.name,
                 nextOperator
               });";

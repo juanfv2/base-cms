@@ -311,11 +311,11 @@ class AngularDetailComponentGenerator extends BaseGenerator
                                               name="$plural disponibles"
                                               [multiple]="true"
                                               [currentPage]="mApi.show()"
-                                              (oSelected)="update2{$fieldCamelPlural}(\$event)"
+                                              (oSelected)="{$fieldCamelPlural}2update(\$event)"
                                               [avoidable]="{$this->config->modelNames->camel}.$fieldCamelPlural"
                                               [(ngModel)]="{$this->config->modelNames->camel}.$fieldCamelPlural">
                 </app-$fieldDash-auto-complete>
-                <base-cms-many-to-many lField="name" [lModel]="labels.{$fieldCamel}" [gOptions]="{$this->config->modelNames->camel}.$fieldCamelPlural" (rm)="rm2{$fieldCamel}(\$event)" (go)="go2{$fieldCamel}(\$event)" ></base-cms-many-to-many>
+                <base-cms-many-to-many lField="name" [lModel]="labels.{$fieldCamel}" [gOptions]="{$this->config->modelNames->camel}.$fieldCamelPlural" (rm)="{$fieldCamel}2rm(\$event)" (go)="{$fieldCamel}2go(\$event)" ></base-cms-many-to-many>
                 </div>
                 <div class="card-footer"> </div>
             </div>
@@ -341,24 +341,24 @@ class AngularDetailComponentGenerator extends BaseGenerator
             $fieldCamel = Str::camel($field);
             $fieldCamelPlural = Str::plural($fieldCamel);
             $relationText = <<<EOF
-            update2$fieldCamelPlural(\$e: any): void {
+            {$fieldCamelPlural}2update(\$e?: any): void {
                 this.{$this->config->modelNames->camel}.$fieldCamelPlural = this.{$this->config->modelNames->camel}.$fieldCamelPlural || [];
-                // do: something like that?
+                // are required? do you need something like that?
                 // this.{$fieldCamelPlural}AreRequired   = this.{$this->config->modelNames->camel}.$fieldCamelPlural.length > 0 ? '-' : '';
-                // this.avoidables{$fieldCamelPlural}  = [...new Set([...k.{$this->config->modelNames->camel}Clients, ...this.selectables{$fieldCamelPlural}])];
+                // this.{$fieldCamelPlural}Avoidable  = [...new Set([...k.{$this->config->modelNames->camel}Clients, ...this.{$fieldCamelPlural}Selectable])];
             }
 
-            rm2{$fieldCamel}($fieldCamel: $field): void {
+            {$fieldCamel}2rm($fieldCamel: $field): void {
                 this.{$this->config->modelNames->camel}.$fieldCamelPlural = this.{$this->config->modelNames->camel}.$fieldCamelPlural.filter((r:any) => r.id !== $fieldCamel.id);
-                // this.update2$fieldCamelPlural('');
+                // this.{$fieldCamelPlural}2update();
             }
 
-            go2{$fieldCamel}($fieldCamel: $field): void {
+            {$fieldCamel}2gp($fieldCamel: $field): void {
                 this.router.navigate([k.routes.$fieldCamelPlural, $fieldCamel.id]);
             }
             EOF;
             $relations1[] = $relationText;
-            $relations2[] = "this.update2$fieldCamelPlural('');";
+            $relations2[] = "this.{$fieldCamelPlural}2update();";
         }
 
         return [$relations1, $relations2];
@@ -496,7 +496,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
             $fieldCamel = Str::camel($field);
 
             $fields[] = "{$fieldFk}:        new DBType({name: '$fieldFk', label: '$title #',field: '$fieldCamel.id',type: 'number'} as DBType),";
-            $fields[] = "{$fieldCamel}Name: new DBType({name: '$fieldFk', label: '$title', field: '{$fieldCamel}Name',   type: 'string', allowExport: true, allowImport:false} as DBType),";
+            $fields[] = "{$fieldCamel}Name: new DBType({name: '{$fieldCamel}Name', label: '$title', field: '{$fieldCamel}Name',   type: 'string', allowExport: true, allowImport:false} as DBType),";
         }
 
         $fields[] = "},";
