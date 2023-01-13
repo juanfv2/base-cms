@@ -233,9 +233,9 @@ class AngularDetailComponentGenerator extends BaseGenerator
             $relationText = <<<EOF
             <!-- $fieldCamel . init -->
             <div class="form-group">
-              <app-$fieldDash-auto-complete id="{$this->config->modelNames->camel}-$fieldCamel"
-                                            [name]="labels.$fieldCamel.ownName"
-                                            [disabled]="isSubComponentFrom === '$fieldCamel'"
+              <app-$fieldDash-auto-complete acId="{$this->config->modelNames->camel}-$fieldCamel"
+                                            [acName]="labels.$fieldCamel.ownName"
+                                            [acDisabled]="isSubComponentFrom === '$fieldCamel'"
                                             [currentPage]="mApi.show()"
                                             formControlName="{$fieldCamel}"
                                             >
