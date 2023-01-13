@@ -335,7 +335,17 @@ class AngularDetailComponentGenerator extends BaseGenerator
                 $validations[] = " {$field->name}: [this.{$this->config->modelNames->camel}.{$field->name}, Validators.required], ";
             }
         }
+        foreach ($this->config->relations as $relation) {
+            $type = $relation->type ?? null;
+            $field = $relation->inputs[0] ?? null;
+            if ($type != 'mt1') {
+                continue;
+            }
 
+            $fieldCamel = Str::camel($field);
+            $validations[] = " {$fieldCamel}: [this.{$this->config->modelNames->camel}.{$fieldCamel}, Validators.required], ";
+
+        }
         return $validations;
     }
 
