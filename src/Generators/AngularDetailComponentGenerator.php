@@ -126,8 +126,8 @@ class AngularDetailComponentGenerator extends BaseGenerator
                     $requiredTextProperties = "required\nplaceholder=\"Requerido\"";
 
                     $requiredText = <<<EOF
-                    <div *ngIf="!{$this->config->modelNames->camel}_$fieldCamel.valid && {$this->config->modelNames->camel}_$fieldCamel.dirty && {$this->config->modelNames->camel}_$fieldCamel.errors?.['required']"
-                         class="alert alert-danger form-text"
+                    <div *ngIf="!mFormGroup.controls['$field->name'].valid && mFormGroup.controls['$field->name'].dirty && mFormGroup.controls['$field->name'].errors?.['required']"
+                         class="alert alert-danger form-text {$field->name}-error-required"
                          role="alert">
                         {{labels.{$this->config->modelNames->camel}.$field->name.label}} es requerido
                     </div>
@@ -140,13 +140,13 @@ class AngularDetailComponentGenerator extends BaseGenerator
                 switch ($field->htmlType) {
                     case 'textarea':
                         $relationText .= <<<EOF
-                        <textarea id="{$this->config->modelNames->camel}-$field->name"
-                                  name="{$this->config->modelNames->camel}-$field->name"
-                                  [(ngModel)]="{$this->config->modelNames->camel}.$field->name"
-                                  #{$this->config->modelNames->camel}_$fieldCamel="ngModel"
-                                  class="form-control"
-                                  rows="3"
-                                  $requiredTextProperties></textarea>
+                        <textarea
+                        id="{$this->config->modelNames->camel}-$field->name"
+                        class="form-control"
+                        rows="3"
+                        $requiredTextProperties
+                        formControlName="$field->name"
+                         ></textarea>
                         EOF;
                         break;
                     case 'checkbox':
@@ -156,10 +156,9 @@ class AngularDetailComponentGenerator extends BaseGenerator
                             <label for="{$this->config->modelNames->camel}-$field->name"
                                    class="switch">
                                    <input id="{$this->config->modelNames->camel}-$field->name"
-                                          name="{$this->config->modelNames->camel}-$field->name"
-                                          [(ngModel)]="{$this->config->modelNames->camel}.$field->name"
-                                          #{$this->config->modelNames->camel}_$fieldCamel="ngModel"
-                                          type="checkbox">
+                                          type="checkbox"
+                                          formControlName="$field->name"
+                                        />
                                 <span class="slider round"></span>
                             </label>
                             <span class="p-1">{{ {$this->config->modelNames->camel}.$field->name ? 'Activo' : 'Desactivo' }}</span>
@@ -171,14 +170,14 @@ class AngularDetailComponentGenerator extends BaseGenerator
                     case 'date':
                         $relationText .= <<<EOF
                         <div class="input-group">
-                            <input id="{$this->config->modelNames->camel}-$field->name"
-                                   name="{$this->config->modelNames->camel}-$field->name"
-                                   [(ngModel)]="{$this->config->modelNames->camel}.$field->name"
-                                   #{$this->config->modelNames->camel}_$fieldCamel="ngModel"
-                                   #{$this->config->modelNames->camel}_{$fieldCamel}_date="ngbDatepicker"
-                                   class="form-control"
-                                   placeholder="yyyy-mm-dd"
-                                   ngbDatepicker>
+                            <input
+                            id="{$this->config->modelNames->camel}-$field->name"
+                            #{$this->config->modelNames->camel}_{$fieldCamel}_date="ngbDatepicker"
+                            class="form-control"
+                            placeholder="yyyy-mm-dd"
+                            ngbDatepicker
+                            formControlName="$field->name"
+                            >
                             <button title="calendario"
                                     class="btn btn-outline-secondary m-0"
                                     (click)="{$this->config->modelNames->camel}_{$fieldCamel}_date.toggle()"
@@ -186,7 +185,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
                                     <i class="fa fa-calendar text-info"></i>
                                     </button>
                         </div>
-                        <div *ngIf="!{$this->config->modelNames->camel}_$fieldCamel.valid && {$this->config->modelNames->camel}_$fieldCamel.dirty && {$this->config->modelNames->camel}_$fieldCamel.errors?.ngbDate?.invalid"
+                        <div *ngIf="!mFormGroup.controls['$field->name'].valid && mFormGroup.controls['$field->name'].dirty && mFormGroup.controls['$field->name'].errors?.[ 'ngbDate' ]?.invalid"
                             class="alert alert-danger form-text"
                             role="alert">
                             {{labels.{$this->config->modelNames->camel}.$field->name.label}} fecha invalida
@@ -199,12 +198,11 @@ class AngularDetailComponentGenerator extends BaseGenerator
 
                         $relationText .= <<<EOF
                         <input id="{$this->config->modelNames->camel}-$field->name"
-                               name="{$this->config->modelNames->camel}-$field->name"
-                               [(ngModel)]="{$this->config->modelNames->camel}.$field->name"
-                               #{$this->config->modelNames->camel}_$fieldCamel="ngModel"
                                class="form-control"
                                type="$tType"
-                               $requiredTextProperties />
+                               $requiredTextProperties
+                               formControlName="$field->name"
+                               />
                         EOF;
                         break;
                 }
@@ -324,6 +322,22 @@ class AngularDetailComponentGenerator extends BaseGenerator
         EOF;
 
         return $relationText;
+    }
+
+    private function tsValidateFormGroup()
+    {
+        $validations = [];
+        foreach ($this->config->fields as $field) {
+            if ($field->name == '' || $field->name == 'created_by' || $field->name == 'updated_by') {
+                continue;
+            }
+            $required = strpos($field->validations, 'required') !== false;
+            if ($field->inForm && $required) {
+                $validations[] = " {$field->name}: [this.{$this->config->modelNames->camel}.{$field->name}, Validators.required], ";
+            }
+        }
+
+        return $validations;
     }
 
     private function tsRelations_mtm()
@@ -530,6 +544,8 @@ class AngularDetailComponentGenerator extends BaseGenerator
         $variables['relation_model_names_1'] = implode(',', $relatedNames1);
         $variables['relation_model_names_2'] = implode(',', $relatedNames2);
         $variables['model_info'] = implode(infy_nl(), $this->tsModel());
+        $variables['validate_form_group'] = implode(infy_nl(), $this->tsValidateFormGroup());
+        $variables['tdd_fields'] = implode(infy_nl(), ['x']);
 
         $variables['input_fields'] = implode(infy_nl(), $this->htmlInputFields());
         $variables['input_fields_related'] = implode(infy_nl(), $this->htmlInputFieldsRelated());
