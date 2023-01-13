@@ -37,7 +37,7 @@ class AngularAutoCompleteComponentGenerator extends BaseGenerator
 
         g_filesystem()->createFile($this->path.$this->fileName, $templateData);
 
-        $this->config->commandComment("AutoComplete Component created: ");
+        $this->config->commandComment('AutoComplete Component created: ');
         $this->config->commandInfo($this->fileName);
     }
 

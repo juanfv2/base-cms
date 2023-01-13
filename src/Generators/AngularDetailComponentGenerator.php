@@ -51,7 +51,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
 
         g_filesystem()->createFile($this->path.$this->fileName, $templateData);
 
-        $this->config->commandComment("Detail.ts Component created: ");
+        $this->config->commandComment('Detail.ts Component created: ');
         $this->config->commandInfo($this->fileName);
     }
 
@@ -62,7 +62,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
 
         g_filesystem()->createFile($this->path.$this->fileNameScss, $templateData);
 
-        $this->config->commandComment("Detail.scss Component created: ");
+        $this->config->commandComment('Detail.scss Component created: ');
         $this->config->commandInfo($this->fileNameScss);
     }
 
@@ -73,7 +73,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
 
         g_filesystem()->createFile($this->path.$this->fileNameSpec, $templateData);
 
-        $this->config->commandComment("Detail.spec Component created: ");
+        $this->config->commandComment('Detail.spec Component created: ');
         $this->config->commandInfo($this->fileNameSpec);
     }
 
@@ -84,7 +84,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
 
         g_filesystem()->createFile($this->path.$this->fileNameHtml, $templateData);
 
-        $this->config->commandComment("Detail.html Component created: ");
+        $this->config->commandComment('Detail.html Component created: ');
         $this->config->commandInfo($this->fileNameHtml);
     }
 
@@ -412,8 +412,8 @@ class AngularDetailComponentGenerator extends BaseGenerator
     {
         $fields = [];
         $fields[] = '/**';
-        $fields[] = "// admin-angular/src/app/models/_models.ts";
-        $fields[] = "";
+        $fields[] = '// admin-angular/src/app/models/_models.ts';
+        $fields[] = '';
         $fields[] = "export interface {$this->config->modelNames->name} {";
         foreach ($this->config->fields as $field) {
             if ($field->name == '' || $field->name == 'created_by' || $field->name == 'updated_by') {
@@ -425,6 +425,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
             if ($field->isPrimary) {
                 $fieldText .= '?: number;';
                 $fields[] = $fieldText;
+
                 continue;
             }
             switch ($field->dbType) {
@@ -465,8 +466,8 @@ class AngularDetailComponentGenerator extends BaseGenerator
         $fields[] = "// admin-angular/src/environments/k.ts>routes\n";
         $fields[] = "{$this->config->modelNames->camelPlural}: '{$this->config->modelNames->snakePlural}',\n";
 
-        $fields[] = "// admin-angular/src/environments/l.ts";
-        $fields[] = "";
+        $fields[] = '// admin-angular/src/environments/l.ts';
+        $fields[] = '';
         $fields[] = "{$this->config->modelNames->camel}: {";
         $fields[] = "tablePK: '{$this->config->primaryName}',";
         $fields[] = "tableName: '{$this->config->tableName}',";
@@ -474,7 +475,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
         $fields[] = "ownNamePlural: '{$this->config->modelNames->plural}',";
 
         foreach ($this->config->fields as $field) {
-            if(!$field->name) {
+            if (! $field->name) {
                 continue;
             }
             $converted = Str::title($field->name);
@@ -513,23 +514,56 @@ class AngularDetailComponentGenerator extends BaseGenerator
             $fields[] = "{$fieldCamel}Name: new DBType({name: '{$fieldCamel}Name', label: '$title', field: '{$fieldCamel}Name',   type: 'string', allowExport: true, allowImport:false} as DBType),";
         }
 
-        $fields[] = "},";
-        $fields[] = "";
-        $fields[] = "// admin-angular/src/app/core/modules/main/main.module.ts";
-        $fields[] = "";
+        $fields[] = '},';
+        $fields[] = '';
+        $fields[] = '// admin-angular/src/app/core/modules/main/main.module.ts';
+        $fields[] = '';
 
         $fields[] = "{$this->config->modelNames->name}ListComponent,";
         $fields[] = "{$this->config->modelNames->name}DetailComponent,";
         $fields[] = "{$this->config->modelNames->name}AutoCompleteComponent,";
-        $fields[] = "";
-        $fields[] = "// admin-angular/src/app/core/modules/main/main-routing.module.ts";
-        $fields[] = "";
+        $fields[] = '';
+        $fields[] = '// admin-angular/src/app/core/modules/main/main-routing.module.ts';
+        $fields[] = '';
         $fields[] = "{ path: `\${k.routes.{$this->config->modelNames->camelPlural}}/:id`, component: {$this->config->modelNames->name}DetailComponent },";
         $fields[] = "{ path: k.routes.{$this->config->modelNames->camelPlural}, component: {$this->config->modelNames->name}ListComponent },";
 
         $fields[] = '*/';
 
         return $fields;
+    }
+
+    private function specValidateFields()
+    {
+        $validations = [];
+        foreach ($this->config->fields as $field) {
+            if ($field->name == '' || $field->name == 'created_by' || $field->name == 'updated_by') {
+                continue;
+            }
+            $required = strpos($field->validations, 'required') !== false;
+            if ($field->inForm && $required) {
+                $converted = Str::title($field->name);
+                $relationyyText = <<<EOF
+
+                it('should render "{$this->config->modelNames->camel}-{$field->name}" validation message when formControl mark as dirty and empty', () => {
+                const elements: HTMLElement = fixture.nativeElement
+                expect(elements.querySelector('.{$field->name}-error-required')).toBeNull()
+
+                // elements.querySelector('button').click();
+                const {$field->name} = component.mFormGroup.controls['{$field->name}']
+                {$field->name}.setValue('')
+                {$field->name}.markAsDirty()
+
+                fixture.detectChanges()
+                // expect(elements.querySelector('.{$field->name}-error-required')).toBeTruthy()
+                expect(elements.querySelector('.{$field->name}-error-required')?.textContent).toContain('{$converted} es requerido')
+                })
+                EOF;
+                $validations[] = $relationyyText;
+            }
+        }
+
+        return $validations;
     }
 
     protected function docsVariables(): array
@@ -545,7 +579,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
         $variables['relation_model_names_2'] = implode(',', $relatedNames2);
         $variables['model_info'] = implode(infy_nl(), $this->tsModel());
         $variables['validate_form_group'] = implode(infy_nl(), $this->tsValidateFormGroup());
-        $variables['tdd_fields'] = implode(infy_nl(), ['x']);
+        $variables['spec_validate_fields'] = implode(infy_nl(), $this->specValidateFields());
 
         $variables['input_fields'] = implode(infy_nl(), $this->htmlInputFields());
         $variables['input_fields_related'] = implode(infy_nl(), $this->htmlInputFieldsRelated());

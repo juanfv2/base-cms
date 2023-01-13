@@ -3,13 +3,10 @@
 namespace Juanfv2\BaseCms\Generators;
 
 use Illuminate\Support\Str;
-use InfyOm\Generator\Common\CommandData;
 use InfyOm\Generator\Generators\BaseGenerator;
-use InfyOm\Generator\Utils\FileUtil;
 
 class AngularListComponentGenerator extends BaseGenerator
 {
-
     public string $path;
 
     private string $fileName;
@@ -25,12 +22,12 @@ class AngularListComponentGenerator extends BaseGenerator
         parent::__construct();
 
         $mPath = config('laravel_generator.path.angular', 'angular/');
-        $this->path = $mPath . $this->config->modelNames->dashed . '/';
-        $name = $this->config->modelNames->dashed . '-list.component.';
-        $this->fileName = $name . 'ts';
-        $this->fileNameSpec = $name . 'spec.ts';
-        $this->fileNameScss = $name . 'scss';
-        $this->fileNameHtml = $name . 'html';
+        $this->path = $mPath.$this->config->modelNames->dashed.'/';
+        $name = $this->config->modelNames->dashed.'-list.component.';
+        $this->fileName = $name.'ts';
+        $this->fileNameSpec = $name.'spec.ts';
+        $this->fileNameScss = $name.'scss';
+        $this->fileNameHtml = $name.'html';
     }
 
     public function variables(): array
@@ -49,44 +46,44 @@ class AngularListComponentGenerator extends BaseGenerator
     public function generateTs()
     {
         $viewName = 'list_component';
-        $templateData = view('laravel-generator::angular.' . $viewName, $this->variables())->render();
+        $templateData = view('laravel-generator::angular.'.$viewName, $this->variables())->render();
 
-        g_filesystem()->createFile($this->path . $this->fileName, $templateData);
+        g_filesystem()->createFile($this->path.$this->fileName, $templateData);
 
-        $this->config->commandComment("Detail.ts Component created: ");
+        $this->config->commandComment('Detail.ts Component created: ');
         $this->config->commandInfo($this->fileName);
     }
 
     public function generateScss()
     {
         $viewName = 'list_component_scss';
-        $templateData = view('laravel-generator::angular.' . $viewName, $this->variables())->render();
+        $templateData = view('laravel-generator::angular.'.$viewName, $this->variables())->render();
 
-        g_filesystem()->createFile($this->path . $this->fileNameScss, $templateData);
+        g_filesystem()->createFile($this->path.$this->fileNameScss, $templateData);
 
-        $this->config->commandComment("Detail.scss Component created: ");
+        $this->config->commandComment('Detail.scss Component created: ');
         $this->config->commandInfo($this->fileNameScss);
     }
 
     public function generateSpec()
     {
         $viewName = 'list_component_spec';
-        $templateData = view('laravel-generator::angular.' . $viewName, $this->variables())->render();
+        $templateData = view('laravel-generator::angular.'.$viewName, $this->variables())->render();
 
-        g_filesystem()->createFile($this->path . $this->fileNameSpec, $templateData);
+        g_filesystem()->createFile($this->path.$this->fileNameSpec, $templateData);
 
-        $this->config->commandComment("Detail.spec Component created: ");
+        $this->config->commandComment('Detail.spec Component created: ');
         $this->config->commandInfo($this->fileNameSpec);
     }
 
     public function generateHtml()
     {
         $viewName = 'list_component_html';
-        $templateData = view('laravel-generator::angular.' . $viewName, $this->variables())->render();
+        $templateData = view('laravel-generator::angular.'.$viewName, $this->variables())->render();
 
-        g_filesystem()->createFile($this->path . $this->fileNameHtml, $templateData);
+        g_filesystem()->createFile($this->path.$this->fileNameHtml, $templateData);
 
-        $this->config->commandComment("Detail.html Component created: ");
+        $this->config->commandComment('Detail.html Component created: ');
         $this->config->commandInfo($this->fileNameHtml);
     }
 
@@ -107,6 +104,7 @@ class AngularListComponentGenerator extends BaseGenerator
 
         return $searchables;
     }
+
     private function getSearchablesRelations()
     {
         $relations = [];
@@ -139,7 +137,7 @@ class AngularListComponentGenerator extends BaseGenerator
 
             $relationShipText = $field;
 
-            if (!empty($relationsOpts)) {
+            if (! empty($relationsOpts)) {
                 if (in_array($field, $relationsOpts)) {
                     $relations[] = $relationShipText;
                 }
@@ -467,18 +465,18 @@ class AngularListComponentGenerator extends BaseGenerator
         $searchables1 = $this->getSearchables();
         $searchables2 = $this->getSearchablesRelations();
 
-        $variables['searchable_1']                       = implode(infy_nl_tab().',', $searchables1);
-        $variables['searchable_2']                       = implode(infy_nl_tab().',', $searchables2);
-        $variables['relation_model_names']               = implode(',', $this->generateRelationModelNames());
-        $variables['relations_fields']                   = implode(infy_nl_tab(), $this->generateRelationsFields());
+        $variables['searchable_1'] = implode(infy_nl_tab().',', $searchables1);
+        $variables['searchable_2'] = implode(infy_nl_tab().',', $searchables2);
+        $variables['relation_model_names'] = implode(',', $this->generateRelationModelNames());
+        $variables['relations_fields'] = implode(infy_nl_tab(), $this->generateRelationsFields());
         $variables['relations_fields_init_search_model'] = implode(infy_nl_tab().',', $this->generateRelationsInitSearchModel());
-        $variables['relations_fields_init_search']       = implode(infy_nl_tab(), $this->generateRelationsInitSearch());
-        $variables['relations_fields_on_lazy_load_1']    = implode(infy_nl_tab(), $this->generateRelationsOnLazyLoad());
-        $variables['relations_fields_on_lazy_load_2']    = implode(infy_nl_tab(), $this->generateRelationsOnLazyLoad2());
-        $variables['relations_fields_add_new']           = implode(infy_nl_tab().',', $this->generateRelationsAddNew());
+        $variables['relations_fields_init_search'] = implode(infy_nl_tab(), $this->generateRelationsInitSearch());
+        $variables['relations_fields_on_lazy_load_1'] = implode(infy_nl_tab(), $this->generateRelationsOnLazyLoad());
+        $variables['relations_fields_on_lazy_load_2'] = implode(infy_nl_tab(), $this->generateRelationsOnLazyLoad2());
+        $variables['relations_fields_add_new'] = implode(infy_nl_tab().',', $this->generateRelationsAddNew());
 
         $variables['relations_search_fields'] = implode(infy_nl_tab(), $this->generateRelationsHtmlSearchFields());
-        $variables['column_fields']           = implode(infy_nl_tab(), $this->generateHtmlColumnFields());
+        $variables['column_fields'] = implode(infy_nl_tab(), $this->generateHtmlColumnFields());
         $variables['column_fields_relations'] = implode(infy_nl_tab(), $this->generateHtmlColumnRelationsFields());
         $variables['column_values'] = implode(infy_nl_tab(), $this->generateHtmlColumnValues());
         $variables['column_values_relations'] = implode(infy_nl_tab(), $this->generateHtmlColumnRelationsValues());
@@ -495,7 +493,7 @@ class AngularListComponentGenerator extends BaseGenerator
     public function rollback()
     {
         if ($this->rollbackFile($this->path, $this->fileName)) {
-            $this->config->commandComment('API Controller file deleted: ' . $this->fileName);
+            $this->config->commandComment('API Controller file deleted: '.$this->fileName);
         }
     }
 }
