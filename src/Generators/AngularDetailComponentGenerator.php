@@ -123,7 +123,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
                 $required = strpos($field->validations, 'required') !== false;
                 if ($required) {
                     $requiredTextAsterisk = '*';
-                    $requiredTextProperties = "required\nplaceholder=\"Requerido\"";
+                    $requiredTextProperties = "placeholder=\"Requerido\"";
 
                     $requiredText = <<<EOF
                     <div *ngIf="!mFormGroup.controls['$field->name'].valid && mFormGroup.controls['$field->name'].dirty && mFormGroup.controls['$field->name'].errors?.['required']"
@@ -235,13 +235,12 @@ class AngularDetailComponentGenerator extends BaseGenerator
             <div class="form-group">
               <app-$fieldDash-auto-complete id="{$this->config->modelNames->camel}-$fieldCamel"
                                             [name]="labels.$fieldCamel.ownName"
-                                            [(ngModel)]="{$this->config->modelNames->camel}.$fieldCamel"
-                                            #{$this->config->modelNames->camel}_$fieldCamel="ngModel"
                                             [disabled]="isSubComponentFrom === '$fieldCamel'"
                                             [currentPage]="mApi.show()"
-                                            required>
+                                            formControlName="{$fieldCamel}"
+                                            >
               </app-$fieldDash-auto-complete>
-              <div *ngIf="!{$this->config->modelNames->camel}_$fieldCamel.valid && {$this->config->modelNames->camel}_$fieldCamel.dirty && {$this->config->modelNames->camel}_$fieldCamel.errors?.['required']"
+              <div *ngIf="!mFormGroup.controls['$fieldCamel'].valid && mFormGroup.controls['$fieldCamel'].dirty && mFormGroup.controls['$fieldCamel'].errors?.['required']"
                    class="alert alert-danger form-text">
                 {{labels.$fieldCamel.ownName}} es requerido
               </div>
