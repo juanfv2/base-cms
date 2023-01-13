@@ -546,8 +546,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
                 $relationyyText = <<<EOF
 
                 it('should render "{$this->config->modelNames->camel}-{$field->name}" validation message when formControl mark as dirty and empty', () => {
-                const elements: HTMLElement = fixture.nativeElement
-                expect(elements.querySelector('.{$field->name}-error-required')).toBeNull()
+                expect(domHelper.count('.{$field->name}-error-required')).toEqual(0)
 
                 // elements.querySelector('button').click();
                 const {$field->name} = component.mFormGroup.controls['{$field->name}']
@@ -555,8 +554,8 @@ class AngularDetailComponentGenerator extends BaseGenerator
                 {$field->name}.markAsDirty()
 
                 fixture.detectChanges()
-                // expect(elements.querySelector('.{$field->name}-error-required')).toBeTruthy()
-                expect(elements.querySelector('.{$field->name}-error-required')?.textContent).toContain('{$converted} es requerido')
+                // expect(domHelper.count('.{$field->name}-error-required')).toEqual(1)
+                expect(domHelper.singleText('.{$field->name}-error-required')).toContain('{$converted} es requerido')
                 })
                 EOF;
                 $validations[] = $relationyyText;
