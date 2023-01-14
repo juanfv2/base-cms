@@ -303,16 +303,16 @@ class AngularListComponentGenerator extends BaseGenerator
                 continue;
             }
 
-            $fieldSnape = Str::camel($field);
+            $fieldCamel = Str::camel($field);
             $fieldDash = Str::kebab($field);
             $relationText = <<<EOF
-            <!-- $fieldSnape -->
+            <!-- $fieldCamel -->
             <div class="row">
                 <div class="col-12 col-md-3">
                     <div class="form-group">
                         <label> Cond. </label>
-                        <select id="{$fieldSnape}Cond"
-                                name="{$fieldSnape}Cond"
+                        <select id="{$fieldCamel}Cond"
+                                name="{$fieldCamel}Cond"
                                 class="form-control"
                                 [(ngModel)]="modelSearch.condition$field.cond">
                             <option *ngFor="let o of conditionalOptions"
@@ -324,18 +324,20 @@ class AngularListComponentGenerator extends BaseGenerator
                 </div>
                 <div class="col-12 col-md-7">
                     <div class="form-group">
-                        <app-$fieldDash-auto-complete id="$fieldSnape"
-                                                      [name]="labels.$fieldSnape.ownName"
-                                                      [currentPage]="mApi.index()"
-                                                      [(ngModel)]="modelSearch.condition$field.value">
+                        <app-$fieldDash-auto-complete
+                                name="labels.$fieldCamel.ownName"
+                                acId="$fieldCamel"
+                                [acName]="labels.$fieldCamel.ownName"
+                                [currentPage]="mApi.index()"
+                                [(ngModel)]="modelSearch.condition$field.value">
                         </app-$fieldDash-auto-complete>
                     </div>
                 </div>
                 <div class="col-12 col-md-2">
                     <div class="form-group">
                         <label> Oper. </label>
-                        <select id="{$fieldSnape}Oper"
-                                name="{$fieldSnape}Oper"
+                        <select id="{$fieldCamel}Oper"
+                                name="{$fieldCamel}Oper"
                                 class="form-control"
                                 [(ngModel)]="modelSearch.condition$field.oper">
                             <option *ngFor="let o of operatorOptions"
@@ -346,7 +348,7 @@ class AngularListComponentGenerator extends BaseGenerator
                     </div>
                 </div>
             </div>
-            <!-- $fieldSnape . end -->
+            <!-- $fieldCamel . end -->
             EOF;
             $relations[] = $relationText;
         }

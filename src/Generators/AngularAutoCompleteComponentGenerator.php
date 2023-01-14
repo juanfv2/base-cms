@@ -52,11 +52,11 @@ class AngularAutoCompleteComponentGenerator extends BaseGenerator
             }
             if ($field->isSearchable) {
                 $searchables1[] = "g.push(new JfCondition(`OR \${this.labels.{$this->config->modelNames->camel}.{$field->name}.field} like`, term));";
-                $searchables2[] = "`\${this.labels.{$this->config->modelNames->camel}.{$field->name}.field}`,";
+                $searchables2[] = "this.labels.{$this->config->modelNames->camel}.{$field->name}.field,";
             }
             if ($field->isPrimary) {
                 $searchables1[] = "g.push(new JfCondition(`OR \${this.labels.{$this->config->modelNames->camel}.{$field->name}.field} like`, term));";
-                $searchables2[] = "`\${this.labels.{$this->config->modelNames->camel}.{$field->name}.field}`,";
+                $searchables2[] = "this.labels.{$this->config->modelNames->camel}.{$field->name}.field,";
             }
         }
 
@@ -99,15 +99,8 @@ class AngularAutoCompleteComponentGenerator extends BaseGenerator
                 continue;
             }
 
-            $fieldSnape = Str::camel($field);
-            $relationText = <<<EOF
-            m$field?: $field;
-            @Input()
-            set $fieldSnape($fieldSnape: $field) {
-                this.value = undefined;
-                this.m$field = $fieldSnape;
-            }
-            EOF;
+            $fieldCamel = Str::camel($field);
+            $relationText ="@Input()$fieldCamel!: $field";
             $relations[] = $relationText;
         }
 
@@ -126,10 +119,10 @@ class AngularAutoCompleteComponentGenerator extends BaseGenerator
                 continue;
             }
 
-            $fieldSnape = Str::camel($field);
+            $fieldCamel = Str::camel($field);
             $relationText = <<<EOF
-            if (this.m$field) {
-                conditions.push(new JfCondition(`\${this.labels.{$this->config->modelNames->camel}.tableName}.$fieldFK`, this.m$field.id));
+            if (this.$fieldCamel) {
+                conditions.push(new JfCondition(this.labels.{$this->config->modelNames->camel}.$fieldFK.field, this.$fieldCamel.id));
             }
             EOF;
             $relations[] = $relationText;

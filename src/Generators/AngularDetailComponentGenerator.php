@@ -17,6 +17,9 @@ class AngularDetailComponentGenerator extends BaseGenerator
 
     private string $fileNameHtml;
 
+    private array $spec_relations_1;
+    private array $spec_relations_2;
+
     public function __construct()
     {
         parent::__construct();
@@ -24,6 +27,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
         $mPath = config('laravel_generator.path.angular', 'angular/');
         $this->path = $mPath.$this->config->modelNames->dashed.'/';
         $name = $this->config->modelNames->dashed.'-detail.component.';
+
 
         $this->fileName = $name.'ts';
         $this->fileNameSpec = $name.'spec.ts';
@@ -390,6 +394,10 @@ class AngularDetailComponentGenerator extends BaseGenerator
     private function tsSaveRelations()
     {
         $relations = [];
+
+        $this->spec_relations_1 = [];
+        $this->spec_relations_2 = [];
+
         foreach ($this->config->relations as $relation) {
             $type = $relation->type ?? null;
             $field = $relation->inputs[0] ?? null;
@@ -406,6 +414,9 @@ class AngularDetailComponentGenerator extends BaseGenerator
                 }
                 EOF;
                 $relations[] = $relationText;
+
+                $this->spec_relations_1[] = "modelTemp.{$fieldCamel} = {id: 1};\nmodelTemp.{$fieldSnake}_id = modelTemp.$fieldCamel.id;";
+                $this->spec_relations_2[] = "delete modelTemp.{$fieldCamel};\ndelete modelTemp.{$fieldSnake}Name;";
             }
 
             if ($type == 'mtm') {
@@ -588,6 +599,8 @@ class AngularDetailComponentGenerator extends BaseGenerator
         $variables['model_info'] = implode(infy_nl(), $this->tsModel());
         $variables['validate_form_group'] = implode(infy_nl(), $this->tsValidateFormGroup());
         $variables['spec_validate_fields'] = implode(infy_nl(), $this->specValidateFields());
+        $variables['spec_relations_1'] = implode(infy_nl(), $this->spec_relations_1);
+        $variables['spec_relations_2'] = implode(infy_nl(), $this->spec_relations_2);
 
         $variables['input_fields'] = implode(infy_nl(), $this->htmlInputFields());
         $variables['input_fields_related'] = implode(infy_nl(), $this->htmlInputFieldsRelated());
