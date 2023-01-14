@@ -100,7 +100,7 @@ class AngularAutoCompleteComponentGenerator extends BaseGenerator
             }
 
             $fieldCamel = Str::camel($field);
-            $relationText ="@Input()$fieldCamel!: $field";
+            $relationText = "@Input()$fieldCamel!: $field";
             $relations[] = $relationText;
         }
 

@@ -18,6 +18,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
     private string $fileNameHtml;
 
     private array $spec_relations_1;
+
     private array $spec_relations_2;
 
     public function __construct()
@@ -27,7 +28,6 @@ class AngularDetailComponentGenerator extends BaseGenerator
         $mPath = config('laravel_generator.path.angular', 'angular/');
         $this->path = $mPath.$this->config->modelNames->dashed.'/';
         $name = $this->config->modelNames->dashed.'-detail.component.';
-
 
         $this->fileName = $name.'ts';
         $this->fileNameSpec = $name.'spec.ts';
@@ -127,7 +127,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
                 $required = strpos($field->validations, 'required') !== false;
                 if ($required) {
                     $requiredTextAsterisk = '*';
-                    $requiredTextProperties = "placeholder=\"Requerido\"";
+                    $requiredTextProperties = 'placeholder="Requerido"';
 
                     $requiredText = <<<EOF
                     <div *ngIf="!mFormGroup.controls['$field->name'].valid && mFormGroup.controls['$field->name'].dirty && mFormGroup.controls['$field->name'].errors?.['required']"
@@ -348,8 +348,8 @@ class AngularDetailComponentGenerator extends BaseGenerator
 
             $fieldCamel = Str::camel($field);
             $validations[] = " {$fieldCamel}: [this.{$this->config->modelNames->camel}.{$fieldCamel}, Validators.required], ";
-
         }
+
         return $validations;
     }
 
