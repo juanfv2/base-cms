@@ -307,14 +307,14 @@ class AngularDetailComponentGenerator extends BaseGenerator
             <div class="card">
                 <div class="card-body">
                 <div *ngIf="!{$fieldCamelPlural}AreRequired" class="alert alert-danger form-text" role="alert"> Debe seleccionar {{labels.$fieldCamel.ownName}} </div>
-                <app-$fieldDash-auto-complete name="m2m-{$fieldDash}"
-                                              acId="{$fieldDash}-availables"
+                <app-$fieldDash-auto-complete name="m2m-{$fieldCamelPlural}"
+                                              acId="{$fieldCamelPlural}-availables"
                                               acName="$plural disponibles"
                                               [acMultiple]="true"
                                               [currentPage]="mApi.show()"
                                               (oSelected)="{$fieldCamelPlural}2update(\$event)"
-                                              [avoidable]="{$this->config->modelNames->camel}.$fieldCamelPlural"
-                                              [(ngModel)]="{$this->config->modelNames->camel}.$fieldCamelPlural">
+                                              [avoidable]="{$fieldCamelPlural}Avoidable"
+                                              [(ngModel)]="{$fieldCamelPlural}Selected">
                 </app-$fieldDash-auto-complete>
                 <base-cms-many-to-many lField="name" [lModel]="labels.{$fieldCamel}" [gOptions]="{$this->config->modelNames->camel}.$fieldCamelPlural" (rm)="{$fieldCamel}2rm(\$event)" (go)="{$fieldCamel}2go(\$event)" ></base-cms-many-to-many>
                 </div>
@@ -375,6 +375,8 @@ class AngularDetailComponentGenerator extends BaseGenerator
                 // are required? do you need something like that?
                 // this.{$fieldCamelPlural}AreRequired   = this.{$this->config->modelNames->camel}.$fieldCamelPlural.length > 0 ? '-' : '';
                 // this.{$fieldCamelPlural}Avoidable  = [...new Set([...k.{$this->config->modelNames->camel}Clients, ...this.{$fieldCamelPlural}Selectable])];
+                // this.{$fieldCamelPlural}Selected = [...new Set([...{$this->config->modelNames->camel}.$fieldCamelPlural, ...this.{$fieldCamelPlural}Selected])]
+                // this.{$this->config->modelNames->camel}.$fieldCamelPlural = this.{$fieldCamelPlural}Selected
             }
 
             {$fieldCamel}2rm($fieldCamel: $field): void {
@@ -382,7 +384,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
                 // this.{$fieldCamelPlural}2update();
             }
 
-            {$fieldCamel}2gp($fieldCamel: $field): void {
+            {$fieldCamel}2go($fieldCamel: $field): void {
                 this.router.navigate([k.routes.$fieldCamelPlural, $fieldCamel.id]);
             }
             EOF;
