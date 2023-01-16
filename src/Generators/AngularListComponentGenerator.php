@@ -325,8 +325,8 @@ class AngularListComponentGenerator extends BaseGenerator
                 <div class="col-12 col-md-7">
                     <div class="form-group">
                         <app-$fieldDash-auto-complete
-                                name="labels.$fieldCamel.ownName"
-                                acId="$fieldCamel"
+                                name="m2m-$fieldDash"
+                                acId="$fieldDash"
                                 [acName]="labels.$fieldCamel.ownName"
                                 [currentPage]="mApi.index()"
                                 [(ngModel)]="modelSearch.condition$field.value">

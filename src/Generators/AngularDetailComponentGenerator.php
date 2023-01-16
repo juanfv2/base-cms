@@ -154,7 +154,6 @@ class AngularDetailComponentGenerator extends BaseGenerator
                         EOF;
                         break;
                     case 'checkbox':
-                        $requiredText = '';
                         $relationText .= <<<EOF
                         <div class="d-flex">
                             <label for="{$this->config->modelNames->camel}-$field->name"
@@ -308,9 +307,10 @@ class AngularDetailComponentGenerator extends BaseGenerator
             <div class="card">
                 <div class="card-body">
                 <div *ngIf="!{$fieldCamelPlural}AreRequired" class="alert alert-danger form-text" role="alert"> Debe seleccionar {{labels.$fieldCamel.ownName}} </div>
-                <app-$fieldDash-auto-complete id="{$fieldCamel}-availables"
-                                              name="$plural disponibles"
-                                              [multiple]="true"
+                <app-$fieldDash-auto-complete name="m2m-{$fieldDash}"
+                                              acId="{$fieldDash}-availables"
+                                              acName="$plural disponibles"
+                                              [acMultiple]="true"
                                               [currentPage]="mApi.show()"
                                               (oSelected)="{$fieldCamelPlural}2update(\$event)"
                                               [avoidable]="{$this->config->modelNames->camel}.$fieldCamelPlural"
@@ -337,6 +337,8 @@ class AngularDetailComponentGenerator extends BaseGenerator
             $required = strpos($field->validations, 'required') !== false;
             if ($field->inForm && $required) {
                 $validations[] = " {$field->name}: [this.{$this->config->modelNames->camel}.{$field->name}, Validators.required], ";
+            } else{
+                $validations[] = " {$field->name}: [this.{$this->config->modelNames->camel}.{$field->name}], ";
             }
         }
         foreach ($this->config->relations as $relation) {
@@ -422,6 +424,8 @@ class AngularDetailComponentGenerator extends BaseGenerator
             if ($type == 'mtm') {
                 $relationText = " modelTemp.{$fieldCamelPlural} = modelTemp.{$fieldCamelPlural} ? modelTemp.{$fieldCamelPlural}.map((item:any) => item.id) : [];";
                 $relations[] = $relationText;
+
+                $this->spec_relations_1[] = "modelTemp.{$fieldCamelPlural} = [ {id: 1} ];";
             }
         }
 
@@ -441,6 +445,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
             }
             $fieldText = '';
             $fieldText .= $field->name;
+            $fdbType = explode(',', $field->dbType)[0];
 
             if ($field->isPrimary) {
                 $fieldText .= '?: number;';
@@ -448,7 +453,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
 
                 continue;
             }
-            switch ($field->dbType) {
+            switch ($fdbType) {
                 case 'integer':
                 case 'bigInteger':
                     $fieldText .= ': number;';
@@ -467,15 +472,18 @@ class AngularDetailComponentGenerator extends BaseGenerator
             $type = $relation->type ?? null;
             $field = $relation->inputs[0] ?? null;
             $fieldCamel = Str::camel($field);
-            $fields[] = "{$fieldCamel}Name: string;// $type";
+            $fieldCamelPlural = Str::pluralStudly($fieldCamel);
             switch ($type) {
                 case 'mtm':
-                case '1tm':
-                    $fieldCamel = Str::pluralStudly($fieldCamel);
-                    $fields[] = "$fieldCamel: {$field}[]; ";
+                    $fields[] = "{$fieldCamelPlural}Name: string;// $type";
+                    $fields[] = "$fieldCamelPlural: {$field}[]; ";
                     break;
-
+                case '1tm':
+                    $fields[] = "{$fieldCamel}Name: string;// $type";
+                    $fields[] = "$fieldCamelPlural: {$field}[]; ";
+                    break;
                 default:
+                    $fields[] = "{$fieldCamel}Name: string;// $type";
                     $fields[] = "$fieldCamel: $field; ";
                     break;
             }
@@ -500,11 +508,12 @@ class AngularDetailComponentGenerator extends BaseGenerator
             }
             $converted = Str::title($field->name);
             $fieldText = "$field->name: new DBType({label: '{$converted}', name: '$field->name', field: '{$this->config->tableName}.$field->name', ";
+            $fdbType = explode(',', $field->dbType)[0];
 
             if ($field->isPrimary) {
                 $mPrimaryKey = $field->name;
             }
-            switch ($field->dbType) {
+            switch ($fdbType) {
                 case 'integer':
                 case 'bigInteger':
                     $fieldText .= "type: 'number'} as DBType),";
@@ -547,7 +556,9 @@ class AngularDetailComponentGenerator extends BaseGenerator
         $fields[] = '';
         $fields[] = "{ path: `\${k.routes.{$this->config->modelNames->camelPlural}}/:id`, component: {$this->config->modelNames->name}DetailComponent },";
         $fields[] = "{ path: k.routes.{$this->config->modelNames->camelPlural}, component: {$this->config->modelNames->name}ListComponent },";
+        $fields[] = '';
 
+        $fields[] = '';
         $fields[] = '*/';
 
         return $fields;
@@ -566,7 +577,8 @@ class AngularDetailComponentGenerator extends BaseGenerator
                 $relationyyText = <<<EOF
 
                 it('should render "{$this->config->modelNames->camel}-{$field->name}" validation message when formControl mark as dirty and empty', () => {
-                expect(domHelper.count('.{$field->name}-error-required')).toEqual(0)
+                const _tag = '.{$field->name}-error-required'
+                expect(domHelper.count(_tag)).toEqual(0)
 
                 // elements.querySelector('button').click();
                 const {$field->name} = component.mFormGroup.controls['{$field->name}']
@@ -574,8 +586,8 @@ class AngularDetailComponentGenerator extends BaseGenerator
                 {$field->name}.markAsDirty()
 
                 fixture.detectChanges()
-                // expect(domHelper.count('.{$field->name}-error-required')).toEqual(1)
-                expect(domHelper.singleText('.{$field->name}-error-required')).toContain('{$converted} es requerido')
+                // expect(domHelper.count(_tag)).toEqual(1)
+                expect(domHelper.singleText(_tag)).toContain('{$converted} es requerido')
                 })
                 EOF;
                 $validations[] = $relationyyText;
