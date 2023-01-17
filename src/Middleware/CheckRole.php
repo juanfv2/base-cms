@@ -34,20 +34,23 @@ class CheckRole
      **/
     private function userHasPermission()
     {
-        $cRoute = Route::getCurrentRoute()->action['as'];
+        $cRouteParent = Route::getCurrentRoute()->action['as'];
+        $cRouteChild = request()->get('cp', '-.-');
 
         // logger(__FILE__ . ':' . __LINE__ . ' $cRoute ', [$cRoute]);
 
-        if ($cRoute == 'api.login.logout') {
+        if ($cRouteParent == 'api.login.logout') {
             return true;
         }
 
-        if (request()->has('cp')) {
-            $cRoute = request()->get('cp', '-.-._._.-.-');
+        if ($cRouteChild != '-.-') {
+            $temp = $cRouteParent;
+            $cRouteParent = $cRouteChild;
+            $cRouteChild = $temp;
         }
 
         // mysql
-        $menu = DB::select('call sp_has_permission (?, ?);', [auth()->id(), $cRoute]);
+        $menu = DB::select('call sp_has_permission (?, ?, ?);', [auth()->id(), $cRouteParent, $cRouteChild]);
 
         $hasPermission = $menu[0]->aggregate > 0;
 

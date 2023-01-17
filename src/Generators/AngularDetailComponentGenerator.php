@@ -337,7 +337,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
             $required = strpos($field->validations, 'required') !== false;
             if ($field->inForm && $required) {
                 $validations[] = " {$field->name}: [this.{$this->config->modelNames->camel}.{$field->name}, Validators.required], ";
-            } else{
+            } else {
                 $validations[] = " {$field->name}: [this.{$this->config->modelNames->camel}.{$field->name}], ";
             }
         }
