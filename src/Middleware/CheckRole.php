@@ -52,11 +52,11 @@ class CheckRole
         // mysql
         $menu = DB::select('call sp_has_permission (?, ?, ?);', [auth()->id(), $cRouteParent, $cRouteChild]);
 
-        $hasPermission = $menu[0]->aggregate > 0;
+        $hasPermission = $menu ? $menu[0]->aggregate > 0 : 0;
 
         // -- sql-server $menu = DB::select('execute sp_has_permission ?, ?;', [$this->id, $cRoute]);
 
-        // logger(__FILE__ . ':' . __LINE__ . ' $this->id ', [' . ' . auth()->id() . ' . ' . $cRoute . ' . \'' . $hasPermission . '\'']);
+        logger(__FILE__ . ':' . __LINE__ . auth()->id() . " '$cRouteParent','$cRouteChild' hasPermission: '$hasPermission'", [$menu]);
 
         return $hasPermission;
     }
