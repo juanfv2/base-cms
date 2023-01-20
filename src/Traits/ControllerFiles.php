@@ -101,7 +101,7 @@ trait ControllerFiles
         $isTemporal = strpos($fieldName, 'massive') !== false;
         $baseAssets = 'public/assets/adm/';
 
-        $rCountry = $request->header('r-country', '');
+        $rCountry = $request->header('r-country', 'sv');
 
         if ($rCountry) {
             $baseAssets = $baseAssets.$rCountry.'/';
@@ -215,7 +215,7 @@ trait ControllerFiles
      */
     public function fileDown($tableName, $fieldName, $id, $w = 0, $h = 0, $imageName = '')
     {
-        $rCountry = request()->get('rCountry', '');
+        $rCountry = request()->get('rCountry', 'sv');
         if (! $imageName) {
             if ($rCountry) {
                 config()->set('database.default', config('base-cms.default_prefix').$rCountry);
@@ -253,7 +253,7 @@ trait ControllerFiles
             $strLocationImage2show = $strLocationImageNotFound;
         }
 
-        // logger(__FILE__ . ':' . __LINE__ . ' $strLocationImageSaved ', [$strLocationImageSaved]);
+        logger(__FILE__.':'.__LINE__.' $strLocationImageSaved ', [$exists, $strLocationImage2show, $strLocationImageSaved]);
 
         ini_set('memory_limit', '-1');
 
