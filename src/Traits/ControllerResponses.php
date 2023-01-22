@@ -1,6 +1,6 @@
 <?php
 
-namespace  Juanfv2\BaseCms\Traits;
+namespace Juanfv2\BaseCms\Traits;
 
 trait ControllerResponses
 {
@@ -24,7 +24,13 @@ trait ControllerResponses
      */
     public function sendError($data, $message = '', $responseCode = 404)
     {
-        return response()->json($this->makeResponse($data, $message, false), $responseCode);
+        $d = $data;
+        $m = $message;
+        $c = $responseCode;
+        if (is_numeric($message)) {
+            $c = $message;
+        }
+        return response()->json($this->makeResponse($d, $m, false), $c);
     }
 
     /**
@@ -46,7 +52,7 @@ trait ControllerResponses
 
     /**
      * @param  string  $message
-     * @param  mixed  $data
+     * @param  mixed|string $data
      * @return array
      */
     private function makeResponse($data, $message, $isSuccess = true)
