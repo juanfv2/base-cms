@@ -211,13 +211,13 @@ trait BaseCmsModel
                         if ($new_values && count($new_values) > 0 && is_array($new_values[0])) {
                             $data = [];
                             $sync = false;
-                            foreach ($new_values as $val) {
-                                if (isset($val['pivot'])) {
-                                    $data[$val['pivot'][$this->$key()->getRelatedPivotKeyName()]] = $val['pivot'];
+                            foreach ($new_values as $val01) {
+                                if (isset($val01['pivot'])) {
+                                    $data[$val01['pivot'][$this->$key()->getRelatedPivotKeyName()]] = $val01['pivot'];
                                     $sync = true;
                                 }
-                                if (isset($val[$this->$key()->getRelatedPivotKeyName()])) {
-                                    $data[$val[$this->$key()->getRelatedPivotKeyName()]] = $val;
+                                if (isset($val01[$this->$key()->getRelatedPivotKeyName()])) {
+                                    $data[$val01[$this->$key()->getRelatedPivotKeyName()]] = $val01;
                                     $sync = true;
                                 }
                             }
@@ -259,9 +259,9 @@ trait BaseCmsModel
 
                         if (count($new_values) > 0) {
                             $related = get_class($this->$key()->getRelated());
-                            foreach ($new_values as $val) {
-                                $rel = $related::find($val);
-                                // logger(__FILE__ . ':' . __LINE__ . ' $rel ', [$this->id, $this->getTable(), $key, $val, $related, $rel]);
+                            foreach ($new_values as $val02) {
+                                $rel = $related::find($val02);
+                                // logger(__FILE__ . ':' . __LINE__ . ' $rel ', [$this->id, $this->getTable(), $key, $val02, $related, $rel]);
                                 if ($rel) {
                                     $rel->$model_key = $this->id;
                                     $rel->save();
