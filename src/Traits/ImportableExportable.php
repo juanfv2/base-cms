@@ -98,11 +98,10 @@ trait ImportableExportable
 
     public function getDataToKeys($headers, $data)
     {
-        // logger(__FILE__ . ':' . __LINE__ . ' $headers, $data, $keys ', [$headers, $data, $keys]);
         $dataToSave = [];
 
         foreach ($headers as $k) {
-            $dataToSave[$k] = $data[$k] ?? '';
+            $dataToSave[$k] = $data[$k] ?? '0';
         }
 
         return $dataToSave;
@@ -156,7 +155,6 @@ trait ImportableExportable
 
             return $model->$k;
         } catch (\Throwable $th) {
-            logger(__FILE__.':'.__LINE__.' $th ', [$th]);
             throw $th;
         }
     }
