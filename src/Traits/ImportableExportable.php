@@ -29,6 +29,10 @@ trait ImportableExportable
                 if ($dataCombine) {
                     $data = $this->getDataToSave($xHeadersTemp, $dataCombine, $keys);
 
+                    if ($extra_data) {
+                        $data = array_merge($data, $extra_data);
+                    }
+
                     $attrKeys = [];
                     $kName = '';
 
@@ -40,11 +44,7 @@ trait ImportableExportable
                     }
 
                     if (is_array($primaryKeys)) {
-                        $attrKeys = $this->getDataToSave($primaryKeys, $dataCombine, $keys);
-                    }
-
-                    if ($extra_data) {
-                        $data = array_merge($data, $extra_data);
+                        $attrKeys = $this->getDataToKeys($primaryKeys, $data);
                     }
 
                     if ($model_name) {
@@ -96,6 +96,18 @@ trait ImportableExportable
         return $dataToSave;
     }
 
+    public function getDataToKeys($headers, $data)
+    {
+        // logger(__FILE__ . ':' . __LINE__ . ' $headers, $data, $keys ', [$headers, $data, $keys]);
+        $dataToSave = [];
+
+        foreach ($headers as $k) {
+            $dataToSave[$k] = $data[$k] ?? '';
+        }
+
+        return $dataToSave;
+    }
+
     public function saveArray($table, $attrKeys, $data, $kName)
     {
         try {
@@ -132,16 +144,19 @@ trait ImportableExportable
 
             if (is_string($primaryKeys)) {
                 $model->setKeyName($primaryKeys);
+
+                if (isset($data[$primaryKeys])) {
+                    $model->$primaryKeys = $data[$primaryKeys];
+                }
             }
 
-            if (isset($data[$primaryKeys])) {
-                $model->$primaryKeys = $data[$primaryKeys];
-            }
             $model->fill($res);
             $model->save();
+            $k = $model->getKeyName();
 
-            return $model->$primaryKeys;
+            return $model->$k;
         } catch (\Throwable $th) {
+            logger(__FILE__.':'.__LINE__.' $th ', [$th]);
             throw $th;
         }
     }
@@ -223,7 +238,7 @@ trait ImportableExportable
                 $model->setKeyName($primaryKeys);
             }
 
-            return  $model->delete();
+            return $model->delete();
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -249,7 +264,7 @@ trait ImportableExportable
                 $model->setKeyName($primaryKeys);
             }
 
-            return  $model->restore();
+            return $model->restore();
         } catch (\Throwable $th) {
             throw $th;
         }

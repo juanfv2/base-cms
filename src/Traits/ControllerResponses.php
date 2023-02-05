@@ -30,6 +30,7 @@ trait ControllerResponses
         if (is_numeric($message)) {
             $c = $message;
         }
+
         return response()->json($this->makeResponse($d, $m, false), $c);
     }
 
@@ -52,7 +53,7 @@ trait ControllerResponses
 
     /**
      * @param  string  $message
-     * @param  mixed|string $data
+     * @param  mixed|string  $data
      * @return array
      */
     private function makeResponse($data, $message, $isSuccess = true)
