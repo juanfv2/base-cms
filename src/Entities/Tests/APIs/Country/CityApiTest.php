@@ -11,12 +11,10 @@ use Tests\TestCase;
 
 class CityApiTest extends TestCase
 {
-    use ApiTestTrait,
-        WithoutMiddleware,
-        DatabaseTransactions
-        // RefreshDatabase
-        // ...
-;
+    use ApiTestTrait;
+    use WithoutMiddleware;
+    use DatabaseTransactions;
+    // use RefreshDatabase;
 
     /** @test */
     public function api_index_city()

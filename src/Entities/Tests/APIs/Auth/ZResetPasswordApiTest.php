@@ -12,12 +12,10 @@ use Tests\TestCase;
 
 class ZResetPasswordApiTest extends TestCase
 {
-    use ApiTestTrait,
-        WithoutMiddleware,
-        DatabaseTransactions
-        // RefreshDatabase
-        // ...
-;
+    use ApiTestTrait;
+    use WithoutMiddleware;
+    use DatabaseTransactions;
+    // use RefreshDatabase;
 
     /** @test */
     public function reset_password()

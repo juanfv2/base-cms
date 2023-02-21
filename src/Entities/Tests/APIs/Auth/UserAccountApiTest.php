@@ -15,12 +15,10 @@ use Tests\TestCase;
 
 class UserAccountApiTest extends TestCase
 {
-    use ApiTestTrait,
-        WithoutMiddleware,
-        DatabaseTransactions
-        // RefreshDatabase
-        // ...
-;
+    use ApiTestTrait;
+    use WithoutMiddleware;
+    use DatabaseTransactions;
+    // use RefreshDatabase;
 
     /** @test */
     public function api_create_account_without_image()
