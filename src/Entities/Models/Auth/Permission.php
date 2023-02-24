@@ -43,8 +43,8 @@ class Permission extends Model
         'isVisible',
         'orderInMenu',
         'permission_id',
-        'createdBy',
-        'updatedBy',
+        'created_By',
+        'updated_By',
     ];
 
     /**

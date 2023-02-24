@@ -7,16 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Juanfv2\BaseCms\Traits\BaseCmsModel;
 use Juanfv2\BaseCms\Traits\ControllerFiles;
 
-/**
- * Class XFile
- *
- * @version October 19, 2022, 9:29 pm UTC
- */
 class XFile extends Model
 {
-    use BaseCmsModel,
-        ControllerFiles,
-        HasFactory;
+    use BaseCmsModel;
+    use ControllerFiles;
+    use HasFactory;
 
     public $table = 'auth_x_files';
 
@@ -31,15 +26,8 @@ class XFile extends Model
         'data',
     ];
 
-    /**
-     * The attributes that should be casted to native types.
-     *
-     * @var array
-     */
     protected $casts = [
-        'id' => 'integer',
         'entity' => 'string',
-        'entity_id' => 'integer',
         'field' => 'string',
         'name' => 'string',
         'nameOriginal' => 'string',
@@ -48,19 +36,14 @@ class XFile extends Model
         'data' => 'json',
     ];
 
-    /**
-     * Validation rules
-     *
-     * @var array
-     */
     public static $rules = [
-        'entity' => 'required|string|max:191',
+        'entity' => 'required|string',
         'entity_id' => 'required',
-        'field' => 'required|string|max:191',
-        'name' => 'required|string|max:191',
-        'nameOriginal' => 'required|string|max:191',
-        'publicPath' => 'required|string|max:191',
-        'extension' => 'required|string|max:10',
+        'field' => 'required|string',
+        'name' => 'required|string',
+        'nameOriginal' => 'required|string',
+        'publicPath' => 'required|string',
+        'extension' => 'required|string',
         'data' => 'nullable|string',
         'created_at' => 'nullable',
         'updated_at' => 'nullable',

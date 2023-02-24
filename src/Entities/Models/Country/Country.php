@@ -4,81 +4,57 @@ namespace App\Models\Country;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Juanfv2\BaseCms\Traits\BaseCmsModel;
 use Juanfv2\BaseCms\Traits\UserResponsible;
 
-/**
- * Class Country
- *
- * @version October 19, 2022, 8:27 pm UTC
- */
 class Country extends Model
 {
-    use BaseCmsModel,
-        UserResponsible,
-        HasFactory;
+    use BaseCmsModel;
+    use UserResponsible;
+    use SoftDeletes;
+    use HasFactory;
 
     public $table = 'countries';
 
     public $fillable = [
         'name',
         'code',
-        'createdBy',
-        'updatedBy',
+        'created_by',
+        'updated_by',
     ];
 
-    /**
-     * The attributes that should be casted to native types.
-     *
-     * @var array
-     */
     protected $casts = [
-        'id' => 'integer',
         'name' => 'string',
         'code' => 'string',
-        'createdBy' => 'integer',
-        'updatedBy' => 'integer',
     ];
 
-    /**
-     * Validation rules
-     *
-     * @var array
-     */
     public static $rules = [
-        'name' => 'required|string|max:191',
-        'code' => 'required|string|max:10',
-        'createdBy' => 'nullable',
-        'updatedBy' => 'nullable',
+        'name' => 'required|string',
+        'code' => 'required|string',
+        'created_by' => 'nullable',
+        'updated_by' => 'nullable',
         'created_at' => 'nullable',
         'updated_at' => 'nullable',
+        'deleted_at' => 'nullable',
     ];
 
     public $hidden = [
-        'createdBy', 'updatedBy', 'created_at', 'updated_at', 'deleted_at',
+        'created_by', 'updated_by', 'created_at', 'updated_at', 'deleted_at',
     ];
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     **/
-    public function users()
+    public function regions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\App\Models\Country\Region::class, 'country_id');
+    }
+
+    public function cities(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\App\Models\Country\City::class, 'country_id');
+    }
+
+    public function users(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(\App\Models\Auth\User::class, 'country_id');
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     **/
-    public function regions()
-    {
-        return $this->hasMany(Region::class, 'country_id');
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     **/
-    public function cities()
-    {
-        return $this->hasMany(City::class, 'country_id');
     }
 }
