@@ -39,7 +39,7 @@ class CheckRole
 
         // logger(__FILE__ . ':' . __LINE__ . ' $cRoute ', [$cRoute]);
 
-        if ($cRouteParent == 'api.login.logout') {
+        if ($cRouteParent == 'api.login.logout' && $cRouteChild == '-.-') {
             return true;
         }
 
@@ -56,7 +56,10 @@ class CheckRole
 
         // -- sql-server $menu = DB::select('execute sp_has_permission ?, ?;', [$this->id, $cRoute]);
 
-        logger(__FILE__.':'.__LINE__.auth()->id()." '$cRouteParent','$cRouteChild' hasPermission: '$hasPermission'", [$menu]);
+        if (! $hasPermission) {
+            logger(__FILE__ . ':' . __LINE__ . auth()->id() . " call sp_save_permission_permission('$cRouteParent','$cRouteChild'); -'$hasPermission'-", [$menu]);
+        }
+
 
         return $hasPermission;
     }
