@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\APIs\Country;
+namespace Tests\Feature\APIs\Country;
 
 use App\Models\Country\Region;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -11,15 +11,13 @@ use Tests\TestCase;
 
 class RegionApiTest extends TestCase
 {
-    use ApiTestTrait,
-        WithoutMiddleware,
-        DatabaseTransactions
-        // RefreshDatabase
-        // ...
-;
+    use ApiTestTrait;
+    use WithoutMiddleware;
+    use DatabaseTransactions;
+    // use RefreshDatabase;
 
     /** @test */
-    public function api_index_region()
+    public function api_index_regions()
     {
         $this->withoutExceptionHandling();
 
@@ -30,8 +28,7 @@ class RegionApiTest extends TestCase
 
         $this->response = $this->json('POST', route('api.regions.store', ['limit' => $limit, 'offset' => $offset, 'to_index' => 2]));
 
-        // $this->response->dump();
-        // dd($this->response->json());
+        // $this->response->dd();
 
         $this->assertJsonIndex($limit, $models[0]);
     }
@@ -43,10 +40,9 @@ class RegionApiTest extends TestCase
 
         $model = Region::factory()->make()->toArray();
 
-        $this->response = $this->actingAsAdmin('api')->json('POST', route('api.regions.store'), $model);
+        $this->response = $this->actingAsAdmin()->json('POST', route('api.regions.store'), $model);
 
-        // $this->response->dump();
-        // dd($this->response->json());
+        // $this->response->dd();
 
         $this->assertJsonModifications();
     }
@@ -56,7 +52,7 @@ class RegionApiTest extends TestCase
     {
         $model = Region::factory()->create();
 
-        $this->response = $this->actingAsAdmin('api')->json('GET', route('api.regions.show', ['region' => $model->id]));
+        $this->response = $this->actingAsAdmin()->json('GET', route('api.regions.show', ['region' => $model->id]));
 
         $this->assertJsonShow($model);
     }
@@ -67,7 +63,7 @@ class RegionApiTest extends TestCase
         $model = Region::factory()->create();
         $modelEdited = Region::factory()->make()->toArray();
 
-        $this->response = $this->actingAsAdmin('api')->json('PUT', route('api.regions.update', ['region' => $model->id]), $modelEdited);
+        $this->response = $this->actingAsAdmin()->json('PUT', route('api.regions.update', ['region' => $model->id]), $modelEdited);
 
         $this->assertJsonModifications();
     }
@@ -77,11 +73,11 @@ class RegionApiTest extends TestCase
     {
         $model = Region::factory()->create();
 
-        $this->response = $this->actingAsAdmin('api')->json('DELETE', route('api.regions.destroy', ['region' => $model->id]));
+        $this->response = $this->actingAsAdmin()->json('DELETE', route('api.regions.destroy', ['region' => $model->id]));
 
         $this->assertApiSuccess();
 
-        $this->response = $this->actingAsAdmin('api')->json('DELETE', route('api.regions.destroy', ['region' => $model->id]));
+        $this->response = $this->actingAsAdmin()->json('DELETE', route('api.regions.destroy', ['region' => $model->id]));
 
         $this->response->assertStatus(404);
     }

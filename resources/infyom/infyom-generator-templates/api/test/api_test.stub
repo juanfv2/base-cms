@@ -11,12 +11,11 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class $MODEL_NAME$ApiTest extends TestCase
 {
-    use ApiTestTrait,
-        WithoutMiddleware,
-        DatabaseTransactions
-        // RefreshDatabase
-        // ...
-    ;
+    use ApiTestTrait;
+        use WithoutMiddleware;
+        use DatabaseTransactions;
+        // use RefreshDatabase;
+
 
     /** @test */
     public function api_index_$MODEL_NAME_SNAKE$()

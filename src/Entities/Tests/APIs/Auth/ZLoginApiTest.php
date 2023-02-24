@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\APIs\Auth;
+namespace Tests\Feature\APIs\Auth;
 
 use App\Models\Auth\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -11,12 +11,10 @@ use Tests\TestCase;
 
 class ZLoginApiTest extends TestCase
 {
-    use ApiTestTrait,
-        WithoutMiddleware,
-        DatabaseTransactions
-        // RefreshDatabase
-        // ...
-;
+    use ApiTestTrait;
+    use WithoutMiddleware;
+    use DatabaseTransactions;
+    // use RefreshDatabase;
 
     /** @test */
     public function login_user_person()
@@ -56,11 +54,11 @@ class ZLoginApiTest extends TestCase
         $this->response = $this->json('POST', route('api.login.login'), $credentials);
 
         $this->assertApiSuccess();
-        $this->responseContent = $this->response->json();
+        $responseContent = $this->response->json();
 
         // dd($this->responseContent);
 
-        $token = $this->responseContent['data']['token'];
+        $token = $responseContent['data']['token'];
 
         $this->response = $this->actingAsAdmin()->json('POST', route('api.login.logout'), [], ['Authorization' => 'Bearer '.$token]);
         // $this->response->dump();
@@ -83,8 +81,8 @@ class ZLoginApiTest extends TestCase
 
         $this->response->assertStatus(404);
 
-        $this->responseContent = $this->response->json();
-        $actual = $this->responseContent['message'];
+        $responseContent = $this->response->json();
+        $actual = $responseContent['message'];
         $expected = __('passwords.user');
         $this->assertEquals($expected, $actual);
     }
@@ -105,8 +103,8 @@ class ZLoginApiTest extends TestCase
 
         $this->response->assertStatus(422);
 
-        $this->responseContent = $this->response->json();
-        $actual = $this->responseContent['message'];
+        $responseContent = $this->response->json();
+        $actual = $responseContent['message'];
         $expected = __('auth.failed');
 
         $this->assertEquals($expected, $actual);
@@ -128,8 +126,8 @@ class ZLoginApiTest extends TestCase
 
         $this->response->assertStatus(422);
 
-        $this->responseContent = $this->response->json();
-        $actual = $this->responseContent['message'];
+        $responseContent = $this->response->json();
+        $actual = $responseContent['message'];
         $expected = __('auth.no.active');
 
         $this->assertEquals($expected, $actual);

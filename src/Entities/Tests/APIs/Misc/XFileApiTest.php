@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\APIs\Misc;
+namespace Tests\Feature\APIs\Misc;
 
 use App\Models\Misc\XFile;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -11,15 +11,13 @@ use Tests\TestCase;
 
 class XFileApiTest extends TestCase
 {
-    use ApiTestTrait,
-        WithoutMiddleware,
-        DatabaseTransactions
-        // RefreshDatabase
-        // ...
-;
+    use ApiTestTrait;
+    use WithoutMiddleware;
+    use DatabaseTransactions;
+    // use RefreshDatabase;
 
     /** @test */
-    public function api_index_x_file()
+    public function api_index_x_files()
     {
         $this->withoutExceptionHandling();
 
@@ -28,10 +26,9 @@ class XFileApiTest extends TestCase
         $offset = 0;
         $models = XFile::factory($created)->create();
 
-        $this->response = $this->json('POST', route('api.x_files.store', ['limit' => $limit, 'offset' => $offset, 'to_index' => 2]));
+        $this->response = $this->json('POST', route('api.x-files.store', ['limit' => $limit, 'offset' => $offset, 'to_index' => 2]));
 
-        // $this->response->dump();
-        // dd($this->response->json());
+        // $this->response->dd();
 
         $this->assertJsonIndex($limit, $models[0]);
     }
@@ -43,10 +40,9 @@ class XFileApiTest extends TestCase
 
         $model = XFile::factory()->make()->toArray();
 
-        $this->response = $this->actingAsAdmin('api')->json('POST', route('api.x_files.store'), $model);
+        $this->response = $this->json('POST', route('api.x-files.store'), $model);
 
-        // $this->response->dump();
-        // dd($this->response->json());
+        // $this->response->dd();
 
         $this->assertJsonModifications();
     }
@@ -56,7 +52,7 @@ class XFileApiTest extends TestCase
     {
         $model = XFile::factory()->create();
 
-        $this->response = $this->actingAsAdmin('api')->json('GET', route('api.x_files.show', ['x_file' => $model->id]));
+        $this->response = $this->json('GET', route('api.x-files.show', ['x_file' => $model->id]));
 
         $this->assertJsonShow($model);
     }
@@ -67,7 +63,7 @@ class XFileApiTest extends TestCase
         $model = XFile::factory()->create();
         $modelEdited = XFile::factory()->make()->toArray();
 
-        $this->response = $this->actingAsAdmin('api')->json('PUT', route('api.x_files.update', ['x_file' => $model->id]), $modelEdited);
+        $this->response = $this->json('PUT', route('api.x-files.update', ['x_file' => $model->id]), $modelEdited);
 
         $this->assertJsonModifications();
     }
@@ -77,11 +73,11 @@ class XFileApiTest extends TestCase
     {
         $model = XFile::factory()->create();
 
-        $this->response = $this->actingAsAdmin('api')->json('DELETE', route('api.x_files.destroy', ['x_file' => $model->id]));
+        $this->response = $this->json('DELETE', route('api.x-files.destroy', ['x_file' => $model->id]));
 
         $this->assertApiSuccess();
 
-        $this->response = $this->actingAsAdmin('api')->json('DELETE', route('api.x_files.destroy', ['x_file' => $model->id]));
+        $this->response = $this->json('DELETE', route('api.x-files.destroy', ['x_file' => $model->id]));
 
         $this->response->assertStatus(404);
     }

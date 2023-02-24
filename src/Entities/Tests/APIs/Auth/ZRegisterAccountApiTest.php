@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\APIs\Auth;
+namespace Tests\Feature\APIs\Auth;
 
 use App\Models\Auth\Role;
 use App\Models\Auth\User;
@@ -13,12 +13,10 @@ use Tests\TestCase;
 
 class ZRegisterAccountApiTest extends TestCase
 {
-    use ApiTestTrait,
-        WithoutMiddleware,
-        DatabaseTransactions
-        // RefreshDatabase
-        // ...
-;
+    use ApiTestTrait;
+    use WithoutMiddleware;
+    use DatabaseTransactions;
+    // use RefreshDatabase;
 
     /** @test */
     public function api_create_an_account()
@@ -44,15 +42,15 @@ class ZRegisterAccountApiTest extends TestCase
 
         $this->response = $this->json('POST', route('api.register.register'), $credentials);
 
+        // $this->response->dd();
+
         $this->response->assertOk();
 
         $response = $this->response->json();
 
-        // dd($response);
-        // dump($response);
-        // $response->dump();
-        $resp = "Se envió un correo a $e, verifique su correo";
-        $this->assertEquals($resp, $response['message']);
+        $message = __('messages.mail.verify', ['email' => $e]);
+
+        $this->assertEquals($message, $response['message']);
     }
 
     /** @test */

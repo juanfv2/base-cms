@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\APIs\Auth;
+namespace Tests\Feature\APIs\Auth;
 
 use App\Models\Auth\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -9,7 +9,8 @@ use Tests\TestCase;
 
 class ZForgotPasswordApiTest extends TestCase
 {
-    use ApiTestTrait, DatabaseTransactions;
+    use ApiTestTrait;
+    use DatabaseTransactions;
 
     /** @test */
     public function forgot_password()

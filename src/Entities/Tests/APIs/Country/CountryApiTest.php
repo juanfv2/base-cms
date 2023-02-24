@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\APIs\Country;
+namespace Tests\Feature\APIs\Country;
 
 use App\Models\Country\Country;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -11,15 +11,13 @@ use Tests\TestCase;
 
 class CountryApiTest extends TestCase
 {
-    use ApiTestTrait,
-        WithoutMiddleware,
-        DatabaseTransactions
-        // RefreshDatabase
-        // ...
-;
+    use ApiTestTrait;
+    use WithoutMiddleware;
+    use DatabaseTransactions;
+    // use RefreshDatabase;
 
     /** @test */
-    public function api_index_country()
+    public function api_index_countries()
     {
         $this->withoutExceptionHandling();
 
@@ -30,8 +28,7 @@ class CountryApiTest extends TestCase
 
         $this->response = $this->json('POST', route('api.countries.store', ['limit' => $limit, 'offset' => $offset, 'to_index' => 2]));
 
-        // $this->response->dump();
-        // dd($this->response->json());
+        // $this->response->dd();
 
         $this->assertJsonIndex($limit, $models[0]);
     }
@@ -43,10 +40,9 @@ class CountryApiTest extends TestCase
 
         $model = Country::factory()->make()->toArray();
 
-        $this->response = $this->actingAsAdmin('api')->json('POST', route('api.countries.store'), $model);
+        $this->response = $this->actingAsAdmin()->json('POST', route('api.countries.store'), $model);
 
-        // $this->response->dump();
-        // dd($this->response->json());
+        // $this->response->dd();
 
         $this->assertJsonModifications();
     }
@@ -56,7 +52,7 @@ class CountryApiTest extends TestCase
     {
         $model = Country::factory()->create();
 
-        $this->response = $this->actingAsAdmin('api')->json('GET', route('api.countries.show', ['country' => $model->id]));
+        $this->response = $this->actingAsAdmin()->json('GET', route('api.countries.show', ['country' => $model->id]));
 
         $this->assertJsonShow($model);
     }
@@ -67,7 +63,7 @@ class CountryApiTest extends TestCase
         $model = Country::factory()->create();
         $modelEdited = Country::factory()->make()->toArray();
 
-        $this->response = $this->actingAsAdmin('api')->json('PUT', route('api.countries.update', ['country' => $model->id]), $modelEdited);
+        $this->response = $this->actingAsAdmin()->json('PUT', route('api.countries.update', ['country' => $model->id]), $modelEdited);
 
         $this->assertJsonModifications();
     }
@@ -77,11 +73,11 @@ class CountryApiTest extends TestCase
     {
         $model = Country::factory()->create();
 
-        $this->response = $this->actingAsAdmin('api')->json('DELETE', route('api.countries.destroy', ['country' => $model->id]));
+        $this->response = $this->actingAsAdmin()->json('DELETE', route('api.countries.destroy', ['country' => $model->id]));
 
         $this->assertApiSuccess();
 
-        $this->response = $this->actingAsAdmin('api')->json('DELETE', route('api.countries.destroy', ['country' => $model->id]));
+        $this->response = $this->actingAsAdmin()->json('DELETE', route('api.countries.destroy', ['country' => $model->id]));
 
         $this->response->assertStatus(404);
     }
