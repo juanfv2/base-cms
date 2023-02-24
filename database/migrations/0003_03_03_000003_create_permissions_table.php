@@ -25,8 +25,8 @@ class CreatePermissionsTable extends Migration
 
             $table->unsignedBigInteger('permission_id')->default(0);
 
-            $table->unsignedBigInteger('createdBy')->nullable();
-            $table->unsignedBigInteger('updatedBy')->nullable();
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

@@ -1,0 +1,62 @@
+[
+  {
+    "parent_id": 7,
+    "child_id": 12
+  },
+  {
+    "parent_id": 7,
+    "child_id": 22
+  },
+  {
+    "parent_id": 7,
+    "child_id": 27
+  },
+  {
+    "parent_id": 7,
+    "child_id": 32
+  },
+  {
+    "parent_id": 8,
+    "child_id": 12
+  },
+  {
+    "parent_id": 8,
+    "child_id": 22
+  },
+  {
+    "parent_id": 8,
+    "child_id": 27
+  },
+  {
+    "parent_id": 8,
+    "child_id": 32
+  },
+  {
+    "parent_id": 13,
+    "child_id": 6
+  },
+  {
+    "parent_id": 27,
+    "child_id": 22
+  },
+  {
+    "parent_id": 28,
+    "child_id": 22
+  },
+  {
+    "parent_id": 32,
+    "child_id": 22
+  },
+  {
+    "parent_id": 32,
+    "child_id": 27
+  },
+  {
+    "parent_id": 33,
+    "child_id": 22
+  },
+  {
+    "parent_id": 33,
+    "child_id": 27
+  }
+]

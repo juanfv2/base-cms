@@ -24,8 +24,8 @@ class CreatePeopleTable extends Migration
 
             $table->foreignId('user_id')->constrained('auth_users')->onDelete('cascade');
 
-            $table->unsignedBigInteger('createdBy')->nullable();
-            $table->unsignedBigInteger('updatedBy')->nullable();
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

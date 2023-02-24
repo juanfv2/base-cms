@@ -3,10 +3,7 @@
 namespace Database\Factories\Auth;
 
 use App\Models\Auth\Role;
-use App\Models\Auth\User;
-use App\Models\Country\City;
 use App\Models\Country\Country;
-use App\Models\Country\Region;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class UserFactory extends Factory
@@ -16,7 +13,7 @@ class UserFactory extends Factory
      *
      * @var string
      */
-    protected $model = User::class;
+    protected $model = \App\Models\Auth\User::class;
 
     /**
      * Define the model's default state.
@@ -25,22 +22,34 @@ class UserFactory extends Factory
      */
     public function definition()
     {
+        $country = Country::first();
+        if (! $country) {
+            $country = Country::factory()->create();
+        }
+        $role = Role::first();
+        if (! $role) {
+            $role = Role::factory()->create();
+        }
+
         return [
             'name' => $this->faker->word,
             'email' => $this->faker->email,
             'password' => '$2y$10$Hh8ASBG2oQFWTJb.uNTKeex8Z2WjYigFfPJf5uBh0IAAgBujZWg3i', // 123456
             'email_verified_at' => $this->faker->date('Y-m-d H:i:s'),
             'disabled' => 0,
-            'phoneNumber' => $this->faker->word,
+            'phoneNumber' => $this->faker->numerify('0##########'),
             'uid' => $this->faker->word,
-
-            'role_id' => Role::factory(),
-            'country_id' => Country::factory(),
-            'region_id' => Region::factory(),
-            'city_id' => City::factory(),
-
-            'api_token' => $this->faker->word,
-            'remember_token' => $this->faker->word,
+            'role_id' => $role->id,
+            'country_id' => $country->id,
+            // 'region_id' => $this->faker->word,
+            // 'city_id' => $this->faker->word,
+            'api_token' => $this->faker->text($this->faker->numberBetween(5, 96)),
+            'remember_token' => $this->faker->text($this->faker->numberBetween(5, 96)),
+            // 'created_by' => $this->faker->word,
+            // 'updated_by' => $this->faker->word,
+            // 'created_at' => $this->faker->date('Y-m-d H:i:s'),
+            // 'updated_at' => $this->faker->date('Y-m-d H:i:s'),
+            // 'deleted_at' => $this->faker->date('Y-m-d H:i:s')
         ];
     }
 

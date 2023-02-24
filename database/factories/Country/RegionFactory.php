@@ -3,7 +3,6 @@
 namespace Database\Factories\Country;
 
 use App\Models\Country\Country;
-use App\Models\Country\Region;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class RegionFactory extends Factory
@@ -13,7 +12,7 @@ class RegionFactory extends Factory
      *
      * @var string
      */
-    protected $model = Region::class;
+    protected $model = \App\Models\Country\Region::class;
 
     /**
      * Define the model's default state.
@@ -22,10 +21,20 @@ class RegionFactory extends Factory
      */
     public function definition()
     {
+        $country = Country::first();
+        if (! $country) {
+            $country = Country::factory()->create();
+        }
+
         return [
-            'name' => $this->faker->word,
+            'name' => $this->faker->country,
             'code' => $this->faker->countryCode,
-            'country_id' => Country::factory(),
+            'country_id' => $country,
+            // 'created_by' => $this->faker->word,
+            // 'updated_by' => $this->faker->word,
+            // 'created_at' => $this->faker->date('Y-m-d H:i:s'),
+            // 'updated_at' => $this->faker->date('Y-m-d H:i:s'),
+            // 'deleted_at' => $this->faker->date('Y-m-d H:i:s')
         ];
     }
 }

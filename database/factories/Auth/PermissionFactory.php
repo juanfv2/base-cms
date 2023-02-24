@@ -2,7 +2,6 @@
 
 namespace Database\Factories\Auth;
 
-use App\Models\Auth\Permission;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class PermissionFactory extends Factory
@@ -12,7 +11,7 @@ class PermissionFactory extends Factory
      *
      * @var string
      */
-    protected $model = Permission::class;
+    protected $model = \App\Models\Auth\Permission::class;
 
     /**
      * Define the model's default state.
@@ -30,8 +29,6 @@ class PermissionFactory extends Factory
             'isVisible' => $this->faker->boolean(),
             'orderInMenu' => $this->faker->randomDigitNotNull,
             'permission_id' => $this->faker->numberBetween(0, 10),
-            'createdBy' => $this->faker->numberBetween(0, 10),
-            'updatedBy' => $this->faker->numberBetween(0, 10),
         ];
     }
 }

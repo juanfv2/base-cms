@@ -32,8 +32,8 @@ class CreateUsersTable extends Migration
 
             $table->text('api_token')->nullable();
             $table->string('remember_token')->nullable(); // aquí "$table->rememberToken();" >>> nooo!!!
-            $table->unsignedBigInteger('createdBy')->nullable();
-            $table->unsignedBigInteger('updatedBy')->nullable();
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

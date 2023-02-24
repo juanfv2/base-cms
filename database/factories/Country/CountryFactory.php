@@ -2,7 +2,6 @@
 
 namespace Database\Factories\Country;
 
-use App\Models\Country\Country;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CountryFactory extends Factory
@@ -12,7 +11,7 @@ class CountryFactory extends Factory
      *
      * @var string
      */
-    protected $model = Country::class;
+    protected $model = \App\Models\Country\Country::class;
 
     /**
      * Define the model's default state.
@@ -24,6 +23,11 @@ class CountryFactory extends Factory
         return [
             'name' => $this->faker->country,
             'code' => $this->faker->countryCode,
+            // 'created_by' => $this->faker->word,
+            // 'updated_by' => $this->faker->word,
+            // 'created_at' => $this->faker->date('Y-m-d H:i:s'),
+            // 'updated_at' => $this->faker->date('Y-m-d H:i:s'),
+            // 'deleted_at' => $this->faker->date('Y-m-d H:i:s')
         ];
     }
 }

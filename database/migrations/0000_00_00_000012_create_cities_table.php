@@ -19,13 +19,15 @@ class CreateCitiesTable extends Migration
             $table->decimal('latitude', 10, 8);
             $table->decimal('longitude', 11, 8);
 
-            $table->unsignedBigInteger('country_id');
-            $table->foreign('country_id')->references('id')->on('countries');
-
-            $table->unsignedBigInteger('region_id');
-            $table->foreign('region_id')->references('id')->on('regions');
+            $table->foreignId('country_id')->constrained()->onDelete('cascade');
+            $table->foreignId('region_id')->constrained()->onDelete('cascade');
 
             $table->index(['name']);
+
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

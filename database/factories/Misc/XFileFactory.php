@@ -2,7 +2,6 @@
 
 namespace Database\Factories\Misc;
 
-use App\Models\Misc\XFile;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class XFileFactory extends Factory
@@ -12,7 +11,7 @@ class XFileFactory extends Factory
      *
      * @var string
      */
-    protected $model = XFile::class;
+    protected $model = \App\Models\Misc\XFile::class;
 
     /**
      * Define the model's default state.
@@ -29,7 +28,9 @@ class XFileFactory extends Factory
             'nameOriginal' => $this->faker->word,
             'publicPath' => $this->faker->word,
             'extension' => $this->faker->countryCode,
-            'data' => $this->faker->text,
+            'data' => $this->faker->word,
+            'created_at' => $this->faker->date('Y-m-d H:i:s'),
+            'updated_at' => $this->faker->date('Y-m-d H:i:s'),
         ];
     }
 }

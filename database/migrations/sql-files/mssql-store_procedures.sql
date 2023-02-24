@@ -6,10 +6,10 @@ CREATE PROCEDURE sp_has_permission
 @urlFrontEnd varchar(255)
 AS
 SELECT count(*) AS aggregate FROM auth_users
-INNER JOIN auth_users_has_roles       ON auth_users_has_roles.user_id = auth_users.id
-INNER JOIN auth_roles                 ON auth_users_has_roles.role_id = auth_roles.id
-INNER JOIN auth_roles_has_permissions ON auth_roles_has_permissions.role_id = auth_roles.id
-INNER JOIN auth_permissions           ON auth_roles_has_permissions.permission_id = auth_permissions.id
+INNER JOIN auth_user_role       ON auth_user_role.user_id = auth_users.id
+INNER JOIN auth_roles           ON auth_user_role.role_id = auth_roles.id
+INNER JOIN auth_role_permission ON auth_role_permission.role_id = auth_roles.id
+INNER JOIN auth_permissions     ON auth_role_permission.permission_id = auth_permissions.id
 WHERE auth_permissions.urlBackEnd = @urlFrontEnd
 AND auth_users.id =  @user_id
 AND auth_users.deleted_at IS NULL;

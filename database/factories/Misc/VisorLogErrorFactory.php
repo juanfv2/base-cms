@@ -21,9 +21,10 @@ class VisorLogErrorFactory extends Factory
     public function definition()
     {
         return [
-            'payload' => $this->faker->text,
+            'payload' => $this->faker->text($this->faker->numberBetween(5, 4096)),
             'queue' => $this->faker->word,
             'container_id' => 1,
+            'created_at' => $this->faker->date('Y-m-d H:i:s'),
         ];
     }
 }
