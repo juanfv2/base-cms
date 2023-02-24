@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\API\Country;
 
-use App\Http\Controllers\AppBaseController;
+use Juanfv2\BaseCms\Controllers\AppBaseController;
 use App\Models\Country\City;
 
 /**
