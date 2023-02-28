@@ -253,13 +253,13 @@ trait ControllerFiles
             $strLocationImage2show = $strLocationImageNotFound;
         }
 
-        logger(__FILE__.':'.__LINE__.' $strLocationImageSaved ', [$exists, $strLocationImage2show, $strLocationImageSaved]);
+        // logger(__FILE__.':'.__LINE__.' $strLocationImageSaved ', [$exists, $strLocationImage2show, $strLocationImageSaved]);
 
         ini_set('memory_limit', '-1');
 
         $temp = Storage::path($strLocationImage2show);
 
-        if (class_exists('Imagick') && ($w || $h)) {
+        if ((extension_loaded('gd') || class_exists('Imagick')) && ($w || $h)) {
             $basename = basename($strLocationImage2show);
             $ext = pathinfo($basename, PATHINFO_EXTENSION);
             $strLocationImage2showNew = Str::replaceLast(".{$ext}", "-{$w}x{$h}.{$ext}", $strLocationImage2show);
