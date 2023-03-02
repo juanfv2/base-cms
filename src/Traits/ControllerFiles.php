@@ -129,13 +129,22 @@ trait ControllerFiles
             $xFile->nameOriginal = $originalName;
 
             if (($fileExtension == 'csv' || $fileExtension == 'txt') && ($handle = fopen($_versionsCsv_File, 'r')) !== false) {
-                $delimiter = _file_delimiter($_versionsCsv_File);
 
-                while (($data = fgetcsv($handle, 1000, $delimiter)) !== false) {
-                    $columns = count($data);
-                    break;
+                $keys = json_decode($request->get('keys'), true);
+                $primaryKeyName = $request->get('primaryKeyName');
+                $cModel = \Illuminate\Support\Str::replace('-', '\\', $request->get('cModel', ''));
+                $created = 0;
+
+                try {
+                    $delimiter = _file_delimiter($_versionsCsv_File);
+
+                    $created = $this->importing($handle, $tableName, $primaryKeyName, $keys, $delimiter, $cModel);
+
+                    return $this->sendResponse([$fieldName => ['updated' => $created],], __('validation.model.list', ['model' => $tableName]));
+                } catch (\Throwable $th) {
+                    // throw $th;
+                    return $this->sendError([$fieldName => ['code' => $th->getCode(), 'message' => $th->getMessage(), 'updated' => $created]], 'Error en la linea '.$created, 500);
                 }
-                fclose($handle);
             }
         } else {
             $path = $request->$fieldName->storeAs($strLocation, $newNameWithExtension);

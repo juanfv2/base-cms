@@ -55,7 +55,7 @@ trait ImportableExportable
                         }
 
                         $r = $this->saveModel($model_name, $attrKeys, $data, $primaryKeys, $table);
-                    // logger(__FILE__ . ':' . __LINE__ . ' $r ', [$r]);
+                        // logger(__FILE__ . ':' . __LINE__ . ' $r ', [$r]);
                     } else {
                         $r = $this->saveArray($table, $attrKeys, $data, $kName);
                     }
@@ -223,7 +223,7 @@ trait ImportableExportable
                 $model->setKeyName($primaryKeys);
             }
 
-            return  $model->delete();
+            return $model->delete();
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -249,7 +249,7 @@ trait ImportableExportable
                 $model->setKeyName($primaryKeys);
             }
 
-            return  $model->restore();
+            return $model->restore();
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -263,7 +263,6 @@ trait ImportableExportable
      * @param $primaryKeyName
      * @param $massiveQueryFileName
      * @param $keys
-     * @return array|\Illuminate\Http\JsonResponse
      */
     public function importCsv(Request $request)
     {
@@ -300,6 +299,8 @@ trait ImportableExportable
             // throw $th;
             return $this->sendError(['code' => $th->getCode(), 'message' => $th->getMessage(), 'updated' => $created], 'Error en la linea '.$created, 500);
         }
+
+        return false;
     }
 
     public function importJson(Request $request)
