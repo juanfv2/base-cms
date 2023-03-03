@@ -280,7 +280,7 @@ class RequestCriteriaModel implements CriteriaInterfaceModel
         $conditions = json_decode(urldecode($conditions), null, 512, JSON_THROW_ON_ERROR);
         $massiveQueryFileName = $massiveQ['massiveWithFile'] ?? '';
         $exactSearch = isset($massiveQ['exactSearch']) ? ($massiveQ['exactSearch'] === 'true') : false;
-        $rCountry = $this->request->header('r-country', '');
+        $rCountry = $this->request->header('r-country', $this->request->get('rCountry', session('r-country', '.l.')));
         $basename = basename($massiveQueryFileName);
         $fileTempName = pathinfo($basename, PATHINFO_FILENAME);
         $baseAssets = 'assets/adm';
