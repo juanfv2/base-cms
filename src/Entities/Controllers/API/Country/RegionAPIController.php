@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\API\Country;
 
-use Juanfv2\BaseCms\Controllers\AppBaseController;
 use App\Models\Country\Region;
+use Juanfv2\BaseCms\Controllers\AppBaseController;
 
 /**
  * Class RegionController

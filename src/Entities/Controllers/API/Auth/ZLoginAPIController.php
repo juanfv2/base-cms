@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\API\Auth;
 
-use Juanfv2\BaseCms\Controllers\AppBaseController;
 use App\Models\Auth\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -10,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Juanfv2\BaseCms\Controllers\AppBaseController;
 use Juanfv2\BaseCms\Resources\GenericResource;
 
 /**

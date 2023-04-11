@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\API\Auth;
 
-use Juanfv2\BaseCms\Controllers\AppBaseController;
 use App\Models\Auth\Account;
 use App\Models\Auth\Person;
 use App\Models\Auth\User;
 use Illuminate\Http\Request;
+use Juanfv2\BaseCms\Controllers\AppBaseController;
 
 /**
  * Class PersonController

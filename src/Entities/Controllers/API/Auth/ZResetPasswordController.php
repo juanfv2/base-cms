@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\API\Auth;
 
-use Juanfv2\BaseCms\Controllers\AppBaseController;
 use App\Models\Auth\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Juanfv2\BaseCms\Controllers\AppBaseController;
 
 class ZResetPasswordController extends AppBaseController
 {

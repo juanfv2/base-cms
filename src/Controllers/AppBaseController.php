@@ -49,7 +49,7 @@ class AppBaseController extends Controller
                 break;
 
             case 'distinct':
-                $itemCount = $this->model->mQueryWithCriteria()->distinct()->count($this->model->getTable() . '.' . $this->model->getKeyName());
+                $itemCount = $this->model->mQueryWithCriteria()->distinct()->count($this->model->getTable().'.'.$this->model->getKeyName());
 
                 $this->model->pushCriteria(new LimitOffsetCriteriaModel($request));
 

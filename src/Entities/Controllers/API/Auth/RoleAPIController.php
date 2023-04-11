@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\API\Auth;
 
-use Juanfv2\BaseCms\Controllers\AppBaseController;
 use App\Models\Auth\Permission;
 use App\Models\Auth\Role;
 use Illuminate\Http\Request;
+use Juanfv2\BaseCms\Controllers\AppBaseController;
 
 /**
  * Class RoleController

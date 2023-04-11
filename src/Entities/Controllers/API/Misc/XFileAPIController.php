@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\API\Misc;
 
-use Juanfv2\BaseCms\Controllers\AppBaseController;
 use App\Models\Misc\XFile;
+use Juanfv2\BaseCms\Controllers\AppBaseController;
 
 /**
  * Class XFileController

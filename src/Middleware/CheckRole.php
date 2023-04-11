@@ -60,7 +60,6 @@ class CheckRole
             logger(__FILE__.':'.__LINE__.auth()->id()." -'$hasPermission'- call sp_save_permission_permission('$cRouteParent','$cRouteChild'); -", [$menu]);
         }
 
-
         return $hasPermission;
     }
 }
