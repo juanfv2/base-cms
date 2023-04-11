@@ -22,8 +22,8 @@ use Juanfv2\BaseCms\Traits\UserResponsible;
  * @property bool $isVisible
  * @property int $orderInMenu
  * @property int $permission_id
- * @property int $createdBy
- * @property int $updatedBy
+ * @property int $created_by
+ * @property int $updated_by
  */
 class Permission extends Model
 {
@@ -62,8 +62,8 @@ class Permission extends Model
         'isVisible' => 'boolean',
         'orderInMenu' => 'integer',
         'permission_id' => 'integer',
-        'createdBy' => 'integer',
-        'updatedBy' => 'integer',
+        'created_by' => 'integer',
+        'updated_by' => 'integer',
     ];
 
     /**
@@ -80,15 +80,15 @@ class Permission extends Model
         'isVisible' => 'required|boolean',
         'orderInMenu' => 'required|integer',
         'permission_id' => 'required',
-        'createdBy' => 'nullable',
-        'updatedBy' => 'nullable',
+        'created_by' => 'nullable',
+        'updated_by' => 'nullable',
         'created_at' => 'nullable',
         'updated_at' => 'nullable',
         'deleted_at' => 'nullable',
     ];
 
     public $hidden = [
-        'createdBy', 'updatedBy', 'created_at', 'updated_at', 'deleted_at',
+        'created_by', 'updated_by', 'created_at', 'updated_at', 'deleted_at',
     ];
 
     /**

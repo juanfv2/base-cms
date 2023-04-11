@@ -28,7 +28,7 @@ trait ApiTestTrait
                 ->has('success')
                 ->has('data.content', $limit)
                 ->has('data.content.0', fn ($json) => $this->jsonValidate($json, $firstItem))
-            //  ->has( 'data.content.0', fn ($json) => $json->where('id', $area->id) ->where('name', $area->name) ->missing('createdBy') ->etc())
+            //  ->has( 'data.content.0', fn ($json) => $json->where('id', $area->id) ->where('name', $area->name) ->missing('created_by') ->etc())
 
         );
     }
@@ -41,7 +41,7 @@ trait ApiTestTrait
                 ->has('message')
                 ->has('success')
                 ->has('data', fn ($json) => $this->jsonValidate($json, $item))
-            //  ->has( 'data.content.0', fn ($json) => $json->where('id', $area->id) ->where('name', $area->name) ->missing('createdBy') ->etc())
+            //  ->has( 'data.content.0', fn ($json) => $json->where('id', $area->id) ->where('name', $area->name) ->missing('created_by') ->etc())
 
         );
     }

@@ -29,6 +29,10 @@ trait ImportableExportable
                 if ($dataCombine) {
                     $data = $this->getDataToSave($xHeadersTemp, $dataCombine, $keys);
 
+                    if ($extra_data) {
+                        $data = array_merge($data, $extra_data);
+                    }
+
                     $attrKeys = [];
                     $kName = '';
 
@@ -40,11 +44,7 @@ trait ImportableExportable
                     }
 
                     if (is_array($primaryKeys)) {
-                        $attrKeys = $this->getDataToSave($primaryKeys, $dataCombine, $keys);
-                    }
-
-                    if ($extra_data) {
-                        $data = array_merge($data, $extra_data);
+                        $attrKeys = $this->getDataToKeys($primaryKeys, $data);
                     }
 
                     if ($model_name) {
@@ -55,7 +55,7 @@ trait ImportableExportable
                         }
 
                         $r = $this->saveModel($model_name, $attrKeys, $data, $primaryKeys, $table);
-                        // logger(__FILE__ . ':' . __LINE__ . ' $r ', [$r]);
+                    // logger(__FILE__ . ':' . __LINE__ . ' $r ', [$r]);
                     } else {
                         $r = $this->saveArray($table, $attrKeys, $data, $kName);
                     }
@@ -91,6 +91,17 @@ trait ImportableExportable
                     $dataToSave[$keys[$k]] = $data[$k];
                 }
             }
+        }
+
+        return $dataToSave;
+    }
+
+    public function getDataToKeys($headers, $data)
+    {
+        $dataToSave = [];
+
+        foreach ($headers as $k) {
+            $dataToSave[$k] = $data[$k] ?? '0';
         }
 
         return $dataToSave;
@@ -132,15 +143,17 @@ trait ImportableExportable
 
             if (is_string($primaryKeys)) {
                 $model->setKeyName($primaryKeys);
+
+                if (isset($data[$primaryKeys])) {
+                    $model->$primaryKeys = $data[$primaryKeys];
+                }
             }
 
-            if (isset($data[$primaryKeys])) {
-                $model->$primaryKeys = $data[$primaryKeys];
-            }
             $model->fill($res);
             $model->save();
+            $k = $model->getKeyName();
 
-            return $model->$primaryKeys;
+            return $model->$k;
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -263,6 +276,7 @@ trait ImportableExportable
      * @param $primaryKeyName
      * @param $massiveQueryFileName
      * @param $keys
+     * @return array|\Illuminate\Http\JsonResponse
      */
     public function importCsv(Request $request)
     {
@@ -299,8 +313,6 @@ trait ImportableExportable
             // throw $th;
             return $this->sendError(['code' => $th->getCode(), 'message' => $th->getMessage(), 'updated' => $created], 'Error en la linea '.$created, 500);
         }
-
-        return false;
     }
 
     public function importJson(Request $request)

@@ -108,7 +108,7 @@
     "inView": true
   },
   {
-    "name": "createdBy",
+    "name": "created_by",
     "dbType": "bigInteger,false",
     "htmlType": null,
     "validations": "nullable|nullable",
@@ -120,7 +120,7 @@
     "inView": true
   },
   {
-    "name": "updatedBy",
+    "name": "updated_by",
     "dbType": "bigInteger,false",
     "htmlType": null,
     "validations": "nullable|nullable",
