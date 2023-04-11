@@ -33,13 +33,6 @@ class RequestCriteriaModel implements CriteriaInterfaceModel
         $this->request = $request;
     }
 
-    /**
-     * Apply criteria in query repository
-     *
-     * @param    $model
-     * @param  RepositoryInterface  $repository
-     * @return mixed
-     */
     public function apply(&$model)
     {
         $this->model = $model;
@@ -83,11 +76,6 @@ class RequestCriteriaModel implements CriteriaInterfaceModel
         $this->mTrashed($onlyTrashed);
     }
 
-    /**
-     * @param $k
-     * @param  null  $query
-     * @param  int  $currentIndex
-     */
     private function mNestedWhereQuery($conditions, $query = null, $_kOperatorStrParam = 'AND', $hasMq = false)
     {
         if (is_array($conditions)) {
@@ -292,7 +280,7 @@ class RequestCriteriaModel implements CriteriaInterfaceModel
         $conditions = json_decode(urldecode($conditions), null, 512, JSON_THROW_ON_ERROR);
         $massiveQueryFileName = $massiveQ['massiveWithFile'] ?? '';
         $exactSearch = isset($massiveQ['exactSearch']) ? ($massiveQ['exactSearch'] === 'true') : false;
-        $rCountry = $this->request->header('r-country', '');
+        $rCountry = $this->request->header('r-country', $this->request->get('rCountry', session('r-country', '.l.')));
         $basename = basename($massiveQueryFileName);
         $fileTempName = pathinfo($basename, PATHINFO_FILENAME);
         $baseAssets = 'assets/adm';
