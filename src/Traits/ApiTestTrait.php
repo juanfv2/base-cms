@@ -8,10 +8,11 @@ use App\Models\Auth\Role;
 use App\Models\Auth\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Testing\Fluent\AssertableJson;
+use Illuminate\Testing\TestResponse;
 
 trait ApiTestTrait
 {
-    private $response;
+    public TestResponse $response;
 
     public function assertApiSuccess()
     {

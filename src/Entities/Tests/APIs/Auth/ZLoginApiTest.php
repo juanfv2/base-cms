@@ -56,7 +56,7 @@ class ZLoginApiTest extends TestCase
         $this->assertApiSuccess();
         $responseContent = $this->response->json();
 
-        // dd($this->responseContent);
+        // dd($responseContent);
 
         $token = $responseContent['data']['token'];
 
