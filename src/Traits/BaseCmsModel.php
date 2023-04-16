@@ -199,11 +199,7 @@ trait BaseCmsModel
     public function mUpdateRelations($attributes)
     {
         foreach ($attributes as $key => $val) {
-            if (
-                isset($this) &&
-                method_exists($this, $key) &&
-                is_a(@$this->$key(), \Illuminate\Database\Eloquent\Relations\Relation::class)
-            ) {
+            if (isset($this) && method_exists($this, $key) && is_a(@$this->$key(), \Illuminate\Database\Eloquent\Relations\Relation::class)) {
                 $methodClass = get_class($this->$key($key));
                 switch ($methodClass) {
                     case \Illuminate\Database\Eloquent\Relations\BelongsToMany::class:
