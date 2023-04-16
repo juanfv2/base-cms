@@ -121,8 +121,7 @@ class Permission extends Model
             ->where('isSection', 0)
             ->where('isVisible', 0)
             ->orderBy('orderInMenu')
-            ->orderBy('name')
+            ->orderBy('name');
             //->orderBy('permission_id')
-;
     }
 }

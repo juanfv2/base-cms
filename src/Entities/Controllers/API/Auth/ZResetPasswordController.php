@@ -13,7 +13,6 @@ class ZResetPasswordController extends AppBaseController
     /**
      * Reset the given user's password.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function reset(Request $request)

@@ -27,7 +27,6 @@ class UserAPIController extends AppBaseController
      * Store a newly created Person in storage.
      * POST /people
      *
-     * @param  Request  $request
      * @return Response
      */
     public function store(Request $request)
@@ -63,7 +62,6 @@ class UserAPIController extends AppBaseController
      * PUT/PATCH /people/{id}
      *
      * @param  int  $id
-     * @param  Request  $request
      * @return Response
      */
     public function update($id, Request $request)

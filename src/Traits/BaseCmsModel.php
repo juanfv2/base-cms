@@ -25,7 +25,6 @@ trait BaseCmsModel
     /**
      * Push Criteria for filter the query
      *
-     * @param $criteria
      * @return $this
      */
     public function pushCriteria($criteria)
@@ -65,7 +64,6 @@ trait BaseCmsModel
     /**
      * Applies the given where conditions to the model.
      *
-     * @param  array  $where
      * @return void
      */
     protected function applyConditions(array $where)

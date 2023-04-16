@@ -31,9 +31,6 @@ abstract class BaseRepository implements RepositoryInterface
 
     protected $table = '';
 
-    /**
-     * @param  Application  $app
-     */
     public function __construct(Application $app)
     {
         $this->app = $app;
@@ -133,7 +130,6 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Push Criteria for filter the query
      *
-     * @param $criteria
      * @return $this
      *
      * @throws \Prettus\Repository\Exceptions\RepositoryException
@@ -148,7 +144,6 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Applies the given where conditions to the model.
      *
-     * @param  array  $where
      * @return void
      */
     protected function applyConditions(array $where)
@@ -266,7 +261,6 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Count results of repository
      *
-     * @param  array  $where
      * @param  string  $columns
      * @return int
      */
@@ -298,7 +292,6 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Find data by id
      *
-     * @param    $id
      * @param  array  $columns
      * @return mixed
      */
@@ -324,7 +317,6 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Find data by multiple fields
      *
-     * @param  array  $where
      * @param  array  $columns
      * @return mixed
      */
@@ -372,7 +364,6 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Delete a entity in repository by id
      *
-     * @param $id
      * @return int
      */
     public function delete($id)
@@ -458,8 +449,6 @@ abstract class BaseRepository implements RepositoryInterface
      * Update or Create an entity in repository
      *
      *
-     * @param  array  $attributes
-     * @param  array  $values
      * @return mixed
      *
      * @throws ValidatorException

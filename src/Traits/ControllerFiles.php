@@ -79,8 +79,6 @@ trait ControllerFiles
      *
      * /api/file/{tableName}/{fieldName}/{id?}/{color?}
      *
-     * @param $tableName
-     * @param $fieldName
      * @param  int  $id
      * @param  bool  $color
      * @return \Illuminate\Http\JsonResponse

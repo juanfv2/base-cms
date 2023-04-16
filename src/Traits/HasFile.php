@@ -1,6 +1,6 @@
 <?php
 
-namespace  Juanfv2\BaseCms\Traits;
+namespace Juanfv2\BaseCms\Traits;
 
 trait HasFile
 {

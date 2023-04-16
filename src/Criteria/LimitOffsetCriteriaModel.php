@@ -23,7 +23,6 @@ class LimitOffsetCriteriaModel implements CriteriaInterfaceModel
     /**
      * Apply criteria in query repository.
      *
-     * @param $model
      * @return void
      */
     public function apply(&$model)

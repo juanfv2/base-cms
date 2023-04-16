@@ -24,7 +24,6 @@ class AppBaseController extends Controller
      * Display a listing of the {{CurrentModel}}.
      * GET|HEAD /{model}
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse|string
      */
     public function index(Request $request)
@@ -79,7 +78,6 @@ class AppBaseController extends Controller
      * Store a newly created {{CurrentModel}} in storage.
      * POST /{model}
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse|string
      */
     public function store(Request $request)
@@ -127,7 +125,6 @@ class AppBaseController extends Controller
      * PUT/PATCH /{model}/{id}
      *
      * @param  int  $id
-     * @param  Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function update($id, Request $request)

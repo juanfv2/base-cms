@@ -9,8 +9,6 @@ use Illuminate\Support\Facades\Route;
 class CheckRole
 {
     /**
-     * @param $request
-     * @param  Closure  $next
      * @return mixed
      */
     public function handle($request, Closure $next)

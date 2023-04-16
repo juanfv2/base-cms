@@ -54,7 +54,7 @@ class BaseCmsServiceProvider extends ServiceProvider
         ], 'base-cms-databases');
 
         $this->publishes([
-            __DIR__.'/../resources/infyom' => resource_path('infyom'),
+            __DIR__.'/../resources/vendor/laravel-generator' => resource_path('laravel-generator'),
             __DIR__.'/../resources/model_schemas' => resource_path('model_schemas'),
             __DIR__.'/../resources/lang' => resource_path('lang'),
             __DIR__.'/../resources/assets' => public_path('assets'),
