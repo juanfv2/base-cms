@@ -53,7 +53,7 @@ class BaseCmsServiceProvider extends ServiceProvider
         ], 'base-cms-databases');
 
         $this->publishes([
-            __DIR__.'/../resources/vendor' => resource_path('views'),
+            __DIR__.'/../resources/vendor' => resource_path('views/vendor'),
             __DIR__.'/../resources/model_schemas' => resource_path('model_schemas'),
             __DIR__.'/../resources/assets' => public_path('assets'),
             __DIR__.'/../resources/base' => public_path('base'),

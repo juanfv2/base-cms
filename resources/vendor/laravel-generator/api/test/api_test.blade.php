@@ -14,9 +14,9 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 class {{ $config->modelNames->name }}ApiTest extends TestCase
 {
     use ApiTestTrait;
-        use WithoutMiddleware;
-        use DatabaseTransactions;
-        // use RefreshDatabase;
+    use WithoutMiddleware;
+    use DatabaseTransactions;
+    // use RefreshDatabase;
 
 
     /** @test */
@@ -36,7 +36,6 @@ class {{ $config->modelNames->name }}ApiTest extends TestCase
         $this->assertJsonIndex($limit, $models[0]);
     }
 
-
     /** @test */
     public function api_create_{{ $config->modelNames->snake }}()
     {
@@ -50,6 +49,7 @@ class {{ $config->modelNames->name }}ApiTest extends TestCase
 
         $this->assertJsonModifications();
     }
+
     /** @test */
     public function api_read_{{ $config->modelNames->snake }}()
     {
