@@ -37,7 +37,6 @@ class BaseCmsServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/Entities/Controllers' => app_path('Http/Controllers'),
             __DIR__.'/Entities/Models' => app_path('Models'),
-            __DIR__.'/Traits/BaseCmsModelUser.php' => app_path('/Traits/BaseCmsModelUser.php'),
             __DIR__.'/Entities/Notifications' => app_path('Notifications'),
             __DIR__.'/Entities/Tests' => base_path('tests'),
         ], 'base-cms-entities');
@@ -54,7 +53,7 @@ class BaseCmsServiceProvider extends ServiceProvider
         ], 'base-cms-databases');
 
         $this->publishes([
-            __DIR__.'/../resources/vendor/laravel-generator' => resource_path('laravel-generator'),
+            __DIR__.'/../resources/vendor' => resource_path('views'),
             __DIR__.'/../resources/model_schemas' => resource_path('model_schemas'),
             __DIR__.'/../resources/assets' => public_path('assets'),
             __DIR__.'/../resources/base' => public_path('base'),

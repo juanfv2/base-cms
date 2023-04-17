@@ -1,0 +1,42 @@
+{
+    "folders": [
+      {
+        "path": "."
+      },
+      {
+        "path": "./resources/front-end/admin-angular"
+      },
+      {
+        "path": "vendor/juanfv2/base-cms",
+        "name": "base-cms-laravel"
+      },
+      {
+        "path": "./resources/front-end/base-cms-angular",
+        "name": "base-cms-angular"
+      },
+      {
+        "path": "_.info.dev"
+      },
+      {
+        "path": "./_.info"
+      }
+    ],
+    "settings": {
+      "workbench.colorCustomizations": {
+        "titleBar.activeBackground": "#c64af7",
+        "titleBar.activeForeground": "#000000",
+        "titleBar.inactiveBackground": "#c64af7",
+        "titleBar.inactiveForeground": "#000000",
+        "titleBar.border": "#c64af7",
+        "activityBar.background": "#c64af7",
+        "activityBar.foreground": "#000000",
+        "statusBar.background": "#c64af7",
+        "statusBar.foreground": "#000000",
+        "statusBar.debuggingBackground": "#c64af7",
+        "statusBar.debuggingForeground": "#000000",
+        "tab.activeBorder": "#c64af7",
+        "iLoveWorkSpaceColors": true,
+        "iLoveWorkSpaceRandom": false
+      }
+    }
+  }
