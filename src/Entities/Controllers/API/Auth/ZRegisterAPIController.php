@@ -16,7 +16,7 @@ use Juanfv2\BaseCms\Resources\GenericResource;
  */
 class ZRegisterAPIController extends AppBaseController
 {
-    private \App\Models\Auth\User $model;
+    public $model;
 
     public function __construct(User $model)
     {
