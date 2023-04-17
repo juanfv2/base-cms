@@ -11,30 +11,21 @@ class ResetPasswordNotification extends Notification
     use Queueable;
 
     /**
-     * The password reset token.
-     *
-     * @var string
-     */
-    public $token;
-
-    /**
      * Create a notification instance.
      *
      * @param  string  $token
      * @return void
      */
-    public function __construct($token)
+    public function __construct(public $token)
     {
-        $this->token = $token;
     }
 
     /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed  $notifiable
      * @return array
      */
-    public function via($notifiable)
+    public function via(mixed $notifiable)
     {
         return ['mail'];
     }
@@ -42,15 +33,14 @@ class ResetPasswordNotification extends Notification
     /**
      * Get the mail representation of the notification.
      *
-     * @param  mixed  $notifiable
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
-    public function toMail($notifiable)
+    public function toMail(mixed $notifiable)
     {
-        $urlStr = (config('base.welcome_page') == '' ? url('/') : config('base.welcome_page')).'/base/password/?t='.$this->token.'&e='.urlencode($notifiable->email);
+        $urlStr = (config('base.welcome_page') == '' ? url('/') : config('base.welcome_page')).'/base/password/?t='.$this->token.'&e='.urlencode((string) $notifiable->email);
 
         return (new MailMessage)
-            ->subject(__('auth.password.reset'))
+            ->subject(__('auth.password.reset.subject'))
             ->line(__('auth.password.reset.line.1'))
             ->action(__('auth.password.reset.action'), $urlStr)
             ->line(__('auth.password.reset.line.2'))
@@ -63,10 +53,9 @@ class ResetPasswordNotification extends Notification
     /**
      * Get the array representation of the notification.
      *
-     * @param  mixed  $notifiable
      * @return array
      */
-    public function toArray($notifiable)
+    public function toArray(mixed $notifiable)
     {
         return [
             //

@@ -26,7 +26,7 @@ return [
 
     'password' => [
         'reset' => [
-            'Restablecimiento de contraseña',
+            'subject' => 'Restablecimiento de contraseña',
             'action' => 'Restablecer la contraseña',
             'line' => [
                 '1' => 'Usted está recibiendo este correo electrónico porque recibimos una solicitud de restablecimiento de contraseña para su cuenta. Haga clic en el siguiente botón para restablecer su contraseña:',
