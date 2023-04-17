@@ -18,21 +18,18 @@ class BaseCmsExportExcel implements BaseCmsExport, FromCollection, WithHeadings
 
     protected $exportTo;
 
-    protected $filename;
-
-    private $collection;
+    private ?\Illuminate\Support\Collection $collection = null;
 
     private $headers;
 
-    private $extension;
+    private readonly string $extension;
 
-    public function __construct($filename = 'export-data', $extension = 'csv', $exportTo = self::TO_BROWSER)
+    public function __construct(protected $filename = 'export-data', $extension = 'csv', $exportTo = self::TO_BROWSER)
     {
         if (! in_array($exportTo, ['browser', 'file', 'string'])) {
             throw new Exception("$exportTo is not a valid ExportData export type");
         }
         $this->exportTo = $exportTo;
-        $this->filename = $filename;
         $this->extension = Str::ucfirst(Str::lower($extension));
     }
 
@@ -55,14 +52,11 @@ class BaseCmsExportExcel implements BaseCmsExport, FromCollection, WithHeadings
     public function finalize()
     {
         $ext = Str::lower($this->extension);
-        switch ($this->exportTo) {
-            case self::TO_STRING:
-                return $this->stringData;
-            case self::TO_FILE:
-                return \Maatwebsite\Excel\Facades\Excel::store($this, "{$this->filename}.{$ext}", 'local', $this->extension);
-            default:
-                return \Maatwebsite\Excel\Facades\Excel::download($this, "{$this->filename}.{$ext}", $this->extension);
-        }
+        return match ($this->exportTo) {
+            self::TO_STRING => $this->stringData,
+            self::TO_FILE => \Maatwebsite\Excel\Facades\Excel::store($this, "{$this->filename}.{$ext}", 'local', $this->extension),
+            default => \Maatwebsite\Excel\Facades\Excel::download($this, "{$this->filename}.{$ext}", $this->extension),
+        };
     }
 
     public function addRow($row)

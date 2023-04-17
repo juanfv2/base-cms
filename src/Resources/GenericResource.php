@@ -8,18 +8,14 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class GenericResource extends JsonResource
 {
-    public $includes;
-
     /**
      * Create a new resource instance.
      *
      * @param  mixed  $resource
      * @return void
      */
-    public function __construct($resource, $ownIncludes = null)
+    public function __construct($resource, public $includes = null)
     {
-        $this->includes = $ownIncludes;
-
         parent::__construct($resource);
     }
 
@@ -30,7 +26,7 @@ class GenericResource extends JsonResource
         $this->includes = $ownIncludes ?: $this->includes;
 
         if ($request->has('includes')) {
-            $arr = $request['includes'] = is_string($request->get('includes', null)) ? json_decode($request->get('includes', '[]'), true, 512, JSON_THROW_ON_ERROR) : $request['includes'];
+            $arr = $request['includes'] = is_string($request->get('includes', null)) ? json_decode((string) $request->get('includes', '[]'), true, 512, JSON_THROW_ON_ERROR) : $request['includes'];
 
             // logger(__FILE__ . ':' . __LINE__ . ' $arr ', [$arr]);
             // logger(__FILE__ . ':' . __LINE__ . ' $this->includes ', [$this->includes]);
@@ -81,10 +77,9 @@ class GenericResource extends JsonResource
     /**
      * Create new anonymous resource collection.
      *
-     * @param  mixed  $resource
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public static function coll($resource, $includes)
+    public static function coll(mixed $resource, $includes)
     {
         return new GenericResourceCollection($resource, static::class, $includes);
     }

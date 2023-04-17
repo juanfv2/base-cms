@@ -49,7 +49,7 @@ class AnyTableSeeder extends Seeder
         }
     }
 
-    public function inserts($table)
+    public function inserts(string $table)
     {
         logger(__FILE__.':'.__LINE__.' "database/data/{$table}.json" ', ["database/data/{$table}.json"]);
         // Allowed memory size of 134217728 bytes exhausted (tried to allocate

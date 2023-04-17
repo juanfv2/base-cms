@@ -6,15 +6,6 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class GenericResourceCollection extends AnonymousResourceCollection
 {
-    public $includes;
-
-    /**
-     * The name of the resource being collected.
-     *
-     * @var string
-     */
-    public $collects;
-
     /**
      * The mapped collection instance.
      *
@@ -29,12 +20,8 @@ class GenericResourceCollection extends AnonymousResourceCollection
      * @param  string  $collects
      * @return void
      */
-    public function __construct($resource, $collects, $includes)
+    public function __construct($resource, public $collects, public $includes)
     {
-        $this->collects = $collects;
-
-        $this->includes = $includes;
-
         parent::__construct($resource, $collects);
     }
 
@@ -42,9 +29,8 @@ class GenericResourceCollection extends AnonymousResourceCollection
      * Transform the resource into a JSON array.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
      */
-    public function toArray($request)
+    public function toArray($request): array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
     {
         return $this->collection->map->toArray($request, $this->includes)->all();
     }

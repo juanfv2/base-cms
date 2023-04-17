@@ -53,12 +53,12 @@ function _sanitize($name)
 {
     $name = Str::of($name)->lower()->snake()->ascii();
 
-    return str_replace([':', "'", '/', '\\', '.', '"', '?', '$', '-', '*', '`', '+', ','], '_', $name);
+    return str_replace([':', "'", '/', '\\', '.', '"', '?', '$', '-', '*', '`', '+', ','], '_', (string) $name);
 }
 
 function _isJson($string)
 {
-    json_decode($string);
+    json_decode((string) $string);
 
     return json_last_error() === JSON_ERROR_NONE;
 }

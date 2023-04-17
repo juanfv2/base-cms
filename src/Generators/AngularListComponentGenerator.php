@@ -9,13 +9,13 @@ class AngularListComponentGenerator extends BaseGenerator
 {
     public string $path;
 
-    private string $fileName;
+    private readonly string $fileName;
 
-    private string $fileNameSpec;
+    private readonly string $fileNameSpec;
 
-    private string $fileNameScss;
+    private readonly string $fileNameScss;
 
-    private string $fileNameHtml;
+    private readonly string $fileNameHtml;
 
     public function __construct()
     {
@@ -283,7 +283,7 @@ class AngularListComponentGenerator extends BaseGenerator
     {
         // $templateData = fill_template($this->dynamicVars, $templateData);
 
-        $templateData = str_replace('$RELATIONS_AS_SEARCH_FIELDS$', implode("\n", $this->generateRelationsHtmlSearchFields()), $templateData);
+        $templateData = str_replace('$RELATIONS_AS_SEARCH_FIELDS$', implode("\n", $this->generateRelationsHtmlSearchFields()), (string) $templateData);
         $templateData = str_replace('$COLUMN_FIELDS$', implode("\n", $this->generateHtmlColumnFields()), $templateData);
         $templateData = str_replace('$COLUMN_FIELDS_RELATIONS$', implode("\n", $this->generateHtmlColumnRelationsFields()), $templateData);
         $templateData = str_replace('$COLUMN_VALUES$', implode("\n", $this->generateHtmlColumnValues()), $templateData);

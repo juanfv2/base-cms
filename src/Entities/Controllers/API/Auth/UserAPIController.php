@@ -37,14 +37,10 @@ class UserAPIController extends AppBaseController
 
         $withEntity = $request->get('withEntity', '-');
 
-        switch ($withEntity) {
-            case 'auth_people':
-                $this->rules = $this->model::$rules + Person::$rules;
-                break;
-            default:
-                $this->rules = $this->model::$rules + Account::$rules;
-                break;
-        }
+        $this->rules = match ($withEntity) {
+            'auth_people' => $this->model::$rules + Person::$rules,
+            default => $this->model::$rules + Account::$rules,
+        };
 
         $input = $this->validate($request, $this->rules);
 
@@ -68,14 +64,10 @@ class UserAPIController extends AppBaseController
     {
         $withEntity = $request->get('withEntity', '-');
 
-        switch ($withEntity) {
-            case 'auth_people':
-                $this->rules = $this->model::$rules + Person::$rules;
-                break;
-            default:
-                $this->rules = $this->model::$rules + Account::$rules;
-                break;
-        }
+        $this->rules = match ($withEntity) {
+            'auth_people' => $this->model::$rules + Person::$rules,
+            default => $this->model::$rules + Account::$rules,
+        };
 
         $this->rules['email'] = 'required|string|max:191|unique:auth_users,email,'.$id;
         $this->rules['password'] = 'min:6|confirmed';

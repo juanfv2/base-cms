@@ -9,13 +9,13 @@ class AngularDetailComponentGenerator extends BaseGenerator
 {
     public string $path;
 
-    private string $fileName;
+    private readonly string $fileName;
 
-    private string $fileNameSpec;
+    private readonly string $fileNameSpec;
 
-    private string $fileNameScss;
+    private readonly string $fileNameScss;
 
-    private string $fileNameHtml;
+    private readonly string $fileNameHtml;
 
     private array $spec_relations_1;
 
@@ -124,7 +124,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
                 $requiredTextProperties = '';
                 $requiredTextAsterisk = '';
                 $requiredText = '';
-                $required = strpos($field->validations, 'required') !== false;
+                $required = str_contains($field->validations, 'required');
                 if ($required) {
                     $requiredTextAsterisk = '*';
                     $requiredTextProperties = 'placeholder="Requerido"';
@@ -334,7 +334,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
             if ($field->name == '' || $field->name == 'created_by' || $field->name == 'updated_by') {
                 continue;
             }
-            $required = strpos($field->validations, 'required') !== false;
+            $required = str_contains($field->validations, 'required');
             if ($field->inForm && $required) {
                 $validations[] = " {$field->name}: [this.{$this->config->modelNames->camel}.{$field->name}, Validators.required], ";
             } else {
@@ -455,18 +455,11 @@ class AngularDetailComponentGenerator extends BaseGenerator
 
                 continue;
             }
-            switch ($fdbType) {
-                case 'integer':
-                case 'bigInteger':
-                    $fieldText .= ': number;';
-                    break;
-                case 'boolean':
-                    $fieldText .= ': boolean;';
-                    break;
-                default:
-                    $fieldText .= ': string;';
-                    break;
-            }
+            match ($fdbType) {
+                'integer', 'bigInteger' => $fieldText .= ': number;',
+                'boolean' => $fieldText .= ': boolean;',
+                default => $fieldText .= ': string;',
+            };
             $fields[] = $fieldText;
         }
 
@@ -515,22 +508,12 @@ class AngularDetailComponentGenerator extends BaseGenerator
             if ($field->isPrimary) {
                 $mPrimaryKey = $field->name;
             }
-            switch ($fdbType) {
-                case 'integer':
-                case 'bigInteger':
-                    $fieldText .= "type: 'number'} as DBType),";
-                    break;
-                case 'date':
-                case 'datetime':
-                    $fieldText .= "type: 'date'} as DBType),";
-                    break;
-                case 'boolean':
-                    $fieldText .= "type: 'boolean'} as DBType),";
-                    break;
-                default:
-                    $fieldText .= "type: 'string'} as DBType),";
-                    break;
-            }
+            match ($fdbType) {
+                'integer', 'bigInteger' => $fieldText .= "type: 'number'} as DBType),",
+                'date', 'datetime' => $fieldText .= "type: 'date'} as DBType),",
+                'boolean' => $fieldText .= "type: 'boolean'} as DBType),",
+                default => $fieldText .= "type: 'string'} as DBType),",
+            };
             $fields[] = $fieldText;
         }
 
@@ -573,7 +556,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
             if ($field->name == '' || $field->name == 'created_by' || $field->name == 'updated_by') {
                 continue;
             }
-            $required = strpos($field->validations, 'required') !== false;
+            $required = str_contains($field->validations, 'required');
             if ($field->inForm && $required) {
                 $converted = Str::title($field->name);
                 $relationyyText = <<<EOF

@@ -43,13 +43,13 @@ class RequestCriteriaModel implements CriteriaInterfaceModel
         $withCount = $this->request->get('withCount', '[]');
         $with = $this->request->get('with', '[]');
         $onlyTrashed = (int) $this->request->get('trashed', Trashed::Without);
-        $conditions = json_decode(urldecode($conditions), null, 512, JSON_THROW_ON_ERROR);
-        $joins = json_decode(urldecode($joins), null, 512, JSON_THROW_ON_ERROR);
-        $sorts = json_decode(urldecode($sorts), null, 512, JSON_THROW_ON_ERROR);
-        $withCount = json_decode(urldecode($withCount), null, 512, JSON_THROW_ON_ERROR);
-        $with = json_decode(urldecode($with), null, 512, JSON_THROW_ON_ERROR);
-        $select2 = _isJson($select1) ? json_decode(urldecode($select1), null, 512, JSON_THROW_ON_ERROR) : null;
-        $select = $select2 ?: ($select1 ? explode(',', urldecode($select1)) : null);
+        $conditions = json_decode(urldecode((string) $conditions), null, 512, JSON_THROW_ON_ERROR);
+        $joins = json_decode(urldecode((string) $joins), null, 512, JSON_THROW_ON_ERROR);
+        $sorts = json_decode(urldecode((string) $sorts), null, 512, JSON_THROW_ON_ERROR);
+        $withCount = json_decode(urldecode((string) $withCount), null, 512, JSON_THROW_ON_ERROR);
+        $with = json_decode(urldecode((string) $with), null, 512, JSON_THROW_ON_ERROR);
+        $select2 = _isJson($select1) ? json_decode(urldecode((string) $select1), null, 512, JSON_THROW_ON_ERROR) : null;
+        $select = $select2 ?: ($select1 ? explode(',', urldecode((string) $select1)) : null);
 
         // logger(__FILE__ . ':' . __LINE__ . ' $this->request ', [$this->request]);
 
@@ -93,18 +93,13 @@ class RequestCriteriaModel implements CriteriaInterfaceModel
                 $nullOrEmpty = '---';
                 $_kOperatorStr = 'AND';
                 $_kConditionalStr = '=';
-                $condition = explode(' ', $k->c);
+                $condition = explode(' ', (string) $k->c);
 
-                switch (count($condition)) {
-                    case 3:
-                        [$_kOperatorStr, $_kFieldStr, $_kConditionalStr] = $condition;
-                        break;
-                    case 2:
-                        [$_kOperatorStr, $_kFieldStr] = $condition;
-                        break;
-                    default:
-                        [$_kFieldStr] = $condition;
-                }
+                [$_kOperatorStr, $_kFieldStr, $_kConditionalStr] = match (count($condition)) {
+                    3 => $condition,
+                    2 => $condition,
+                    default => $condition,
+                };
                 if ($_kFieldStr === 'OR') {
                     $_kOperatorStrParam = 'OR';
 
@@ -112,8 +107,8 @@ class RequestCriteriaModel implements CriteriaInterfaceModel
                 }
 
                 $_kValue = property_exists($k, 'v') ? $k->v : $noValue;
-                $_kValueIsOptionNull = strpos($_kConditionalStr, 'null') !== false;
-                $_kValueIsOptionEmpty = strpos($_kConditionalStr, 'empty') !== false;
+                $_kValueIsOptionNull = str_contains($_kConditionalStr, 'null');
+                $_kValueIsOptionEmpty = str_contains($_kConditionalStr, 'empty');
                 $kFieldStrK = str_replace("{$this->model->getTable()}.", '', $_kFieldStr);
 
                 if ($_kValueIsOptionNull || $_kValueIsOptionEmpty) {
@@ -189,7 +184,7 @@ class RequestCriteriaModel implements CriteriaInterfaceModel
     {
         if (is_array($joins)) {
             foreach ($joins as $k) {
-                $split = explode('.', $k->c);
+                $split = explode('.', (string) $k->c);
                 if (count($split) < 3) {
                     continue;
                 }
@@ -218,18 +213,11 @@ class RequestCriteriaModel implements CriteriaInterfaceModel
                         break;
                 }
 
-                switch ($joinType) {
-                    case '<':
-                        $this->model->getJQuery()->leftJoin($joinTable, $joinTable.'.'.$foreignKey, '=', $ownTable.'.'.$ownerKey);
-                        break;
-                    case '>':
-                        $this->model->getJQuery()->leftJoin($joinTable, $joinTable.'.'.$foreignKey, '=', $ownTable.'.'.$ownerKey);
-                        break;
-
-                    default:
-                        $this->model->getJQuery()->join($joinTable, $joinTable.'.'.$foreignKey, '=', $ownTable.'.'.$ownerKey);
-                        break;
-                }
+                match ($joinType) {
+                    '<' => $this->model->getJQuery()->leftJoin($joinTable, $joinTable.'.'.$foreignKey, '=', $ownTable.'.'.$ownerKey),
+                    '>' => $this->model->getJQuery()->leftJoin($joinTable, $joinTable.'.'.$foreignKey, '=', $ownTable.'.'.$ownerKey),
+                    default => $this->model->getJQuery()->join($joinTable, $joinTable.'.'.$foreignKey, '=', $ownTable.'.'.$ownerKey),
+                };
 
                 if (isset($k->v)) {
                     $this->model->getJQuery()->addSelect($k->v);
@@ -277,11 +265,11 @@ class RequestCriteriaModel implements CriteriaInterfaceModel
         $this->model = $model;
         $massiveQ = $this->request->get('mq');
         $conditions = $massiveQ['conditions'] ?? null;
-        $conditions = json_decode(urldecode($conditions), null, 512, JSON_THROW_ON_ERROR);
+        $conditions = json_decode(urldecode((string) $conditions), null, 512, JSON_THROW_ON_ERROR);
         $massiveQueryFileName = $massiveQ['massiveWithFile'] ?? '';
         $exactSearch = isset($massiveQ['exactSearch']) ? ($massiveQ['exactSearch'] === 'true') : false;
         $rCountry = $this->request->header('r-country', $this->request->get('rCountry', session('r-country', '.l.')));
-        $basename = basename($massiveQueryFileName);
+        $basename = basename((string) $massiveQueryFileName);
         $fileTempName = pathinfo($basename, PATHINFO_FILENAME);
         $baseAssets = 'assets/adm';
 
@@ -343,7 +331,7 @@ class RequestCriteriaModel implements CriteriaInterfaceModel
             }
 
             ini_set('auto_detect_line_endings', false);
-        } catch (\Throwable $th) {
+        } catch (\Throwable) {
             // throw $th;
             // logger(__FILE__ . ':' . __LINE__ . ' $th ', [$th]);
             // return $model;
@@ -361,7 +349,7 @@ class RequestCriteriaModel implements CriteriaInterfaceModel
         for ($i = 0; $i < (is_countable($conditions) ? count($conditions) : 0); $i++) {
             $column = $columns[$i];
             $_condition = $conditions[$i];
-            $condition = explode(' ', $_condition->c);
+            $condition = explode(' ', (string) $_condition->c);
             $cCount = count($condition);
 
             if ($cCount != 3) {
@@ -413,18 +401,13 @@ class RequestCriteriaModel implements CriteriaInterfaceModel
 
                     continue; // continuar con el siguiente.
                 }
-                $condition = explode(' ', $k->c);
+                $condition = explode(' ', (string) $k->c);
 
-                switch (count($condition)) {
-                    case 3:
-                        [$_kOperatorStr, $kFieldStr, $_kConditionalStr] = $condition;
-                        break;
-                    case 2:
-                        [$_kOperatorStr, $kFieldStr] = $condition;
-                        break;
-                    default:
-                        [$kFieldStr] = $condition;
-                }
+                [$_kOperatorStr, $kFieldStr, $_kConditionalStr] = match (count($condition)) {
+                    3 => $condition,
+                    2 => $condition,
+                    default => $condition,
+                };
                 if ($kFieldStr === 'OR') {
                     $_kOperatorStrNested = 'OR';
 
@@ -435,7 +418,7 @@ class RequestCriteriaModel implements CriteriaInterfaceModel
                 }
                 $noValue = '--false--';
                 $_kValue = property_exists($k, 'v') ? $k->v : $noValue;
-                $_kValueIsOptionNull = strpos($_kConditionalStr, 'null') !== false;
+                $_kValueIsOptionNull = str_contains($_kConditionalStr, 'null');
 
                 if (! $_kValueIsOptionNull && $_kValue === $noValue) {
                     continue;
@@ -456,7 +439,7 @@ class RequestCriteriaModel implements CriteriaInterfaceModel
                 if ($_kValueIsOptionNull) {
                     $isNot = $_kConditionalStr === 'not-null' ? ' NOT' : '';
                     $where .= " $_kOperatorStr $kFieldStr$isNot $_kConditionalStr '$_kValue'";
-                } elseif (strpos($_kConditionalStr, 'in') !== false) {
+                } elseif (str_contains($_kConditionalStr, 'in')) {
                     $isNot = $_kConditionalStr === 'not-in' ? ' NOT' : '';
                     $inStr = implode("','", $_kValue);
                     $where .= " $_kOperatorStr $kFieldStr$isNot $_kConditionalStr ('$inStr')";

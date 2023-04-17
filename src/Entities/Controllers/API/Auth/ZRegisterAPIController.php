@@ -80,9 +80,8 @@ class ZRegisterAPIController extends AppBaseController
      * Si uid tiene un valor el usuario viene de red social, ej. Facebook
      *
      * @param  array  $request
-     * @return $this|\Illuminate\Database\Eloquent\Model|null|static
      */
-    public function registerUserByUid($input)
+    public function registerUserByUid($input): static|\Illuminate\Database\Eloquent\Model|null
     {
         $this->model = User::where('uid', $input['uid'])->first();
 

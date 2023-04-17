@@ -7,7 +7,7 @@ use InfyOm\Generator\Generators\BaseGenerator;
 
 class AngularAutoCompleteComponentGenerator extends BaseGenerator
 {
-    private string $fileName;
+    private readonly string $fileName;
 
     public function __construct()
     {

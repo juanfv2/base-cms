@@ -41,13 +41,13 @@ class RequestGenericCriteria implements CriteriaInterface
         $withCount = $this->request->get('withCount', '');
         $with = $this->request->get('with', '');
         $onlyTrashed = $this->request->get('onlyTrashed', '');
-        $conditions = json_decode(urldecode($conditions), null, 512, JSON_THROW_ON_ERROR);
-        $joins = json_decode(urldecode($joins), null, 512, JSON_THROW_ON_ERROR);
-        $sorts = json_decode(urldecode($sorts), null, 512, JSON_THROW_ON_ERROR);
-        $withCount = json_decode(urldecode($withCount), null, 512, JSON_THROW_ON_ERROR);
-        $with = json_decode(urldecode($with), null, 512, JSON_THROW_ON_ERROR);
-        $select2 = $select1 ? json_decode(urldecode($select1), null, 512, JSON_THROW_ON_ERROR) : null;
-        $select = $select2 ?: ($select1 ? explode(',', urldecode($select1)) : null);
+        $conditions = json_decode(urldecode((string) $conditions), null, 512, JSON_THROW_ON_ERROR);
+        $joins = json_decode(urldecode((string) $joins), null, 512, JSON_THROW_ON_ERROR);
+        $sorts = json_decode(urldecode((string) $sorts), null, 512, JSON_THROW_ON_ERROR);
+        $withCount = json_decode(urldecode((string) $withCount), null, 512, JSON_THROW_ON_ERROR);
+        $with = json_decode(urldecode((string) $with), null, 512, JSON_THROW_ON_ERROR);
+        $select2 = $select1 ? json_decode(urldecode((string) $select1), null, 512, JSON_THROW_ON_ERROR) : null;
+        $select = $select2 ?: ($select1 ? explode(',', urldecode((string) $select1)) : null);
 
         // logger(__FILE__ . ':' . __LINE__ . ' $this->request ', [$this->request]);
 
@@ -57,7 +57,7 @@ class RequestGenericCriteria implements CriteriaInterface
 
         if (is_array($joins)) {
             foreach ($joins as $k) {
-                $split = explode('.', $k->c);
+                $split = explode('.', (string) $k->c);
                 if (count($split) < 3) {
                     continue;
                 }
@@ -86,18 +86,11 @@ class RequestGenericCriteria implements CriteriaInterface
                         break;
                 }
 
-                switch ($joinType) {
-                    case '<':
-                        $model = $model->leftJoin($joinTable, $joinTable.'.'.$foreignKey, '=', $ownTable.'.'.$ownerKey);
-                        break;
-                    case '>':
-                        $model = $model->leftJoin($joinTable, $joinTable.'.'.$foreignKey, '=', $ownTable.'.'.$ownerKey);
-                        break;
-
-                    default:
-                        $model = $model->join($joinTable, $joinTable.'.'.$foreignKey, '=', $ownTable.'.'.$ownerKey);
-                        break;
-                }
+                $model = match ($joinType) {
+                    '<' => $model->leftJoin($joinTable, $joinTable.'.'.$foreignKey, '=', $ownTable.'.'.$ownerKey),
+                    '>' => $model->leftJoin($joinTable, $joinTable.'.'.$foreignKey, '=', $ownTable.'.'.$ownerKey),
+                    default => $model->join($joinTable, $joinTable.'.'.$foreignKey, '=', $ownTable.'.'.$ownerKey),
+                };
 
                 if (isset($k->v)) {
                     $model = $model->addSelect($k->v);
@@ -162,18 +155,13 @@ class RequestGenericCriteria implements CriteriaInterface
             $nullOrEmpty = '---';
             $_kOperatorStr = 'AND';
             $_kConditionalStr = '=';
-            $condition = explode(' ', $k->c);
+            $condition = explode(' ', (string) $k->c);
 
-            switch (count($condition)) {
-                case 3:
-                    [$_kOperatorStr, $_kFieldStr, $_kConditionalStr] = $condition;
-                    break;
-                case 2:
-                    [$_kOperatorStr, $_kFieldStr] = $condition;
-                    break;
-                default:
-                    [$_kFieldStr] = $condition;
-            }
+            [$_kOperatorStr, $_kFieldStr, $_kConditionalStr] = match (count($condition)) {
+                3 => $condition,
+                2 => $condition,
+                default => $condition,
+            };
             if ($_kFieldStr === 'OR') {
                 $_kOperatorStrParam = 'OR';
 
@@ -181,8 +169,8 @@ class RequestGenericCriteria implements CriteriaInterface
             }
 
             $_kValue = property_exists($k, 'v') ? $k->v : $noValue;
-            $_kValueIsOptionNull = strpos($_kConditionalStr, 'null') !== false;
-            $_kValueIsOptionEmpty = strpos($_kConditionalStr, 'empty') !== false;
+            $_kValueIsOptionNull = str_contains($_kConditionalStr, 'null');
+            $_kValueIsOptionEmpty = str_contains($_kConditionalStr, 'empty');
             $kFieldStrK = str_replace("$table.", '', $_kFieldStr);
 
             if ($_kValueIsOptionNull || $_kValueIsOptionEmpty) {
@@ -257,11 +245,11 @@ class RequestGenericCriteria implements CriteriaInterface
         $table = $model->getModel()->getTable();
         $massiveQ = $this->request->get('mq');
         $conditions = $massiveQ['conditions'] ?? null;
-        $conditions = json_decode(urldecode($conditions), null, 512, JSON_THROW_ON_ERROR);
+        $conditions = json_decode(urldecode((string) $conditions), null, 512, JSON_THROW_ON_ERROR);
         $massiveQueryFileName = $massiveQ['massiveWithFile'] ?? '';
         $exactSearch = isset($massiveQ['exactSearch']) ? ($massiveQ['exactSearch'] === 'true') : false;
         $rCountry = $this->request->header('r-country', '');
-        $basename = basename($massiveQueryFileName);
+        $basename = basename((string) $massiveQueryFileName);
         $fileTempName = pathinfo($basename, PATHINFO_FILENAME);
         $baseAssets = 'assets/adm';
 
@@ -323,7 +311,7 @@ class RequestGenericCriteria implements CriteriaInterface
             }
 
             ini_set('auto_detect_line_endings', false);
-        } catch (\Throwable $th) {
+        } catch (\Throwable) {
             // throw $th;
             // logger(__FILE__ . ':' . __LINE__ . ' $th ', [$th]);
             // return $model;
@@ -341,7 +329,7 @@ class RequestGenericCriteria implements CriteriaInterface
         for ($i = 0; $i < (is_countable($conditions) ? count($conditions) : 0); $i++) {
             $column = $columns[$i];
             $_condition = $conditions[$i];
-            $condition = explode(' ', $_condition->c);
+            $condition = explode(' ', (string) $_condition->c);
             $cCount = count($condition);
 
             if ($cCount != 3) {
@@ -393,18 +381,13 @@ class RequestGenericCriteria implements CriteriaInterface
 
                     continue; // continuar con el siguiente.
                 }
-                $condition = explode(' ', $k->c);
+                $condition = explode(' ', (string) $k->c);
 
-                switch (count($condition)) {
-                    case 3:
-                        [$_kOperatorStr, $kFieldStr, $_kConditionalStr] = $condition;
-                        break;
-                    case 2:
-                        [$_kOperatorStr, $kFieldStr] = $condition;
-                        break;
-                    default:
-                        [$kFieldStr] = $condition;
-                }
+                [$_kOperatorStr, $kFieldStr, $_kConditionalStr] = match (count($condition)) {
+                    3 => $condition,
+                    2 => $condition,
+                    default => $condition,
+                };
                 if ($kFieldStr === 'OR') {
                     $_kOperatorStrNested = 'OR';
 
@@ -415,7 +398,7 @@ class RequestGenericCriteria implements CriteriaInterface
                 }
                 $noValue = '--false--';
                 $_kValue = property_exists($k, 'v') ? $k->v : $noValue;
-                $_kValueIsOptionNull = strpos($_kConditionalStr, 'null') !== false;
+                $_kValueIsOptionNull = str_contains($_kConditionalStr, 'null');
 
                 if (! $_kValueIsOptionNull && $_kValue === $noValue) {
                     continue;
@@ -436,7 +419,7 @@ class RequestGenericCriteria implements CriteriaInterface
                 if ($_kValueIsOptionNull) {
                     $isNot = $_kConditionalStr === 'not-null' ? ' NOT' : '';
                     $where .= " $_kOperatorStr $kFieldStr$isNot $_kConditionalStr '$_kValue'";
-                } elseif (strpos($_kConditionalStr, 'in') !== false) {
+                } elseif (str_contains($_kConditionalStr, 'in')) {
                     $isNot = $_kConditionalStr === 'not-in' ? ' NOT' : '';
                     $inStr = implode("','", $_kValue);
                     $where .= " $_kOperatorStr $kFieldStr$isNot $_kConditionalStr ('$inStr')";

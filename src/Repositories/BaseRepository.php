@@ -309,7 +309,7 @@ abstract class BaseRepository implements RepositoryInterface
     {
         try {
             return $this->find($id, $columns);
-        } catch (Exception $e) {
+        } catch (Exception) {
             return;
         }
     }
@@ -386,7 +386,7 @@ abstract class BaseRepository implements RepositoryInterface
                 method_exists($model, $key) &&
                 is_a(@$model->$key(), 'Illuminate\Database\Eloquent\Relations\Relation')
             ) {
-                $methodClass = get_class($model->$key($key));
+                $methodClass = $model->$key($key)::class;
                 switch ($methodClass) {
                     case \Illuminate\Database\Eloquent\Relations\BelongsToMany::class:
                         $new_values = Arr::get($attributes, $key, []);
@@ -419,7 +419,7 @@ abstract class BaseRepository implements RepositoryInterface
                             unset($new_values[array_search('', $new_values)]);
                         }
 
-                        [$temp, $model_key] = explode('.', $model->$key($key)->getQualifiedForeignKeyName());
+                        [$temp, $model_key] = explode('.', (string) $model->$key($key)->getQualifiedForeignKeyName());
 
                         foreach ($model->$key as $rel) {
                             if (! in_array($rel->id, $new_values)) {
@@ -430,7 +430,7 @@ abstract class BaseRepository implements RepositoryInterface
                         }
 
                         if ((is_countable($new_values) ? count($new_values) : 0) > 0) {
-                            $related = get_class($model->$key()->getRelated());
+                            $related = $model->$key()->getRelated()::class;
                             foreach ($new_values as $val) {
                                 $rel = $related::find($val);
                                 $rel->$model_key = $model->id;

@@ -66,16 +66,10 @@ class BaseCmsExportCSV implements BaseCmsExport
             return;
         }
 
-        switch ($this->exportTo) {
-            case self::TO_STRING:
-                $this->stringData .= $this->generateRow($row);
-                break;
-            default:
-                // case 'file':
-                // case 'browser':
-                fputcsv($this->file, $row);
-                break;
-        }
+        match ($this->exportTo) {
+            self::TO_STRING => $this->stringData .= $this->generateRow($row),
+            default => fputcsv($this->file, $row),
+        };
     }
 
     /* -------------------------------------------------------------------------- */
@@ -108,7 +102,7 @@ class BaseCmsExportCSV implements BaseCmsExport
         foreach ($row as $key => $value) {
             // Escape inner quotes and wrap all contents in new quotes.
             // Note that we are using \" to escape double quote not ""
-            $row[$key] = '"'.str_replace('"', '""', $value).'"';
+            $row[$key] = '"'.str_replace('"', '""', (string) $value).'"';
         }
 
         return implode(',', $row)."\n";

@@ -13,7 +13,7 @@ trait IsPivot
     public function scopeId($query, $id)
     {
         $pks = [];
-        $pkValues = explode('_', $id);
+        $pkValues = explode('_', (string) $id);
         foreach ($this->primaryKey as $k => $value) {
             $pks[$value] = $pkValues[$k];
         }
@@ -70,10 +70,9 @@ trait IsPivot
     /**
      * Get the primary key value for a save query.
      *
-     * @param  mixed  $keyName
      * @return mixed
      */
-    protected function getKeyForSaveQuery($keyName = null)
+    protected function getKeyForSaveQuery(mixed $keyName = null)
     {
         if (is_null($keyName)) {
             $keyName = $this->getKeyName();
