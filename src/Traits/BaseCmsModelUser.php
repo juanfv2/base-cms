@@ -63,9 +63,8 @@ trait BaseCmsModelUser
             $account = new Account;
             $account->mSave($input);
 
-            if (! isset($input['uid'])) {
-                \App\Models\Misc\XUserVerified::create(['user_id' => $r->id, 'token' => \Illuminate\Support\Str::random(40)]);
-                $r->notify(new \App\Notifications\UserRegisteredNotification($r));
+            if (!isset($input['uid'])) {
+                $r->verifyUser();
             }
 
             return $r;
@@ -93,7 +92,7 @@ trait BaseCmsModelUser
     public function deleteAuthUser()
     {
         return DB::transaction(function () {
-            $this->email = $this->email.'-deleted-'.$this->id.'-'.time();
+            $this->email = $this->email . '-deleted-' . $this->id . '-' . time();
             $this->save();
             if ($this->person) {
                 $this->person->delete();
