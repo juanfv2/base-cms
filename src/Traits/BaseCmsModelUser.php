@@ -63,7 +63,7 @@ trait BaseCmsModelUser
             $account = new Account;
             $account->mSave($input);
 
-            if (!isset($input['uid'])) {
+            if (! isset($input['uid'])) {
                 $r->verifyUser();
             }
 
@@ -92,7 +92,7 @@ trait BaseCmsModelUser
     public function deleteAuthUser()
     {
         return DB::transaction(function () {
-            $this->email = $this->email . '-deleted-' . $this->id . '-' . time();
+            $this->email = $this->email.'-deleted-'.$this->id.'-'.time();
             $this->save();
             if ($this->person) {
                 $this->person->delete();
