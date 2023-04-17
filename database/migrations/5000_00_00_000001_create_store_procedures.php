@@ -12,6 +12,6 @@ class CreateStoreProcedures extends Migration
      */
     public function up()
     {
-        DB::unprepared(file_get_contents(__DIR__.'/sql-files/mysql-store_procedures.sql'));
+        DB::unprepared(file_get_contents(__DIR__.'/sql-files/00-01-mysql-store_procedures.sql'));
     }
 }

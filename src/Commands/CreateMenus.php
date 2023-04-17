@@ -80,7 +80,7 @@ class CreateMenus extends Command
         }
 
         if ($sub_permissons) {
-            \Illuminate\Support\Facades\DB::unprepared(file_get_contents(database_path('migrations/sql-files/00-save-sub-permissions.sql')));
+            \Illuminate\Support\Facades\DB::unprepared(file_get_contents(database_path('migrations/sql-files/00-02-mysql-save-sub-permissions.sql')));
         }
 
         $this->info("Menus creados: {$r}");
