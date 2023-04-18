@@ -3,12 +3,8 @@
 namespace App\Http\Controllers\API\Auth;
 
 use App\Models\Auth\User;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use Juanfv2\BaseCms\Controllers\AppBaseController;
 use Juanfv2\BaseCms\Resources\GenericResource;
 
@@ -35,7 +31,7 @@ class ZLoginAPIController extends AppBaseController
     {
         $r = $this->attemptLogout();
         // return response()->json(['bye' => $r], 204);
-        return $this->sendResponse(__('user.bye'), null, $r, 204);
+        return $this->sendResponse($r, __('user.bye'), true, 204);
     }
 
     // Utilities
@@ -44,7 +40,7 @@ class ZLoginAPIController extends AppBaseController
      * Attempt to create an access token using user credentials
      *
      * @param $array
-     * @return User | \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory $response
+     * @return \App\Models\Auth\User|\Illuminate\Http\JsonResponse
      */
     public function attemptLogin($request)
     {
@@ -58,29 +54,19 @@ class ZLoginAPIController extends AppBaseController
         }
 
         if (! Hash::check($password, $user->password)) {
-            return $this->sendError(__('auth.failed'), [], 422);
+            return $this->sendError([], __('auth.failed'), 422);
         }
 
         if ($user->disabled) {
-            return $this->sendError(__('auth.no.active'), [], 422);
+            return $this->sendError([], __('auth.no.active'), 422);
         }
 
-        $expire = 60 * 24; // min
-        $time = Carbon::now()->add($expire, 'minute')->timestamp;
+        $rCountry = request()->get('rCountry', request()->headers->get('r-country', '.l.'));
+        $tokenName = "{$rCountry}-{$user->id}";
+        $token = $user->createToken($tokenName);
+        $user->remember_token = $token->plainTextToken;
 
-        $t = "{$user->id}-{$time}";
-
-        $user->api_token = Crypt::encryptString($t);
-
-        // todo: get >>> $decrypted = Crypt::decryptString($user->api_token);
-
-        if ($user->api_token) {
-            $user->save();
-
-            return $user;
-        }
-
-        return $this->sendError(__('auth.failed'), [], 422);
+        return $user;
     }
 
     /**
@@ -93,11 +79,8 @@ class ZLoginAPIController extends AppBaseController
         $user = auth()->user();
 
         if (! is_null($user)) {
-            $user->api_token = Str::random(70);
-
-            return $user->save();
+            $user->tokens()->delete();
         }
-        // return Auth::user()->token()->revoke();
 
         return [];
     }

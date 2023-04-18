@@ -52,6 +52,7 @@ class BaseCmsExportExcel implements BaseCmsExport, FromCollection, WithHeadings
     public function finalize()
     {
         $ext = Str::lower($this->extension);
+
         return match ($this->exportTo) {
             self::TO_STRING => $this->stringData,
             self::TO_FILE => \Maatwebsite\Excel\Facades\Excel::store($this, "{$this->filename}.{$ext}", 'local', $this->extension),

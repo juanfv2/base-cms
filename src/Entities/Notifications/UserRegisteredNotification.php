@@ -13,16 +13,15 @@ class UserRegisteredNotification extends Notification
     /**
      * Create a new notification instance.
      *
+     * @param  \App\Models\Auth\User  $user
      * @return void
-     * @param \App\Models\Auth\User $user
      */
     public function __construct(
         /**
          * undocumented class variable
          **/
         public $user
-    )
-    {
+    ) {
     }
 
     /**
