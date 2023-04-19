@@ -92,14 +92,29 @@ class RequestCriteriaModel implements CriteriaInterfaceModel
                 $noValue = '--false--';
                 $nullOrEmpty = '---';
                 $_kOperatorStr = 'AND';
+                $_kFieldStr = null;
                 $_kConditionalStr = '=';
                 $condition = explode(' ', (string) $k->c);
 
-                [$_kOperatorStr, $_kFieldStr, $_kConditionalStr] = match (count($condition)) {
-                    3 => $condition,
-                    2 => $condition,
-                    default => $condition,
-                };
+
+                switch (count($condition)) {
+                    case 3:
+                        $_kOperatorStr = $condition[0];
+                        $_kFieldStr = $condition[1];
+                        $_kConditionalStr = $condition[2];
+                        // [$_kOperatorStr, $_kFieldStr, $_kConditionalStr] = $condition;
+                        break;
+                    case 2:
+
+                        $_kOperatorStr = $condition[0];
+                        $_kFieldStr = $condition[1];
+                        // [$_kOperatorStr, $_kFieldStr] = $condition;
+                        break;
+                    default:
+                        $_kFieldStr = $condition[0];
+                        // [$_kFieldStr] = $condition;
+                }
+
                 if ($_kFieldStr === 'OR') {
                     $_kOperatorStrParam = 'OR';
 
@@ -124,15 +139,15 @@ class RequestCriteriaModel implements CriteriaInterfaceModel
                 }
 
                 if ($_kConditionalStr === 'like') {
-                    $_kValue = '%'.$_kValue.'%';
+                    $_kValue = '%' . $_kValue . '%';
                 }
                 if ($_kConditionalStr === 'like>') {
                     $_kConditionalStr = 'like';
-                    $_kValue = $_kValue.'%';
+                    $_kValue = $_kValue . '%';
                 }
                 if ($_kConditionalStr === '<like') {
                     $_kConditionalStr = 'like';
-                    $_kValue = '%'.$_kValue;
+                    $_kValue = '%' . $_kValue;
                 }
 
                 switch ($_kConditionalStr) {
@@ -214,9 +229,9 @@ class RequestCriteriaModel implements CriteriaInterfaceModel
                 }
 
                 match ($joinType) {
-                    '<' => $this->model->getJQuery()->leftJoin($joinTable, $joinTable.'.'.$foreignKey, '=', $ownTable.'.'.$ownerKey),
-                    '>' => $this->model->getJQuery()->leftJoin($joinTable, $joinTable.'.'.$foreignKey, '=', $ownTable.'.'.$ownerKey),
-                    default => $this->model->getJQuery()->join($joinTable, $joinTable.'.'.$foreignKey, '=', $ownTable.'.'.$ownerKey),
+                    '<' => $this->model->getJQuery()->leftJoin($joinTable, $joinTable . '.' . $foreignKey, '=', $ownTable . '.' . $ownerKey),
+                    '>' => $this->model->getJQuery()->leftJoin($joinTable, $joinTable . '.' . $foreignKey, '=', $ownTable . '.' . $ownerKey),
+                    default => $this->model->getJQuery()->join($joinTable, $joinTable . '.' . $foreignKey, '=', $ownTable . '.' . $ownerKey),
                 };
 
                 if (isset($k->v)) {
@@ -240,7 +255,7 @@ class RequestCriteriaModel implements CriteriaInterfaceModel
                 }
             }
         } else {
-            $this->model->getJQuery()->addSelect($this->model->getTable().'.*');
+            $this->model->getJQuery()->addSelect($this->model->getTable() . '.*');
         }
     }
 
@@ -274,13 +289,13 @@ class RequestCriteriaModel implements CriteriaInterfaceModel
         $baseAssets = 'assets/adm';
 
         if ($rCountry) {
-            $baseAssets = $baseAssets.'/'.$rCountry;
+            $baseAssets = $baseAssets . '/' . $rCountry;
         }
 
         $path = "$baseAssets/temporals/$fileTempName/{$this->model->getTable()}/massive-with-file/$massiveQueryFileName";
         $columns = [];
 
-        if (! Storage::disk('public')->exists($path)) {
+        if (!Storage::disk('public')->exists($path)) {
             throw new \Juanfv2\BaseCms\Exceptions\NoReportException("Archivo no encontrado: '{$massiveQueryFileName}'");
         }
 
@@ -397,7 +412,7 @@ class RequestCriteriaModel implements CriteriaInterfaceModel
                 }
 
                 if (is_array($k)) {
-                    $where .= " $_kOperatorStrNested (".RequestGenericCriteria::conditionz($k, 'OR').')';
+                    $where .= " $_kOperatorStrNested (" . RequestGenericCriteria::conditionz($k, 'OR') . ')';
 
                     continue; // continuar con el siguiente.
                 }
@@ -420,20 +435,20 @@ class RequestCriteriaModel implements CriteriaInterfaceModel
                 $_kValue = property_exists($k, 'v') ? $k->v : $noValue;
                 $_kValueIsOptionNull = str_contains($_kConditionalStr, 'null');
 
-                if (! $_kValueIsOptionNull && $_kValue === $noValue) {
+                if (!$_kValueIsOptionNull && $_kValue === $noValue) {
                     continue;
                 }
 
                 if ($_kConditionalStr === 'like') {
-                    $_kValue = '%'.$_kValue.'%';
+                    $_kValue = '%' . $_kValue . '%';
                 }
                 if ($_kConditionalStr === 'like>') {
                     $_kConditionalStr = 'like';
-                    $_kValue = $_kValue.'%';
+                    $_kValue = $_kValue . '%';
                 }
                 if ($_kConditionalStr === '<like') {
                     $_kConditionalStr = 'like';
-                    $_kValue = '%'.$_kValue;
+                    $_kValue = '%' . $_kValue;
                 }
 
                 if ($_kValueIsOptionNull) {
