@@ -1,0 +1,170 @@
+<div class="panel-header panel-header-sm" *ngIf="!isSubComponent"></div>
+<div *ngIf="role" [class.main-content]="!isSubComponent">
+  <!-- form -->
+  <form class="card" [formGroup]="mFormGroup">
+    <div class="card-header">
+      <h5 class="title d-inline-block">
+        {{ labels.role.ownName }}
+      </h5>
+      <h6 class="ps-1 d-inline-block ms-2">
+        {{ labels.role.id.label }}
+        {{ role.id }}
+      </h6>
+    </div>
+    <div class="card-body">
+      <!-- name . init -->
+      <div class="form-group">
+        <label for="role-name">{{ labels.role.name.label }} *</label>
+        <input id="role-name" class="form-control" type="text" placeholder="Requerido" formControlName="name" />
+        <div
+          *ngIf="!mFormGroup.controls['name'].valid && mFormGroup.controls['name'].dirty && mFormGroup.controls['name'].errors?.['required']"
+          class="alert alert-danger form-text name-error-required"
+          role="alert"
+        >
+          {{ labels.role.name.label }} es requerido
+        </div>
+      </div>
+      <!-- name . end -->
+      <!-- description . init -->
+      <div class="form-group">
+        <label for="role-description">{{ labels.role.description.label }} *</label>
+        <input
+          id="role-description"
+          class="form-control"
+          type="text"
+          placeholder="Requerido"
+          formControlName="description"
+        />
+        <div
+          *ngIf="!mFormGroup.controls['description'].valid && mFormGroup.controls['description'].dirty && mFormGroup.controls['description'].errors?.['required']"
+          class="alert alert-danger form-text description-error-required"
+          role="alert"
+        >
+          {{ labels.role.description.label }} es requerido
+        </div>
+      </div>
+      <!-- description . end -->
+
+      <input
+        id="role-roleIdsPermissionStr"
+        type="hidden"
+        placeholder="Requerido"
+        formControlName="roleIdsPermissionStr"
+      />
+      <div
+        *ngIf="!mFormGroup.controls['roleIdsPermissionStr'].valid && mFormGroup.controls['roleIdsPermissionStr'].dirty && mFormGroup.controls['roleIdsPermissionStr'].errors?.['required']"
+        class="alert alert-danger form-text roleIdsPermissionStr-error-required"
+        role="alert"
+      >
+        Debe seleccionar {{ labels.permission.ownNamePlural }}
+      </div>
+
+    </div>
+    <div class="card-footer">
+      <button (click)="onBack()" type="button" class="btn btn-secondary m-1">Regresar</button>
+      <button
+        *ngIf="hasPermission2edit"
+        (click)="onSave()"
+        type="submit"
+        class="btn btn-primary m-1 save-role"
+        [disabled]="!mFormGroup.valid || sending"
+      >
+        Guardar
+        <div *ngIf="sending" class="fa-3x i-sending mx-1 float-end">
+          <i class="fas fa-spinner fa-spin"></i>
+        </div>
+      </button>
+      <button
+        *ngIf="hasPermission2new && !isSubComponent && role.id"
+        (click)="addNew()"
+        type="button"
+        class="btn btn-warning m-1 new-role"
+      >
+        Agregar otro
+      </button>
+    </div>
+  </form>
+  <!-- form . end -->
+  <!-- related . init -->
+  <div>
+    <nav ngbNav #nav="ngbNav" class="nav-tabs">
+      <ng-container ngbNavItem>
+        <a ngbNavLink>{{ labels.permission.ownNamePlural }}</a>
+        <ng-template ngbNavContent>
+          <div class="card">
+            <div class="card-body">
+              <nav ngbNav #navRoles="ngbNav" [(activeId)]="tabActive" class="nav-tabs -'{{ roleIdsPermissionStr }}'- ">
+                <ng-container *ngFor="let menu of permissionSource; let i = index" [ngbNavItem]="'' + (i + 1)">
+                  <a ngbNavLink>{{ menu.name }}</a>
+                  <ng-template ngbNavContent>
+                    <div class="card">
+                      <div class="card-header">
+                        <div class="row">
+                          <div class="col-12 col-md-6">
+                            Sección:
+                            <label for="permission_isSection_{{ menu.id }}">
+                              <input
+                                type="checkbox"
+                                id="permission_isSection_{{ menu.id }}"
+                                value="{{ menu.id }}"
+                                (click)="permissionSelected(menu.id!)"
+                                [checked]="permissionIsSelected(menu.id!)"
+                              />
+                              {{ menu.name }}
+                            </label>
+                          </div>
+                          <div class="col-12 col-md-6 text-end">
+                            <button (click)="permissionSelected(menu.id!, true)" type="button" class="btn btn-link m-1">
+                              todos en esta sección
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="card-body">
+                        <div class="row" *ngFor="let subMenu of menu.subMenus">
+                          <div class="col-12 col-md-2">
+                            <label for="permission_isVisible_{{ subMenu.id }}">
+                              <input
+                                type="checkbox"
+                                id="permission_isVisible_{{ subMenu.id }}"
+                                value="{{ subMenu.id }}"
+                                (click)="permissionSelected(subMenu.id!)"
+                                [checked]="permissionIsSelected(subMenu.id!)"
+                              />
+                              {{ subMenu.name }}
+                            </label>
+                          </div>
+                          <div class="col-12 col-md-10">
+                            <div class="row">
+                              <div class="col-12 col-md-3" *ngFor="let action of subMenu.actions">
+                                <label for="permission_isAction_{{ action.id }}">
+                                  <input
+                                    type="checkbox"
+                                    id="permission_isAction_{{ action.id }}"
+                                    value="{{ action.id }}"
+                                    (click)="permissionSelected(action.id!)"
+                                    [checked]="permissionIsSelected(action.id!)"
+                                  />
+                                  {{ action.name }}
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                          <hr class="clearfix w-100" />
+                        </div>
+                      </div>
+                    </div>
+                  </ng-template>
+                </ng-container>
+              </nav>
+              <div [ngbNavOutlet]="navRoles"></div>
+            </div>
+            <div class="card-footer"></div>
+          </div>
+        </ng-template>
+      </ng-container>
+    </nav>
+    <div [ngbNavOutlet]="nav" class="bg-white"></div>
+  </div>
+  <!-- related . end -->
+</div>

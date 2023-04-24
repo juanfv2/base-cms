@@ -1,0 +1,67 @@
+<div class="panel-header panel-header-sm" *ngIf="!isSubComponent"></div>
+<div [class.main-content]="!isSubComponent">
+  <form class="card" #modelForm="ngForm">
+    <div *ngIf="!isSubComponent" class="card-header">
+      <h5 class="title">{{ labels.visorLogError.ownNamePlural }}</h5>
+    </div>
+    <div *ngIf="!isSubComponent" class="card-body"></div>
+    <div *ngIf="!isSubComponent" class="card-body">
+      <ng-template baseCmsJfAddComponent></ng-template>
+      <div class="row">
+        <div class="col-12">
+          <div class="form-group">
+            <button (click)="addFilter()" type="button" class="btn btn-info m-1 float-end">
+              Agregar criterio de búsqueda
+            </button>
+
+            <!-- catch error testing -- >
+            <button (click)="onAddNew('')" type="button" class="btn btn-warning m-1">
+              Crear {{ labels.visorLogError.ownName }}
+            </button>
+            <!-- -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <base-cms-generic-table
+      *ngIf="!itemCurrent"
+      [loadCsv]="true"
+      [csv]="csv"
+      [labels]="labels"
+      [itemLabels]="itemLabels"
+      [modelSearch]="modelSearch"
+      [responseList]="responseList"
+      [loading]="loading"
+      [isSubComponent]="isSubComponent"
+      [hasPermission2delete]="hasPermission2delete"
+      [hasPermission2show]="hasPermission2show"
+      (_onLazyLoad)="onLazyLoad($event)"
+      (_onRowSelect)="onRowSelect($event)"
+      (_onAddNew)="onAddNew($event)"
+      (_onDelete)="onDelete($event)"
+      (_onClearFilters)="clearFilters($event)"
+      (_onMassiveInsert)="massiveInsert($event)"
+    >
+      <ng-template let-fieldName="pFieldName" let-model="pItem">
+        <ng-container (dblclick)="copyInputMessage(errorContent?.innerText)" #errorContent>
+          <div class="card m-0" *ngIf="model?.error?.message; else normal">
+            <div class="card-header [location]">{{ model?.error?.location }}</div>
+            <div class="card-body [message]">
+              <pre>{{ model?.error?.message }}</pre>
+            </div>
+            <div class="card-body [stack]">
+              <pre>{{ model?.error?.stack }}</pre>
+            </div>
+            <div class="card-body [navigator]">
+              <pre>{{ model?.error?.navigator | json }}</pre>
+            </div>
+            <div class="card-footer [queue]">{{ model.queue }}</div>
+          </div>
+
+          <ng-template #normal>{{ model.error }}</ng-template>
+        </ng-container>
+      </ng-template>
+    </base-cms-generic-table>
+  </form>
+</div>

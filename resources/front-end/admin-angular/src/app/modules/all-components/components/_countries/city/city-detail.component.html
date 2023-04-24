@@ -1,0 +1,154 @@
+<div class="panel-header panel-header-sm" *ngIf="!isSubComponent"></div>
+<div *ngIf="city" [class.main-content]="!isSubComponent">
+  <!-- form -->
+  <form class="card" [formGroup]="mFormGroup">
+    <div class="card-header">
+      <h5 class="title d-inline-block">
+        {{ labels.city.ownName }}
+      </h5>
+      <h6 class="ps-1 d-inline-block ms-2">
+        {{ labels.city.id.label }}
+        {{ city.id }}
+      </h6>
+    </div>
+    <div class="card-body">
+      <!-- name . init -->
+      <div class="form-group">
+        <label for="city-name">{{ labels.city.name.label }} *</label>
+        <input id="city-name" class="form-control" type="text" placeholder="Requerido" formControlName="name" />
+        <div
+          *ngIf="!mFormGroup.controls['name'].valid && mFormGroup.controls['name'].dirty && mFormGroup.controls['name'].errors?.['required']"
+          class="alert alert-danger form-text name-error-required"
+          role="alert"
+        >
+          {{ labels.city.name.label }} es requerido
+        </div>
+      </div>
+      <!-- name . end -->
+      <!-- latitude . init -->
+      <div class="form-group">
+        <label for="city-latitude">{{ labels.city.latitude.label }} *</label>
+        <input
+          id="city-latitude"
+          class="form-control"
+          type="number"
+          placeholder="Requerido"
+          formControlName="latitude"
+        />
+        <div
+          *ngIf="!mFormGroup.controls['latitude'].valid && mFormGroup.controls['latitude'].dirty && mFormGroup.controls['latitude'].errors?.['required']"
+          class="alert alert-danger form-text latitude-error-required"
+          role="alert"
+        >
+          {{ labels.city.latitude.label }} es requerido
+        </div>
+        <div
+          *ngIf="!mFormGroup.controls['latitude'].valid && mFormGroup.controls['latitude'].dirty && mFormGroup.controls['latitude'].errors?.['validLatitude']"
+          class="alert alert-danger form-text latitude-error-invalid"
+          role="alert"
+        >
+          {{ labels.city.latitude.label }} no es valida
+        </div>
+      </div>
+      <!-- latitude . end -->
+      <!-- longitude . init -->
+      <div class="form-group">
+        <label for="city-longitude">{{ labels.city.longitude.label }} *</label>
+        <input
+          id="city-longitude"
+          class="form-control"
+          type="number"
+          placeholder="Requerido"
+          formControlName="longitude"
+        />
+        <div
+          *ngIf="!mFormGroup.controls['longitude'].valid && mFormGroup.controls['longitude'].dirty && mFormGroup.controls['longitude'].errors?.['required']"
+          class="alert alert-danger form-text longitude-error-required"
+          role="alert"
+        >
+          {{ labels.city.longitude.label }} es requerido
+        </div>
+        <div
+          *ngIf="!mFormGroup.controls['longitude'].valid && mFormGroup.controls['longitude'].dirty && mFormGroup.controls['longitude'].errors?.['validLongitude']"
+          class="alert alert-danger form-text longitude-error-invalid"
+          role="alert"
+        >
+          {{ labels.city.longitude.label }} no es valida
+        </div>
+      </div>
+      <!-- longitude . end -->
+      <!-- country . init -->
+      <div class="form-group">
+        <app-country-auto-complete
+          acId="city-country"
+          [acName]="labels.country.ownName"
+          [acDisabled]="isSubComponentFrom === 'region' || isSubComponentFrom === 'country'"
+          [currentPage]="mApi.show()"
+          formControlName="country"
+        >
+        </app-country-auto-complete>
+        <div
+          *ngIf="!mFormGroup.controls['country'].valid && mFormGroup.controls['country'].dirty && mFormGroup.controls['country'].errors?.['required']"
+          class="alert alert-danger form-text"
+        >
+          {{ labels.country.ownName }} es requerido
+        </div>
+      </div>
+      <!-- country . end -->
+      <!-- region . init -->
+      <div class="form-group">
+        <app-region-auto-complete
+          acId="city-region"
+          [acName]="labels.region.ownName"
+          [acDisabled]="isSubComponentFrom === 'region'"
+          [currentPage]="mApi.show()"
+          formControlName="region"
+          [country]="mFormGroup.controls['country'].value"
+        >
+        </app-region-auto-complete>
+        <div
+          *ngIf="!mFormGroup.controls['region'].valid && mFormGroup.controls['region'].dirty && mFormGroup.controls['region'].errors?.['required']"
+          class="alert alert-danger form-text"
+        >
+          {{ labels.region.ownName }} es requerido
+        </div>
+      </div>
+      <!-- region . end -->
+    </div>
+    <div class="card-footer">
+      <button (click)="onBack()" type="button" class="btn btn-secondary m-1">Regresar</button>
+      <button
+        *ngIf="hasPermission2edit"
+        (click)="onSave()"
+        type="submit"
+        class="btn btn-primary m-1 save-city"
+        [disabled]="!mFormGroup.valid || sending"
+      >
+        Guardar
+        <div *ngIf="sending" class="fa-3x i-sending mx-1 float-end">
+          <i class="fas fa-spinner fa-spin"></i>
+        </div>
+      </button>
+      <button
+        *ngIf="hasPermission2new && !isSubComponent && city.id"
+        (click)="addNew()"
+        type="button"
+        class="btn btn-warning m-1 new-city"
+      >
+        Agregar otro
+      </button>
+    </div>
+  </form>
+  <!-- form . end -->
+  <!-- related . init -- >
+    <div *ngIf="city?.id">    <nav ngbNav #nav="ngbNav" class="nav-tabs">
+<ng-container ngbNavItem>
+    <a ngbNavLink>{{labels.user.ownNamePlural}}</a>
+    <ng-template ngbNavContent>
+    <app-user-list [city]="city" [isSubComponent]="true">
+    </app-user-list>
+    </ng-template>
+</ng-container>
+</nav><div [ngbNavOutlet]="nav" class="bg-white"></div></div>
+<!-- related . end -->
+</div>

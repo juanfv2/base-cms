@@ -1,0 +1,333 @@
+<div class="panel-header panel-header-sm" *ngIf="!isSubComponent"></div>
+<div *ngIf="user" [class.main-content]="!isSubComponent">
+  <!-- form -->
+  <form class="card" [formGroup]="mFormGroup">
+    <div class="card-header">
+      <h5 class="title d-inline-block">
+        {{ itemLabels.ownName }}
+      </h5>
+      <h6 class="ps-1 d-inline-block ms-2">
+        {{ labels.user.id.label }}
+        {{ user.id }}
+      </h6>
+    </div>
+    <div class="card-body [user]">
+      <div class="row">
+        <div class="col-12 col-md-8 order-12 order-md-1">
+          <!-- name . init -->
+          <div class="form-group">
+            <label for="user-name">{{ labels.user.name.label }} *</label>
+            <input id="user-name" class="form-control" type="text" placeholder="Requerido" formControlName="name" />
+            <div
+              *ngIf="!mFormGroup.controls['name'].valid && mFormGroup.controls['name'].dirty && mFormGroup.controls['name'].errors?.['required']"
+              class="alert alert-danger form-text name-error-required"
+              role="alert"
+            >
+              {{ labels.user.name.label }} es requerido
+            </div>
+          </div>
+          <!-- name . end -->
+          <!-- email . init -->
+          <div class="form-group">
+            <label for="user-email">{{ labels.user.email.label }} *</label>
+            <input id="user-email" class="form-control" type="text" placeholder="Requerido" formControlName="email" />
+            <div
+              *ngIf="!mFormGroup.controls['email'].valid && mFormGroup.controls['email'].dirty && mFormGroup.controls['email'].errors?.['required']"
+              class="alert alert-danger form-text email-error-required"
+              role="alert"
+            >
+              {{ labels.user.email.label }} es requerido
+            </div>
+            <div
+              *ngIf="!mFormGroup.controls['email'].valid && mFormGroup.controls['email'].touched && mFormGroup.controls['email'].errors?.['pattern']"
+              class="alert alert-danger form-text email-error-invalid"
+              role="alert"
+            >
+              Correo electrónico es invalido
+            </div>
+          </div>
+          <!-- email . end -->
+          <!-- password . init -->
+          <div class="form-group">
+            <label for="user-password">{{ labels.user.password.label }} *</label>
+            <input
+              id="user-password"
+              class="form-control"
+              type="text"
+              placeholder="Requerido"
+              formControlName="password"
+            />
+            <div
+              *ngIf="!mFormGroup.controls['password'].valid && mFormGroup.controls['password'].dirty && mFormGroup.controls['password'].errors?.['required']"
+              class="alert alert-danger form-text password-error-required"
+              role="alert"
+            >
+              {{ labels.user.password.label }} es requerido
+            </div>
+            <div
+              *ngIf="!mFormGroup.controls['password'].valid && mFormGroup.controls['password'].touched && mFormGroup.controls['password'].errors?.['passwordStrength']"
+              class="alert alert-danger form-text password-error-invalid"
+              role="alert"
+            >
+              {{ labels.user.password.label }} debe ser mayor a 8 caracteres y debe incluir mayúsculas, minúsculas,
+              números.
+            </div>
+          </div>
+          <!-- password . end -->
+          <!-- phoneNumber . init -->
+          <div class="form-group">
+            <label for="user-phoneNumber">{{ labels.user.phoneNumber.label }} </label>
+            <input id="user-phoneNumber" class="form-control" type="text" formControlName="phoneNumber" />
+          </div>
+          <!-- phoneNumber . end -->
+          <!-- email_verified_at . init -- >
+          <div class="form-group">
+            <label for="user-email_verified_at">{{ labels.user.email_verified_at.label }} </label>
+            <div class="input-group">
+              <input
+                id="user-email_verified_at"
+                class="form-control"
+                placeholder="yyyy-mm-dd"
+                ngbDatepicker
+                #user_emailVerifiedAt_date="ngbDatepicker"
+                formControlName="email_verified_at"
+              />
+              <button
+                title="calendario"
+                class="btn btn-outline-secondary m-0"
+                (click)="user_emailVerifiedAt_date.toggle()"
+                type="button"
+              >
+                <i class="fa fa-calendar text-info"></i>
+              </button>
+            </div>
+            <div
+              *ngIf="!mFormGroup.controls['email_verified_at'].valid && mFormGroup.controls['email_verified_at'].dirty && mFormGroup.controls['email_verified_at'].errors?.['ngbDate']?.invalid"
+              class="alert alert-danger form-text"
+              role="alert"
+            >
+              {{ labels.user.email_verified_at.label }} fecha invalida
+            </div>
+          </div>
+          <!-- email_verified_at . end -->
+          <!-- uid . init -- >
+          <div class="form-group">
+            <label for="user-uid">{{ labels.user.uid.label }} </label>
+            <input id="user-uid" class="form-control" type="text" formControlName="uid" />
+          </div>
+          <!-- uid . end -->
+        </div>
+        <div class="col-12 col-md-4 order-1 order-md-12 bg-light">
+          <!-- disabled . init -->
+          <div class="form-group">
+            <label for="user-disabled">{{ labels.user.disabled.label }} *</label>
+            <div class="d-flex">
+              <label for="user-disabled" class="switch">
+                <input id="user-disabled" type="checkbox" formControlName="disabled" />
+                <span class="slider round"></span>
+              </label>
+              <span class="p-1">{{ mFormGroup.controls['disabled'].value ? 'Desactivo' : 'Activo' }}</span>
+            </div>
+            <div
+              *ngIf="!mFormGroup.controls['disabled'].valid && mFormGroup.controls['disabled'].dirty && mFormGroup.controls['disabled'].errors?.['required']"
+              class="alert alert-danger form-text disabled-error-required"
+              role="alert"
+            >
+              {{ labels.user.disabled.label }} es requerido
+            </div>
+          </div>
+          <!-- disabled . end -->
+
+          <!--
+          photoUrl
+          url2upload: /api/file/{tableName}/{fieldName}/{id?}/{color?}
+          url2show:   /api/file/{tableName}/{fieldName}/{id}/{w?}/{h?}/{imageNameOriginal?}
+
+          url2public: /assets/adm/{tableName}/{fieldName}/{imageNameOriginal?}
+          -->
+          <base-cms-file-upload
+            *ngIf="photo"
+            [labels]="labels"
+            [label]="labels.user.photo.label"
+            [name]="labels.user.photo.field"
+            [iWidth]="150"
+            minHeight="200px"
+            placeholder="Requerido"
+            [maxFileSize]="1024 * 1024"
+            [allowMultiples]="false"
+            [hideProcess]="!user.id"
+            [autoUpload]="!!user.id"
+            (finish)="onFinishUploadFile($event)"
+            (uploaderQueue)="uploaderQueue($event)"
+            [allowedTypes]="['image/gif', 'image/png', 'image/jpeg', 'image/bmp', 'image/webp']"
+            [value]="photo"
+          >
+          </base-cms-file-upload>
+          <input type="hidden" formControlName="photo_id" />
+          <div
+            *ngIf="!mFormGroup.controls['photo_id'].valid && mFormGroup.controls['photo_id'].errors?.['required']"
+            class="alert alert-danger form-text photo_id-error-required"
+            role="alert"
+          >
+            La imagen es requerida
+          </div>
+          <!--  -->
+        </div>
+      </div>
+    </div>
+    <div class="card-body [country-region-city role]">
+      <div class="row">
+        <div class="col col-md-4">
+          <!-- country . init -->
+          <div class="form-group">
+            <app-country-auto-complete
+              acId="user-country"
+              [acName]="labels.country.ownName"
+              [acDisabled]="isSubComponentFrom === 'country'"
+              [currentPage]="mApi.show()"
+              formControlName="country"
+            >
+            </app-country-auto-complete>
+            <div
+              *ngIf="!mFormGroup.controls['country'].valid && mFormGroup.controls['country'].dirty && mFormGroup.controls['country'].errors?.['required']"
+              class="alert alert-danger form-text"
+            >
+              {{ labels.country.ownName }} es requerido
+            </div>
+          </div>
+          <!-- country . end -->
+        </div>
+        <div class="col col-md-4">
+          <!-- region . init -->
+          <div class="form-group">
+            <app-region-auto-complete
+              acId="user-region"
+              [acName]="labels.region.ownName"
+              [acDisabled]="isSubComponentFrom === 'region'"
+              [currentPage]="mApi.show()"
+              formControlName="region"
+              [country]="mFormGroup.controls['country'].value"
+            >
+            </app-region-auto-complete>
+            <div
+              *ngIf="!mFormGroup.controls['region'].valid && mFormGroup.controls['region'].dirty && mFormGroup.controls['region'].errors?.['required']"
+              class="alert alert-danger form-text"
+            >
+              {{ labels.region.ownName }} es requerido
+            </div>
+          </div>
+          <!-- region . end -->
+        </div>
+        <div class="col col-md-4">
+          <!-- city . init -->
+          <div class="form-group">
+            <app-city-auto-complete
+              acId="user-city"
+              [acName]="labels.city.ownName"
+              [acDisabled]="isSubComponentFrom === 'city'"
+              [currentPage]="mApi.show()"
+              formControlName="city"
+              [country]="mFormGroup.controls['country'].value"
+              [region]="mFormGroup.controls['region'].value"
+            >
+            </app-city-auto-complete>
+            <div
+              *ngIf="!mFormGroup.controls['city'].valid && mFormGroup.controls['city'].dirty && mFormGroup.controls['city'].errors?.['required']"
+              class="alert alert-danger form-text"
+            >
+              {{ labels.city.ownName }} es requerido
+            </div>
+          </div>
+          <!-- city . end -->
+        </div>
+      </div>
+
+      <!-- role . init -->
+      <div *ngIf="!user.account && user.roles && user.roles.length" class="form-group">
+        <app-role-auto-complete
+          [selectable]="user.roles"
+          acId="user-role"
+          [acName]="labels.role.ownName"
+          [acDisabled]="isSubComponentFrom === 'role'"
+          [currentPage]="mApi.show()"
+          formControlName="role"
+        >
+        </app-role-auto-complete>
+        <div
+          *ngIf="!mFormGroup.controls['role'].valid && mFormGroup.controls['role'].dirty && mFormGroup.controls['role'].errors?.['required']"
+          class="alert alert-danger form-text"
+        >
+          {{ labels.role.ownName }} es requerido
+        </div>
+      </div>
+      <!-- role . end -->
+    </div>
+    <div class="card-body [account - person]">
+      <app-person-detail *ngIf="user.person" [person]="user.person"></app-person-detail>
+      <app-account-detail *ngIf="user.account" [account]="user.account"></app-account-detail>
+    </div>
+    <div class="card-footer">
+      <button (click)="onBack()" type="button" class="btn btn-secondary m-1">Regresar</button>
+      <button
+        *ngIf="hasPermission2edit"
+        (click)="onSave()"
+        type="submit"
+        class="btn btn-primary m-1 save-user"
+        [disabled]="!mFormGroup.valid || sending"
+      >
+        Guardar
+        <div *ngIf="sending" class="fa-3x i-sending mx-1 float-end">
+          <i class="fas fa-spinner fa-spin"></i>
+        </div>
+      </button>
+      <button
+        *ngIf="hasPermission2new && !isSubComponent && user.id"
+        (click)="addNew()"
+        type="button"
+        class="btn btn-warning m-1 new-user"
+      >
+        Agregar otro
+      </button>
+      <input type="hidden" name="user-roles" formControlName="rolesAreRequired" />
+    </div>
+  </form>
+  <!-- form . end -->
+  <!-- related . init -->
+  <div *ngIf="currentPath === labels.misc.k.routes.users">
+    <nav ngbNav #nav="ngbNav" class="nav-tabs">
+      <ng-container ngbNavItem>
+        <a ngbNavLink>{{ labels.role.ownNamePlural }}</a>
+        <ng-template ngbNavContent>
+          <div class="card">
+            <div class="card-body">
+              <div *ngIf="!rolesAreRequired" class="alert alert-danger form-text" role="alert">
+                Debe seleccionar {{ labels.role.ownName }}
+              </div>
+              <app-role-auto-complete
+                name="m2m-roles"
+                acId="roles-available"
+                acName="Roles disponibles"
+                [acMultiple]="true"
+                [currentPage]="mApi.show()"
+                (oSelected)="roles2update($event)"
+                [avoidable]="rolesAvoidable"
+                [(ngModel)]="rolesSelected"
+              >
+              </app-role-auto-complete>
+              <base-cms-many-to-many
+                lField="name"
+                [lModel]="labels.role"
+                [gOptions]="user.roles"
+                (rm)="role2rm($event)"
+                (go)="role2go($event)"
+              ></base-cms-many-to-many>
+            </div>
+            <div class="card-footer"></div>
+          </div>
+        </ng-template>
+      </ng-container>
+    </nav>
+    <div [ngbNavOutlet]="nav" class="bg-white"></div>
+  </div>
+  <!-- related . end -->
+</div>

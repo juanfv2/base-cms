@@ -1,0 +1,13 @@
+/* You can add global styles to this file, and also import other style files */
+@import url('//fonts.googleapis.com/css?family=Montserrat:400,700,200');
+// $primary-color: #9c27b0;
+$fa-font-path: '/assets/fonts';
+@import 'dist/base-cms/scss/now-ui-dashboard';
+// @import 'node_modules/@juanfv2/base-cms/scss/now-ui-dashboard';
+
+.map-container {
+  width: 100% !important;
+}
+.card label {
+  color: #342727;
+}

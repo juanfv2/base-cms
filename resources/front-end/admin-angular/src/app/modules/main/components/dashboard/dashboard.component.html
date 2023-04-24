@@ -1,0 +1,127 @@
+<div class="panel-header panel-header-sm"></div>
+<div class="main-content">
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+        <div class="col col-md-6">
+          <div class="my-md-4">
+            <div class="py-md-4">
+              <div class="d-flex justify-content-end">
+                <img class="img-fluid" src="{{ labels.misc.k.routes.backEnd.assets }}images/logo.png" alt="." />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col col-md-6">
+          <div class="my-md-4 .">
+            <div class="py-md-4">
+              <div class="">
+                <h5 class="title">¡Bienvenido!</h5>
+                <p class="category">¿Cómo deseas iniciar hoy?</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-3 col-md-6 col-sm-6">
+          <div class="card card-stats">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-7 col-md-8">
+                  <div class="numbers text-left m-xl-2 m-lg-1">
+                    <p class="card-title font-weight-bold text-danger">{{ data.points }}</p>
+                    <p class="card-category">Puntos</p>
+                  </div>
+                </div>
+                <div class="col-5 col-md-4">
+                  <div class="icon-md h-100 d-flex justify-content-center align-items-center">
+                    <i class="fas fa-map-marker-alt text-danger"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer"></div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-6">
+          <div class="card card-stats">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-7 col-md-8">
+                  <div class="numbers text-left m-xl-2 m-lg-1">
+                    <p class="card-title font-weight-bold text-secondary">{{ data.marks }}</p>
+                    <p class="card-category">Marcas</p>
+                  </div>
+                </div>
+                <div class="col-5 col-md-4">
+                  <div class="icon-md h-100 d-flex justify-content-center align-items-center">
+                    <i class="fas fa-map-marker-alt text-secondary"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer"></div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-6">
+          <div class="card card-stats">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-7 col-md-8">
+                  <div class="numbers text-left m-xl-2 m-lg-1">
+                    <p class="card-title font-weight-bold text-normal">{{ data.providers }}</p>
+                    <p class="card-category">Proveedores</p>
+                  </div>
+                </div>
+                <div class="col-5 col-md-4">
+                  <div class="icon-md h-100 d-flex justify-content-center align-items-center">
+                    <i class="fas fa-map-marker-alt text-normal"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer"></div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-6">
+          <div class="card card-stats">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-7 col-md-8">
+                  <div class="numbers text-left m-xl-2 m-lg-1">
+                    <p class="card-title font-weight-bold">{{ data.routes }}</p>
+                    <p class="card-category">Rutas</p>
+                  </div>
+                </div>
+                <div class="col-5 col-md-4">
+                  <div class="icon-md h-100 d-flex justify-content-center align-items-center">
+                    <i class="fas fa-map-marker-alt"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer"></div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="inDevMode" class="row">
+        <div class="col">
+          <!-- -->
+          <button type="button" class="btn btn-primary m-1">Primary</button>
+          <button type="button" class="btn btn-secondary m-1">Secondary</button>
+          <button type="button" class="btn btn-success m-1">Success</button>
+          <button type="button" class="btn btn-danger m-1">Danger</button>
+          <button type="button" class="btn btn-warning m-1">Warning</button>
+          <button type="button" class="btn btn-info m-1">Info</button>
+          <button type="button" class="btn btn-light m-1">Light</button>
+          <button type="button" class="btn btn-dark m-1">Dark</button>
+          <button type="button" class="btn btn-link m-1">Link</button>
+          <!-- -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

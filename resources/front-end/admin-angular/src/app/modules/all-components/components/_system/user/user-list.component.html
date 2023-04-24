@@ -1,0 +1,239 @@
+<div class="panel-header panel-header-sm" *ngIf="!isSubComponent"></div>
+<div [class.main-content]="!isSubComponent">
+  <form class="card" #modelForm="ngForm">
+    <div *ngIf="!isSubComponent" class="card-header">
+      <h5 class="title">{{ isPathPeople ? labels.user.ownNamePlural : labels.account.ownNamePlural }}</h5>
+    </div>
+    <div *ngIf="!isSubComponent" class="card-body">
+      <!-- country -->
+      <div class="row">
+        <div class="col-12 col-md-3">
+          <div class="form-group">
+            <label> Cond. </label>
+            <select
+              id="countryCond"
+              name="countryCond"
+              class="form-control"
+              [(ngModel)]="modelSearch.conditionCountry.cond"
+            >
+              <option *ngFor="let o of conditionalOptions" [value]="o.value">
+                {{ o.label }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="col-12 col-md-7">
+          <div class="form-group">
+            <app-country-auto-complete
+              name="m2m-country"
+              acId="country"
+              [acName]="labels.country.ownName"
+              [currentPage]="mApi.index()"
+              [(ngModel)]="modelSearch.conditionCountry.value"
+            >
+            </app-country-auto-complete>
+          </div>
+        </div>
+        <div class="col-12 col-md-2">
+          <div class="form-group">
+            <label> Oper. </label>
+            <select
+              id="countryOper"
+              name="countryOper"
+              class="form-control"
+              [(ngModel)]="modelSearch.conditionCountry.oper"
+            >
+              <option *ngFor="let o of operatorOptions" [value]="o.value">
+                {{ o.label }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <!-- country . end -->
+      <!-- region -->
+      <div class="row">
+        <div class="col-12 col-md-3">
+          <div class="form-group">
+            <label> Cond. </label>
+            <select
+              id="regionCond"
+              name="regionCond"
+              class="form-control"
+              [(ngModel)]="modelSearch.conditionRegion.cond"
+            >
+              <option *ngFor="let o of conditionalOptions" [value]="o.value">
+                {{ o.label }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="col-12 col-md-7">
+          <div class="form-group">
+            <app-region-auto-complete
+              [country]="modelSearch.conditionCountry.value"
+              name="m2m-region"
+              acId="region"
+              [acName]="labels.region.ownName"
+              [currentPage]="mApi.index()"
+              [(ngModel)]="modelSearch.conditionRegion.value"
+            >
+            </app-region-auto-complete>
+          </div>
+        </div>
+        <div class="col-12 col-md-2">
+          <div class="form-group">
+            <label> Oper. </label>
+            <select
+              id="regionOper"
+              name="regionOper"
+              class="form-control"
+              [(ngModel)]="modelSearch.conditionRegion.oper"
+            >
+              <option *ngFor="let o of operatorOptions" [value]="o.value">
+                {{ o.label }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <!-- region . end -->
+      <!-- city -->
+      <div class="row">
+        <div class="col-12 col-md-3">
+          <div class="form-group">
+            <label> Cond. </label>
+            <select id="cityCond" name="cityCond" class="form-control" [(ngModel)]="modelSearch.conditionCity.cond">
+              <option *ngFor="let o of conditionalOptions" [value]="o.value">
+                {{ o.label }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="col-12 col-md-7">
+          <div class="form-group">
+            <app-city-auto-complete
+              [country]="modelSearch.conditionCountry.value"
+              [region]="modelSearch.conditionRegion.value"
+              name="m2m-city"
+              acId="city"
+              [acName]="labels.city.ownName"
+              [currentPage]="mApi.index()"
+              [(ngModel)]="modelSearch.conditionCity.value"
+            >
+            </app-city-auto-complete>
+          </div>
+        </div>
+        <div class="col-12 col-md-2">
+          <div class="form-group">
+            <label> Oper. </label>
+            <select id="cityOper" name="cityOper" class="form-control" [(ngModel)]="modelSearch.conditionCity.oper">
+              <option *ngFor="let o of operatorOptions" [value]="o.value">
+                {{ o.label }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <!-- city . end -->
+      <!-- role -->
+      <div class="row">
+        <div class="col-12 col-md-3">
+          <div class="form-group">
+            <label> Cond. </label>
+            <select id="roleCond" name="roleCond" class="form-control" [(ngModel)]="modelSearch.conditionRole.cond">
+              <option *ngFor="let o of conditionalOptions" [value]="o.value">
+                {{ o.label }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="col-12 col-md-7">
+          <div class="form-group">
+            <app-role-auto-complete
+              name="m2m-role"
+              acId="role"
+              [acName]="labels.role.ownName"
+              [currentPage]="mApi.index()"
+              [(ngModel)]="modelSearch.conditionRole.value"
+            >
+            </app-role-auto-complete>
+          </div>
+        </div>
+        <div class="col-12 col-md-2">
+          <div class="form-group">
+            <label> Oper. </label>
+            <select id="roleOper" name="roleOper" class="form-control" [(ngModel)]="modelSearch.conditionRole.oper">
+              <option *ngFor="let o of operatorOptions" [value]="o.value">
+                {{ o.label }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <!-- role . end -->
+    </div>
+    <div *ngIf="!isSubComponent" class="card-body">
+      <ng-template baseCmsJfAddComponent></ng-template>
+      <div class="row">
+        <div class="col-12">
+          <div class="form-group">
+            <button (click)="addFilter()" type="button" class="btn btn-info m-1 float-end">
+              Agregar criterio de búsqueda
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <base-cms-generic-table
+      *ngIf="!itemCurrent"
+      [csv]="csv"
+      [labels]="labels"
+      [itemLabels]="itemLabels"
+      [modelSearch]="modelSearch"
+      [responseList]="responseList"
+      [loading]="loading"
+      [isSubComponent]="isSubComponent"
+      [hasPermission2delete]="hasPermission2delete"
+      [hasPermission2new]="hasPermission2new"
+      [hasPermission2show]="hasPermission2show"
+      (_onLazyLoad)="onLazyLoad($event)"
+      (_onRowSelect)="onRowSelect($event)"
+      (_onAddNew)="onAddNew($event)"
+      (_onDelete)="onDelete($event)"
+      (_onClearFilters)="clearFilters($event)"
+      (_onMassiveInsert)="massiveInsert($event)"
+    >
+      <ng-template let-fieldName="pFieldName" let-model="pItem">
+        <ng-container [ngSwitch]="fieldName">
+          <ng-container *ngSwitchCase="itemLabels.roles.name">
+            <ul>
+              <li *ngFor="let role of model?.roles">{{ role.name }}</li>
+            </ul>
+          </ng-container>
+
+          <ng-container *ngSwitchDefault>
+            <div class="d-inline w-35-px d-flex m-0 justify-content-center align-items-center overflow-hidden">
+              <img
+                [src]="model?.photo | jfHasXFile : 55"
+                alt="..."
+                class="bg-secondary rounded-circle border border-primary m-avatar h-35-px w-35-px p-1"
+              />
+            </div>
+          </ng-container>
+        </ng-container>
+      </ng-template>
+    </base-cms-generic-table>
+  </form>
+
+  <app-user-detail
+    *ngIf="itemCurrent"
+    [user]="itemCurrent"
+    [isSubComponent]="isSubComponent"
+    [isSubComponentFrom]="isSubComponentFrom"
+    (saveClicked)="saveFormClicked($event)"
+    (cancelClicked)="itemCurrent = undefined"
+  >
+  </app-user-detail>
+</div>

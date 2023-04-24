@@ -1,0 +1,93 @@
+<!-- form -->
+<div class="card card-account" [formGroupName]="mFormGroupName">
+  <div class="card-header"><small class="ps-1 d-inline-block ms-2">Información general</small></div>
+  <div class="card-body">
+    <!-- firstName . init -->
+    <div class="form-group">
+      <label for="account-firstName">{{ labels.account.firstName.label }} *</label>
+      <input
+        id="account-firstName"
+        class="form-control"
+        type="text"
+        placeholder="Requerido"
+        formControlName="firstName"
+      />
+      <div
+        *ngIf="!mFormGroup.get(mFormGroupName)?.get('firstName')?.valid && mFormGroup.get(mFormGroupName)?.get('firstName')?.dirty && mFormGroup.get(mFormGroupName)?.get('firstName')?.errors?.['required']"
+        class="alert alert-danger form-text firstName-error-required"
+        role="alert"
+      >
+        {{ labels.account.firstName.label }} es requerido
+      </div>
+    </div>
+    <!-- firstName . end -->
+    <!-- lastName . init -->
+    <div class="form-group">
+      <label for="account-lastName">{{ labels.account.lastName.label }} *</label>
+      <input
+        id="account-lastName"
+        class="form-control"
+        type="text"
+        placeholder="Requerido"
+        formControlName="lastName"
+      />
+      <div
+        *ngIf="!mFormGroup.get(mFormGroupName)?.get('lastName')?.valid && mFormGroup.get(mFormGroupName)?.get('lastName')?.dirty && mFormGroup.get(mFormGroupName)?.get('lastName')?.errors?.['required']"
+        class="alert alert-danger form-text lastName-error-required"
+        role="alert"
+      >
+        {{ labels.account.lastName.label }} es requerido
+      </div>
+    </div>
+    <!-- lastName . end -->
+    <!-- cellPhone . init -->
+    <div class="form-group">
+      <label for="account-cellPhone">{{ labels.account.cellPhone.label }} </label>
+      <input id="account-cellPhone" class="form-control" type="text" formControlName="cellPhone" />
+    </div>
+    <!-- cellPhone . end -->
+    <!-- birthDate . init -->
+    <div class="form-group">
+      <label for="account-birthDate">{{ labels.account.birthDate.label }} </label>
+      <div class="input-group">
+        <input
+          id="account-birthDate"
+          #account_birthDate_date="ngbDatepicker"
+          class="form-control"
+          placeholder="yyyy-mm-dd"
+          ngbDatepicker
+          formControlName="birthDate"
+        />
+        <button
+          title="calendario"
+          class="btn btn-outline-secondary m-0"
+          (click)="account_birthDate_date.toggle()"
+          type="button"
+        >
+          <i class="fa fa-calendar text-info"></i>
+        </button>
+      </div>
+      <div
+        *ngIf="!mFormGroup.get(mFormGroupName)?.get('birthDate')?.valid && mFormGroup.get(mFormGroupName)?.get('birthDate')?.dirty &&  mFormGroup.get(mFormGroupName)?.get('birthDate')?.errors?.[ 'ngbDate' ]?.invalid"
+        class="alert alert-danger form-text"
+        role="alert"
+      >
+        {{ labels.account.birthDate.label }} fecha invalida
+      </div>
+    </div>
+    <!-- birthDate . end -->
+    <!-- address . init -->
+    <div class="form-group">
+      <label for="account-address">{{ labels.account.address.label }} </label>
+      <input id="account-address" class="form-control" type="text" formControlName="address" />
+    </div>
+    <!-- address . end -->
+    <!-- neighborhood . init -->
+    <div class="form-group">
+      <label for="account-neighborhood">{{ labels.account.neighborhood.label }} </label>
+      <input id="account-neighborhood" class="form-control" type="text" formControlName="neighborhood" />
+    </div>
+    <!-- neighborhood . end -->
+  </div>
+</div>
+<!-- form . end -->

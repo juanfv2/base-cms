@@ -1,0 +1,99 @@
+<div class="panel-header panel-header-sm" *ngIf="!isSubComponent"></div>
+<div *ngIf="country" [class.main-content]="!isSubComponent">
+  <!-- form -->
+  <form class="card" [formGroup]="mFormGroup">
+    <div class="card-header">
+      <h5 class="title d-inline-block">
+        {{ labels.country.ownName }}
+      </h5>
+      <h6 class="ps-1 d-inline-block ms-2">
+        {{ labels.country.id.label }}
+        {{ country.id }}
+      </h6>
+    </div>
+    <div class="card-body">
+      <!-- name . init -->
+      <div class="form-group">
+        <label for="country-name">{{ labels.country.name.label }} *</label>
+        <input id="country-name" class="form-control" type="text" placeholder="Requerido" formControlName="name" />
+        <div
+          *ngIf="!mFormGroup.controls['name'].valid && mFormGroup.controls['name'].dirty && mFormGroup.controls['name'].errors?.['required']"
+          class="alert alert-danger form-text name-error-required"
+          role="alert"
+        >
+          {{ labels.country.name.label }} es requerido
+        </div>
+      </div>
+      <!-- name . end -->
+      <!-- code . init -->
+      <div class="form-group">
+        <label for="country-code">{{ labels.country.code.label }} *</label>
+        <input id="country-code" class="form-control" type="text" placeholder="Requerido" formControlName="code" />
+        <div
+          *ngIf="!mFormGroup.controls['code'].valid && mFormGroup.controls['code'].dirty && mFormGroup.controls['code'].errors?.['required']"
+          class="alert alert-danger form-text code-error-required"
+          role="alert"
+        >
+          {{ labels.country.code.label }} es requerido
+        </div>
+        <div
+          *ngIf="!mFormGroup.controls['code'].valid && mFormGroup.controls['code'].dirty && (mFormGroup.controls['code'].errors?.['minlength'] || mFormGroup.controls['code'].errors?.['maxlength'] ) "
+          class="alert alert-danger form-text code-error-valid-length"
+          role="alert"
+        >
+          {{ labels.country.code.label }} debe ser mínimo 2, máximo 2
+        </div>
+      </div>
+      <!-- code . end -->
+    </div>
+    <div class="card-footer">
+      <button (click)="onBack()" type="button" class="btn btn-secondary m-1">Regresar</button>
+      <button
+        *ngIf="hasPermission2edit"
+        (click)="onSave()"
+        type="submit"
+        class="btn btn-primary m-1 save-country"
+        [disabled]="!mFormGroup.valid || sending"
+      >
+        Guardar
+        <div *ngIf="sending" class="fa-3x i-sending mx-1 float-end">
+          <i class="fas fa-spinner fa-spin"></i>
+        </div>
+      </button>
+      <button
+        *ngIf="hasPermission2new && !isSubComponent && country.id"
+        (click)="addNew()"
+        type="button"
+        class="btn btn-warning m-1 new-country"
+      >
+        Agregar otro
+      </button>
+    </div>
+  </form>
+  <!-- form . end -->
+  <!-- related . init -- >
+    <div *ngIf="country?.id">    <nav ngbNav #nav="ngbNav" class="nav-tabs">
+<ng-container ngbNavItem>
+    <a ngbNavLink>{{labels.user.ownNamePlural}}</a>
+    <ng-template ngbNavContent>
+    <app-user-list [country]="country" [isSubComponent]="true">
+    </app-user-list>
+    </ng-template>
+</ng-container>
+<ng-container ngbNavItem>
+    <a ngbNavLink>{{labels.city.ownNamePlural}}</a>
+    <ng-template ngbNavContent>
+    <app-city-list [country]="country" [isSubComponent]="true">
+    </app-city-list>
+    </ng-template>
+</ng-container>
+<ng-container ngbNavItem>
+    <a ngbNavLink>{{labels.region.ownNamePlural}}</a>
+    <ng-template ngbNavContent>
+    <app-region-list [country]="country" [isSubComponent]="true">
+    </app-region-list>
+    </ng-template>
+</ng-container>
+</nav><div [ngbNavOutlet]="nav" class="bg-white"></div></div>
+<!-- related . end -->
+</div>

@@ -1,0 +1,17 @@
+.inDevMode {
+  background-color: red;
+  color: white;
+  display: block;
+  // height: 10px;
+  font-size: 8px;
+  font-weight: 800;
+  text-align: center;
+  text-shadow: 2px 2px black;
+}
+
+.notify {
+  top: 0;
+  left: 0;
+  z-index: 1500;
+  width: 100%;
+}

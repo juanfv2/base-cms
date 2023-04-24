@@ -1,0 +1,79 @@
+<div class="panel-header panel-header-sm"></div>
+<div class="main-content">
+  <form [formGroup]="mFormGroup" id="login-form">
+    <div class="row">
+      <div class="col-12 col-md-4 m-auto">
+        <div class="card card-user m-auto">
+          <div class="card-body">
+            <!-- class="image" -->
+            <div class="text-center m-1">
+              <img src="{{ labels.misc.k.routes.backEnd.storage }}images/logo.png" alt="" />
+
+              <p class="login-form-text sytem-text">
+                <b>{{ labels.misc.k.project_name }}</b>
+              </p>
+            </div>
+            <div class="form-group">
+              <label for="email">Correo electrónico</label>
+              <input
+                formControlName="email"
+                class="form-control"
+                placeholder="Correo electrónico"
+                required
+                autocomplete="email"
+              />
+              <div
+                *ngIf="!mFormGroup.controls['email'].valid && mFormGroup.controls['email'].touched && mFormGroup.controls['email'].errors?.['pattern']"
+                class="alert alert-danger form-text email-error-invalid"
+                role="alert"
+              >
+                Correo electrónico es invalido
+              </div>
+              <div
+                *ngIf="!mFormGroup.controls['email'].valid && (mFormGroup.controls['email'].dirty && mFormGroup.controls['email'].errors?.['required'])"
+                class="alert alert-danger form-text email-error-required"
+                role="alert"
+              >
+                Correo electrónico es requerido
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="login-password">Contraseña</label>
+              <input
+                formControlName="password"
+                class="form-control"
+                placeholder="Contraseña"
+                required
+                type="password"
+              />
+              <div
+                *ngIf="!mFormGroup.controls['password'].valid && mFormGroup.controls['password'].dirty && mFormGroup.controls['password'].errors?.['required']"
+                class="alert alert-danger form-text password-error-required"
+                role="alert"
+              >
+                Contraseña es requerida
+              </div>
+            </div>
+            <hr class="m-3" />
+            <div class="button-container">
+              <button
+                type="button"
+                class="btn btn-primary"
+                (click)="login()"
+                type="submit"
+                [disabled]="!mFormGroup.valid || sending"
+              >
+                Ingresar
+                <div *ngIf="sending" class="fa-3x i-sending mx-1 float-end">
+                  <i class="fas fa-star-of-david fa-spin"></i>
+                </div>
+              </button>
+            </div>
+            <label class="d-flex justify-content-end"></label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
