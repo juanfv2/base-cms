@@ -20,5 +20,16 @@
     "isVisible": 1,
     "permission_id": 2,
     "orderInMenu": 1
+  },
+  {
+    "isGroup": true,
+    "name": "Fallo",
+    "namePlural": "Fallos",
+    "namePluralBackEnd": "visor-log-errors",
+    "icon": "bomb",
+    "isSection": 0,
+    "isVisible": 1,
+    "permission_id": 2,
+    "orderInMenu": 2
   }
 ]

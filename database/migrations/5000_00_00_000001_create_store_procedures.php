@@ -3,15 +3,13 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 
-class CreateStoreProcedures extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         DB::unprepared(file_get_contents(__DIR__.'/sql-files/00-01-mysql-store_procedures.sql'));
     }
-}
+};
