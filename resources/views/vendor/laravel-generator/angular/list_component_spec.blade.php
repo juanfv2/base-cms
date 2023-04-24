@@ -24,6 +24,7 @@ fixture = TestBed.createComponent({{ $config->modelNames->name }}ListComponent);
 component = fixture.componentInstance;
 const items = Helpers.generateObjectsMock(component.itemLabels, 3)
 component.responseList = {content: items} as JfResponseList<{{ $config->modelNames->name }}>
+component.hasPermission2delete = true
 
 domHelper = new DOMHelper(fixture)
 fixture.detectChanges();

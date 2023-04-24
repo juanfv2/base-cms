@@ -70,7 +70,10 @@ const search = !this.isSubComponent ? JfStorageManagement.getItem(this.kConditio
 const mSearch = {
 lazyLoadEvent: new JfLazyLoadEvent(),
 {!! $relations_fields_init_search_model !!}
+cModel: '-App-Models-{{ $config->modelNames->name }}',
 };
+this.currentFields(mSearch)
+
 const r = search ? (JSON.parse(search) || mSearch) : mSearch;
 // console.log('r', r);
 return r;
@@ -81,14 +84,12 @@ this.modelSearch = this.initSearchModel();
 if (this.isSubComponent) {
 {{ $relations_fields_init_search }}
 } else {
-if (this.modelSearch) {
-if (this.modelSearch.conditions) {
+if (this.modelSearch?.conditions?.length) {
 Promise.resolve(this.searchField).then(() => {
 for (const condition of this.modelSearch.conditions) {
 this.addFilter(condition);
 }
 });
-}
 }
 }
 }
@@ -109,11 +110,7 @@ for (const c of this.modelSearch.conditions) {
 nextOperator = JfUtils.addCondition(c, nextOperator, conditions)
 }
 }
-// joinType === '<' leftJoin, '>' rightJoin
-// 'joinTable.joinTablePK.ownTableFK'
-// 'joinTable.joinTablePK.ownTableFK.joinType'
-// 'joinTable.joinTablePK.ownTable.ownTableFK'
-// 'joinTable.joinTablePK.ownTable.ownTableFK.joinType'
+
 this.modelSearch.lazyLoadEvent.joins = [
 {{ $relations_fields_on_lazy_load_2 }}
 ];
@@ -131,8 +128,8 @@ break;
 }
 }
 
-override addNew(): void {
+override onAddNew(m: any): void {
 this.itemCurrent = { {{ $relations_fields_add_new }} } as unknown as {{ $config->modelNames->name }};
-super.addNew()
+super.onAddNew(m)
 }
 }

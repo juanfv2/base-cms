@@ -92,5 +92,4 @@ expect(crudServiceStub.updateEntity).toHaveBeenCalledTimes(1)
 
 expect(crudServiceStub.updateEntity).toHaveBeenCalledWith(k.routes.{{ $config->modelNames->camelPlural }}, modelTemp)
 })
-
 });
