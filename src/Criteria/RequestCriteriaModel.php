@@ -96,7 +96,6 @@ class RequestCriteriaModel implements CriteriaInterfaceModel
                 $_kConditionalStr = '=';
                 $condition = explode(' ', (string) $k->c);
 
-
                 switch (count($condition)) {
                     case 3:
                         $_kOperatorStr = $condition[0];
@@ -139,15 +138,15 @@ class RequestCriteriaModel implements CriteriaInterfaceModel
                 }
 
                 if ($_kConditionalStr === 'like') {
-                    $_kValue = '%' . $_kValue . '%';
+                    $_kValue = '%'.$_kValue.'%';
                 }
                 if ($_kConditionalStr === 'like>') {
                     $_kConditionalStr = 'like';
-                    $_kValue = $_kValue . '%';
+                    $_kValue = $_kValue.'%';
                 }
                 if ($_kConditionalStr === '<like') {
                     $_kConditionalStr = 'like';
-                    $_kValue = '%' . $_kValue;
+                    $_kValue = '%'.$_kValue;
                 }
 
                 switch ($_kConditionalStr) {
@@ -229,9 +228,9 @@ class RequestCriteriaModel implements CriteriaInterfaceModel
                 }
 
                 match ($joinType) {
-                    '<' => $this->model->getJQuery()->leftJoin($joinTable, $joinTable . '.' . $foreignKey, '=', $ownTable . '.' . $ownerKey),
-                    '>' => $this->model->getJQuery()->leftJoin($joinTable, $joinTable . '.' . $foreignKey, '=', $ownTable . '.' . $ownerKey),
-                    default => $this->model->getJQuery()->join($joinTable, $joinTable . '.' . $foreignKey, '=', $ownTable . '.' . $ownerKey),
+                    '<' => $this->model->getJQuery()->leftJoin($joinTable, $joinTable.'.'.$foreignKey, '=', $ownTable.'.'.$ownerKey),
+                    '>' => $this->model->getJQuery()->leftJoin($joinTable, $joinTable.'.'.$foreignKey, '=', $ownTable.'.'.$ownerKey),
+                    default => $this->model->getJQuery()->join($joinTable, $joinTable.'.'.$foreignKey, '=', $ownTable.'.'.$ownerKey),
                 };
 
                 if (isset($k->v)) {
@@ -255,7 +254,7 @@ class RequestCriteriaModel implements CriteriaInterfaceModel
                 }
             }
         } else {
-            $this->model->getJQuery()->addSelect($this->model->getTable() . '.*');
+            $this->model->getJQuery()->addSelect($this->model->getTable().'.*');
         }
     }
 
@@ -289,13 +288,13 @@ class RequestCriteriaModel implements CriteriaInterfaceModel
         $baseAssets = 'assets/adm';
 
         if ($rCountry) {
-            $baseAssets = $baseAssets . '/' . $rCountry;
+            $baseAssets = $baseAssets.'/'.$rCountry;
         }
 
         $path = "$baseAssets/temporals/$fileTempName/{$this->model->getTable()}/massive-with-file/$massiveQueryFileName";
         $columns = [];
 
-        if (!Storage::disk('public')->exists($path)) {
+        if (! Storage::disk('public')->exists($path)) {
             throw new \Juanfv2\BaseCms\Exceptions\NoReportException("Archivo no encontrado: '{$massiveQueryFileName}'");
         }
 
@@ -412,7 +411,7 @@ class RequestCriteriaModel implements CriteriaInterfaceModel
                 }
 
                 if (is_array($k)) {
-                    $where .= " $_kOperatorStrNested (" . RequestGenericCriteria::conditionz($k, 'OR') . ')';
+                    $where .= " $_kOperatorStrNested (".RequestGenericCriteria::conditionz($k, 'OR').')';
 
                     continue; // continuar con el siguiente.
                 }
@@ -435,20 +434,20 @@ class RequestCriteriaModel implements CriteriaInterfaceModel
                 $_kValue = property_exists($k, 'v') ? $k->v : $noValue;
                 $_kValueIsOptionNull = str_contains($_kConditionalStr, 'null');
 
-                if (!$_kValueIsOptionNull && $_kValue === $noValue) {
+                if (! $_kValueIsOptionNull && $_kValue === $noValue) {
                     continue;
                 }
 
                 if ($_kConditionalStr === 'like') {
-                    $_kValue = '%' . $_kValue . '%';
+                    $_kValue = '%'.$_kValue.'%';
                 }
                 if ($_kConditionalStr === 'like>') {
                     $_kConditionalStr = 'like';
-                    $_kValue = $_kValue . '%';
+                    $_kValue = $_kValue.'%';
                 }
                 if ($_kConditionalStr === '<like') {
                     $_kConditionalStr = 'like';
-                    $_kValue = '%' . $_kValue;
+                    $_kValue = '%'.$_kValue;
                 }
 
                 if ($_kValueIsOptionNull) {
