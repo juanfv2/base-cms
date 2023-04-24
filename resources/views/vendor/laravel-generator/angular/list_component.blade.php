@@ -51,6 +51,7 @@ this.fieldsInList = [ {!! $searchable_1 !!} ,  {!! $searchable_2 !!}  ];
 this.hasPermission2show = JfRequestOption.isAuthorized(`/${kRoute}/show`)
 this.hasPermission2new = JfRequestOption.isAuthorized(`/${kRoute}/new`)
 this.hasPermission2delete = JfRequestOption.isAuthorized(`/${kRoute}/delete`)
+this.storageSession = true
 }
 
 ngOnInit(): void {
@@ -66,7 +67,7 @@ this.onLazyLoad();
 }
 
 initSearchModel(): any {
-const search = !this.isSubComponent ? JfStorageManagement.getItem(this.kConditions) : null;
+const search = !this.isSubComponent ? JfStorageManagement.getItem(this.kConditions, this.storageSession) : null;
 const mSearch = {
 lazyLoadEvent: new JfLazyLoadEvent(),
 {!! $relations_fields_init_search_model !!}
