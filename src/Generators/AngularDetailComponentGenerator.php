@@ -524,8 +524,8 @@ class AngularDetailComponentGenerator extends BaseGenerator
             $title = Str::title($field);
             $fieldCamel = Str::camel($field);
 
-            $fields[] = "{$fieldFk}:        new DBType({name: '$fieldFk', label: '$title #',field: '$fieldCamel.id',type: 'number'} as DBType),";
-            $fields[] = "{$fieldCamel}Name: new DBType({name: '{$fieldCamel}Name', label: '$title', field: '{$fieldCamel}Name',   type: 'string', allowExport: true, allowImport:false} as DBType),";
+            $fields[] = "// {$fieldFk}:        new DBType({label: '$title #', name: '$fieldFk',          field: '$fieldCamel.id',    type: 'number'} as DBType),";
+            $fields[] = "// {$fieldCamel}Name: new DBType({label: '$title',   name: '{$fieldCamel}Name', field: '{$fieldCamel}Name', type: 'string', allowExport: true, allowImport:false} as DBType),";
         }
 
         $fields[] = '},';
