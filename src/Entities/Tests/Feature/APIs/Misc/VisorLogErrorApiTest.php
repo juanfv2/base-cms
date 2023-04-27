@@ -40,6 +40,8 @@ class VisorLogErrorApiTest extends TestCase
 
         $model = VisorLogError::factory()->make()->toArray();
 
+        $model['payload'] = '-error-';
+
         $this->response = $this->json('POST', route('api.visor-log-errors.store'), $model);
 
         // $this->response->dd();

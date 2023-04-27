@@ -28,12 +28,19 @@ class VisorLogError extends Model
 
     public static $rules = [
         'payload' => 'required|string',
-        'queue' => 'required|string',
+        'queue' => 'required|string|max:191',
         'container_id' => 'required',
         'created_at' => 'nullable',
     ];
 
     public $hidden = [
-        'created_by', 'updated_by', 'created_at', 'updated_at', 'deleted_at',
+        'payload',
     ];
+
+    public function getErrorAttribute()
+    {
+        $object = json_decode($this->payload, null, 512, 0);
+
+        return $object ?? $this->payload;
+    }
 }
