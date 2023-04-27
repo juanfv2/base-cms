@@ -60,6 +60,10 @@ class ZRegisterAPIController extends AppBaseController
                 $r = $this->createAccount($input);
                 $message = __('messages.mail.verify', ['email' => $this->model->email]);
                 break;
+            // case 4:
+            //     $r = $this->createDriver($input);
+            //     $message = __('messages.mail.verify', ['email' => $this->model->email]);
+            //     break;
             default:
                 // code...
                 break;
