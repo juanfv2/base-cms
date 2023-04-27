@@ -2,17 +2,18 @@
 
 namespace App\Models\Auth;
 
-use App\Traits\BaseCmsModelUser;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Juanfv2\BaseCms\Traits\BaseCmsModel;
+use Juanfv2\BaseCms\Traits\BaseCmsModelUser;
 use Juanfv2\BaseCms\Traits\HasFile;
 use Juanfv2\BaseCms\Traits\UserResponsible;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use BaseCmsModel;
     use BaseCmsModelUser;
@@ -129,7 +130,7 @@ class User extends Authenticatable
 
     public function verifyUser()
     {
-        return $this->hasOne(\App\Models\Misc\XUserVerified::class);
+        event(new \Illuminate\Auth\Events\Registered($this));
     }
 
     /**

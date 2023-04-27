@@ -26,7 +26,7 @@ class ZResetPasswordController extends AppBaseController
         if (is_null($user)) {
             return $this->sendError(__('passwords.user'));
         }
-        $resetTable = 'password_resets';
+        $resetTable = 'password_reset_tokens';
         $reset = DB::table($resetTable)->where('email', $email)->first();
 
         $isValid = $reset && $reset->token == $input['token'];

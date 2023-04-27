@@ -4,10 +4,10 @@ namespace Tests\Feature\APIs\Auth;
 
 use App\Models\Auth\Role;
 use App\Models\Auth\User;
-use App\Models\Misc\XUserVerified;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Illuminate\Support\Facades\Auth;
 use Juanfv2\BaseCms\Traits\ApiTestTrait;
 use Tests\TestCase;
 
@@ -23,7 +23,7 @@ class ZRegisterAccountApiTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $role = Role::factory()->create(['id' => 4]);
+        $role = Role::factory()->create(['id' => 3]);
         $e = 'juanfv2@gmail.com';
         $p = '123456';
 
@@ -58,7 +58,7 @@ class ZRegisterAccountApiTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $role = Role::factory()->create(['id' => 4]);
+        $role = Role::factory()->create(['id' => 3]);
         $p = '123456';
         $e = 'juanfv2@gmail.com';
 
@@ -76,17 +76,19 @@ class ZRegisterAccountApiTest extends TestCase
         $response->assertOk();
 
         $user = User::where('email', $e)->first();
-        $userV = XUserVerified::where('user_id', $user->id)->first();
 
-        $this->response = $this->json('POST', route('api.register.verifyUser', ['token' => $userV->token]));
+        Auth::loginUsingId($user->id);
 
-        $this->response->assertOk();
+        $this->response = $this->json('GET', route('verification.verify', ['id' => $user->id, 'hash' => hash('sha1', (string) $user->email)]));
 
-        $response = $this->response->json();
+        $this->response->assertStatus(302);
 
-        // dump($response);
-        // $response->dump();
-        $resp = 'Su correo electrónico está verificado. Ahora puede iniciar sesión.';
-        $this->assertEquals($resp, $response['data']['description']);
+        //  TODO: Mostrar respuesta
+        // $response = $this->response->json();
+
+        // // dump($response);
+        // // $response->dump();
+        // $resp = 'Su correo electrónico está verificado. Ahora puede iniciar sesión.';
+        // $this->assertEquals($resp, $response['data']['description']);
     }
 }

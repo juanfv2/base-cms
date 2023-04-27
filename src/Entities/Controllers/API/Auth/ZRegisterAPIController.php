@@ -4,8 +4,8 @@ namespace App\Http\Controllers\API\Auth;
 
 use App\Models\Auth\Account;
 use App\Models\Auth\User;
-use App\Models\Misc\XUserVerified;
 use Carbon\Carbon;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Juanfv2\BaseCms\Controllers\AppBaseController;
@@ -57,10 +57,6 @@ class ZRegisterAPIController extends AppBaseController
         $message = '';
         switch (intval($input['role_id'])) {
             case 3:
-                $r = $this->createDriver($input);
-                $message = __('messages.mail.verifyDriver', ['email' => $this->model->email]);
-                break;
-            case 4:
                 $r = $this->createAccount($input);
                 $message = __('messages.mail.verify', ['email' => $this->model->email]);
                 break;
@@ -69,11 +65,10 @@ class ZRegisterAPIController extends AppBaseController
                 break;
         }
         if ($r instanceof User) {
-            // warning: show error
             return $this->sendResponse(['id' => $this->model->id, 'detail' => __('messages.mail.verifyTitle', ['email' => $this->model->email])], $message);
         }
         // warning: show error
-        return $r;
+        return $this->sendError(__('validation.model.error', ['model' => 'Usuario']));
     }
 
     /**
@@ -101,9 +96,10 @@ class ZRegisterAPIController extends AppBaseController
         return $this->model;
     }
 
-    public function verifyUser($token)
+    public function verifyUser(EmailVerificationRequest $request, $id, $hash)
     {
-        $verifyUser = XUserVerified::where('token', $token)->first();
+
+        $request->fulfill();
 
         $isValid = false;
         if (isset($verifyUser)) {
@@ -135,7 +131,7 @@ class ZRegisterAPIController extends AppBaseController
 
     public function createAccount($input)
     {
-        $roleId = 4;
+        $roleId = 3;
         $accountGroupId = 1;
 
         // user
@@ -164,7 +160,7 @@ class ZRegisterAPIController extends AppBaseController
 
     public function createDriver($input)
     {
-        $roleId = 3;
+        $roleId = 4;
         $accountGroupId = 1;
 
         // user

@@ -74,9 +74,15 @@ class Role extends Model
 
     public function getMenusAttribute()
     {
+        return $this->menusFromParent(0);
+    }
+
+    public function menusFromParent($permission_id)
+    {
         $menus = $this->belongsToMany(Permission::class, 'auth_role_permission')
             ->where('isVisible', 1)
             ->where('isSection', 1)
+            ->where('auth_permissions.permission_id', $permission_id)
             ->orderBy('orderInMenu')
             ->get();
         foreach ($menus as $menu) {
@@ -89,10 +95,15 @@ class Role extends Model
     public function inRoleSubMenus($id)
     {
         // logger(__FILE__ . ':' . __LINE__ . ' subMenus ', [$id]);
-        return $this->belongsToMany(Permission::class, 'auth_role_permission')
+        $subMenus = $this->belongsToMany(Permission::class, 'auth_role_permission')
             ->where('isVisible', 1)
             ->where('auth_permissions.permission_id', $id)
             ->orderBy('orderInMenu')
             ->get();
+
+        foreach ($subMenus as $menu) {
+            $menu->subMenus = $this->inRoleSubMenus($menu->id);
+        }
+        return $subMenus;
     }
 }

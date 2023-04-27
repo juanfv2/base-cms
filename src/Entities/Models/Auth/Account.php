@@ -18,6 +18,7 @@ class Account extends Model
     public $table = 'auth_accounts';
 
     public $fillable = [
+        'id',
         'firstName',
         'lastName',
         'cellPhone',

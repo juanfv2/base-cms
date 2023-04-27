@@ -20,6 +20,7 @@ class Person extends Model
     public $incrementing = false;
 
     public $fillable = [
+        'id',
         'firstName',
         'lastName',
         'cellPhone',

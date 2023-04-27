@@ -32,7 +32,7 @@ class ZResetPasswordApiTest extends TestCase
 
         $response->assertOk();
 
-        $resetTable = 'password_resets';
+        $resetTable = 'password_reset_tokens';
         $reset = DB::table($resetTable)->where('email', $account->email)->first();
 
         $credentials = [
@@ -103,7 +103,7 @@ class ZResetPasswordApiTest extends TestCase
 
         $response->assertOk();
 
-        $resetTable = 'password_resets';
+        $resetTable = 'password_reset_tokens';
         $reset = DB::table($resetTable)->where('email', $account->email)->first();
 
         $credentials = [
