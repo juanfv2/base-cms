@@ -86,13 +86,13 @@ class Role extends Model
             ->orderBy('orderInMenu')
             ->get();
         foreach ($menus as $menu) {
-            $menu->subMenus = $this->inRoleSubMenus($menu->id);
+            $menu->subMenus = $this->roleFromSubMenu($menu->id);
         }
 
         return $menus;
     }
 
-    public function inRoleSubMenus($id)
+    public function roleFromSubMenu($id)
     {
         // logger(__FILE__ . ':' . __LINE__ . ' subMenus ', [$id]);
         $subMenus = $this->belongsToMany(Permission::class, 'auth_role_permission')
@@ -102,7 +102,7 @@ class Role extends Model
             ->get();
 
         foreach ($subMenus as $menu) {
-            $menu->subMenus = $this->inRoleSubMenus($menu->id);
+            $menu->subMenus = $this->roleFromSubMenu($menu->id);
         }
         return $subMenus;
     }
