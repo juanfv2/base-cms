@@ -65,6 +65,8 @@ class VisorLogErrorApiTest extends TestCase
         $model = VisorLogError::factory()->create();
         $modelEdited = VisorLogError::factory()->make()->toArray();
 
+        $modelEdited['payload'] = '-error-';
+
         $this->response = $this->json('PUT', route('api.visor-log-errors.update', ['visor_log_error' => $model->id]), $modelEdited);
 
         $this->assertJsonModifications();
