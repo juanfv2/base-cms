@@ -8,7 +8,7 @@ class AdminController extends Controller
 {
     public function admin()
     {
-        \Debugbar::disable();
+        \Barryvdh\Debugbar\Facades\Debugbar::disable();
 
         $index = public_path('_.admin/index.html');
 
@@ -21,7 +21,7 @@ class AdminController extends Controller
 
     public function adminDevelopment()
     {
-        \Debugbar::enable();
+        \Barryvdh\Debugbar\Facades\Debugbar::enable();
 
         $index = public_path('_.admin/index.html');
 

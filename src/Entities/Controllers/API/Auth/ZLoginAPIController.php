@@ -35,14 +35,12 @@ class ZLoginAPIController extends AppBaseController
     }
 
     // Utilities
-
     /**
      * Attempt to create an access token using user credentials
      *
      * @param $array
-     * @return \App\Models\Auth\User|\Illuminate\Http\JsonResponse
      */
-    public function attemptLogin($request)
+    public function attemptLogin($request): User|\Illuminate\Http\JsonResponse
     {
         $email = $request['email'];
         $password = $request['password'];

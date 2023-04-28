@@ -39,7 +39,7 @@ class VisorLogError extends Model
 
     public function getErrorAttribute()
     {
-        $object = json_decode($this->payload, null, 512, 0);
+        $object = json_decode((string) $this->payload, null, 512, 0);
 
         return $object ?? $this->payload;
     }

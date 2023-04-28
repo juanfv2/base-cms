@@ -104,6 +104,7 @@ class Role extends Model
         foreach ($subMenus as $menu) {
             $menu->subMenus = $this->roleFromSubMenu($menu->id);
         }
+
         return $subMenus;
     }
 }
