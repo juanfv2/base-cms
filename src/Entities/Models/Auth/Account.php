@@ -17,6 +17,8 @@ class Account extends Model
 
     public $table = 'auth_accounts';
 
+    public $incrementing = false;
+
     public $fillable = [
         'id',
         'firstName',
