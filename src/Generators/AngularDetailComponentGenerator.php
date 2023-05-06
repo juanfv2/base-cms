@@ -487,7 +487,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
         $fields[] = "}\n";
 
         $fields[] = "// admin-angular/src/environments/k.ts>routes\n";
-        $fields[] = "{$this->config->modelNames->camel}: '{$this->config->modelNames->dashedPlural}',\n";
+        $fields[] = "{$this->config->modelNames->camelPlural}: '{$this->config->modelNames->dashedPlural}',\n";
 
         $fields[] = '// admin-angular/src/environments/l.ts';
         $fields[] = '';
