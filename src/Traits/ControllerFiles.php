@@ -128,7 +128,7 @@ trait ControllerFiles
 
             if (($fileExtension == 'csv' || $fileExtension == 'txt') && ($handle = fopen($_versionsCsv_File, 'r')) !== false) {
                 $delimiter = _file_delimiter($_versionsCsv_File);
-                if ((bool) $request->soon) {
+                if ((bool) $request->immediate) {
                     $keys = json_decode($request->get('keys'), true);
                     $primaryKeyName = $request->get('primaryKeyName');
                     $cModel = \Illuminate\Support\Str::replace('-', '\\', $request->get('cModel', ''));

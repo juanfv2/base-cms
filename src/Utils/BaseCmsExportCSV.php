@@ -87,7 +87,7 @@ class BaseCmsExportCSV implements BaseCmsExport
         return response()
             ->download($p, $this->filename)
             ->deleteFileAfterSend(true);
-            // ..
+        // ..
     }
 
     public function send2file($pathCsv)
