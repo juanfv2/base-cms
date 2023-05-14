@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Juanfv2\BaseCms\Utils\BaseCmsExportCSV;
+use Juanfv2\BaseCms\Utils\BaseCmsExportExcel;
 
 trait ImportableExportable
 {
@@ -381,6 +382,10 @@ trait ImportableExportable
         $labels = \ForceUTF8\Encoding::fixUTF8($headers);
         $fNames = array_keys($headers);
         $exporter = new BaseCmsExportCSV($title, $extension);
+
+        if (class_exists(\Maatwebsite\Excel\Facades\Excel::class)) {
+            $exporter = new BaseCmsExportExcel($title, $extension);
+        }
 
         $exporter->initialize($labels);
 
