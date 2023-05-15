@@ -108,7 +108,7 @@ trait ControllerFiles
         $time = now()->format('Y_m_d_H_i_s_u');
         $strLocation = "$baseAssets$tableName/$fieldName";
         $originalName = $request->$fieldName->getClientOriginalName();
-        $fileExtension = $request->$fieldName->extension();
+        $fileExtension = strtolower($request->$fieldName->getClientOriginalExtension());
         $fileNamePrefix = $tableName.'-'.$id;
         $newName = "$fileNamePrefix-$time";
         $newNameWithExtension = $newName.'.'.$fileExtension;
@@ -128,6 +128,7 @@ trait ControllerFiles
 
             if (($fileExtension == 'csv' || $fileExtension == 'txt') && ($handle = fopen($_versionsCsv_File, 'r')) !== false) {
                 $delimiter = _file_delimiter($_versionsCsv_File);
+
                 if ((bool) $request->immediate) {
                     $keys = json_decode($request->get('keys'), true);
                     $primaryKeyName = $request->get('primaryKeyName');
