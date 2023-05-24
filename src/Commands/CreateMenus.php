@@ -93,9 +93,9 @@ class CreateMenus extends Command
         $id = $request['id'] ?? null;
         $isGroup = isset($request['isGroup']);
         $nameSingular = $request['name'];
-        $namePlural = $request['namePlural'];
+        $namePlural = $request['namePlural'] ?? '';
         $icon = $request['icon'];
-        $namePluralBackEnd = $request['namePluralBackEnd'];
+        $namePluralBackEnd = $request['namePluralBackEnd'] ?? '';
         $isSection = $request['isSection'];
         $isVisible = $request['isVisible'];
         $permission_id = $request['permission_id'];
