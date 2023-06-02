@@ -23,7 +23,7 @@ Agregar criterio de búsqueda
 
 <base-cms-generic-table
 *ngIf="!itemCurrent"
-[loadCsv]="true"
+[allowImport]="true"
 [csv]="csv"
 [labels]="labels"
 [itemLabels]="itemLabels"
