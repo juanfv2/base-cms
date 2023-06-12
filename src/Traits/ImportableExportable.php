@@ -3,14 +3,77 @@
 namespace Juanfv2\BaseCms\Traits;
 
 use App\Models\Misc\VisorLogError;
+use App\Models\Misc\XFile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Juanfv2\BaseCms\Events\AnyTableExportEvent;
+use Juanfv2\BaseCms\Events\AnyTableImportEvent;
 use Juanfv2\BaseCms\Utils\BaseCmsExportCSV;
 use Juanfv2\BaseCms\Utils\BaseCmsExportExcel;
 
 trait ImportableExportable
 {
+    public function import2email(Request $request, XFile $xFile)
+    {
+        // your-code
+        $input = $request->all();
+
+        session(['cQueue' => $this->queueName('import')]);
+
+        $input['user_id'] = auth()->user()->id;
+        $input['user_email'] = auth()->user()->email;
+        $input['rCountry'] = $request->header('r-country', '.l.');
+        $input['massiveQueryFieldName'] = $xFile->fieldName;
+        $input['massiveQueryFileName'] = $xFile->name;
+        $input['massiveQueryFileNameOriginal'] = $xFile->nameOriginal;
+        $input['cQueue'] = session('cQueue');
+        $input['cModel'] = Str::replace('-', '\\', $request->get('cModel', ''));
+
+        unset($input['massive-inserts']);
+
+        // dd($input);
+        $inputObj = (object) $input;
+        $inputObj->keys = json_decode((string) $input['keys'], true, 512, JSON_THROW_ON_ERROR);
+        $inputObj->primaryKeyName = _isJson($input['primaryKeyName']) ? json_decode((string) $input['primaryKeyName'], true, 512, JSON_THROW_ON_ERROR) : $input['primaryKeyName'];
+
+        // dd($inputObj);
+
+        $dbDefault = config('base-cms.default_prefix').config('base-cms.default_code');
+        config()->set('database.default', $dbDefault);
+        event(new AnyTableImportEvent($inputObj));
+        $this->trackingPending($inputObj->rCountry, $inputObj->cQueue, $inputObj->user_id);
+
+        $xFile->extension = __('messages.mail.file.alert', ['email' => $inputObj->user_email]);
+        $xFile->cQueue = $inputObj->cQueue;
+
+        return $xFile;
+    }
+
+    public function export2email(Request $request)
+    {
+        session(['cQueue' => $this->queueName('export')]);
+        $input = $request->all();
+
+        $input['rCountry'] = $request->header('r-country', '.l.');
+        $input['user_id'] = auth()->user()->id;
+        $input['user_email'] = auth()->user()->email;
+        $input['user_name'] = auth()->user()->name;
+        $input['cQueue'] = session('cQueue');
+        $input['cModel'] = Str::replace('-', '\\', $request->get('cModel', ''));
+        $input['extension'] = $request->ext;
+
+        $inputObj = (object) $input;
+
+        $dbDefault = config('base-cms.default_prefix').config('base-cms.default_code');
+        config()->set('database.default', $dbDefault);
+        event(new AnyTableExportEvent($inputObj));
+        $this->trackingPending($inputObj->rCountry, $inputObj->cQueue, $inputObj->user_id);
+
+        return $this->sendResponse(['cQueue' => $inputObj->cQueue], __('messages.mail.file.alert', ['email' => $input['user_email']]));
+    }
+
     /* -------------------------------------------------------------------------- */
     /* save                                                                       */
     /* -------------------------------------------------------------------------- */

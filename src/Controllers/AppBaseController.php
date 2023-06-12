@@ -10,10 +10,14 @@ use Juanfv2\BaseCms\Resources\GenericResource;
 use Juanfv2\BaseCms\Traits\ControllerFiles;
 use Juanfv2\BaseCms\Traits\ControllerResponses;
 use Juanfv2\BaseCms\Traits\ImportableExportable;
+use Juanfv2\BaseCms\Traits\ListenerTracking;
 
 class AppBaseController extends Controller
 {
-    use ControllerResponses, ControllerFiles, ImportableExportable;
+    use ControllerResponses;
+    use ControllerFiles;
+    use ImportableExportable;
+    use ListenerTracking;
 
     /** $model \Illuminate\Database\Eloquent\Model */
     public $model;
@@ -34,6 +38,8 @@ class AppBaseController extends Controller
         $this->model->pushCriteria(new RequestCriteriaModel($request));
 
         switch ($action) {
+            case 'export-limit':
+                return $this->export2email($request);
             case 'export':
                 $headers = json_decode($request->get('fields'), true, 512, JSON_THROW_ON_ERROR);
                 $zName = _sanitize($request->get('title', '-'));

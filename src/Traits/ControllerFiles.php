@@ -125,24 +125,35 @@ trait ControllerFiles
             $_versionsCsv_File = storage_path("app/$path");
             $xFile->name = $name;
             $xFile->nameOriginal = $originalName;
+            $xFile->fieldName = $fieldName;
 
             if (($fileExtension == 'csv' || $fileExtension == 'txt') && ($handle = fopen($_versionsCsv_File, 'r')) !== false) {
                 $delimiter = _file_delimiter($_versionsCsv_File);
 
-                if ((bool) $request->immediate) {
-                    $keys = json_decode($request->get('keys'), true);
-                    $primaryKeyName = $request->get('primaryKeyName');
-                    $cModel = \Illuminate\Support\Str::replace('-', '\\', $request->get('cModel', ''));
-                    $created = 0;
+                switch ($request->immediate) {
+                    case 'email':
+                        $this->import2email($request, $xFile);
+                        break;
 
-                    try {
-                        $created = $this->importing($handle, $tableName, $primaryKeyName, $keys, $delimiter, $cModel);
+                    case 'temporal':
+                        $this->import2email($request, $xFile);
+                        break;
+                    default:
+                        $keys = json_decode($request->get('keys'), true);
+                        $primaryKeyName = $request->get('primaryKeyName');
+                        $cModel = \Illuminate\Support\Str::replace('-', '\\', $request->get('cModel', ''));
+                        $created = 0;
 
-                        return $this->sendResponse([$fieldName => ['updated' => $created]], __('validation.model.list', ['model' => $tableName]));
-                    } catch (\Throwable $th) {
-                        // throw $th;
-                        return $this->sendError([$fieldName => ['code' => $th->getCode(), 'message' => $th->getMessage(), 'updated' => $created]], 'Error en la linea '.$created, 500);
-                    }
+                        try {
+                            $created = $this->importing($handle, $tableName, $primaryKeyName, $keys, $delimiter, $cModel);
+
+                            return $this->sendResponse([$fieldName => ['updated' => $created]], __('validation.model.list', ['model' => $tableName]));
+                        } catch (\Throwable $th) {
+                            // throw $th;
+                            return $this->sendError([$fieldName => ['code' => $th->getCode(), 'message' => $th->getMessage(), 'updated' => $created]], 'Error en la linea '.$created, 500);
+                        }
+
+                        break;
                 }
 
                 while (($data = fgetcsv($handle, 1000, $delimiter)) !== false) {
@@ -211,10 +222,7 @@ trait ControllerFiles
 
         $xFile->columns = $columns;
 
-        return $this->sendResponse(
-            [$fieldName => $xFile],
-            __('validation.model.image.added', ['model' => $tableName])
-        );
+        return $this->sendResponse([$fieldName => $xFile], __('validation.model.image.added', ['model' => $tableName]));
     }
 
     /**
