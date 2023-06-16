@@ -135,10 +135,7 @@ trait ControllerFiles
                         $this->import2email($request, $xFile);
                         break;
 
-                    case 'temporal':
-                        $this->import2email($request, $xFile);
-                        break;
-                    default:
+                    case 'immediate':
                         $keys = json_decode($request->get('keys'), true);
                         $primaryKeyName = $request->get('primaryKeyName');
                         $cModel = \Illuminate\Support\Str::replace('-', '\\', $request->get('cModel', ''));
@@ -152,7 +149,10 @@ trait ControllerFiles
                             // throw $th;
                             return $this->sendError([$fieldName => ['code' => $th->getCode(), 'message' => $th->getMessage(), 'updated' => $created]], 'Error en la linea '.$created, 500);
                         }
-
+                        // $this->import2email($request, $xFile);
+                        break;
+                    default:
+                        // save in temporal
                         break;
                 }
 
