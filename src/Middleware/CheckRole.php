@@ -15,7 +15,7 @@ class CheckRole
     {
         $isDev = request()->headers->get('dev', '');
         if ($isDev) {
-            \Debugbar::enable();
+            \Barryvdh\Debugbar\Facades\Debugbar::enable();
         }
 
         if (! $this->userHasPermission()) {
@@ -35,9 +35,13 @@ class CheckRole
         $cRouteParent = Route::getCurrentRoute()->action['as'];
         $cRouteChild = request()->get('cp', '-.-');
 
-        // logger(__FILE__ . ':' . __LINE__ . ' $cRoute ', [$cRoute]);
+        /**
+         * array: config('base-cms.authenticated')
+         * api.names that only authenticated is needed
+         */
+        $authenticated = config('base-cms.authenticated') ?? [];
 
-        if ($cRouteParent == 'api.login.logout' && $cRouteChild == '-.-') {
+        if (in_array($cRouteParent, $authenticated)) {
             return true;
         }
 
