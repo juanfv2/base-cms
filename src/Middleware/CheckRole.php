@@ -18,7 +18,7 @@ class CheckRole
             \Barryvdh\Debugbar\Facades\Debugbar::enable();
         }
 
-        if (! $this->userHasPermission()) {
+        if (!$this->userHasPermission()) {
             // Redirect...
             return response()->json(['message' => __('auth.no.auth')], 401);
             //abort(401);
@@ -39,7 +39,7 @@ class CheckRole
          * array: config('base-cms.authenticated')
          * api.names that only authenticated is needed
          */
-        $authenticated = config('base-cms.authenticated') ?? [];
+        $authenticated = config('base-cms.authenticated') ?? ['api.login.logout'];
 
         if (in_array($cRouteParent, $authenticated)) {
             return true;
@@ -58,8 +58,8 @@ class CheckRole
 
         // -- sql-server $menu = DB::select('execute sp_has_permission ?, ?;', [$this->id, $cRoute]);
 
-        if (! $hasPermission) {
-            logger(__FILE__.':'.__LINE__.auth()->id()." -'$hasPermission'- [call sp_save_permission_permission('$cRouteParent','$cRouteChild');]:-", [$menu]);
+        if (!$hasPermission) {
+            logger(__FILE__ . ':' . __LINE__ . auth()->id() . " -'$hasPermission'- [call sp_save_permission_permission('$cRouteParent','$cRouteChild');]:-", [$menu]);
         }
 
         return $hasPermission;
