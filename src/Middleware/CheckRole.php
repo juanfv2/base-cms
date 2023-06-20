@@ -18,7 +18,7 @@ class CheckRole
             \Barryvdh\Debugbar\Facades\Debugbar::enable();
         }
 
-        if (!$this->userHasPermission()) {
+        if (! $this->userHasPermission()) {
             // Redirect...
             return response()->json(['message' => __('auth.no.auth')], 401);
             //abort(401);
@@ -58,8 +58,8 @@ class CheckRole
 
         // -- sql-server $menu = DB::select('execute sp_has_permission ?, ?;', [$this->id, $cRoute]);
 
-        if (!$hasPermission) {
-            logger(__FILE__ . ':' . __LINE__ . auth()->id() . " -'$hasPermission'- [call sp_save_permission_permission('$cRouteParent','$cRouteChild');]:-", [$menu]);
+        if (! $hasPermission) {
+            logger(__FILE__.':'.__LINE__.auth()->id()." -'$hasPermission'- [call sp_save_permission_permission('$cRouteParent','$cRouteChild');]:-", [$menu]);
         }
 
         return $hasPermission;
