@@ -215,9 +215,9 @@ class AnyTableExportListener implements ShouldQueue
 
         // success:::
 
-        $company = auth()->user()->role_id == 8 ? 'ransanet' : 'admin';
+        // $company = auth()->user()->role_id == 8 ? 'ransanet' : 'admin';
 
-        $this->event->data->actionUrl = url("{$company}/{$this->event->data->rCountry}/reports/tracking-jobs");
+        // $this->event->data->actionUrl = url("{$company}/{$this->event->data->rCountry}/reports/tracking-jobs");
         $this->event->data->greeting = __('messages.mail.file.subject', ['app_name' => config('app.name'), 'file_name' => 'Excel Report']);
         $this->event->data->subject = __('messages.mail.file.subject', ['app_name' => config('app.name'), 'file_name' => 'Excel Report']);
 
@@ -225,7 +225,7 @@ class AnyTableExportListener implements ShouldQueue
 
         $this->event->data->outroLines = [
             'Nombre del proceso' => $this->event->data->cQueue,
-            'URL' => url("{$company}/{$this->event->data->rCountry}/reports/tracking-jobs"),
+            // 'URL' => url("{$company}/{$this->event->data->rCountry}/reports/tracking-jobs"),
             'Cantidad' => "{$this->counted}/{$this->event->data->qq} . PARTE: {$this->sent}",
         ];
         // *** step 3: send notification
