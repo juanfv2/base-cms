@@ -13,12 +13,54 @@ use Intervention\Image\Facades\Image;
 
 trait ControllerFiles
 {
+    public function import2immediate($request, $tableName, $fieldName, $delimiter, $handle, $basePath)
+    {
+        $keys = $request->get('keys');
+        $primaryKeyName = $request->get('primaryKeyName');
+        $cModel = Str::replace('-', '\\', $request->get('cModel', ''));
+        $created = 0;
+
+        try {
+            $created = $this->importing($handle, $tableName, $primaryKeyName, $keys, $delimiter, $cModel);
+
+            logger(__FILE__ . ':' . __LINE__ . ' $basePath ', [$basePath]);
+
+            Storage::disk('public')->deleteDirectory($basePath);
+
+            return $this->sendResponse([$fieldName => ['updated' => $created]], __('validation.model.list', ['model' => $tableName]));
+        } catch (\Throwable $th) {
+            // throw $th;
+            return $this->sendError([$fieldName => ['code' => $th->getCode(), 'message' => $th->getMessage(), 'updated' => $created]], 'Error en la linea ' . $created, 500);
+        }
+    }
+
+    public function import2delete($request, $tableName, $fieldName, $delimiter, $handle, $basePath)
+    {
+        logger(__FILE__ . ':' . __LINE__ . '  $tableName, $fieldName, $delimiter, $handle, $basePath ', [$tableName, $fieldName, $delimiter, $handle, $basePath]);
+
+        $keys = $request->get('keys');
+        $primaryKeyName = $request->get('primaryKeyName');
+        $cModel = Str::replace('-', '\\', $request->get('cModel', ''));
+        $created = 0;
+
+        try {
+            $created = $this->deleting($handle, $tableName, $primaryKeyName, $keys, $delimiter, $cModel);
+
+            Storage::disk('public')->deleteDirectory($basePath);
+
+            return $this->sendResponse([$fieldName => ['updated' => $created]], __('validation.model.list', ['model' => $tableName]));
+        } catch (\Throwable $th) {
+            // throw $th;
+            return $this->sendError([$fieldName => ['code' => $th->getCode(), 'message' => $th->getMessage(), 'updated' => $created]], 'Error en la linea ' . $created, 500);
+        }
+    }
+
     public function updateXfile($id, Request $request)
     {
         $input = $request->all();
         $f = XFile::find($id);
 
-        if (! $f) {
+        if (!$f) {
             return $this->sendError(__('validation.model.not.found', ['model' => 'Archivo']));
         }
 
@@ -32,7 +74,7 @@ trait ControllerFiles
     {
         $f = XFile::find($id);
 
-        if (! $f) {
+        if (!$f) {
             return $this->sendError(__('validation.model.not.found', ['model' => 'Archivo']));
         }
 
@@ -86,7 +128,7 @@ trait ControllerFiles
     public function fileUpload(Request $request, $tableName, $fieldName, $id = 0, $color = false)
     {
         $data = [];
-        if (! $request->hasFile($fieldName)) {
+        if (!$request->hasFile($fieldName)) {
             return $this->sendError(__('validation.file.required'));
         }
 
@@ -98,26 +140,29 @@ trait ControllerFiles
         $isMulti = $request->header('isMulti', 0);
         $isTemporal = strpos($fieldName, 'massive') !== false;
         $baseAssets = 'public/assets/adm/';
+        $baseAssetsPath = 'assets/adm/';
 
         $rCountry = $request->header('r-country', 'sv');
 
         if ($rCountry) {
-            $baseAssets = $baseAssets.$rCountry.'/';
+            $baseAssets .= $rCountry . '/';
+            $baseAssetsPath .= $rCountry . '/';
         }
 
         $time = now()->format('Y_m_d_H_i_s_u');
         $strLocation = "$baseAssets$tableName/$fieldName";
         $originalName = $request->$fieldName->getClientOriginalName();
         $fileExtension = strtolower($request->$fieldName->getClientOriginalExtension());
-        $fileNamePrefix = $tableName.'-'.$id;
+        $fileNamePrefix = $tableName . '-' . $id;
         $newName = "$fileNamePrefix-$time";
-        $newNameWithExtension = $newName.'.'.$fileExtension;
+        $newNameWithExtension = $newName . '.' . $fileExtension;
 
         /**
          * Si el nombre del archivo trae la palabra "massive"
          * se guarda en una carpeta temporal
          */
         if ($isTemporal) {
+            $basePath = "$baseAssetsPath/temporals/$newName";
             $strLocation = "$baseAssets/temporals/$newName/$tableName/$fieldName";
             $path = $request->$fieldName->storeAs($strLocation, $newNameWithExtension);
             $parts = explode('/', $path);
@@ -136,21 +181,13 @@ trait ControllerFiles
                         break;
 
                     case 'immediate':
-                        $keys = json_decode($request->get('keys'), true);
-                        $primaryKeyName = $request->get('primaryKeyName');
-                        $cModel = \Illuminate\Support\Str::replace('-', '\\', $request->get('cModel', ''));
-                        $created = 0;
-
-                        try {
-                            $created = $this->importing($handle, $tableName, $primaryKeyName, $keys, $delimiter, $cModel);
-
-                            return $this->sendResponse([$fieldName => ['updated' => $created]], __('validation.model.list', ['model' => $tableName]));
-                        } catch (\Throwable $th) {
-                            // throw $th;
-                            return $this->sendError([$fieldName => ['code' => $th->getCode(), 'message' => $th->getMessage(), 'updated' => $created]], 'Error en la linea '.$created, 500);
-                        }
-                        // $this->import2email($request, $xFile);
+                        return $this->import2immediate($request, $tableName, $fieldName, $delimiter, $handle, $basePath);
                         break;
+
+                    case 'delete':
+                        return $this->import2delete($request, $tableName, $fieldName, $delimiter, $handle, $basePath);
+                        break;
+
                     default:
                         // save in temporal
                         break;
@@ -238,9 +275,9 @@ trait ControllerFiles
     public function fileDown($tableName, $fieldName, $id, $w = 0, $h = 0, $imageName = '')
     {
         $rCountry = request()->get('rCountry', 'sv');
-        if (! $imageName) {
+        if (!$imageName) {
             if ($rCountry) {
-                config()->set('database.default', config('base-cms.default_prefix').$rCountry);
+                config()->set('database.default', config('base-cms.default_prefix') . $rCountry);
             }
 
             $imageName = '-';
@@ -260,7 +297,7 @@ trait ControllerFiles
         $baseAssets = 'public/assets/adm';
 
         if ($rCountry) {
-            $baseAssets = $baseAssets.'/'.$rCountry;
+            $baseAssets = $baseAssets . '/' . $rCountry;
         }
 
         $strLocationImageNotFound = 'assets/images/image-not-found.png';
@@ -268,7 +305,7 @@ trait ControllerFiles
         $strLocationImage2show = Storage::exists($strLocationImageSaved) ? $strLocationImageSaved : $strLocationImageNotFound;
         $exists = Storage::exists($strLocationImage2show);
 
-        if (! $exists) {
+        if (!$exists) {
             $response = Http::get('https://eu.ui-avatars.com/api', ['name' => config('app.name'), 'size' => 512]);
             Storage::put($strLocationImageNotFound, $response->body());
 
@@ -289,8 +326,8 @@ trait ControllerFiles
             $supported_image = ['gif', 'jpg', 'jpeg', 'png'];
 
             // logger(__FILE__ . ':' . __LINE__ . ' $temp ', [$temp, $strLocationImage2showNew]);
-            if (! $exists) {
-                if (! in_array($ext, $supported_image)) {
+            if (!$exists) {
+                if (!in_array($ext, $supported_image)) {
                     $temp = $strLocationImageNotFound;
 
                     return response()->file($temp);
@@ -299,7 +336,7 @@ trait ControllerFiles
                 // use jpg format and quality of 100
                 $resized_image = Image::make($temp)
                     ->resize($w > 0 ? $w : null, $h > 0 ? $h : null, function ($constraint) use ($w, $h) {
-                        if (! ($w > 0 && $h > 0)) {
+                        if (!($w > 0 && $h > 0)) {
                             $constraint->aspectRatio();
                         }
                     })

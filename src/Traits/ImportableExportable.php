@@ -31,16 +31,12 @@ trait ImportableExportable
         $input['cQueue'] = session('cQueue');
         $input['cModel'] = Str::replace('-', '\\', $request->get('cModel', ''));
 
-        unset($input['massive-inserts']);
-
         // dd($input);
         $inputObj = (object) $input;
-        $inputObj->keys = json_decode((string) $input['keys'], true, 512, JSON_THROW_ON_ERROR);
-        $inputObj->primaryKeyName = _isJson($input['primaryKeyName']) ? json_decode((string) $input['primaryKeyName'], true, 512, JSON_THROW_ON_ERROR) : $input['primaryKeyName'];
 
         // dd($inputObj);
 
-        $dbDefault = config('base-cms.default_prefix').config('base-cms.default_code');
+        $dbDefault = config('base-cms.default_prefix') . config('base-cms.default_code');
         config()->set('database.default', $dbDefault);
         event(new AnyTableImportEvent($inputObj));
         $this->trackingPending($inputObj->rCountry, $inputObj->cQueue, $inputObj->user_id);
@@ -66,7 +62,7 @@ trait ImportableExportable
 
         $inputObj = (object) $input;
 
-        $dbDefault = config('base-cms.default_prefix').config('base-cms.default_code');
+        $dbDefault = config('base-cms.default_prefix') . config('base-cms.default_code');
         config()->set('database.default', $dbDefault);
         event(new AnyTableExportEvent($inputObj));
         $this->trackingPending($inputObj->rCountry, $inputObj->cQueue, $inputObj->user_id);
@@ -79,11 +75,14 @@ trait ImportableExportable
     /* -------------------------------------------------------------------------- */
     public function importing($handle, $table, $primaryKeys, $keys, $delimiter, $model_name = '', $extra_data = null, $callback = null)
     {
+        $primaryKeys = json_decode($primaryKeys, true, 512, JSON_ERROR_NONE) ?? $primaryKeys;
+        $keys = json_decode($keys, true, 512, JSON_ERROR_NONE) ?? $keys;
         $created = 0;
         $line = 0;
         $data1 = [];
         $xHeadersTemp = fgetcsv($handle, 0, $delimiter);
         $xHeadersTemp = \ForceUTF8\Encoding::fixUTF8($xHeadersTemp);
+
         while (($data = fgetcsv($handle, 0, $delimiter)) !== false) {
             $line++;
             try {
@@ -151,7 +150,7 @@ trait ImportableExportable
 
         foreach ($headers as $k) {
             if (isset($keys[$k])) {
-                if (! empty(trim($data[$k]))) {
+                if (!empty(trim($data[$k]))) {
                     $dataToSave[$keys[$k]] = $data[$k];
                 }
             }
@@ -187,6 +186,7 @@ trait ImportableExportable
     public function saveModel($model_name, $attrKeys, $data, $primaryKeys, $tableName = '')
     {
         // logger(__FILE__ . ':' . __LINE__ . ' $model_name, $attrKeys, $data, $primaryKeys, $tableName ', [$model_name, $attrKeys, $data, $primaryKeys, $tableName]);
+
         try {
             $res = $attrKeys + $data;
 
@@ -197,11 +197,11 @@ trait ImportableExportable
                 $model->setTable($tableName);
             }
 
-            if (! empty($attrKeys)) {
+            if (!empty($attrKeys)) {
                 $model = $model->where($attrKeys)->firstOrNew();
             }
 
-            if (! $model) {
+            if (!$model) {
                 return false;
             }
 
@@ -228,11 +228,15 @@ trait ImportableExportable
     /* -------------------------------------------------------------------------- */
     public function deleting($handle, $table, $primaryKeys, $keys, $delimiter, $model_name = '')
     {
+
+        $primaryKeys = json_decode($primaryKeys, true, 512, JSON_ERROR_NONE) ?? $primaryKeys;
+        $keys = json_decode($keys, true, 512, JSON_ERROR_NONE) ?? $keys;
         $created = 0;
         $line = 0;
         $data1 = [];
         $xHeadersTemp = fgetcsv($handle, 0, $delimiter);
         $xHeadersTemp = \ForceUTF8\Encoding::fixUTF8($xHeadersTemp);
+
         while (($data = fgetcsv($handle, 0, $delimiter)) !== false) {
             $line++;
             try {
@@ -243,8 +247,10 @@ trait ImportableExportable
                     $data = $this->getDataToSave($xHeadersTemp, $dataCombine, $keys);
 
                     $attrKeys = [];
+                    $kName = '';
 
                     if (is_string($primaryKeys)) {
+                        $kName = $primaryKeys;
                         if (isset($data[$primaryKeys])) {
                             $attrKeys[$primaryKeys] = $data[$primaryKeys];
                         }
@@ -257,7 +263,7 @@ trait ImportableExportable
                     if ($model_name) {
                         $r = $this->deleteModel($model_name, $attrKeys, $primaryKeys, $table);
                     } else {
-                        $r = $this->deleteArray($table, $attrKeys);
+                        $r = $this->deleteArray($table, $attrKeys, $kName);
                     }
 
                     $created++;
@@ -278,6 +284,11 @@ trait ImportableExportable
     public function deleteArray($table, $attrKeys)
     {
         try {
+
+            if (empty($attrKeys)) {
+                throw new \Juanfv2\BaseCms\Exceptions\NoReportException('No tiene [PK]');
+            }
+
             return DB::table($table)->where($attrKeys)->delete();
         } catch (\Throwable $th) {
             throw $th;
@@ -286,7 +297,13 @@ trait ImportableExportable
 
     public function deleteModel($model_name, $attrKeys, $primaryKeys, $tableName)
     {
+
         try {
+
+            if (empty($attrKeys) || empty($primaryKeys)) {
+                throw new \Juanfv2\BaseCms\Exceptions\NoReportException('No tiene [PK]');
+            }
+
             session(['z-table' => $tableName]);
             $model = new $model_name();
 
@@ -318,7 +335,7 @@ trait ImportableExportable
 
             $model = $model->withTrashed()->where($attrKeys)->first();
 
-            if (! $model) {
+            if (!$model) {
                 return false;
             }
 
@@ -352,7 +369,7 @@ trait ImportableExportable
         $fileTempName = $fileTemp[0];
         $baseAssets = 'public/assets/adm/';
         if ($rCountry) {
-            $baseAssets = $baseAssets.$rCountry.'/';
+            $baseAssets = $baseAssets . $rCountry . '/';
         }
 
         $strLocationFileSaved = "{$baseAssets}temporals/$fileTempName/$tableName/$fieldName/$fileName";
@@ -375,7 +392,7 @@ trait ImportableExportable
             } // end ($handle = fopen($massiveQueryFile, 'r')) !== false
         } catch (\Throwable $th) {
             // throw $th;
-            return $this->sendError(['code' => $th->getCode(), 'message' => $th->getMessage(), 'updated' => $created], 'Error en la linea '.$created, 500);
+            return $this->sendError(['code' => $th->getCode(), 'message' => $th->getMessage(), 'updated' => $created], 'Error en la linea ' . $created, 500);
         }
     }
 
@@ -406,11 +423,11 @@ trait ImportableExportable
                                 $exist = $r[0]->aggregate > 0;
                             }
                             if ($exist) {
-                                DB::table(''.$tableName)
-                                    ->where(''.$primaryKeyName, $object[$primaryKeyName])
+                                DB::table('' . $tableName)
+                                    ->where('' . $primaryKeyName, $object[$primaryKeyName])
                                     ->update($object);
                             } else {
-                                DB::table(''.$tableName)->insert($object);
+                                DB::table('' . $tableName)->insert($object);
                             }
 
                             $updated++;
@@ -429,7 +446,7 @@ trait ImportableExportable
             DB::rollBack();
 
             return $this->sendError(
-                'Error en la linea '.$updated,
+                'Error en la linea ' . $updated,
                 500,
                 [
                     'code' => $e->getCode(),
