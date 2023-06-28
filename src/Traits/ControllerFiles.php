@@ -23,8 +23,6 @@ trait ControllerFiles
         try {
             $created = $this->importing($handle, $tableName, $primaryKeyName, $keys, $delimiter, $cModel);
 
-            logger(__FILE__ . ':' . __LINE__ . ' $basePath ', [$basePath]);
-
             Storage::disk('public')->deleteDirectory($basePath);
 
             return $this->sendResponse([$fieldName => ['updated' => $created]], __('validation.model.list', ['model' => $tableName]));
@@ -36,8 +34,6 @@ trait ControllerFiles
 
     public function import2delete($request, $tableName, $fieldName, $delimiter, $handle, $basePath)
     {
-        logger(__FILE__ . ':' . __LINE__ . '  $tableName, $fieldName, $delimiter, $handle, $basePath ', [$tableName, $fieldName, $delimiter, $handle, $basePath]);
-
         $keys = $request->get('keys');
         $primaryKeyName = $request->get('primaryKeyName');
         $cModel = Str::replace('-', '\\', $request->get('cModel', ''));
@@ -162,8 +158,8 @@ trait ControllerFiles
          * se guarda en una carpeta temporal
          */
         if ($isTemporal) {
-            $basePath = "$baseAssetsPath/temporals/$newName";
-            $strLocation = "$baseAssets/temporals/$newName/$tableName/$fieldName";
+            $basePath = "{$baseAssetsPath}temporals/$newName";
+            $strLocation = "{$baseAssets}temporals/$newName/$tableName/$fieldName";
             $path = $request->$fieldName->storeAs($strLocation, $newNameWithExtension);
             $parts = explode('/', $path);
             $name = Arr::last($parts);
