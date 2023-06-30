@@ -20,6 +20,12 @@ trait ImportableExportable
         // your-code
         $input = $request->all();
 
+        foreach ($input as $key => $value) {
+            if (is_object($input[$key])) {
+                unset($input[$key]);
+            }
+        }
+
         session(['cQueue' => $this->queueName('import')]);
 
         $input['user_id'] = auth()->user()->id;
@@ -34,9 +40,7 @@ trait ImportableExportable
         // dd($input);
         $inputObj = (object) $input;
 
-        // dd($inputObj);
-
-        $dbDefault = config('base-cms.default_prefix') . config('base-cms.default_code');
+        $dbDefault = config('base-cms.default_prefix').config('base-cms.default_code');
         config()->set('database.default', $dbDefault);
         event(new AnyTableImportEvent($inputObj));
         $this->trackingPending($inputObj->rCountry, $inputObj->cQueue, $inputObj->user_id);
@@ -62,7 +66,7 @@ trait ImportableExportable
 
         $inputObj = (object) $input;
 
-        $dbDefault = config('base-cms.default_prefix') . config('base-cms.default_code');
+        $dbDefault = config('base-cms.default_prefix').config('base-cms.default_code');
         config()->set('database.default', $dbDefault);
         event(new AnyTableExportEvent($inputObj));
         $this->trackingPending($inputObj->rCountry, $inputObj->cQueue, $inputObj->user_id);
@@ -75,8 +79,8 @@ trait ImportableExportable
     /* -------------------------------------------------------------------------- */
     public function importing($handle, $table, $primaryKeys, $keys, $delimiter, $model_name = '', $extra_data = null, $callback = null)
     {
-        $primaryKeys = json_decode($primaryKeys, true, 512, JSON_ERROR_NONE) ?? $primaryKeys;
-        $keys = json_decode($keys, true, 512, JSON_ERROR_NONE) ?? $keys;
+        $primaryKeys = is_array($primaryKeys) ? $primaryKeys : (json_decode($primaryKeys, true, 512, JSON_ERROR_NONE) ?? $primaryKeys);
+        $keys = is_array($keys) ? $keys : (json_decode($keys, true, 512, JSON_ERROR_NONE) ?? $keys);
         $created = 0;
         $line = 0;
         $data1 = [];
@@ -150,7 +154,7 @@ trait ImportableExportable
 
         foreach ($headers as $k) {
             if (isset($keys[$k])) {
-                if (!empty(trim($data[$k]))) {
+                if (! empty(trim($data[$k]))) {
                     $dataToSave[$keys[$k]] = $data[$k];
                 }
             }
@@ -197,11 +201,11 @@ trait ImportableExportable
                 $model->setTable($tableName);
             }
 
-            if (!empty($attrKeys)) {
+            if (! empty($attrKeys)) {
                 $model = $model->where($attrKeys)->firstOrNew();
             }
 
-            if (!$model) {
+            if (! $model) {
                 return false;
             }
 
@@ -335,7 +339,7 @@ trait ImportableExportable
 
             $model = $model->withTrashed()->where($attrKeys)->first();
 
-            if (!$model) {
+            if (! $model) {
                 return false;
             }
 
@@ -369,7 +373,7 @@ trait ImportableExportable
         $fileTempName = $fileTemp[0];
         $baseAssets = 'public/assets/adm/';
         if ($rCountry) {
-            $baseAssets = $baseAssets . $rCountry . '/';
+            $baseAssets = $baseAssets.$rCountry.'/';
         }
 
         $strLocationFileSaved = "{$baseAssets}temporals/$fileTempName/$tableName/$fieldName/$fileName";
@@ -392,7 +396,7 @@ trait ImportableExportable
             } // end ($handle = fopen($massiveQueryFile, 'r')) !== false
         } catch (\Throwable $th) {
             // throw $th;
-            return $this->sendError(['code' => $th->getCode(), 'message' => $th->getMessage(), 'updated' => $created], 'Error en la linea ' . $created, 500);
+            return $this->sendError(['code' => $th->getCode(), 'message' => $th->getMessage(), 'updated' => $created], 'Error en la linea '.$created, 500);
         }
     }
 
@@ -423,11 +427,11 @@ trait ImportableExportable
                                 $exist = $r[0]->aggregate > 0;
                             }
                             if ($exist) {
-                                DB::table('' . $tableName)
-                                    ->where('' . $primaryKeyName, $object[$primaryKeyName])
+                                DB::table(''.$tableName)
+                                    ->where(''.$primaryKeyName, $object[$primaryKeyName])
                                     ->update($object);
                             } else {
-                                DB::table('' . $tableName)->insert($object);
+                                DB::table(''.$tableName)->insert($object);
                             }
 
                             $updated++;
@@ -446,7 +450,7 @@ trait ImportableExportable
             DB::rollBack();
 
             return $this->sendError(
-                'Error en la linea ' . $updated,
+                'Error en la linea '.$updated,
                 500,
                 [
                     'code' => $e->getCode(),
