@@ -9,7 +9,7 @@ trait ListenerTracking
     public function queueName()
     {
         $arg_list = func_get_args();
-        $uid = auth()->user()->id;
+        $uid = auth()->id();
         $time = _sanitize(now()->format('Y-m-d-H:i:s.u'));
         $rCountry = request()->get('rCountry', request()->headers->get('r-country', '.l.'));
         $queue = _sanitize(implode('--', $arg_list));
