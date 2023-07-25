@@ -25,50 +25,64 @@ class GenericResource extends JsonResource
 
         $this->includes = $ownIncludes ?: $this->includes;
 
-        if ($request->has('includes')) {
-            $arr = $request['includes'] = is_string($request->get('includes', null)) ? json_decode((string) $request->get('includes', '[]'), true, 512, JSON_THROW_ON_ERROR) : $request['includes'];
+        $inlcudes = $this->getIncludesFromRequest($request);
 
-            // logger(__FILE__ . ':' . __LINE__ . ' $arr ', [$arr]);
-            // logger(__FILE__ . ':' . __LINE__ . ' $this->includes ', [$this->includes]);
+        // logger(__FILE__ . ':' . __LINE__ . ' $inlcudes ', [$inlcudes]);
 
-            if (is_array($this->includes)) {
-                $arr = $this->includes[0] == 'reset' ? null : $this->includes;
-            }
-
-            // logger(__FILE__ . ':' . __LINE__ . ' $arr ', [$arr]);
-
-            if ($arr && is_array($arr)) {
-                foreach ($arr as $kValue => $kProperty) {
-                    if ($this->hidden && in_array($kProperty, $this->hidden)) {
-                        continue;
-                    }
-
-                    $realProperty = $kProperty;
-                    $includes = ['reset'];
-                    if (is_array($kProperty)) {
-                        $realProperty = array_keys($kProperty)[0];
-                        $includes = $kProperty[$realProperty];
-                    }
-
-                    // logger(__FILE__ . ':' . __LINE__ . '. $realProperty   .', [$this->id, $realProperty]);
-                    // logger(__FILE__ . ':' . __LINE__ . '. $kProperty      .', [$kProperty, $kValue]);
-                    // logger(__FILE__ . ':' . __LINE__ . '. $this->resource .', [$this->resource]);
-
-                    $this->add2data($data, $realProperty, $includes);
-                }
+        if ($inlcudes && is_array($inlcudes)) {
+            foreach ($inlcudes as $kProperty) {
+                $this->add2data($data, $kProperty);
             }
         }
 
         return $data;
     }
 
-    private function add2data(&$data, $realProperty, $includes)
+    private function getIncludesFromRequest($request)
     {
+        $includes = $request->input('includes');
+
+        // Parse includes from JSON string if provided as a string
+        if (is_string($includes)) {
+            $includes = json_decode($includes, true, 512, JSON_ERROR_NONE);
+        }
+
+        if (is_array($this->includes)) {
+            $includes = $this->includes[0] == 'reset' ? null : $this->includes;
+        }
+
+        // logger(__FILE__ . ':' . __LINE__ . ' $arr ', [$arr]);
+        // logger(__FILE__ . ':' . __LINE__ . ' $this->includes ', [$this->includes]);
+
+        return $includes;
+    }
+
+    private function add2data(&$data, $kProperty)
+    {
+        $realProperty = $kProperty;
+        $nestedIncludes = ['reset'];
+
+        if (is_array($kProperty)) {
+            $realProperty = array_keys($kProperty)[0];
+            $nestedIncludes = $kProperty[$realProperty];
+        }
+
+        // logger(__FILE__ . ':' . __LINE__ . ' $kProperty ', [$kProperty, $realProperty]);
+
+        if ($this->hidden && in_array($realProperty, $this->hidden)) {
+            return;
+        }
+
+        // logger(__FILE__ . ':' . __LINE__ . '. $realProperty   .', [$this->id, $realProperty]);
+        // logger(__FILE__ . ':' . __LINE__ . '. $kProperty      .', [$kProperty, $kValue]);
+        // logger(__FILE__ . ':' . __LINE__ . '. $this->resource .', [$this->resource]);
+
         $rValue = $this->$realProperty;
+
         if ($rValue instanceof Model) {
-            $data[$realProperty] = new GenericResource($rValue, $includes);
+            $data[$realProperty] = new GenericResource($rValue, $nestedIncludes);
         } elseif ($rValue instanceof Collection) {
-            $data[$realProperty] = GenericResource::coll($rValue, $includes);
+            $data[$realProperty] = GenericResource::mCollection($rValue, $nestedIncludes);
         } elseif ($rValue) {
             $data[$realProperty] = $rValue;
         }
@@ -79,7 +93,7 @@ class GenericResource extends JsonResource
      *
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public static function coll(mixed $resource, $includes)
+    public static function mCollection(mixed $resource, $includes)
     {
         return new GenericResourceCollection($resource, static::class, $includes);
     }
