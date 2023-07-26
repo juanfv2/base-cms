@@ -25,12 +25,10 @@ class GenericResource extends JsonResource
 
         $this->includes = $ownIncludes ?: $this->includes;
 
-        $inlcudes = $this->getIncludesFromRequest($request);
+        $includes = $this->getIncludesFromRequest($request);
 
-        // logger(__FILE__ . ':' . __LINE__ . ' $inlcudes ', [$inlcudes]);
-
-        if ($inlcudes && is_array($inlcudes)) {
-            foreach ($inlcudes as $kProperty) {
+        if ($includes && is_array($includes)) {
+            foreach ($includes as $kProperty) {
                 $this->add2data($data, $kProperty);
             }
         }
@@ -40,15 +38,15 @@ class GenericResource extends JsonResource
 
     private function getIncludesFromRequest($request)
     {
+        if (is_array($this->includes)) {
+            return $this->includes[0] == 'reset' ? null : $this->includes;
+        }
+
         $includes = $request->input('includes');
 
         // Parse includes from JSON string if provided as a string
         if (is_string($includes)) {
             $includes = json_decode($includes, true, 512, JSON_ERROR_NONE);
-        }
-
-        if (is_array($this->includes)) {
-            $includes = $this->includes[0] == 'reset' ? null : $this->includes;
         }
 
         // logger(__FILE__ . ':' . __LINE__ . ' $arr ', [$arr]);
@@ -82,19 +80,9 @@ class GenericResource extends JsonResource
         if ($rValue instanceof Model) {
             $data[$realProperty] = new GenericResource($rValue, $nestedIncludes);
         } elseif ($rValue instanceof Collection) {
-            $data[$realProperty] = GenericResource::mCollection($rValue, $nestedIncludes);
+            $data[$realProperty] = new GenericResourceCollection($rValue, static::class, $nestedIncludes);
         } elseif ($rValue) {
             $data[$realProperty] = $rValue;
         }
-    }
-
-    /**
-     * Create new anonymous resource collection.
-     *
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
-     */
-    public static function mCollection(mixed $resource, $includes)
-    {
-        return new GenericResourceCollection($resource, static::class, $includes);
     }
 }
