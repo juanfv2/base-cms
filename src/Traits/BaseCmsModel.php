@@ -176,7 +176,7 @@ trait BaseCmsModel
     {
         try {
             return $this->find($id, $columns);
-        } catch (Exception $e) {
+        } catch (Exception) {
             return;
         }
     }
@@ -202,7 +202,7 @@ trait BaseCmsModel
                 method_exists($this, $key) &&
                 is_a(@$this->$key(), \Illuminate\Database\Eloquent\Relations\Relation::class)
             ) {
-                $methodClass = get_class($this->$key($key));
+                $methodClass = $this->$key($key)::class;
                 switch ($methodClass) {
                     case \Illuminate\Database\Eloquent\Relations\BelongsToMany::class:
                         $new_values = Arr::get($attributes, $key, []);
@@ -256,7 +256,7 @@ trait BaseCmsModel
                         }
 
                         if (count($new_values) > 0) {
-                            $related = get_class($this->$key()->getRelated());
+                            $related = $this->$key()->getRelated()::class;
                             foreach ($new_values as $val02) {
                                 $rel = $related::find($val02);
                                 // logger(__FILE__ . ':' . __LINE__ . ' $rel ', [$this->id, $this->getTable(), $key, $val02, $related, $rel]);

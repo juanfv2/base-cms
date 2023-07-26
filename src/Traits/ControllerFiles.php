@@ -79,7 +79,7 @@ trait ControllerFiles
 
     public static function getPathFileName($location, $name)
     {
-        $names = explode('.', $name);
+        $names = explode('.', (string) $name);
         $nameWithoutExt = Arr::first($names);
         $temp = storage_path("app/{$location}/{$nameWithoutExt}");
 
@@ -134,7 +134,7 @@ trait ControllerFiles
         $xFile = new XFile();
         $columns = 0;
         $isMulti = $request->header('isMulti', 0);
-        $isTemporal = strpos($fieldName, 'massive') !== false;
+        $isTemporal = str_contains((string) $fieldName, 'massive');
         $baseAssets = 'public/assets/adm/';
         $baseAssetsPath = 'assets/adm/';
 
@@ -161,7 +161,7 @@ trait ControllerFiles
             $basePath = "{$baseAssetsPath}temporals/$newName";
             $strLocation = "{$baseAssets}temporals/$newName/$tableName/$fieldName";
             $path = $request->$fieldName->storeAs($strLocation, $newNameWithExtension);
-            $parts = explode('/', $path);
+            $parts = explode('/', (string) $path);
             $name = Arr::last($parts);
             $_versionsCsv_File = storage_path("app/$path");
             $xFile->name = $name;
@@ -203,7 +203,7 @@ trait ControllerFiles
 
         if ($id) {
             if ($isMulti) {
-                $parts = explode('/', $path);
+                $parts = explode('/', (string) $path);
                 $name = Arr::last($parts);
 
                 $xFile->entity_id = $id;
@@ -230,7 +230,7 @@ trait ControllerFiles
                     static::deleteFileWithGlob("{$temp}*");
                 }
 
-                $parts = explode('/', $path);
+                $parts = explode('/', (string) $path);
                 $name = Arr::last($parts);
 
                 $xFile->name = $name;

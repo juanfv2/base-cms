@@ -17,12 +17,11 @@ trait ControllerResponses
     }
 
     /**
-     * @param  array|string  $data
      * @param  string  $message
      * @param  int  $responseCode
      * @return \Illuminate\Http\JsonResponse
      */
-    public function sendError($data, $message = '', $responseCode = 404)
+    public function sendError(array|string $data, $message = '', $responseCode = 404)
     {
         $d = $data;
         $m = $message;

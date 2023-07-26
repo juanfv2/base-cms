@@ -41,7 +41,7 @@ class AppBaseController extends Controller
             case 'export-limit':
                 return $this->export2email($request);
             case 'export':
-                $headers = json_decode($request->get('fields'), true, 512, JSON_THROW_ON_ERROR);
+                $headers = json_decode((string) $request->get('fields'), true, 512, JSON_THROW_ON_ERROR);
                 $zName = _sanitize($request->get('title', '-'));
                 $extension = $request->get('ext', 'csv');
 
@@ -111,7 +111,7 @@ class AppBaseController extends Controller
      */
     public function show($id)
     {
-        $with = json_decode(urldecode(request('with', '[]')), null, 512, JSON_THROW_ON_ERROR);
+        $with = json_decode(urldecode((string) request('with', '[]')), null, 512, JSON_THROW_ON_ERROR);
 
         $model = $with ?
             $this->model->with($with)->find($id) :

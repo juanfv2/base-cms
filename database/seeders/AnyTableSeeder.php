@@ -53,7 +53,7 @@ class AnyTableSeeder extends Seeder
     {
         logger(__FILE__.':'.__LINE__.' "database/data/{$table}.json" ', ["database/data/{$table}.json"]);
         // Allowed memory size of 134217728 bytes exhausted (tried to allocate
-        $table1 = explode('/', $table);
+        $table1 = explode('/', (string) $table);
         $table2 = end($table1);
         $table3 = explode('-', $table2);
         $tableN = reset($table3);
