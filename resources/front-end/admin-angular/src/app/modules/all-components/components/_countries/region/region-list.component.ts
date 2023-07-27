@@ -121,7 +121,7 @@ export class RegionListComponent extends BaseCmsListComponent implements OnInit,
       primaryKName: this.labels.country.id.name,
       nextOperator,
     })
-    if (this.modelSearch.conditions) {
+    if (this.modelSearch?.conditions?.length) {
       for (const c of this.modelSearch.conditions) {
         nextOperator = JfUtils.addCondition(c, nextOperator, conditions)
       }

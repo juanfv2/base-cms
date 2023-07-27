@@ -152,7 +152,7 @@ export class CityListComponent extends BaseCmsListComponent implements OnInit, O
       primaryKName: this.labels.region.id.name,
       nextOperator,
     })
-    if (this.modelSearch.conditions) {
+    if (this.modelSearch?.conditions?.length) {
       for (const c of this.modelSearch.conditions) {
         nextOperator = JfUtils.addCondition(c, nextOperator, conditions)
       }

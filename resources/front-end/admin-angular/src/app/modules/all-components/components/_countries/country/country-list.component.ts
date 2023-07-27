@@ -105,7 +105,7 @@ export class CountryListComponent extends BaseCmsListComponent implements OnInit
     let nextOperator = 'AND'
     const conditions: any[] = []
 
-    if (this.modelSearch.conditions) {
+    if (this.modelSearch?.conditions?.length) {
       for (const c of this.modelSearch.conditions) {
         nextOperator = JfUtils.addCondition(c, nextOperator, conditions)
       }

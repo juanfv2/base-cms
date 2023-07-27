@@ -152,7 +152,7 @@ export class UserListComponent extends BaseCmsListComponent implements OnInit, O
       this.modelSearch.conditionRole.value = this.mRole
     } else {
       if (this.modelSearch) {
-        if (this.modelSearch.conditions) {
+        if (this.modelSearch?.conditions?.length) {
           Promise.resolve(this.searchField).then(() => {
             for (const condition of this.modelSearch.conditions) {
               this.addFilter(condition)
@@ -218,7 +218,7 @@ export class UserListComponent extends BaseCmsListComponent implements OnInit, O
       nextOperator,
     })
 
-    if (this.modelSearch.conditions) {
+    if (this.modelSearch?.conditions?.length) {
       for (const c of this.modelSearch.conditions) {
         nextOperator = JfUtils.addCondition(c, nextOperator, g)
       }

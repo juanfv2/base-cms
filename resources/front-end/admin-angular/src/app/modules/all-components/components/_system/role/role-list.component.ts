@@ -83,7 +83,7 @@ export class RoleListComponent extends BaseCmsListComponent implements OnInit, O
     if (this.isSubComponent) {
     } else {
       if (this.modelSearch) {
-        if (this.modelSearch.conditions) {
+        if (this.modelSearch?.conditions?.length) {
           Promise.resolve(this.searchField).then(() => {
             for (const condition of this.modelSearch.conditions) {
               this.addFilter(condition)
@@ -105,7 +105,7 @@ export class RoleListComponent extends BaseCmsListComponent implements OnInit, O
     let nextOperator = 'AND'
     const conditions: any[] = []
 
-    if (this.modelSearch.conditions) {
+    if (this.modelSearch?.conditions?.length) {
       for (const c of this.modelSearch.conditions) {
         nextOperator = JfUtils.addCondition(c, nextOperator, conditions)
       }

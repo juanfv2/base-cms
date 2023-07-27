@@ -97,7 +97,7 @@ export class VisorLogErrorListComponent extends BaseCmsListComponent implements 
     if (this.isSubComponent) {
     } else {
       if (this.modelSearch) {
-        if (this.modelSearch.conditions) {
+        if (this.modelSearch?.conditions?.length) {
           Promise.resolve(this.searchField).then(() => {
             for (const condition of this.modelSearch.conditions) {
               this.addFilter(condition)
@@ -119,7 +119,7 @@ export class VisorLogErrorListComponent extends BaseCmsListComponent implements 
     let nextOperator = 'AND'
     const conditions: any[] = []
 
-    if (this.modelSearch.conditions) {
+    if (this.modelSearch?.conditions?.length) {
       for (const c of this.modelSearch.conditions) {
         nextOperator = JfUtils.addCondition(c, nextOperator, conditions)
       }
