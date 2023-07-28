@@ -54,7 +54,7 @@ class AppBaseController extends Controller
                 break;
 
             case 'distinct':
-                $itemCount = $this->model->mQueryWithCriteria()->distinct()->count($this->model->getTable() . '.' . $this->model->getKeyName());
+                $itemCount = $this->model->mQueryWithCriteria()->distinct()->count($this->model->getTable().'.'.$this->model->getKeyName());
 
                 $this->model->pushCriteria(new LimitOffsetCriteriaModel($request));
 
@@ -114,7 +114,7 @@ class AppBaseController extends Controller
         $with = json_decode(urldecode((string) request('with', '[]')), null, 512, JSON_THROW_ON_ERROR);
 
         $model = $with
-            ?  $this->model->with($with)->find($id)
+            ? $this->model->with($with)->find($id)
             : $this->model->find($id);
 
         if (empty($model)) {
