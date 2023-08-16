@@ -135,14 +135,12 @@ trait ControllerFiles
         $columns = 0;
         $isMulti = $request->header('isMulti', 0);
         $isTemporal = str_contains((string) $fieldName, 'massive');
-        $baseAssets = 'public/assets/adm/';
-        $baseAssetsPath = 'assets/adm/';
+        $baseAssets = 'assets/adm/';
 
         $rCountry = $request->header('r-country', 'sv');
 
         if ($rCountry) {
             $baseAssets .= $rCountry.'/';
-            $baseAssetsPath .= $rCountry.'/';
         }
 
         $time = now()->format('Y_m_d_H_i_s_u');
@@ -158,12 +156,12 @@ trait ControllerFiles
          * se guarda en una carpeta temporal
          */
         if ($isTemporal) {
-            $basePath = "{$baseAssetsPath}temporals/$newName";
+            $basePath = "{$baseAssets}temporals/$newName";
             $strLocation = "{$baseAssets}temporals/$newName/$tableName/$fieldName";
-            $path = $request->$fieldName->storeAs($strLocation, $newNameWithExtension);
+            $path = $request->$fieldName->storeAs($strLocation, $newNameWithExtension, 'public');
             $parts = explode('/', (string) $path);
             $name = Arr::last($parts);
-            $_versionsCsv_File = storage_path("app/$path");
+            $_versionsCsv_File = storage_path("app/public/$path");
             $xFile->name = $name;
             $xFile->nameOriginal = $originalName;
             $xFile->fieldName = $fieldName;
@@ -185,7 +183,7 @@ trait ControllerFiles
                         break;
 
                     default:
-                        // save in temporal
+                        // saved in temporal
                         break;
                 }
 
@@ -196,10 +194,10 @@ trait ControllerFiles
                 fclose($handle);
             }
         } else {
-            $path = $request->$fieldName->storeAs($strLocation, $newNameWithExtension);
+            $path = $request->$fieldName->storeAs($strLocation, $newNameWithExtension, 'public');
         }
 
-        // logger(__FILE__ . ':' . __LINE__ . ' $file ', [$file]);
+        // logger(__FILE__ . ':' . __LINE__ . ' $file ', [$path]);
 
         if ($id) {
             if ($isMulti) {
@@ -225,7 +223,7 @@ trait ControllerFiles
                 $xFile = XFile::firstOrNew(['entity_id' => $id, 'entity' => $tableName, 'field' => $fieldName]);
 
                 if ($xFile->id) {
-                    $temp = static::getPathFileName($strLocation, $xFile->name);
+                    $temp = static::getPathFileName('public/'.$strLocation, $xFile->name);
 
                     static::deleteFileWithGlob("{$temp}*");
                 }
