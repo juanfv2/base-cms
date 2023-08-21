@@ -307,6 +307,8 @@ class RequestCriteriaModel implements CriteriaInterfaceModel
             if (($handle = fopen($_versionsCsv_File, 'r')) !== false) {
                 $delimiter = _file_delimiter($_versionsCsv_File);
 
+                $limit = 1000;
+                $rowIndex = 0;
                 while (($data = fgetcsv($handle, 1000, $delimiter)) !== false) {
                     $c = 0;
                     if ($exactSearch) {
@@ -327,7 +329,14 @@ class RequestCriteriaModel implements CriteriaInterfaceModel
                             $c++;
                         }
                     }
+
+                    if ($rowIndex == $limit) {
+                        break;
+                    }
+
+                    $rowIndex++;
                 }
+
                 fclose($handle);
             }
 
