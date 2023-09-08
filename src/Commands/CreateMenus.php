@@ -5,6 +5,7 @@ namespace Juanfv2\BaseCms\Commands;
 use App\Models\Auth\Permission;
 use App\Models\Auth\Role;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class CreateMenus extends Command
@@ -48,7 +49,7 @@ class CreateMenus extends Command
 
         if ($truncate) {
             Schema::disableForeignKeyConstraints();
-            Permission::truncate();
+            DB::table('auth_permissions')->truncate();
             Schema::enableForeignKeyConstraints();
         }
 
@@ -80,6 +81,9 @@ class CreateMenus extends Command
         }
 
         if ($sub_permissons) {
+            Schema::disableForeignKeyConstraints();
+            DB::table('auth_permission_permission')->truncate();
+            Schema::enableForeignKeyConstraints();
             \Illuminate\Support\Facades\DB::unprepared(file_get_contents(database_path('migrations/sql-files/00-02-mysql-save-sub-permissions.sql')));
         }
 
