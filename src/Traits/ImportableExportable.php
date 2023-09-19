@@ -180,7 +180,7 @@ trait ImportableExportable
         $dataToSave = [];
 
         foreach ($headers as $k) {
-            $dataToSave[$k] = $data[$k] ?? '0';
+            $dataToSave[$k] = $data[$k] ?? null;
         }
 
         return $dataToSave;
