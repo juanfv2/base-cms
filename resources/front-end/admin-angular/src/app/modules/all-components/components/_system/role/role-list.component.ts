@@ -3,6 +3,7 @@ import {ActivatedRoute, Router} from '@angular/router'
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap'
 
 import {
+  JfSort,
   JfUtils,
   JfApiRoute,
   JfResponse,
@@ -68,7 +69,7 @@ export class RoleListComponent extends BaseCmsListComponent implements OnInit, O
   initSearchModel(): any {
     const search = !this.isSubComponent ? JfUtils.mStorage.getItem(kConditions) : null
     const mSearch = {
-      lazyLoadEvent: new JfLazyLoadEvent(),
+      lazyLoadEvent: new JfLazyLoadEvent(10, 1, [new JfSort(this.itemLabels.id.field, JfSort.desc)]),
       cModel: '-App-Models-Auth-Role',
     }
     this.currentFields(mSearch)

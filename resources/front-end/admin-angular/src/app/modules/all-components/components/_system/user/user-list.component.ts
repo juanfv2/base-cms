@@ -3,6 +3,7 @@ import {ActivatedRoute, Router} from '@angular/router'
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap'
 
 import {
+  JfSort,
   JfUtils,
   JfApiRoute,
   JfResponse,
@@ -129,7 +130,7 @@ export class UserListComponent extends BaseCmsListComponent implements OnInit, O
   initSearchModel(): any {
     const search = !this.isSubComponent ? JfUtils.mStorage.getItem(this.kConditions, this.storageSession) : null
     const mSearch = {
-      lazyLoadEvent: new JfLazyLoadEvent(),
+      lazyLoadEvent: new JfLazyLoadEvent(10, 1, [new JfSort(this.itemLabels.id.field, JfSort.desc)]),
       conditionCountry: new JfSearchCondition(),
       conditionRegion: new JfSearchCondition(),
       conditionCity: new JfSearchCondition(),
