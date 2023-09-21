@@ -154,20 +154,11 @@ trait ImportableExportable
 
         foreach ($headers as $k) {
             if (isset($keys[$k])) {
-                // if (! empty(trim($data[$k]))) {
-                //     $dataToSave[$keys[$k]] = $data[$k];
-                // }
-
-                // if ($data[$k] == '[[v]]') {
-                //     $dataToSave[$keys[$k]] = null;
-                // }
-
-                // logger(__FILE__.':'.__LINE__.' $k, $keys[$k] ', [$k, $keys[$k], $data[$k]]);
-
-                $dataToSave[$keys[$k]] = trim($data[$k]);
+                $d = $data[$k] ?? '';
+                $dataToSave[$keys[$k]] = trim($d);
 
                 if ($data[$k] === '') {
-                    $dataToSave[$keys[$k]] = null;
+                    unset($dataToSave[$keys[$k]]);
                 }
             }
         }
@@ -180,7 +171,13 @@ trait ImportableExportable
         $dataToSave = [];
 
         foreach ($headers as $k) {
-            $dataToSave[$k] = $data[$k] ?? null;
+
+            $d = $data[$k] ?? '';
+            $dataToSave[$k] = trim($d);
+
+            if ($dataToSave[$k] === '') {
+                unset($dataToSave[$k]);
+            }
         }
 
         return $dataToSave;

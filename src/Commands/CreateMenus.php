@@ -6,6 +6,7 @@ use App\Models\Auth\Permission;
 use App\Models\Auth\Role;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
 
 class CreateMenus extends Command
@@ -84,7 +85,15 @@ class CreateMenus extends Command
             Schema::disableForeignKeyConstraints();
             DB::table('auth_permission_permission')->truncate();
             Schema::enableForeignKeyConstraints();
-            \Illuminate\Support\Facades\DB::unprepared(file_get_contents(database_path('migrations/sql-files/00-02-mysql-save-sub-permissions.sql')));
+            $default_prefix = config('base-cms.default_prefix');
+
+            $q = database_path("migrations/sql-files/{$default_prefix}/00-03-sub-permissions.sql");
+            $qq = File::exists($q);
+
+            if ($qq) {
+                $qString = File::get($q);
+                DB::unprepared($qString);
+            }
         }
 
         $this->info("Menus creados: {$r}");
