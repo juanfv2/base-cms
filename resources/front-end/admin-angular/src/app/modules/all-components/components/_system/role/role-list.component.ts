@@ -49,9 +49,12 @@ export class RoleListComponent extends BaseCmsListComponent implements OnInit, O
     super()
     this.fieldsSearchable = [this.itemLabels.id, this.itemLabels.name, this.itemLabels.description]
     this.fieldsInList = [this.itemLabels.id, this.itemLabels.name, this.itemLabels.description]
+
     this.hasPermission2show = JfRequestOption.isAuthorized(`/${kRoute}/show`)
     this.hasPermission2new = JfRequestOption.isAuthorized(`/${kRoute}/new`)
     this.hasPermission2delete = JfRequestOption.isAuthorized(`/${kRoute}/delete`)
+
+    this.storageSession = true
   }
 
   ngOnInit(): void {
@@ -67,7 +70,7 @@ export class RoleListComponent extends BaseCmsListComponent implements OnInit, O
   }
 
   initSearchModel(): any {
-    const search = !this.isSubComponent ? JfUtils.mStorage.getItem(kConditions) : null
+    const search = !this.isSubComponent ? JfUtils.mStorage.getItem(this.kConditions, this.storageSession) : null
     const mSearch = {
       lazyLoadEvent: new JfLazyLoadEvent(10, 1, [new JfSort(this.itemLabels.id.field, JfSort.desc)]),
       cModel: '-App-Models-Auth-Role',

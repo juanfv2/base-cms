@@ -85,14 +85,19 @@ class CreateMenus extends Command
             Schema::disableForeignKeyConstraints();
             DB::table('auth_permission_permission')->truncate();
             Schema::enableForeignKeyConstraints();
-            $default_prefix = config('base-cms.default_prefix');
 
-            $q = database_path("migrations/sql-files/{$default_prefix}/00-03-sub-permissions.sql");
+            $q = database_path('data/auth/auth_permission_permission_names.json');
             $qq = File::exists($q);
 
             if ($qq) {
                 $qString = File::get($q);
-                DB::unprepared($qString);
+                $json = json_decode($qString);
+
+                foreach ($json as $pc) {
+                    $result = Permission::savePermissionParentChild($pc->_urlParent, $pc->_urlChild);
+
+                    logger(__FILE__.':'.__LINE__.' .savePermissionParentChild ', [$result]);
+                }
             }
         }
 

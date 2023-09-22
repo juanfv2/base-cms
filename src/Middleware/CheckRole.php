@@ -2,8 +2,8 @@
 
 namespace Juanfv2\BaseCms\Middleware;
 
+use App\Models\Auth\Permission;
 use Closure;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 class CheckRole
@@ -50,28 +50,11 @@ class CheckRole
             $cRouteParent = $cRouteChild;
             $cRouteChild = $temp;
         }
-        $default_prefix = config('base-cms.default_prefix');
 
-        $menu = null;
-
-        switch ($default_prefix) {
-            case 'pgsql-':
-                $menu = DB::select('SELECT public.sp_has_permission(?, ?,?) as "aggregate";', [auth()->id(), $cRouteParent, $cRouteChild]);
-                break;
-            case 'sqlsrv-':
-                $menu = DB::select('execute sp_has_permission ?, ?, ?;', [auth()->id(), $cRouteParent, $cRouteChild]);
-                break;
-            default:
-                // mysql
-                $menu = DB::select('call sp_has_permission (?, ?, ?);', [auth()->id(), $cRouteParent, $cRouteChild]);
-                // code...
-                break;
-        }
-
-        $hasPermission = $menu ? $menu[0]->aggregate > 0 : 0;
+        $hasPermission = Permission::userHasPermission(auth()->id(), $cRouteParent, $cRouteChild);
 
         if (! $hasPermission) {
-            logger(__FILE__.':'.__LINE__.' u:'.auth()->id().":'$hasPermission': [call sp_save_permission_permission('$cRouteParent','$cRouteChild');]:-", [$menu]);
+            logger(__FILE__.':'.__LINE__.' u:'.auth()->id().":'$hasPermission': [call sp_save_permission_permission('$cRouteParent','$cRouteChild');]:-", [$hasPermission]);
         }
 
         return $hasPermission;
