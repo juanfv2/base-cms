@@ -155,7 +155,7 @@ trait ImportableExportable
         foreach ($headers as $k) {
             if (isset($keys[$k])) {
                 $d = $data[$k] ?? '';
-                $dataToSave[$keys[$k]] = trim($d);
+                $dataToSave[$keys[$k]] = trim("$d");
 
                 if ($data[$k] === '') {
                     unset($dataToSave[$keys[$k]]);
@@ -173,7 +173,7 @@ trait ImportableExportable
         foreach ($headers as $k) {
 
             $d = $data[$k] ?? '';
-            $dataToSave[$k] = trim($d);
+            $dataToSave[$k] = trim("$d");
 
             if ($dataToSave[$k] === '') {
                 unset($dataToSave[$k]);

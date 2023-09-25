@@ -91,7 +91,7 @@ class CreateMenus extends Command
 
             if ($qq) {
                 $qString = File::get($q);
-                $json = json_decode($qString);
+                $json = json_decode($qString, null, 512, JSON_THROW_ON_ERROR);
 
                 foreach ($json as $pc) {
                     $result = Permission::savePermissionParentChild($pc->_urlParent, $pc->_urlChild);
