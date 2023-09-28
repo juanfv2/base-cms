@@ -34,7 +34,7 @@ export class RoleDetailComponent implements OnInit, OnDestroy {
 
   mFormGroup!: FormGroup
   labels = l
-  includes = ['idsPermissions']
+  includes = ['menus', 'idsPermissions']
   mApi = new JfApiRoute(kRoute)
   private mSubscription: any
   sending = false

@@ -21,6 +21,7 @@ export class LoginComponent implements OnInit {
   labels = l
   sending = false
   returnUrl = ''
+  countrySelected: any = {id: 194, name: 'El Salvador', code: 'sv', flag: 'assets/flags/sv.png'}
 
   constructor(
     private title: Title,
@@ -76,36 +77,44 @@ export class LoginComponent implements OnInit {
           user.role.urlPermissions.push('/not-authorized')
           user.role.urlPermissions.push('/not-found')
 
-          const cDev = JfUtils.mStorage.getItem(k.dev)
-          const entityGlobalId = `${JfUtils.mStorage.getItem(k.entityGlobalId)}`
-          const userEntityGlobalId = user.country ? user.country.id : entityGlobalId
+          // const cDev = JfUtils.mStorage.getItem(k.dev)
+          // const entityGlobalId = `${JfUtils.mStorage.getItem(k.entityGlobalId)}`
+          // const userEntityGlobalId = user.country ? user.country.id : entityGlobalId
 
-          JfUtils.mStorage.setItem(k.user_role_id, `${user.role.id}`)
-          JfUtils.mStorage.setItem(k.user_id, `${user.id}`)
-          JfUtils.mStorage.setItem(k.entityGlobalId, `${userEntityGlobalId}`)
-          JfUtils.mStorage.setItem(
-            k.entityGlobal,
-            JSON.stringify(user.country) || '{"id":194,"name":"El Salvador", "code": "sv"}'
-          )
+          const paths = JfUtils.mStorage.getPath()
+          const cDev = paths[k.path.dev] === 'dev' ? 'dev' : ''
+          const cName = paths[k.path.company] || 'admin'
+          const entityGlobalId = paths[k.path.country] || 'sv'
 
-          JfUtils.mStorage.setItem(k.user, JSON.stringify(user))
+          // JfUtils.mStorage.setItem(k._1_user, JSON.stringify(user))
+          // JfUtils.mStorage.setItem(k._2_user_role_id, `${user.role.id}`)
+          // JfUtils.mStorage.setItem(k._3_user_id, `${user.id}`)
+          // JfUtils.mStorage.setItem(k.entityGlobalId, `${userEntityGlobalId}`)
+          // JfUtils.mStorage.setItem( k.entityGlobal, JSON.stringify(user.country) || '{"id":194,"name":"El Salvador", "code": "sv"}')
+          // JfUtils.mStorage.setItem(k.token, user.token)
+          // JfUtils.mStorage.setItem(k.permissions, JSON.stringify(user.role.urlPermissions))
 
-          JfUtils.mStorage.setItem(k.token, user.token)
-          JfUtils.mStorage.setItem(k.permissions, JSON.stringify(user.role.urlPermissions))
+          JfUtils.mStorage.setItem(k._1_user, JSON.stringify(user))
+          JfUtils.mStorage.setItem(k._2_user_role_id, `${user.role.id}`)
+          JfUtils.mStorage.setItem(k._3_user_id, `${user.id}`)
+          JfUtils.mStorage.setItem(k._6_entityGlobal, JSON.stringify(this.countrySelected))
+          JfUtils.mStorage.setItem(k._10_token, user.token)
+          JfUtils.mStorage.setItem(k._11_permissions, JSON.stringify(user.role.urlPermissions))
 
           this.authService.currentUser.next(user)
+
           // this.authService.isSideBarVisible.next(k.isSidebarVisibleOpen)
           // JfUtils.mStorage.setItem(k.isSidebarVisible, `${k.isSidebarVisibleOpen}`)
+          // if (userEntityGlobalId === entityGlobalId) {
+          //   this.router.navigate([this.returnUrl], {replaceUrl: true})
+          // } else {
+          //   const rDevelop = cDev || ''
+          //   const newLocal = `/admin${rDevelop}/${userEntityGlobalId}#${this.returnUrl}`
+          //   // console.log('newLocal', newLocal);
+          //   location.href = newLocal
+          // }
 
-          if (userEntityGlobalId === entityGlobalId) {
-            this.router.navigate([this.returnUrl], {replaceUrl: true})
-          } else {
-            const rDevelop = cDev || ''
-            const newLocal = `/admin${rDevelop}/${userEntityGlobalId}#${this.returnUrl}`
-            // console.log('newLocal', newLocal);
-            location.href = newLocal
-          }
-
+          this.router.navigate([this.returnUrl], {replaceUrl: true})
           // if success change to the body/dashboard component
           this.messageService.success(k.project_name, 'Ahora está conectado.')
         }

@@ -121,7 +121,8 @@ export class RoleListComponent extends BaseCmsListComponent implements OnInit, O
     // 'joinTable.joinTablePK.ownTable.ownTableFK.joinType'
     this.modelSearch.lazyLoadEvent.joins = []
     this.modelSearch.lazyLoadEvent.conditions = conditions
-    this.modelSearch.lazyLoadEvent.additional = []
+    this.modelSearch.lazyLoadEvent.additional = [new JfCondition('to_index', '.')]
+
     // this.modelSearch.lazyLoadEvent.includes = ['relation-1tm', 'relation-mt1', 'relation-1t1', ...];
     const mSearch = JSON.stringify(this.modelSearch)
     switch (strAction) {

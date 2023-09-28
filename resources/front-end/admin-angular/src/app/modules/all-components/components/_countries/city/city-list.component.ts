@@ -14,7 +14,6 @@ import {
   JfRequestOption,
   JfMessageService,
   JfSearchCondition,
-  JfStorageManagement,
   BaseCmsListComponent,
 } from 'base-cms' // from '@juanfv2/base-cms'
 import {k} from 'src/environments/k'
@@ -49,12 +48,6 @@ export class CityListComponent extends BaseCmsListComponent implements OnInit, O
     }
   }
   override itemCurrent?: City
-  override itemLabels = l.city
-  override labels = l
-  override kRoute = kRoute
-  override kConditions = kConditions
-  override mApi = new JfApiRoute(kRoute)
-  override responseList: JfResponseList<City | any> = new JfResponseList<City | any>(0, 0, [])
 
   constructor(
     public override router: Router,
@@ -64,6 +57,14 @@ export class CityListComponent extends BaseCmsListComponent implements OnInit, O
     private route: ActivatedRoute
   ) {
     super()
+
+    this.itemLabels = l.city
+    this.labels = l
+    this.kRoute = kRoute
+    this.kConditions = kConditions
+    this.mApi = new JfApiRoute(kRoute)
+    this.responseList = new JfResponseList<City | any>(0, 0, [])
+
     this.fieldsSearchable = [
       this.itemLabels.id,
       this.itemLabels.name,
@@ -99,7 +100,7 @@ export class CityListComponent extends BaseCmsListComponent implements OnInit, O
   initSearchModel(): any {
     const search = !this.isSubComponent ? JfUtils.mStorage.getItem(this.kConditions, this.storageSession) : null
     const mSearch = {
-      lazyLoadEvent: new JfLazyLoadEvent(10, 1, [new JfSort(this.itemLabels.id.field, JfSort.desc)]),
+      lazyLoadEvent: new JfLazyLoadEvent(10, 1, [new JfSort(this.itemLabels.id.field!, JfSort.desc)]),
       conditionCountry: new JfSearchCondition(),
       conditionRegion: new JfSearchCondition(),
       cModel: '-App-Models-City',
@@ -170,7 +171,7 @@ export class CityListComponent extends BaseCmsListComponent implements OnInit, O
       ]),
     ]
     this.modelSearch.lazyLoadEvent.conditions = conditions
-    this.modelSearch.lazyLoadEvent.additional = []
+    this.modelSearch.lazyLoadEvent.additional = [new JfCondition('to_index', '.')]
     // this.modelSearch.lazyLoadEvent.includes = ['relation-1tm', 'relation-mt1', 'relation-1t1', ...];
     const mSearch = JSON.stringify(this.modelSearch)
     switch (strAction) {

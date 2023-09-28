@@ -379,7 +379,7 @@ export class UserDetailComponent implements OnInit, OnDestroy {
 
     // are required? do you need something like that?
     // this.rolesAreRequired   = this.user.roles.length > 0 ? '-' : '';
-    // this.rolesAvoidable  = [...new Set([...k.userClients, ...this.rolesSelectable])];
+    // this.rolesAvoidable  = [...new Set([...k._1_userClients, ...this.rolesSelectable])];
   }
 
   role2rm(role: Role): void {

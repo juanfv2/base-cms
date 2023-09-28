@@ -24,7 +24,7 @@ export const routes = {
     xFiles: 'x_files',
     seeder: 'seeder',
     subscribe: 'subscribe',
-    visor_log_errors: 'visor-log-errors',
+    visorLogErrors: 'visor-log-errors',
   },
   /* -------------------------------------------------------------------------- */
   /* System                                                                     */
@@ -36,8 +36,7 @@ export const routes = {
   permissions: 'permissions',
   people: 'people',
   accounts: 'accounts',
-  visor_log_errors: 'visor-log-errors',
-
+  visorLogErrors: 'visor-log-errors',
   /* -------------------------------------------------------------------------- */
   /* Countries                                                                  */
   /* -------------------------------------------------------------------------- */

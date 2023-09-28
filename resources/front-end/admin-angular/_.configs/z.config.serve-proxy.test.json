@@ -1,0 +1,26 @@
+{
+  "/api": {
+    "target": "https://ransa-archivo-10.test",
+    "secure": false
+  },
+  "/storage": {
+    "target": "https://ransa-archivo-10.test",
+    "secure": false
+  },
+  "/assets": {
+    "target": "https://ransa-archivo-10.test",
+    "secure": false
+  },
+  "/all-sw.js": {
+    "target": "https://ransa-archivo-10.test",
+    "secure": false
+  },
+  "/firebase-messaging-sw.js": {
+    "target": "https://ransa-archivo-10.test",
+    "secure": false
+  },
+  "/_.admin/manifest.webmanifest": {
+    "target": "https://ransa-archivo-10.test",
+    "secure": false
+  }
+}

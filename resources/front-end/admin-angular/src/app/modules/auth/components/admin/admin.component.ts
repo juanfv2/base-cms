@@ -30,8 +30,10 @@ export class AdminComponent {
   }
 
   time2live(): void {
-    const timeOut = k.expireTimeOut * 60
-    const timeToIdle = k.expireTime * (isDevMode() ? k.timeToLive: k.timeToLiveProd) - timeOut
+    const timeOut = k.expireTimeOut * 60 // 15m
+    const timeToIdle = k.expireTime * 60 - timeOut // 3m
+
+    console.log({timeOut, timeToIdle})
 
     // establecer un tiempo de espera inactivo de 5 segundos, con fines de prueba.
     this.idle.setIdle(timeToIdle)
@@ -63,13 +65,16 @@ export class AdminComponent {
       this.messageService.currentMessage.next(payload)
     })
     this.idle.onTimeoutWarning.subscribe((countdown) => {
-      // console.log('time: onTimeoutWarning', time);
+      const minutes = Math.floor(countdown / 60)
+      const seconds = countdown % 60
 
-      const min = Math.ceil(countdown / 60) - 1
+      const body = `¡La sesión se cerrará en apróx. ${minutes}:${seconds.toString().padStart(2, '0')}!`
 
-      const payload = {
-        notification: {title: k.project_name, body: `¡La sesión se cerrará en aprox. ${min}:${countdown}!`},
-      }
+      // console.log('time: onTimeoutWarning', countdown)
+      // console.log(msg)
+
+      const payload = {notification: {title: k.project_name, body}}
+
       this.messageService.currentMessage.next(payload)
     })
 

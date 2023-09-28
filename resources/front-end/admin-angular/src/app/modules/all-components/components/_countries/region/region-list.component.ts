@@ -14,7 +14,6 @@ import {
   JfRequestOption,
   JfMessageService,
   JfSearchCondition,
-  JfStorageManagement,
   BaseCmsListComponent,
 } from 'base-cms' // from '@juanfv2/base-cms'
 import {k} from 'src/environments/k'
@@ -40,12 +39,6 @@ export class RegionListComponent extends BaseCmsListComponent implements OnInit,
     }
   }
   override itemCurrent?: Region
-  override itemLabels = l.region
-  override labels = l
-  override kRoute = kRoute
-  override kConditions = kConditions
-  override mApi = new JfApiRoute(kRoute)
-  override responseList: JfResponseList<Region | any> = new JfResponseList<Region | any>(0, 0, [])
 
   constructor(
     public override router: Router,
@@ -55,8 +48,22 @@ export class RegionListComponent extends BaseCmsListComponent implements OnInit,
     private route: ActivatedRoute
   ) {
     super()
-    this.fieldsSearchable = [this.itemLabels.id, this.itemLabels.name, this.itemLabels.code]
-    this.fieldsInList = [this.itemLabels.id, this.itemLabels.name, this.itemLabels.code, this.itemLabels.countryName]
+
+    this.itemLabels = l.region
+    this.labels = l
+    this.kRoute = kRoute
+    this.kConditions = kConditions
+    this.mApi = new JfApiRoute(kRoute)
+    this.responseList = new JfResponseList<Region | any>(0, 0, [])
+
+    this.fieldsSearchable = [this.itemLabels.id, this.itemLabels.name, this.itemLabels.code, this.itemLabels.country_id]
+    this.fieldsInList = [
+      this.itemLabels.id,
+      this.itemLabels.name,
+      this.itemLabels.code,
+      this.itemLabels.country_id,
+      this.itemLabels.countryName,
+    ]
     this.hasPermission2show = JfRequestOption.isAuthorized(`/${kRoute}/show`)
     this.hasPermission2new = JfRequestOption.isAuthorized(`/${kRoute}/new`)
     this.hasPermission2delete = JfRequestOption.isAuthorized(`/${kRoute}/delete`)
@@ -78,7 +85,7 @@ export class RegionListComponent extends BaseCmsListComponent implements OnInit,
   initSearchModel(): any {
     const search = !this.isSubComponent ? JfUtils.mStorage.getItem(this.kConditions, this.storageSession) : null
     const mSearch = {
-      lazyLoadEvent: new JfLazyLoadEvent(10, 1, [new JfSort(this.itemLabels.id.field, JfSort.desc)]),
+      lazyLoadEvent: new JfLazyLoadEvent(10, 1, [new JfSort(this.itemLabels.id.field!, JfSort.desc)]),
       conditionCountry: new JfSearchCondition(),
       cModel: '-App-Models-Region',
     }
@@ -135,7 +142,7 @@ export class RegionListComponent extends BaseCmsListComponent implements OnInit,
       ]),
     ]
     this.modelSearch.lazyLoadEvent.conditions = conditions
-    this.modelSearch.lazyLoadEvent.additional = []
+    this.modelSearch.lazyLoadEvent.additional = [new JfCondition('to_index', '.')]
     // this.modelSearch.lazyLoadEvent.includes = ['relation-1tm', 'relation-mt1', 'relation-1t1', ...];
     const mSearch = JSON.stringify(this.modelSearch)
     switch (strAction) {

@@ -25,7 +25,7 @@ export class CountryDetailComponent implements OnInit, OnDestroy {
 
   mFormGroup!: FormGroup
   labels = l
-  includes = ['user', 'city', 'region']
+  includes = ['user', 'region', 'city']
   mApi = new JfApiRoute(kRoute)
   private mSubscription: any
   sending = false

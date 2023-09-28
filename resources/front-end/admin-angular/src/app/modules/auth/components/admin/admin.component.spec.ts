@@ -21,7 +21,7 @@ describe('AdminComponent', () => {
     spyOn(localStorage, 'clear').and.callFake(() => (localStore = {}))
     JfUtils.getBaseLocation()
 
-    JfUtils.mStorage.setItem(k.user, JSON.stringify(user))
+    JfUtils.mStorage.setItem(k._1_user, JSON.stringify(user))
   })
 
   beforeEach(async () => {

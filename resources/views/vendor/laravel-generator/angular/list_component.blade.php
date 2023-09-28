@@ -3,6 +3,7 @@ import {ActivatedRoute, Router} from '@angular/router'
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap'
 
 import {
+JfSort,
 JfUtils,
 JfApiRoute,
 JfResponse,
@@ -13,7 +14,6 @@ JfLazyLoadEvent,
 JfRequestOption,
 JfMessageService,
 JfSearchCondition,
-JfStorageManagement,
 BaseCmsListComponent,
 } from 'base-cms' // from '@juanfv2/base-cms'
 import {k} from 'src/environments/k'
@@ -32,12 +32,6 @@ styleUrls: ['./{{ $config->modelNames->dashed }}-list.component.scss']
 export class {{ $config->modelNames->name }}ListComponent extends BaseCmsListComponent implements OnInit, OnChanges {
 {!! $relations_fields !!}
 override itemCurrent?: {{ $config->modelNames->name }};
-override itemLabels = l.{{ $config->modelNames->camel }}
-override labels = l
-override kRoute = kRoute
-override kConditions = kConditions
-override mApi = new JfApiRoute(kRoute)
-override responseList: JfResponseList<{{ $config->modelNames->name }}| any> = new JfResponseList<{{ $config->modelNames->name }} | any>(0, 0, []);
 
 constructor(
 public override router: Router,
@@ -46,6 +40,14 @@ public override crudService: JfCrudService,
 public override messageService: JfMessageService,
 private route: ActivatedRoute,) {
 super()
+
+this.itemLabels = l.{{ $config->modelNames->camel }}
+this.labels = l
+this.kRoute = kRoute
+this.kConditions = kConditions
+this.mApi = new JfApiRoute(kRoute)
+this.responseList = new JfResponseList<{{ $config->modelNames->name }} | any>(0, 0, []);
+
 this.fieldsSearchable = [ {!! $searchable_1 !!} ];
 this.fieldsInList = [ {!! $searchable_1 !!} ,  {!! $searchable_2 !!}  ];
 this.hasPermission2show = JfRequestOption.isAuthorized(`/${kRoute}/show`)
@@ -67,11 +69,10 @@ this.onLazyLoad();
 }
 
 initSearchModel(): any {
-const search = !this.isSubComponent ? JfStorageManagement.getItem(this.kConditions, this.storageSession) : null;
+const search = !this.isSubComponent ? JfUtils.mStorage.getItem(this.kConditions, this.storageSession) : null;
 const mSearch = {
-lazyLoadEvent: new JfLazyLoadEvent(),
-{!! $relations_fields_init_search_model !!}
-cModel: '-App-Models-{{ $config->modelNames->name }}',
+lazyLoadEvent: new JfLazyLoadEvent(10, 1, [new JfSort(this.itemLabels.id.field!, JfSort.desc)]) {!! $relations_fields_init_search_model !!}
+,cModel: '-App-Models-{{ $config->modelNames->name }}',
 };
 this.currentFields(mSearch)
 
@@ -106,7 +107,7 @@ this.loading = true;
 let nextOperator = 'AND';
 const conditions: any[] = [];
 {!! $relations_fields_on_lazy_load_1 !!}
-if (this.modelSearch.conditions) {
+if (this.modelSearch?.conditions?.length) {
 for (const c of this.modelSearch.conditions) {
 nextOperator = JfUtils.addCondition(c, nextOperator, conditions)
 }
@@ -116,7 +117,7 @@ this.modelSearch.lazyLoadEvent.joins = [
 {{ $relations_fields_on_lazy_load_2 }}
 ];
 this.modelSearch.lazyLoadEvent.conditions = conditions;
-this.modelSearch.lazyLoadEvent.additional = [];
+this.modelSearch.lazyLoadEvent.additional = [new JfCondition('to_index', '.')]
 // this.modelSearch.lazyLoadEvent.includes = ['relation-1tm', 'relation-mt1', 'relation-1t1', ...];
 const mSearch = JSON.stringify(this.modelSearch);
 switch (strAction) {

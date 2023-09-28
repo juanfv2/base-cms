@@ -1,0 +1,26 @@
+{
+  "/api": {
+    "target": "http://localhost:8000",
+    "secure": false
+  },
+  "/storage": {
+    "target": "http://localhost:8000",
+    "secure": false
+  },
+  "/assets": {
+    "target": "http://localhost:8000",
+    "secure": false
+  },
+  "/all-sw.js": {
+    "target": "http://localhost:8000",
+    "secure": false
+  },
+  "/firebase-messaging-sw.js": {
+    "target": "http://localhost:8000",
+    "secure": false
+  },
+  "/_.admin/manifest.webmanifest": {
+    "target": "http://localhost:8000",
+    "secure": false
+  }
+}

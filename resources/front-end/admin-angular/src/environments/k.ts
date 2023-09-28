@@ -1,4 +1,5 @@
 import {k as Constants} from 'base-cms' // from '@juanfv2/base-cms'
+import {l} from './l'
 import {routes} from './routes'
 import {rolesAdmins, rolesClients} from './resources'
 
@@ -14,7 +15,26 @@ k.rolesClients = rolesClients
 k.role_id_1_admin = 1
 k.role_id_2_sub_admin = 2
 k.role_id_3_customer = 3
-k.versionV = 'd-2023_01_18T22_23_50_800Z'
-k.timeToLive = 60 * 60 // 60 - min
-k.timeToLiveProd = 60 * 30 // 30 - min
-// console.log('k', k)
+k.versionV = 'd-2023_09_28T21_38_19_007Z'
+k.expireTimeOut = 5
+k.expireTime = 60
+
+l.k = k
+
+/* -------------------------------------------------------------------------- */
+/* override default url path                                                  */
+/* -------------------------------------------------------------------------- */
+
+// default= host-0/<company-1>/<country-2>/<dev-3>
+// ej.= ransa.net/admin/sv/dev
+// ej.= ransa.net/admin/sv
+// host/<root-1>/<company-2>/<country-3>/<dev-4>
+// ej.= ransa.net/visor/admin/00
+// k.path = {
+//   root= 1
+//   company= 2
+//   country= 3
+//   dev= 4
+// }
+
+// console.log('k' k)

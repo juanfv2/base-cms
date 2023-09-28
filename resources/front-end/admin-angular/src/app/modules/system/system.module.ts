@@ -22,7 +22,7 @@ const _Routes: Routes = [
   {path: `${k.routes.roles}/:id`, component: RoleDetailComponent},
   {path: k.routes.roles, component: RoleListComponent},
 
-  {path: k.routes.visor_log_errors, component: VisorLogErrorListComponent},
+  {path: k.routes.visorLogErrors, component: VisorLogErrorListComponent},
 
   // ...
 ]

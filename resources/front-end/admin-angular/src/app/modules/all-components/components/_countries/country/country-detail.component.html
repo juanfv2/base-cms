@@ -81,17 +81,17 @@
     </ng-template>
 </ng-container>
 <ng-container ngbNavItem>
-    <a ngbNavLink>{{labels.city.ownNamePlural}}</a>
-    <ng-template ngbNavContent>
-    <app-city-list [country]="country" [isSubComponent]="true">
-    </app-city-list>
-    </ng-template>
-</ng-container>
-<ng-container ngbNavItem>
     <a ngbNavLink>{{labels.region.ownNamePlural}}</a>
     <ng-template ngbNavContent>
     <app-region-list [country]="country" [isSubComponent]="true">
     </app-region-list>
+    </ng-template>
+</ng-container>
+<ng-container ngbNavItem>
+    <a ngbNavLink>{{labels.city.ownNamePlural}}</a>
+    <ng-template ngbNavContent>
+    <app-city-list [country]="country" [isSubComponent]="true">
+    </app-city-list>
     </ng-template>
 </ng-container>
 </nav><div [ngbNavOutlet]="nav" class="bg-white"></div></div>
