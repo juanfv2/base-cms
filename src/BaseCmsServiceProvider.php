@@ -34,38 +34,38 @@ class BaseCmsServiceProvider extends ServiceProvider
         }
 
         // $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
-        $this->loadViewsFrom(__DIR__ . '/../resources', 'base-cms-views');
+        $this->loadViewsFrom(__DIR__.'/../resources', 'base-cms-views');
 
         $this->publishes([
-            __DIR__ . '/Entities/Controllers' => app_path('Http/Controllers'),
-            __DIR__ . '/Entities/Models' => app_path('Models'),
-            __DIR__ . '/Entities/Notifications' => app_path('Notifications'),
-            __DIR__ . '/Entities/Tests' => base_path('tests'),
+            __DIR__.'/Entities/Controllers' => app_path('Http/Controllers'),
+            __DIR__.'/Entities/Models' => app_path('Models'),
+            __DIR__.'/Entities/Notifications' => app_path('Notifications'),
+            __DIR__.'/Entities/Tests' => base_path('tests'),
         ], 'base-cms-entities');
 
         $this->publishes([
-            __DIR__ . '/../database/data' => database_path('data'),
-            __DIR__ . '/../database/factories' => database_path('factories'),
-            __DIR__ . '/../database/migrations' => database_path('migrations'),
-            __DIR__ . '/../database/seeders' => database_path('seeders'),
+            __DIR__.'/../database/data' => database_path('data'),
+            __DIR__.'/../database/factories' => database_path('factories'),
+            __DIR__.'/../database/migrations' => database_path('migrations'),
+            __DIR__.'/../database/seeders' => database_path('seeders'),
         ], 'base-cms-databases');
 
         $this->publishes([
-            __DIR__ . '/../resources/views' => resource_path('views'),
-            __DIR__ . '/../resources/model_schemas' => resource_path('model_schemas'),
-            __DIR__ . '/../resources/assets' => public_path('assets'),
-            __DIR__ . '/../resources/base' => public_path('base'),
-            __DIR__ . '/../resources/lang' => base_path('lang'),
+            __DIR__.'/../resources/views' => resource_path('views'),
+            __DIR__.'/../resources/model_schemas' => resource_path('model_schemas'),
+            __DIR__.'/../resources/assets' => public_path('assets'),
+            __DIR__.'/../resources/base' => public_path('base'),
+            __DIR__.'/../resources/lang' => base_path('lang'),
         ], 'base-cms-views');
 
         $this->publishes([
-            __DIR__ . '/../config/api.php' => base_path('routes/api.php'),
-            __DIR__ . '/../config/web.php' => base_path('routes/web.php'),
-            __DIR__ . '/../config/base-cms.php' => config_path('base-cms.php'),
+            __DIR__.'/../config/api.php' => base_path('routes/api.php'),
+            __DIR__.'/../config/web.php' => base_path('routes/web.php'),
+            __DIR__.'/../config/base-cms.php' => config_path('base-cms.php'),
         ], 'base-cms-configs');
 
         $this->publishes([
-            __DIR__ . '/../resources/front-end' => resource_path('front-end'),
+            __DIR__.'/../resources/front-end' => resource_path('front-end'),
         ], 'base-cms-angular-code');
     }
 }

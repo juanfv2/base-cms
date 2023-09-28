@@ -2,13 +2,9 @@
 
 namespace Juanfv2\BaseCms\Commands;
 
-use App\Models\Auth\Permission;
-use App\Models\Auth\Role;
 use App\Models\Misc\ItemField;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Schema;
 
 class CreateFields extends Command
 {
@@ -79,7 +75,7 @@ class CreateFields extends Command
 
                 ], (array) $pc);
 
-                logger(__FILE__ . ':' . __LINE__ . ' $f ', [$f]);
+                logger(__FILE__.':'.__LINE__.' $f ', [$f]);
             }
             $count = ItemField::count();
 
@@ -114,7 +110,7 @@ class CreateFields extends Command
 
         $this->save2ts($index2);
 
-        $this->info("File updated");
+        $this->info('File updated');
     }
 
     public function eachModel($k)
