@@ -491,29 +491,33 @@ class AngularDetailComponentGenerator extends BaseGenerator
 
         $fields[] = '// admin-angular/src/environments/l.ts';
         $fields[] = '';
-        $fields[] = "{$this->config->modelNames->camel}: {";
-        $fields[] = "tablePK: '{$this->config->primaryName}',";
-        $fields[] = "tableName: '{$this->config->tableName}',";
-        $fields[] = "ownName: '{$this->config->modelNames->name}',";
-        $fields[] = "ownNamePlural: '{$this->config->modelNames->plural}',";
+        $fields[] = '"'.$this->config->modelNames->camel.'": {';
+        $fields[] = '"tablePK": "'.$this->config->primaryName.'",';
+        $fields[] = '"tableName": "'.$this->config->tableName.'",';
+        $fields[] = '"ownName": "'.$this->config->modelNames->name.'",';
+        $fields[] = '"ownNamePlural": "'.$this->config->modelNames->plural.'",';
 
         foreach ($this->config->fields as $field) {
             if (! $field->name) {
                 continue;
             }
             $converted = Str::title($field->name);
-            $fieldText = "$field->name: new DBType({label: '{$converted}', name: '$field->name', field: '{$this->config->tableName}.$field->name', ";
+            $fieldText = '"'.$field->name.'":    ';
+            $fieldText .= '{';
+            $fieldText .= '"label": "'.$converted.'", "name": "'.$field->name.'", "field": "'.$this->config->tableName.'.'.$field->name.'", ';
             $fdbType = explode(',', $field->dbType)[0];
 
             if ($field->isPrimary) {
                 $mPrimaryKey = $field->name;
             }
             match ($fdbType) {
-                'integer', 'bigInteger' => $fieldText .= "type: 'number'} as DBType),",
-                'date', 'datetime' => $fieldText .= "type: 'date'} as DBType),",
-                'boolean' => $fieldText .= "type: 'boolean'} as DBType),",
-                default => $fieldText .= "type: 'string'} as DBType),",
+                'integer', 'bigInteger' => $fieldText .= '"type": "number",',
+                'date', 'datetime' => $fieldText .= '"type": "date",',
+                'boolean' => $fieldText .= '"type": "boolean",',
+                default => $fieldText .= '"type": "string",',
             };
+            $fieldText .= '"model": "'.$this->config->modelNames->camel.'"';
+            $fieldText .= '},';
             $fields[] = $fieldText;
         }
 
