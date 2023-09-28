@@ -30,6 +30,7 @@ class ZLoginAPIController extends AppBaseController
     public function logout()
     {
         $r = $this->attemptLogout();
+
         // return response()->json(['bye' => $r], 204);
         return $this->sendResponse($r, __('user.bye'), true, 204);
     }

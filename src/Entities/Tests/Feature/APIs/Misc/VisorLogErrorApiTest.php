@@ -12,8 +12,8 @@ use Tests\TestCase;
 class VisorLogErrorApiTest extends TestCase
 {
     use ApiTestTrait;
-    use WithoutMiddleware;
     use DatabaseTransactions;
+    use WithoutMiddleware;
     // use RefreshDatabase;
 
     /** @test */

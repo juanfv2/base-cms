@@ -71,6 +71,7 @@ class ZRegisterAPIController extends AppBaseController
         if ($r instanceof User) {
             return $this->sendResponse(['id' => $this->model->id, 'detail' => __('messages.mail.verifyTitle', ['email' => $this->model->email])], $message);
         }
+
         // warning: show error
         return $this->sendError(__('validation.model.error', ['model' => 'Usuario']));
     }

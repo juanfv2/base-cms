@@ -5,32 +5,16 @@ namespace App\Models\Auth;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use Juanfv2\BaseCms\Traits\BaseCmsModel;
 use Juanfv2\BaseCms\Traits\UserResponsible;
 
-/**
- * Class Permission
- *
- * @version September 8, 2020, 4:57 pm UTC
- *
- * @property \Illuminate\Database\Eloquent\Collection $authRoles
- * @property string $icon
- * @property string $name
- * @property string $urlBackEnd
- * @property string $urlFrontEnd
- * @property bool $isSection
- * @property bool $isVisible
- * @property int $orderInMenu
- * @property int $permission_id
- * @property int $created_by
- * @property int $updated_by
- */
 class Permission extends Model
 {
-    use BaseCmsModel,
-        UserResponsible,
-        HasFactory,
-        SoftDeletes;
+    use BaseCmsModel;
+    use HasFactory;
+    use SoftDeletes;
+    use UserResponsible;
 
     public $table = 'auth_permissions';
 
@@ -43,8 +27,8 @@ class Permission extends Model
         'isVisible',
         'orderInMenu',
         'permission_id',
-        'created_By',
-        'updated_By',
+        'createdBy',
+        'updatedBy',
     ];
 
     /**
@@ -62,8 +46,8 @@ class Permission extends Model
         'isVisible' => 'boolean',
         'orderInMenu' => 'integer',
         'permission_id' => 'integer',
-        'created_by' => 'integer',
-        'updated_by' => 'integer',
+        'createdBy' => 'integer',
+        'updatedBy' => 'integer',
     ];
 
     /**
@@ -80,15 +64,15 @@ class Permission extends Model
         'isVisible' => 'required|boolean',
         'orderInMenu' => 'required|integer',
         'permission_id' => 'required',
-        'created_by' => 'nullable',
-        'updated_by' => 'nullable',
+        'createdBy' => 'nullable',
+        'updatedBy' => 'nullable',
         'created_at' => 'nullable',
         'updated_at' => 'nullable',
         'deleted_at' => 'nullable',
     ];
 
     public $hidden = [
-        'created_by', 'updated_by', 'created_at', 'updated_at', 'deleted_at',
+        'createdBy', 'updatedBy', 'created_at', 'updated_at', 'deleted_at',
     ];
 
     /**
@@ -96,7 +80,7 @@ class Permission extends Model
      **/
     public function roles()
     {
-        return $this->belongsToMany(\App\Models\Auth\Role::class, 'auth_roles_has_permissions');
+        return $this->belongsToMany(\App\Models\Auth\Role::class, 'auth_role_permission');
     }
 
     /**
@@ -122,5 +106,81 @@ class Permission extends Model
             ->where('isVisible', 0)
             ->orderBy('orderInMenu')
             ->orderBy('name');
+    }
+
+    public static function userHasPermission(int $user_id, string $urlParent, string $urlChild)
+    {
+        if ($urlChild === '-.-') {
+            return DB::table('auth_users')
+                ->join('auth_user_role', 'auth_user_role.user_id', '=', 'auth_users.id')
+                ->join('auth_roles', 'auth_user_role.role_id', '=', 'auth_roles.id')
+                ->join('auth_role_permission', 'auth_role_permission.role_id', '=', 'auth_roles.id')
+                ->join('auth_permissions', 'auth_role_permission.permission_id', '=', 'auth_permissions.id')
+                ->where('auth_permissions.urlBackEnd', '=', $urlParent)
+                ->where('auth_users.id', '=', $user_id)
+                ->whereNull('auth_users.deleted_at')
+                ->count();
+        }
+
+        return DB::table('auth_users as _u')
+            ->join('auth_user_role as _ur', '_ur.user_id', '=', '_u.id')
+            ->join('auth_roles as _r', '_ur.role_id', '=', '_r.id')
+            ->join('auth_role_permission as _rp', '_rp.role_id', '=', '_r.id')
+            ->join('auth_permissions as _p1', '_rp.permission_id', '=', '_p1.id')
+            ->join('auth_permission_permission as _pp', '_pp.parent_id', '=', '_p1.id')
+            ->join('auth_permissions as _p2', '_pp.child_id', '=', '_p2.id')
+            ->where('_p1.urlBackEnd', '=', $urlParent)
+            ->where('_p2.urlBackEnd', '=', $urlChild)
+            ->where('_u.id', '=', $user_id)
+            ->whereNull('_u.deleted_at')
+            ->count();
+    }
+
+    public static function savePermission2Role($role_id, $urlParent)
+    {
+        $permission_id = DB::table('auth_permissions')
+            ->where('urlBackEnd', $urlParent)
+            ->value('id');
+
+        $msg = "( $role_id ) ( '$urlParent', $permission_id ): ";
+        $result = false;
+
+        if ($role_id && $permission_id) {
+            $result = DB::table('auth_role_permission')
+                ->updateOrInsert(
+                    ['role_id' => $role_id, 'permission_id' => $permission_id],
+                    ['role_id' => $role_id, 'permission_id' => $permission_id]
+                );
+        }
+
+        logger(__FILE__.':'.__LINE__.' $msg . $result ', [$msg.$result]);
+
+        return $msg.$result;
+    }
+
+    public static function savePermissionParentChild($urlParent, $urlChild)
+    {
+        $parent_id = DB::table('auth_permissions')
+            ->where('urlBackEnd', $urlParent)
+            ->value('id');
+
+        $child_id = DB::table('auth_permissions')
+            ->where('urlBackEnd', $urlChild)
+            ->value('id');
+
+        $msg = "( '$urlParent' , $parent_id ) ( '$urlChild', $child_id ): ";
+        $result = false;
+
+        if ($parent_id && $child_id) {
+            $result = DB::table('auth_permission_permission')
+                ->updateOrInsert(
+                    ['parent_id' => $parent_id, 'child_id' => $child_id],
+                    ['parent_id' => $parent_id, 'child_id' => $child_id]
+                );
+        }
+
+        logger(__FILE__.':'.__LINE__.' .savePermissionParentChild ', [$msg.$result]);
+
+        return $msg.$result;
     }
 }

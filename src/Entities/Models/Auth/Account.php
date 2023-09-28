@@ -2,6 +2,7 @@
 
 namespace App\Models\Auth;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,9 +12,9 @@ use Juanfv2\BaseCms\Traits\UserResponsible;
 class Account extends Model
 {
     use BaseCmsModel;
-    use UserResponsible;
-    use SoftDeletes;
     use HasFactory;
+    use SoftDeletes;
+    use UserResponsible;
 
     public $table = 'auth_accounts';
 
@@ -59,6 +60,13 @@ class Account extends Model
     public $hidden = [
         'created_by', 'updated_by', 'created_at', 'updated_at', 'deleted_at',
     ];
+
+    protected function fullName(): Attribute
+    {
+        return Attribute::make(
+            get: fn (mixed $value, array $attributes) => ($attributes['firstName'].' '.$attributes['lastName']),
+        );
+    }
 
     public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {

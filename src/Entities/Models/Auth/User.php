@@ -17,12 +17,12 @@ class User extends Authenticatable implements MustVerifyEmail
 {
     use BaseCmsModel;
     use BaseCmsModelUser;
-    use UserResponsible;
-    use HasFile;
-    use SoftDeletes;
-    use HasFactory;
-    use Notifiable;
     use HasApiTokens;
+    use HasFactory;
+    use HasFile;
+    use Notifiable;
+    use SoftDeletes;
+    use UserResponsible;
 
     public $table = 'auth_users';
 

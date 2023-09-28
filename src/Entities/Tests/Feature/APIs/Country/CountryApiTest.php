@@ -12,8 +12,8 @@ use Tests\TestCase;
 class CountryApiTest extends TestCase
 {
     use ApiTestTrait;
-    use WithoutMiddleware;
     use DatabaseTransactions;
+    use WithoutMiddleware;
     // use RefreshDatabase;
 
     /** @test */

@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\APIs\Auth;
 
+use App\Models\Auth\Permission;
+use App\Models\Auth\Role;
 use App\Models\Auth\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -12,7 +14,8 @@ use Tests\TestCase;
 class ZLoginApiTest extends TestCase
 {
     use ApiTestTrait;
-    use WithoutMiddleware;
+
+    // use WithoutMiddleware;
     use DatabaseTransactions;
     // use RefreshDatabase;
 
@@ -32,7 +35,7 @@ class ZLoginApiTest extends TestCase
 
         $this->response = $this->json('POST', route('api.login.login'), $credentials);
 
-        // dd($this->response->json());
+        // $this->response->dd();
 
         $this->assertJsonModifications();
     }
@@ -131,5 +134,64 @@ class ZLoginApiTest extends TestCase
         $expected = __('auth.no.active');
 
         $this->assertEquals($expected, $actual);
+    }
+
+    /** @test */
+    public function get_users_not_allow_role_permissions()
+    {
+        $created = 3;
+        $limit = 2;
+        $offset = 1;
+        $users = User::factory($created)->create();
+
+        $this->response = $this->actingAsAdmin()->json('POST', route('api.users.store', ['limit' => $limit, 'offset' => $offset, 'to_index' => 2]));
+
+        // $this->response->dd();
+
+        $this->response->assertStatus(401);
+    }
+
+    /** @test */
+    public function get_users_allow_role_permissions()
+    {
+        $role = Role::factory()->create(['id' => 1]);
+        $permission = Permission::factory()->create(['id' => 1, 'urlBackEnd' => 'api.users.store']);
+        $user = User::factory()->create(['disabled' => 0]);
+
+        $role->permissions()->attach([$permission->id]);
+        $user->roles()->attach([$role->id]);
+
+        $p = '123456';
+        $credentials = [
+            'email' => $user->email,
+            'password' => $p,
+            'includes' => ['person', 'token'],
+        ];
+
+        $this->response = $this->json('POST', route('api.login.login'), $credentials);
+
+        $this->assertApiSuccess();
+        $responseContent = $this->response->json();
+
+        // dd($responseContent);
+
+        $token = $responseContent['data']['token'];
+
+        $created = 3;
+        $limit = 2;
+        $offset = 1;
+        $users = User::factory($created)->create();
+
+        $this->response = $this->json(
+            'POST',
+            route('api.users.store', ['limit' => $limit, 'offset' => $offset, 'to_index' => 2]),
+            [],
+            ['Authorization' => 'Bearer '.$token]
+
+        );
+
+        // $this->response->dd();
+
+        $this->response->assertStatus(200);
     }
 }

@@ -14,8 +14,8 @@ use Tests\TestCase;
 class ZRegisterAccountApiTest extends TestCase
 {
     use ApiTestTrait;
-    use WithoutMiddleware;
     use DatabaseTransactions;
+    use WithoutMiddleware;
     // use RefreshDatabase;
 
     /** @test */

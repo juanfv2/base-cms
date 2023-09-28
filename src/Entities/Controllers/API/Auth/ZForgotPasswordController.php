@@ -40,14 +40,15 @@ class ZForgotPasswordController extends AppBaseController
                 return $this->sendError([], __('passwords.throttled'), 401);
             }
         }
-        DB::delete("delete from `$resetTable` where email = ?", [$email]);
+
+        $reset = DB::table($resetTable)->where('email', $email)->delete();
 
         $token = base64_encode(Str::random(60));
 
-        DB::insert("insert into `$resetTable` (`email`, `token`, `created_at`) values (?, ?, ?)", [
-            $email,
-            $token,
-            Carbon::now(),
+        DB::table($resetTable)->insert([
+            'email' => $email,
+            'token' => $token,
+            'created_at' => now(),
         ]);
 
         $user->sendPasswordResetNotification($token);

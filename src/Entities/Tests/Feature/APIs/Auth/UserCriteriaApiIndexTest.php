@@ -14,8 +14,8 @@ use Tests\TestCase;
 class UserCriteriaApiIndexTest extends TestCase
 {
     use ApiTestTrait;
-    use WithoutMiddleware;
     use DatabaseTransactions;
+    use WithoutMiddleware;
     // use RefreshDatabase;
 
     public function setUp(): void

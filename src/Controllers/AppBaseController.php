@@ -14,8 +14,8 @@ use Juanfv2\BaseCms\Traits\ListenerTracking;
 
 class AppBaseController extends Controller
 {
-    use ControllerResponses;
     use ControllerFiles;
+    use ControllerResponses;
     use ImportableExportable;
     use ListenerTracking;
 
@@ -73,6 +73,7 @@ class AppBaseController extends Controller
 
         /* */
         $items = GenericResource::collection($items);
+
         /* */
         return $this->sendResponse(
             ['totalPages' => abs(ceil($itemCount / $limit)), 'totalElements' => $itemCount, 'content' => $items],

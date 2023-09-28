@@ -13,8 +13,8 @@ use Tests\TestCase;
 class RoleApiTest extends TestCase
 {
     use ApiTestTrait;
-    use WithoutMiddleware;
     use DatabaseTransactions;
+    use WithoutMiddleware;
     // use RefreshDatabase;
 
     /** @test */

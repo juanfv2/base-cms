@@ -11,9 +11,9 @@ use Juanfv2\BaseCms\Traits\UserResponsible;
 class City extends Model
 {
     use BaseCmsModel;
-    use UserResponsible;
-    use SoftDeletes;
     use HasFactory;
+    use SoftDeletes;
+    use UserResponsible;
 
     public $table = 'cities';
 

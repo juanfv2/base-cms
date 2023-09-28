@@ -11,8 +11,8 @@ use Juanfv2\BaseCms\Traits\BaseCmsModel;
 class TrackingJob extends Model
 {
     use BaseCmsModel;
-    use HasFactory;
     use ConvertTZ;
+    use HasFactory;
 
     public $table = 'tracking_jobs';
 

@@ -16,10 +16,9 @@ use Tests\TestCase;
 class AccountApiTest extends TestCase
 {
     use ApiTestTrait;
+    use DatabaseTransactions;
     use WithoutMiddleware;
-
-    // use DatabaseTransactions;
-    use RefreshDatabase;
+    // use RefreshDatabase;
 
     /** @test */
     public function api_index_accounts()

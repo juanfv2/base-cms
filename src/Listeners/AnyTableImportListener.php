@@ -14,7 +14,7 @@ use Juanfv2\BaseCms\Traits\ImportableExportable;
 
 class AnyTableImportListener implements ShouldQueue
 {
-    use ListenerQueueNotification, ListenerTracking, ImportableExportable;
+    use ImportableExportable, ListenerQueueNotification, ListenerTracking;
 
     /** @var AnyTableImportEvent */
     public $event;

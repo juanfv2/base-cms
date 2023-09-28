@@ -11,9 +11,11 @@ use Juanfv2\BaseCms\Traits\UserResponsible;
 class Role extends Model
 {
     use BaseCmsModel;
-    use UserResponsible;
-    use SoftDeletes;
     use HasFactory;
+    use SoftDeletes;
+    use UserResponsible;
+
+    private ?\Illuminate\Database\Eloquent\Collection $menus = null;
 
     public $table = 'auth_roles';
 
@@ -54,24 +56,6 @@ class Role extends Model
         return $this->belongsToMany(\App\Models\Auth\User::class, 'auth_user_role');
     }
 
-    public function getUrlPermissionsAttribute()
-    {
-        return $this->belongsToMany(Permission::class, 'auth_role_permission')
-            ->select('urlFrontEnd')
-            ->orderBy('urlFrontEnd', 'desc')
-            ->get()
-            ->pluck('urlFrontEnd');
-    }
-
-    public function getIdsPermissionsAttribute()
-    {
-        return $this->belongsToMany(Permission::class, 'auth_role_permission')
-            ->select('auth_permissions.id')
-            ->orderBy('auth_permissions.id', 'desc')
-            ->get()
-            ->pluck('id');
-    }
-
     public function getMenusAttribute()
     {
         return $this->menusFromParent(0);
@@ -79,32 +63,42 @@ class Role extends Model
 
     public function menusFromParent($permission_id)
     {
-        $menus = $this->belongsToMany(Permission::class, 'auth_role_permission')
+        $this->menus = $this->belongsToMany(Permission::class, 'auth_roles_has_permissions')->get();
+
+        /**
+         * Primero "menus" y luego cualquiera de estas dos propiedades.
+         *   includes = ['menus', 'idsPermissions']
+         */
+        $this->idsPermissions = $this->menus->pluck('id')->sort()->toArray();
+        $this->urlPermissions = $this->menus->pluck('urlFrontEnd')->sort()->toArray();
+        $this->_urlBackEnd_ = implode(',', $this->menus->pluck('urlBackEnd')->sort()->toArray());
+
+        $menus = $this->menus
             ->where('isVisible', 1)
             ->where('isSection', 1)
-            ->where('auth_permissions.permission_id', $permission_id)
-            ->orderBy('orderInMenu')
-            ->get();
+            ->where('permission_id', $permission_id)
+            ->sortBy('orderInMenu');
+
         foreach ($menus as $menu) {
-            $menu->subMenus = $this->roleFromSubMenu($menu->id);
+            $menu->subMenus = $this->subMenusFromPermission($menu->id);
         }
 
         return $menus;
     }
 
-    public function roleFromSubMenu($id)
+    public function subMenusFromPermission($id)
     {
-        // logger(__FILE__ . ':' . __LINE__ . ' subMenus ', [$id]);
-        $subMenus = $this->belongsToMany(Permission::class, 'auth_role_permission')
+        // logger(__FILE__ . ':' . __LINE__ . ' subMenus ', [$menus, $menu]);
+
+        $subMenus = $this->menus
             ->where('isVisible', 1)
-            ->where('auth_permissions.permission_id', $id)
-            ->orderBy('orderInMenu')
-            ->get();
+            ->where('permission_id', $id)
+            ->sortBy('orderInMenu');
 
         foreach ($subMenus as $menu) {
-            $menu->subMenus = $this->roleFromSubMenu($menu->id);
+            $menu->subMenus = $this->subMenusFromPermission($menu->id);
         }
 
-        return $subMenus;
+        return $subMenus->toArray();
     }
 }

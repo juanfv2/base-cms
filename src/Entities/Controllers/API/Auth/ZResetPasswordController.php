@@ -32,7 +32,7 @@ class ZResetPasswordController extends AppBaseController
         $isValid = $reset && $reset->token == $input['token'];
 
         if ($isValid) {
-            DB::delete("delete from `$resetTable` where email = ?", [$email]);
+            DB::table($resetTable)->where('email', $email)->delete();
 
             $user->password = Hash::make($input['password']);
             $user->save();
