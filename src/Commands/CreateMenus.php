@@ -96,6 +96,8 @@ class CreateMenus extends Command
                 foreach ($json as $pc) {
                     $result = Permission::savePermissionParentChild($pc->_urlParent, $pc->_urlChild);
                 }
+            } else {
+                $this->error("File not found: $q");
             }
         }
 

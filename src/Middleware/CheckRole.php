@@ -54,6 +54,7 @@ class CheckRole
         $hasPermission = Permission::userHasPermission(auth()->id(), $cRouteParent, $cRouteChild);
 
         if (! $hasPermission) {
+            logger(__FILE__.':'.__LINE__.' u:'.auth()->id().":'$hasPermission': [{ \"_urlParent\": \"$cRouteParent\", \"_urlChild\": \"$cRouteChild\" }]:-", [$hasPermission]);
             logger(__FILE__.':'.__LINE__.' u:'.auth()->id().":'$hasPermission': [call sp_save_permission_permission('$cRouteParent','$cRouteChild');]:-", [$hasPermission]);
         }
 
