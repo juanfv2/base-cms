@@ -516,7 +516,8 @@ class AngularDetailComponentGenerator extends BaseGenerator
                 'boolean' => $fieldText .= '"type": "boolean",',
                 default => $fieldText .= '"type": "string",',
             };
-            $fieldText .= '"model": "'.$this->config->modelNames->camel.'"';
+            $fieldText .= '"model": "'.$this->config->modelNames->camel.'",';
+            $fieldText .= '"allowSearch": true, "allowExport": true, "allowImport": true, "allowInList": true, "fixed": false, "sorting": true';
             $fieldText .= '},';
             $fields[] = $fieldText;
         }
