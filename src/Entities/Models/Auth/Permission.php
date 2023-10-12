@@ -136,6 +136,15 @@ class Permission extends Model
             ->count();
     }
 
+    public static function savePermission($permission)
+    {
+        return DB::table('auth_permissions')
+            ->updateOrInsert(
+                ['urlBackEnd' => $permission['urlBackEnd'], 'urlFrontEnd' => $permission['urlFrontEnd']],
+                $permission
+            );
+    }
+
     public static function savePermission2Role($role_id, $urlParent)
     {
         $permission_id = DB::table('auth_permissions')
@@ -181,6 +190,6 @@ class Permission extends Model
 
         logger(__FILE__.':'.__LINE__.' .savePermissionParentChild ', [$msg.$result]);
 
-        return $msg.$result;
+        return $result;
     }
 }

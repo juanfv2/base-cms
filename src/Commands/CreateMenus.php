@@ -11,12 +11,14 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateMenus extends Command
 {
+    public string $separator = '# ---------------------------------------------------------------------------- #';
+
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'base-cms:menus {paths*} {--t|truncate} {--a|admin} {--p|parents}';
+    protected $signature = 'base-cms:menus {--country=} {--c|create} {--t|truncate} {--p|permissions} {--s|sub_permissions} {--a|admin}';
 
     /**
      * The console command description.
@@ -43,27 +45,49 @@ class CreateMenus extends Command
     public function handle()
     {
         $results = [];
-        $paths = $this->argument('paths');
+        $country = $this->option('country');
         $truncate = $this->option('truncate');
+        $paths = $this->option('create');
+        $permissons = $this->option('permissions');
+        $sub_permissons = $this->option('sub_permissions');
         $admin = $this->option('admin');
-        $sub_permissons = $this->option('parents');
 
-        if ($truncate) {
-            Schema::disableForeignKeyConstraints();
-            DB::table('auth_permissions')->truncate();
-            Schema::enableForeignKeyConstraints();
+        if ($country) {
+            config()->set('database.default', config('base-cms.default_prefix').$country);
         }
 
-        // var_dump($paths);
-        // Read File
+        if ($truncate) {
+            $this->truncatePermissions();
+        }
+
+        if ($paths) {
+            $this->createPermissions();
+        }
+        if ($permissons) {
+            $this->savePermissions();
+        }
+
+        if ($sub_permissons) {
+            $this->saveSubPermissions();
+        }
+
+        if ($admin) {
+            $this->addPermission2Admin();
+        }
+
+        return count($results);
+    }
+
+    public function createPermissions()
+    {
+        $strLocationAndFileNamePrefix = database_path('data/_.menus/p.*.json');
+        $paths = glob($strLocationAndFileNamePrefix);
         $results[] = [];
 
         foreach ($paths as $path) {
-            $jsonString = file_get_contents(base_path($path));
+            $jsonString = file_get_contents($path);
 
             $permissions = json_decode($jsonString, true, 512, JSON_THROW_ON_ERROR);
-
-            // echo $path;
 
             foreach ($permissions as $value) {
                 $results[] = $this->createMenus($value);
@@ -72,38 +96,9 @@ class CreateMenus extends Command
 
         $r = Permission::count();
 
-        if ($admin) {
-            $role = Role::find(1);
-            $permissions = [];
-            for ($i = 1; $i <= $r; $i++) {
-                $permissions[] = $i;
-            }
-            $role->permissions()->sync($permissions);
-        }
-
-        if ($sub_permissons) {
-            Schema::disableForeignKeyConstraints();
-            DB::table('auth_permission_permission')->truncate();
-            Schema::enableForeignKeyConstraints();
-
-            $q = database_path('data/auth/auth_permission_permission_names.json');
-            $qq = File::exists($q);
-
-            if ($qq) {
-                $qString = File::get($q);
-                $json = json_decode($qString, null, 512, JSON_THROW_ON_ERROR);
-
-                foreach ($json as $pc) {
-                    $result = Permission::savePermissionParentChild($pc->_urlParent, $pc->_urlChild);
-                }
-            } else {
-                $this->error("File not found: $q");
-            }
-        }
-
-        $this->info("Menus creados: {$r}");
-
-        return count($results);
+        $this->info($this->separator);
+        $this->info("MENUS CREADOS: {$r}");
+        $this->info($this->separator);
     }
 
     public function createMenus($request)
@@ -186,5 +181,87 @@ class CreateMenus extends Command
         }
 
         return 'ok';
+    }
+
+    public function truncatePermissions()
+    {
+        Schema::disableForeignKeyConstraints();
+        DB::table('auth_permissions')->truncate();
+        Schema::enableForeignKeyConstraints();
+
+        $this->info($this->separator);
+        $this->info('TRUNCATE');
+        $this->info($this->separator);
+    }
+
+    public function savePermissions()
+    {
+        $q = database_path('data/auth/z_base_cms_menus_permissions.json');
+        $qq = File::exists($q);
+
+        if ($qq) {
+            $qString = File::get($q);
+            $json = json_decode($qString, true, 512, JSON_THROW_ON_ERROR);
+            $result = 0;
+
+            foreach ($json as $p) {
+                $r = Permission::savePermission($p) ? 1 : 0;
+
+                $result += $r;
+
+                if ($r) {
+                    $this->info("{$p['urlBackEnd']}");
+                }
+            }
+
+            $this->info($this->separator);
+            $this->info("PERMISSIONS: $result");
+            $this->info($this->separator);
+        } else {
+            $this->error("File not found: $q");
+        }
+    }
+
+    public function saveSubPermissions()
+    {
+        Schema::disableForeignKeyConstraints();
+        DB::table('auth_permission_permission')->truncate();
+        Schema::enableForeignKeyConstraints();
+
+        $q = database_path('data/auth/z_base_cms_menus_sub_permissions.json');
+        $qq = File::exists($q);
+
+        if ($qq) {
+            $qString = File::get($q);
+            $json = json_decode($qString, null, 512, JSON_THROW_ON_ERROR);
+            $result = 0;
+
+            foreach ($json as $pc) {
+                $r = Permission::savePermissionParentChild($pc->_urlParent, $pc->_urlChild) ? 1 : 0;
+                $result += $r;
+            }
+
+            $this->info($this->separator);
+            $this->info("SUB-PERMISSIONS: $result");
+            $this->info($this->separator);
+        } else {
+            $this->error("File not found: $q");
+        }
+    }
+
+    public function addPermission2Admin()
+    {
+        $r = Permission::count();
+
+        $role = Role::find(1);
+        $permissions = [];
+        for ($i = 1; $i <= $r; $i++) {
+            $permissions[] = $i;
+        }
+        $role->permissions()->sync($permissions);
+
+        $this->info($this->separator);
+        $this->info('PERMISSIONS TO ADMIN');
+        $this->info($this->separator);
     }
 }

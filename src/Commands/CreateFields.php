@@ -13,7 +13,7 @@ class CreateFields extends Command
      *
      * @var string
      */
-    protected $signature = 'base-cms:fields {--f|updateFile} {--t|updateTable}';
+    protected $signature = 'base-cms:fields {--country=} {--f|updateFile} {--t|updateTable}';
 
     /**
      * The console command description.
@@ -43,15 +43,20 @@ class CreateFields extends Command
      */
     public function handle()
     {
+        $country = $this->option('country');
         $updateFile = $this->option('updateFile');
         $updateTable = $this->option('updateTable');
+
+        if ($country) {
+            config()->set('database.default', config('base-cms.default_prefix').$country);
+        }
 
         if ($updateTable) {
             $this->createFields();
         }
 
         if ($updateFile) {
-            $this->updateLabels();
+            $this->updateLabelsFile();
         }
 
         return 1;
@@ -59,34 +64,37 @@ class CreateFields extends Command
 
     public function createFields()
     {
-        $q = database_path('data/auth/item_fields.json');
+        $q = database_path('data/auth/z_base_cms_fields.json');
         $qq = File::exists($q);
 
         if ($qq) {
             $qString = File::get($q);
             $json = json_decode($qString, null, 512, JSON_THROW_ON_ERROR);
+            $result = 0;
 
             foreach ($json as $pc) {
 
-                $f = ItemField::updateOrCreate([
+                $r = ItemField::updateOrCreate([
                     'field' => $pc->field,
                     'name' => $pc->name,
                     'model' => $pc->model,
 
-                ], (array) $pc);
+                ], (array) $pc) ? 1 : 0;
 
-                // logger(__FILE__ . ':' . __LINE__ . ' $f ', [$pc]);
-                logger(__FILE__.':'.__LINE__.' $f ', [$f]);
+                $result += $r;
+
+                if ($r) {
+                    $this->info("{$pc->field}");
+                }
             }
-            $count = ItemField::count();
 
-            $this->info("Fields : $count");
+            $this->info("Fields : $result");
         } else {
             $this->error("File not found: $q");
         }
     }
 
-    public function updateLabels()
+    public function updateLabelsFile()
     {
 
         $index1 = resource_path('front-end/admin-angular/src/environments/l.template.dev.json');
