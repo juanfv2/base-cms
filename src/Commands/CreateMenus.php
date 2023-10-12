@@ -18,7 +18,7 @@ class CreateMenus extends Command
      *
      * @var string
      */
-    protected $signature = 'base-cms:menus {--country=} {--c|create} {--t|truncate} {--p|permissions} {--s|sub_permissions} {--a|admin}';
+    protected $signature = 'base-cms:menus {--country=} {--c|create} {--t|truncate} {--p|permissions} {--s|sub_permissions} {--a|admin} {--j|json}';
 
     /**
      * The console command description.
@@ -51,6 +51,7 @@ class CreateMenus extends Command
         $permissons = $this->option('permissions');
         $sub_permissons = $this->option('sub_permissions');
         $admin = $this->option('admin');
+        $json = $this->option('json');
 
         if ($country) {
             config()->set('database.default', config('base-cms.default_prefix').$country);
@@ -73,6 +74,10 @@ class CreateMenus extends Command
 
         if ($admin) {
             $this->addPermission2Admin();
+        }
+
+        if ($json) {
+            $this->createPermissionsFile();
         }
 
         return count($results);
@@ -262,6 +267,34 @@ class CreateMenus extends Command
 
         $this->info($this->separator);
         $this->info('PERMISSIONS TO ADMIN');
+        $this->info($this->separator);
+    }
+
+    public function createPermissionsFile()
+    {
+        $path = database_path('data/auth/z_base_cms_menus_permissions.json');
+
+        $permissions = Permission::select([
+            'icon',
+            'name',
+            'urlBackEnd',
+            'urlFrontEnd',
+            'isSection',
+            'isVisible',
+            'orderInMenu',
+
+        ])
+            ->orderBy('urlBackEnd')
+            ->orderBy('orderInMenu')
+            ->orderByDesc('isSection')
+            ->get();
+
+        $lString = json_encode($permissions, JSON_ERROR_NONE);
+
+        File::put($path, $lString);
+
+        $this->info($this->separator);
+        $this->info('PERMISSIONS FILE CREATED');
         $this->info($this->separator);
     }
 }
