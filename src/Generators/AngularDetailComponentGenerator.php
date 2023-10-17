@@ -308,13 +308,13 @@ class AngularDetailComponentGenerator extends BaseGenerator
                 <div class="card-body">
                 <div *ngIf="!{$fieldCamelPlural}AreRequired" class="alert alert-danger form-text" role="alert"> Debe seleccionar {{labels.$fieldCamel.ownName}} </div>
                 <app-$fieldDash-auto-complete name="m2m-{$fieldCamelPlural}"
-                                              acId="{$fieldCamelPlural}-availables"
+                                              acId="{$fieldCamelPlural}-available"
                                               acName="$plural disponibles"
                                               [acMultiple]="true"
                                               [currentPage]="mApi.show()"
-                                              (oSelected)="{$fieldCamelPlural}2update(\$event)"
-                                              [avoidable]="{$fieldCamelPlural}Avoidable"
-                                              [(ngModel)]="{$fieldCamelPlural}Selected">
+                                              [avoidable]="{$fieldCamel}.{$fieldCamelPlural}"
+                                              [(ngModel)]="{$fieldCamel}.{$fieldCamelPlural}"
+                                              (ngModelChange)="{$fieldCamelPlural}2update(\$event)">
                 </app-$fieldDash-auto-complete>
                 <base-cms-many-to-many lField="name" [lModel]="labels.{$fieldCamel}" [gOptions]="{$this->config->modelNames->camel}.$fieldCamelPlural" (rm)="{$fieldCamel}2rm(\$event)" (go)="{$fieldCamel}2go(\$event)" ></base-cms-many-to-many>
                 </div>
