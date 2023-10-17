@@ -3,7 +3,6 @@
 namespace Juanfv2\BaseCms\Commands;
 
 use App\Models\Auth\Permission;
-use App\Models\Auth\Role;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -25,7 +24,13 @@ class CreateMenus extends Command
      *
      * @var string
      */
-    protected $description = '(-t): truncate permissions table, (-a): add all permissions to role admin';
+    protected $description = '(-c): create permissions from json files "data/_.menus/p.*.json"
+                              (-t): truncate permissions table
+                              (-a): add permissions to roles
+                              (-s): add/update sub-permissions from "z_base_cms_menus_sub_permissions"
+                              (-p): add/update permissions     from "z_base_cms_menus_permissions"
+                              (-p): create premissions file         "z_base_cms_menus_permissions"
+                              ';
 
     /**
      * Create a new command instance.
@@ -73,7 +78,7 @@ class CreateMenus extends Command
         }
 
         if ($admin) {
-            $this->addPermission2Admin();
+            $this->addPermissions2Roles();
         }
 
         if ($json) {
@@ -254,20 +259,33 @@ class CreateMenus extends Command
         }
     }
 
-    public function addPermission2Admin()
+    public function addPermissions2Roles()
     {
-        $r = Permission::count();
+        $q = database_path('data/auth/z_base_cms_menus_roles.json');
+        $qq = File::exists($q);
 
-        $role = Role::find(1);
-        $permissions = [];
-        for ($i = 1; $i <= $r; $i++) {
-            $permissions[] = $i;
+        if ($qq) {
+            $qString = File::get($q);
+            $json = json_decode($qString, null, 512, JSON_THROW_ON_ERROR);
+            $result = 0;
+
+            foreach ($json as $role => $permissions) {
+
+                if (is_numeric($role)) {
+
+                    foreach ($permissions as $key) {
+                        $r = Permission::savePermission2Role($key, $role);
+                        $result += $r;
+                    }
+                    $this->info($this->separator);
+                    $this->info("PERMISSIONS TO ADMIN ($result)");
+                    $this->info($this->separator);
+                    $result = 0;
+                }
+            }
+        } else {
+            $this->error("File not found: $q");
         }
-        $role->permissions()->sync($permissions);
-
-        $this->info($this->separator);
-        $this->info('PERMISSIONS TO ADMIN');
-        $this->info($this->separator);
     }
 
     public function createPermissionsFile()

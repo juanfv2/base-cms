@@ -145,26 +145,21 @@ class Permission extends Model
             );
     }
 
-    public static function savePermission2Role($role_id, $urlParent)
+    public static function savePermission2Role($urlParent, $role_id)
     {
         $permission_id = DB::table('auth_permissions')
             ->where('urlBackEnd', $urlParent)
             ->value('id');
 
-        $msg = "( $role_id ) ( '$urlParent', $permission_id ): ";
-        $result = false;
-
         if ($role_id && $permission_id) {
-            $result = DB::table('auth_role_permission')
+            return DB::table('auth_role_permission')
                 ->updateOrInsert(
                     ['role_id' => $role_id, 'permission_id' => $permission_id],
                     ['role_id' => $role_id, 'permission_id' => $permission_id]
                 );
         }
 
-        logger(__FILE__.':'.__LINE__.' $msg . $result ', [$msg.$result]);
-
-        return $msg.$result;
+        return false;
     }
 
     public static function savePermissionParentChild($urlParent, $urlChild)
@@ -177,19 +172,14 @@ class Permission extends Model
             ->where('urlBackEnd', $urlChild)
             ->value('id');
 
-        $msg = "( '$urlParent' , $parent_id ) ( '$urlChild', $child_id ): ";
-        $result = false;
-
         if ($parent_id && $child_id) {
-            $result = DB::table('auth_permission_permission')
+            return DB::table('auth_permission_permission')
                 ->updateOrInsert(
                     ['parent_id' => $parent_id, 'child_id' => $child_id],
                     ['parent_id' => $parent_id, 'child_id' => $child_id]
                 );
         }
 
-        logger(__FILE__.':'.__LINE__.' .savePermissionParentChild ', [$msg.$result]);
-
-        return $result;
+        return false;
     }
 }
