@@ -3,6 +3,7 @@
 namespace Juanfv2\BaseCms\Commands;
 
 use App\Models\Auth\Permission;
+use App\Models\Auth\Role;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -90,6 +91,8 @@ class CreateMenus extends Command
 
     public function createPermissions()
     {
+        $this->truncatePermissions();
+
         $strLocationAndFileNamePrefix = database_path('data/_.menus/p.*.json');
         $paths = glob($strLocationAndFileNamePrefix);
         $results[] = [];
@@ -108,6 +111,131 @@ class CreateMenus extends Command
 
         $this->info($this->separator);
         $this->info("MENUS CREADOS: {$r}");
+        $this->info($this->separator);
+    }
+
+    public function truncatePermissions()
+    {
+        Schema::disableForeignKeyConstraints();
+        DB::table('auth_permissions')->truncate();
+        Schema::enableForeignKeyConstraints();
+
+        $this->info($this->separator);
+        $this->info('TRUNCATE');
+        $this->info($this->separator);
+    }
+
+    public function savePermissions()
+    {
+        $q = database_path('data/auth/z_base_cms_menus_permissions.json');
+        $qq = File::exists($q);
+
+        if ($qq) {
+            $qString = File::get($q);
+            $json = json_decode($qString, true, 512, JSON_THROW_ON_ERROR);
+            $result = 0;
+
+            foreach ($json as $p) {
+                $r = Permission::savePermission($p) ? 1 : 0;
+
+                $result += $r;
+
+                if ($r) {
+                    $this->info("{$p['urlBackEnd']}");
+                }
+            }
+
+            $this->info($this->separator);
+            $this->info("PERMISSIONS: $result");
+            $this->info($this->separator);
+        } else {
+            $this->error("File not found: $q");
+        }
+    }
+
+    public function saveSubPermissions()
+    {
+        Schema::disableForeignKeyConstraints();
+        DB::table('auth_permission_permission')->truncate();
+        Schema::enableForeignKeyConstraints();
+
+        $q = database_path('data/auth/z_base_cms_menus_sub_permissions.json');
+        $qq = File::exists($q);
+
+        if ($qq) {
+            $qString = File::get($q);
+            $json = json_decode($qString, null, 512, JSON_THROW_ON_ERROR);
+            $result = 0;
+
+            foreach ($json as $pc) {
+                $r = Permission::savePermissionParentChild($pc->_urlParent, $pc->_urlChild) ? 1 : 0;
+                $result += $r;
+            }
+
+            $this->info($this->separator);
+            $this->info("SUB-PERMISSIONS: $result");
+            $this->info($this->separator);
+        } else {
+            $this->error("File not found: $q");
+        }
+    }
+
+    public function addPermissions2Roles()
+    {
+        $q = database_path('data/auth/z_base_cms_menus_roles.json');
+        $qq = File::exists($q);
+
+        if ($qq) {
+            $qString = File::get($q);
+            $json = json_decode($qString, null, 512, JSON_THROW_ON_ERROR);
+            $result = 0;
+
+            foreach ($json as $r => $permissions) {
+
+                if (is_numeric($r)) {
+
+                    $role = Role::find($r);
+
+                    foreach ($permissions as $key) {
+                        $r1 = Permission::savePermission2Role($key, $role->id);
+                        $result += $r1;
+                    }
+                    $this->info($this->separator);
+                    $this->info("PERMISSIONS TO {$role->id}:{$role->name} ($result)");
+                    $this->info($this->separator);
+                    $result = 0;
+                }
+            }
+        } else {
+            $this->error("File not found: $q");
+        }
+    }
+
+    public function createPermissionsFile()
+    {
+        $path = database_path('data/auth/z_base_cms_menus_permissions.json');
+
+        $permissions = Permission::select([
+            'icon',
+            'name',
+            'urlBackEnd',
+            'urlFrontEnd',
+            'isSection',
+            'isVisible',
+            'orderInMenu',
+
+        ])
+            ->orderBy('urlBackEnd')
+            ->orderBy('orderInMenu')
+            ->orderByDesc('isSection')
+            ->get();
+
+        $lString = json_encode($permissions, JSON_ERROR_NONE);
+
+        File::put($path, $lString);
+
+        $this->info($this->separator);
+        $this->info('PERMISSIONS FILE CREATED');
         $this->info($this->separator);
     }
 
@@ -191,128 +319,5 @@ class CreateMenus extends Command
         }
 
         return 'ok';
-    }
-
-    public function truncatePermissions()
-    {
-        Schema::disableForeignKeyConstraints();
-        DB::table('auth_permissions')->truncate();
-        Schema::enableForeignKeyConstraints();
-
-        $this->info($this->separator);
-        $this->info('TRUNCATE');
-        $this->info($this->separator);
-    }
-
-    public function savePermissions()
-    {
-        $q = database_path('data/auth/z_base_cms_menus_permissions.json');
-        $qq = File::exists($q);
-
-        if ($qq) {
-            $qString = File::get($q);
-            $json = json_decode($qString, true, 512, JSON_THROW_ON_ERROR);
-            $result = 0;
-
-            foreach ($json as $p) {
-                $r = Permission::savePermission($p) ? 1 : 0;
-
-                $result += $r;
-
-                if ($r) {
-                    $this->info("{$p['urlBackEnd']}");
-                }
-            }
-
-            $this->info($this->separator);
-            $this->info("PERMISSIONS: $result");
-            $this->info($this->separator);
-        } else {
-            $this->error("File not found: $q");
-        }
-    }
-
-    public function saveSubPermissions()
-    {
-        Schema::disableForeignKeyConstraints();
-        DB::table('auth_permission_permission')->truncate();
-        Schema::enableForeignKeyConstraints();
-
-        $q = database_path('data/auth/z_base_cms_menus_sub_permissions.json');
-        $qq = File::exists($q);
-
-        if ($qq) {
-            $qString = File::get($q);
-            $json = json_decode($qString, null, 512, JSON_THROW_ON_ERROR);
-            $result = 0;
-
-            foreach ($json as $pc) {
-                $r = Permission::savePermissionParentChild($pc->_urlParent, $pc->_urlChild) ? 1 : 0;
-                $result += $r;
-            }
-
-            $this->info($this->separator);
-            $this->info("SUB-PERMISSIONS: $result");
-            $this->info($this->separator);
-        } else {
-            $this->error("File not found: $q");
-        }
-    }
-
-    public function addPermissions2Roles()
-    {
-        $q = database_path('data/auth/z_base_cms_menus_roles.json');
-        $qq = File::exists($q);
-
-        if ($qq) {
-            $qString = File::get($q);
-            $json = json_decode($qString, null, 512, JSON_THROW_ON_ERROR);
-            $result = 0;
-
-            foreach ($json as $role => $permissions) {
-
-                if (is_numeric($role)) {
-
-                    foreach ($permissions as $key) {
-                        $r = Permission::savePermission2Role($key, $role);
-                        $result += $r;
-                    }
-                    $this->info($this->separator);
-                    $this->info("PERMISSIONS TO ADMIN ($result)");
-                    $this->info($this->separator);
-                    $result = 0;
-                }
-            }
-        } else {
-            $this->error("File not found: $q");
-        }
-    }
-
-    public function createPermissionsFile()
-    {
-        $path = database_path('data/auth/z_base_cms_menus_permissions.json');
-
-        $permissions = Permission::select([
-            'icon',
-            'name',
-            'urlBackEnd',
-            'urlFrontEnd',
-            'isSection',
-            'isVisible',
-            'orderInMenu',
-
-        ])
-            ->orderBy('urlBackEnd')
-            ->orderBy('orderInMenu')
-            ->orderByDesc('isSection')
-            ->get();
-
-        $lString = json_encode($permissions, JSON_ERROR_NONE);
-
-        File::put($path, $lString);
-
-        $this->info($this->separator);
-        $this->info('PERMISSIONS FILE CREATED');
-        $this->info($this->separator);
     }
 }
