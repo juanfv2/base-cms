@@ -2,8 +2,6 @@
 
 namespace Juanfv2\BaseCms\Traits;
 
-use App\Models\Auth\Account;
-use App\Models\Auth\Person;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
@@ -14,7 +12,7 @@ trait BaseCmsModelUser
     public function deleteAuthUser($type)
     {
         return DB::transaction(function () use ($type) {
-            $this->email = $this->email . '-deleted-' . $this->id . '-' . time();
+            $this->email = $this->email.'-deleted-'.$this->id.'-'.time();
             $this->save();
             $this->$type->delete();
 
@@ -36,7 +34,7 @@ trait BaseCmsModelUser
             $mType = new $type;
             $mType->mSave($input);
 
-            if (!isset($input['uid'])) {
+            if (! isset($input['uid'])) {
                 $r->verifyUser();
             }
 

@@ -215,7 +215,7 @@ class CreateMenus extends Command
     {
         $path = database_path('data/auth/z_base_cms_menus_permissions.json');
 
-        $permissions = Permission::select([
+        $permissions = DB::table('auth_permissions')->select([
             'icon',
             'name',
             'urlBackEnd',
@@ -230,7 +230,7 @@ class CreateMenus extends Command
             ->orderByDesc('isSection')
             ->get();
 
-        $lString = json_encode($permissions, JSON_ERROR_NONE);
+        $lString = json_encode($permissions, JSON_PRETTY_PRINT);
 
         File::put($path, $lString);
 
