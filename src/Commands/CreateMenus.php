@@ -116,7 +116,7 @@ class CreateMenus extends Command
     public function truncatePermissions()
     {
         Schema::disableForeignKeyConstraints();
-        DB::table('auth_permissions')->truncate();
+        Permission::truncate();
         Schema::enableForeignKeyConstraints();
 
         $this->info($this->separator);
@@ -154,14 +154,15 @@ class CreateMenus extends Command
 
     public function saveSubPermissions()
     {
-        Schema::disableForeignKeyConstraints();
-        DB::table('auth_permission_permission')->truncate();
-        Schema::enableForeignKeyConstraints();
-
         $q = database_path('data/auth/z_base_cms_menus_sub_permissions.json');
         $qq = File::exists($q);
 
         if ($qq) {
+
+            Schema::disableForeignKeyConstraints();
+            DB::table('auth_permission_permission')->truncate();
+            Schema::enableForeignKeyConstraints();
+
             $qString = File::get($q);
             $json = json_decode($qString, null, 512, JSON_THROW_ON_ERROR);
             $result = 0;
@@ -185,12 +186,15 @@ class CreateMenus extends Command
         $qq = File::exists($q);
 
         if ($qq) {
+
+            Schema::disableForeignKeyConstraints();
+            DB::table('auth_permission_role')->truncate();
+            Schema::enableForeignKeyConstraints();
+
             $qString = File::get($q);
             $json = json_decode($qString, null, 512, JSON_THROW_ON_ERROR);
 
             foreach ($json->data->content as $role) {
-
-                DB::table('auth_permission_role')->where('role_id', $role->id)->delete();
 
                 $result = 0;
                 foreach ($role->_urlBackEnd_ as $key) {
@@ -211,7 +215,7 @@ class CreateMenus extends Command
     {
         $path = database_path('data/auth/z_base_cms_menus_permissions.json');
 
-        $permissions = DB::table('auth_permissions')->select([
+        $permissions = Permission::select([
             'icon',
             'name',
             'urlBackEnd',
