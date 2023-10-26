@@ -169,6 +169,6 @@
   },
   {
     "type": "relation",
-    "relation": "mtm,AuthRole,auth_roles_has_permissions"
+    "relation": "mtm,AuthRole,auth_permission_role"
   }
 ]

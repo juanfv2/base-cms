@@ -20,8 +20,8 @@ class DatabaseSeeder extends Seeder
             // 'oauth_clients',
             // 'oauth_personal_access_clients',
 
-            'auth_user_role',
-            'auth_role_permission',
+            'auth_role_user',
+            'auth_permission_role',
 
             'auth_users',
             'auth_people',

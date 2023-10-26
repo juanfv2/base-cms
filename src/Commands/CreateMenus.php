@@ -3,7 +3,6 @@
 namespace Juanfv2\BaseCms\Commands;
 
 use App\Models\Auth\Permission;
-use App\Models\Auth\Role;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -27,10 +26,10 @@ class CreateMenus extends Command
      */
     protected $description = '(-c): create permissions from json files "data/_.menus/p.*.json"
                               (-t): truncate permissions table
-                              (-a): add permissions to roles
+                              (-a): add permissions to roles   from "z_base_cms_menus_roles"
                               (-s): add/update sub-permissions from "z_base_cms_menus_sub_permissions"
                               (-p): add/update permissions     from "z_base_cms_menus_permissions"
-                              (-j): create premissions file         "z_base_cms_menus_permissions"
+                              (-j): create premissions file    to   "z_base_cms_menus_permissions";
                               ';
 
     /**
@@ -188,23 +187,20 @@ class CreateMenus extends Command
         if ($qq) {
             $qString = File::get($q);
             $json = json_decode($qString, null, 512, JSON_THROW_ON_ERROR);
-            $result = 0;
 
-            foreach ($json as $r => $permissions) {
+            foreach ($json->data->content as $role) {
 
-                if (is_numeric($r)) {
+                DB::table('auth_permission_role')->where('role_id', $role->id)->delete();
 
-                    $role = Role::find($r);
-
-                    foreach ($permissions as $key) {
-                        $r1 = Permission::savePermission2Role($key, $role->id);
-                        $result += $r1;
-                    }
-                    $this->info($this->separator);
-                    $this->info("PERMISSIONS TO {$role->id}:{$role->name} ($result)");
-                    $this->info($this->separator);
-                    $result = 0;
+                $result = 0;
+                foreach ($role->_urlBackEnd_ as $key) {
+                    $r1 = Permission::savePermission2Role($key, $role->id);
+                    $result += $r1;
                 }
+
+                $this->info($this->separator);
+                $this->info("PERMISSIONS TO {$role->id}:{$role->name} ($result)");
+                $this->info($this->separator);
             }
         } else {
             $this->error("File not found: $q");

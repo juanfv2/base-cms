@@ -80,7 +80,7 @@ class Permission extends Model
      **/
     public function roles()
     {
-        return $this->belongsToMany(\App\Models\Auth\Role::class, 'auth_role_permission');
+        return $this->belongsToMany(\App\Models\Auth\Role::class, 'auth_permission_role');
     }
 
     /**
@@ -112,10 +112,10 @@ class Permission extends Model
     {
         if ($urlChild === '-.-') {
             return DB::table('auth_users')
-                ->join('auth_user_role', 'auth_user_role.user_id', '=', 'auth_users.id')
-                ->join('auth_roles', 'auth_user_role.role_id', '=', 'auth_roles.id')
-                ->join('auth_role_permission', 'auth_role_permission.role_id', '=', 'auth_roles.id')
-                ->join('auth_permissions', 'auth_role_permission.permission_id', '=', 'auth_permissions.id')
+                ->join('auth_role_user', 'auth_role_user.user_id', '=', 'auth_users.id')
+                ->join('auth_roles', 'auth_role_user.role_id', '=', 'auth_roles.id')
+                ->join('auth_permission_role', 'auth_permission_role.role_id', '=', 'auth_roles.id')
+                ->join('auth_permissions', 'auth_permission_role.permission_id', '=', 'auth_permissions.id')
                 ->where('auth_permissions.urlBackEnd', '=', $urlParent)
                 ->where('auth_users.id', '=', $user_id)
                 ->whereNull('auth_users.deleted_at')
@@ -123,9 +123,9 @@ class Permission extends Model
         }
 
         return DB::table('auth_users as _u')
-            ->join('auth_user_role as _ur', '_ur.user_id', '=', '_u.id')
+            ->join('auth_role_user as _ur', '_ur.user_id', '=', '_u.id')
             ->join('auth_roles as _r', '_ur.role_id', '=', '_r.id')
-            ->join('auth_role_permission as _rp', '_rp.role_id', '=', '_r.id')
+            ->join('auth_permission_role as _rp', '_rp.role_id', '=', '_r.id')
             ->join('auth_permissions as _p1', '_rp.permission_id', '=', '_p1.id')
             ->join('auth_permission_permission as _pp', '_pp.parent_id', '=', '_p1.id')
             ->join('auth_permissions as _p2', '_pp.child_id', '=', '_p2.id')
@@ -152,7 +152,7 @@ class Permission extends Model
             ->value('id');
 
         if ($role_id && $permission_id) {
-            return DB::table('auth_role_permission')
+            return DB::table('auth_permission_role')
                 ->updateOrInsert(
                     ['role_id' => $role_id, 'permission_id' => $permission_id],
                     ['role_id' => $role_id, 'permission_id' => $permission_id]

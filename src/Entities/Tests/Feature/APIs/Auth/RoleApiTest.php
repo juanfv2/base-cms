@@ -57,8 +57,8 @@ class RoleApiTest extends TestCase
                 'permission_id' => $key,
             ];
         }
-        $this->assertDatabaseCount('auth_role_permission', 3);
-        $this->assertDatabaseHas('auth_role_permission', $rolePermissions[0]);
+        $this->assertDatabaseCount('auth_permission_role', 3);
+        $this->assertDatabaseHas('auth_permission_role', $rolePermissions[0]);
 
         $this->assertJsonModifications();
     }

@@ -48,12 +48,12 @@ class Role extends Model
 
     public function permissions()
     {
-        return $this->belongsToMany(\App\Models\Auth\Permission::class, 'auth_role_permission');
+        return $this->belongsToMany(\App\Models\Auth\Permission::class, 'auth_permission_role');
     }
 
     public function users()
     {
-        return $this->belongsToMany(\App\Models\Auth\User::class, 'auth_user_role');
+        return $this->belongsToMany(\App\Models\Auth\User::class, 'auth_role_user');
     }
 
     public function getMenusAttribute()
@@ -63,7 +63,7 @@ class Role extends Model
 
     public function menusFromParent($permission_id)
     {
-        $this->menus = $this->belongsToMany(Permission::class, 'auth_roles_has_permissions')->get();
+        $this->menus = $this->belongsToMany(Permission::class, 'auth_permission_role')->get();
 
         /**
          * Primero "menus" y luego cualquiera de estas dos propiedades.

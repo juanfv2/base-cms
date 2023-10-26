@@ -115,7 +115,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function roles(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
-        return $this->belongsToMany(\App\Models\Auth\Role::class, 'auth_user_role');
+        return $this->belongsToMany(\App\Models\Auth\Role::class, 'auth_role_user');
     }
 
     public function photo(): \Illuminate\Database\Eloquent\Relations\HasOne

@@ -97,7 +97,7 @@
   },
   {
     "type": "relation",
-    "relation": "mtm,Permission,auth_roles_has_permissions"
+    "relation": "mtm,Permission,auth_permission_role"
   },
   {
     "type": "relation",
