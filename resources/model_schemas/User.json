@@ -253,6 +253,6 @@
   },
   {
     "type": "relation",
-    "relation": "mtm,Role,auth_users_has_roles"
+    "relation": "mtm,Role,auth_role_user"
   }
 ]

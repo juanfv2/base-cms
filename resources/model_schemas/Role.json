@@ -105,6 +105,6 @@
   },
   {
     "type": "relation",
-    "relation": "mtm,User,auth_users_has_roles"
+    "relation": "mtm,User,auth_role_user"
   }
 ]
