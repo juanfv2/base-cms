@@ -80,45 +80,6 @@ trait ImportableExportable
         return $created;
     }
 
-    public function getDataToSave($headersInCsv, $data, $headersValid)
-    {
-        $dataToSave = [];
-
-        foreach ($headersInCsv as $header) {
-            if (isset($headersValid[$header])) {
-                $value = trim($data[$header]);
-                $dataToSave[$headersValid[$header]] = $value;
-
-                if ($value === '') {
-                    $dataToSave[$headersValid[$header]] = null;
-                }
-            }
-        }
-
-        return $dataToSave;
-    }
-
-    public function getDataToKeys($headers, $data)
-    {
-        $dataToSave = [];
-
-        foreach ($headers as $header) {
-            $dataToSave[$header] = null;
-
-            if (isset($data[$header])) {
-                $value = trim($data[$header]);
-
-                $dataToSave[$header] = $value;
-
-                if ($value === '') {
-                    $dataToSave[$header] = null;
-                }
-            }
-        }
-
-        return $dataToSave;
-    }
-
     public function saveArray($table, $attrKeys, $data, $kName)
     {
         try {
@@ -435,6 +396,45 @@ trait ImportableExportable
         }
 
         return $exporter->finalize();
+    }
+
+    public function getDataToSave($headersInCsv, $data, $headersValid)
+    {
+        $dataToSave = [];
+
+        foreach ($headersInCsv as $header) {
+            if (isset($headersValid[$header])) {
+                $value = trim($data[$header]);
+                $dataToSave[$headersValid[$header]] = $value;
+
+                if ($value === '') {
+                    $dataToSave[$headersValid[$header]] = null;
+                }
+            }
+        }
+
+        return $dataToSave;
+    }
+
+    public function getDataToKeys($headers, $data)
+    {
+        $dataToSave = [];
+
+        foreach ($headers as $header) {
+            $dataToSave[$header] = null;
+
+            if (isset($data[$header])) {
+                $value = trim($data[$header]);
+
+                $dataToSave[$header] = $value;
+
+                if ($value === '') {
+                    $dataToSave[$header] = null;
+                }
+            }
+        }
+
+        return $dataToSave;
     }
 
     public static function array2lower(array $array)
