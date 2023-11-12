@@ -18,8 +18,9 @@ trait ImportableExportable
         $created = 0;
         $line = 0;
         $data1 = [];
-        $xHeadersTemp = fgetcsv($handle, 0, $delimiter);
-        $xHeadersTemp = \ForceUTF8\Encoding::fixUTF8($xHeadersTemp);
+        $keys = self::assoc2lower($keys);
+        $xHeadersTemp = \ForceUTF8\Encoding::fixUTF8(self::array2lower(fgetcsv($handle, 0, $delimiter)));
+
         while (($data = fgetcsv($handle, 0, $delimiter)) !== false) {
             $line++;
             try {
@@ -38,9 +39,7 @@ trait ImportableExportable
 
                     if (is_string($primaryKeys)) {
                         $kName = $primaryKeys;
-                        if (isset($data[$primaryKeys])) {
-                            $attrKeys[$primaryKeys] = $data[$primaryKeys];
-                        }
+                        $attrKeys = $this->getDataToKeys([$primaryKeys], $data);
                     }
 
                     if (is_array($primaryKeys)) {
@@ -51,7 +50,7 @@ trait ImportableExportable
                         $recover = config('base-cms.recover');
                         if (isset($data[$recover]) && $data[$recover]) {
                             $r = $this->restoreModel($model_name, $attrKeys, $primaryKeys, $table);
-                            unset($data['RECUPERAR']);
+                            unset($data[$recover]);
                         }
 
                         $r = $this->saveModel($model_name, $attrKeys, $data, $primaryKeys, $table);
@@ -81,26 +80,17 @@ trait ImportableExportable
         return $created;
     }
 
-    public function getDataToSave($headers, $data, $keys)
+    public function getDataToSave($headersInCsv, $data, $headersValid)
     {
         $dataToSave = [];
 
-        foreach ($headers as $k) {
-            if (isset($keys[$k])) {
-                // if (! empty(trim($data[$k]))) {
-                //     $dataToSave[$keys[$k]] = $data[$k];
-                // }
+        foreach ($headersInCsv as $header) {
+            if (isset($headersValid[$header])) {
+                $value = trim($data[$header]);
+                $dataToSave[$headersValid[$header]] = $value;
 
-                // if ($data[$k] == '[[v]]') {
-                //     $dataToSave[$keys[$k]] = null;
-                // }
-
-                // logger(__FILE__.':'.__LINE__.' $k, $keys[$k] ', [$k, $keys[$k], $data[$k]]);;
-
-                $dataToSave[$keys[$k]] = trim($data[$k]);
-
-                if ($data[$k] === '') {
-                    $dataToSave[$keys[$k]] = null;
+                if ($value === '') {
+                    $dataToSave[$headersValid[$header]] = null;
                 }
             }
         }
@@ -112,8 +102,18 @@ trait ImportableExportable
     {
         $dataToSave = [];
 
-        foreach ($headers as $k) {
-            $dataToSave[$k] = $data[$k] ?? '0';
+        foreach ($headers as $header) {
+            $dataToSave[$header] = null;
+
+            if (isset($data[$header])) {
+                $value = trim($data[$header]);
+
+                $dataToSave[$header] = $value;
+
+                if ($value === '') {
+                    $dataToSave[$header] = null;
+                }
+            }
         }
 
         return $dataToSave;
@@ -134,9 +134,10 @@ trait ImportableExportable
 
     public function saveModel($model_name, $attrKeys, $data, $primaryKeys, $tableName = '')
     {
-        // logger(__FILE__ . ':' . __LINE__ . ' $model_name, $attrKeys, $data, $primaryKeys, $tableName ', [$model_name, $attrKeys, $data, $primaryKeys, $tableName]);
+        // logger(__FILE__.':'.__LINE__.' saveModel:: $model_name, $attrKeys, $data, $primaryKeys, $tableName ', [$model_name, $attrKeys, $data, $primaryKeys, $tableName]);
         try {
             $res = $attrKeys + $data;
+            $nId = 0;
 
             session(['z-table' => $tableName]);
             $model = new $model_name();
@@ -146,7 +147,10 @@ trait ImportableExportable
             }
 
             if (! empty($attrKeys)) {
-                $model = $model->where($attrKeys)->firstOrNew();
+                $saved = $model->updateOrInsert($attrKeys, $res);
+                if ($saved) {
+                    $model = $model->where($attrKeys)->first();
+                }
             }
 
             if (! $model) {
@@ -155,17 +159,10 @@ trait ImportableExportable
 
             if (is_string($primaryKeys)) {
                 $model->setKeyName($primaryKeys);
-
-                if (isset($data[$primaryKeys])) {
-                    $model->$primaryKeys = $data[$primaryKeys];
-                }
+                $nId = $model->$primaryKeys;
             }
 
-            $model->fill($res);
-            $model->save();
-            $k = $model->getKeyName();
-
-            return $model->$k;
+            return $nId;
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -179,8 +176,9 @@ trait ImportableExportable
         $created = 0;
         $line = 0;
         $data1 = [];
-        $xHeadersTemp = fgetcsv($handle, 0, $delimiter);
-        $xHeadersTemp = \ForceUTF8\Encoding::fixUTF8($xHeadersTemp);
+        $keys = self::assoc2lower($keys);
+        $xHeadersTemp = \ForceUTF8\Encoding::fixUTF8(self::array2lower(fgetcsv($handle, 0, $delimiter)));
+
         while (($data = fgetcsv($handle, 0, $delimiter)) !== false) {
             $line++;
             try {
@@ -193,13 +191,11 @@ trait ImportableExportable
                     $attrKeys = [];
 
                     if (is_string($primaryKeys)) {
-                        if (isset($data[$primaryKeys])) {
-                            $attrKeys[$primaryKeys] = $data[$primaryKeys];
-                        }
+                        $attrKeys = $this->getDataToKeys([$primaryKeys], $data);
                     }
 
                     if (is_array($primaryKeys)) {
-                        $attrKeys = $this->getDataToSave($primaryKeys, $dataCombine, $keys);
+                        $attrKeys = $this->getDataToKeys($primaryKeys, $data);
                     }
 
                     if ($model_name) {
@@ -234,6 +230,7 @@ trait ImportableExportable
 
     public function deleteModel($model_name, $attrKeys, $primaryKeys, $tableName)
     {
+        // logger(__FILE__.':'.__LINE__.' deleteModel:: $model_name, $attrKeys, $primaryKeys, $tableName ', [$model_name, $attrKeys, $primaryKeys, $tableName]);
         try {
             session(['z-table' => $tableName]);
             $model = new $model_name();
@@ -242,13 +239,24 @@ trait ImportableExportable
                 $model->setTable($tableName);
             }
 
-            $model = $model->where($attrKeys)->first();
-
             if (is_string($primaryKeys)) {
                 $model->setKeyName($primaryKeys);
             }
 
-            return $model->delete();
+            if (! empty($attrKeys)) {
+                if (is_string($primaryKeys)) {
+                    $model->setKeyName($primaryKeys);
+                    $model = $model->where($attrKeys)->first();
+
+                    return $model?->delete();
+                }
+
+                $r = $model->where($attrKeys)->delete();
+
+                return $r;
+            }
+
+            return false;
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -427,5 +435,35 @@ trait ImportableExportable
         }
 
         return $exporter->finalize();
+    }
+
+    public static function array2lower(array $array)
+    {
+        return array_map('Str::lower', $array);
+    }
+
+    public static function assoc2lower(array $array, $lowerValues = false)
+    {
+        // get keys $arrays
+        $keys = array_keys($array);
+
+        // get values $arrays
+        $values = array_values($array);
+
+        // lower keys
+        $keys = array_map('Str::lower', $keys);
+
+        // lower values
+        if ($lowerValues) {
+            $values = array_map('Str::lower', $values);
+        }
+
+        // return array
+        return array_combine($keys, $values);
+    }
+
+    public static function array2upper(array $array)
+    {
+        return array_map('Str::upper', $array);
     }
 }
