@@ -96,6 +96,7 @@ trait ImportableExportable
     public function saveModel($model_name, $attrKeys, $data, $primaryKeys, $tableName = '')
     {
         // logger(__FILE__.':'.__LINE__.' saveModel:: $model_name, $attrKeys, $data, $primaryKeys, $tableName ', [$model_name, $attrKeys, $data, $primaryKeys, $tableName]);
+
         try {
             $res = $attrKeys + $data;
             $nId = 0;
@@ -107,20 +108,19 @@ trait ImportableExportable
                 $model->setTable($tableName);
             }
 
+            if (is_string($primaryKeys)) {
+                $model->setKeyName($primaryKeys);
+                $model->fill($res);
+                $model->save();
+
+                return $model->$primaryKeys;
+            }
+
             if (! empty($attrKeys)) {
                 $saved = $model->updateOrInsert($attrKeys, $res);
                 if ($saved) {
-                    $model = $model->where($attrKeys)->first();
+                    return $model->where($attrKeys)->first();
                 }
-            }
-
-            if (! $model) {
-                return false;
-            }
-
-            if (is_string($primaryKeys)) {
-                $model->setKeyName($primaryKeys);
-                $nId = $model->$primaryKeys;
             }
 
             return $nId;
@@ -192,6 +192,7 @@ trait ImportableExportable
     public function deleteModel($model_name, $attrKeys, $primaryKeys, $tableName)
     {
         // logger(__FILE__.':'.__LINE__.' deleteModel:: $model_name, $attrKeys, $primaryKeys, $tableName ', [$model_name, $attrKeys, $primaryKeys, $tableName]);
+
         try {
             session(['z-table' => $tableName]);
             $model = new $model_name();
@@ -200,24 +201,20 @@ trait ImportableExportable
                 $model->setTable($tableName);
             }
 
+            if (empty($attrKeys)) {
+                return false;
+            }
+
             if (is_string($primaryKeys)) {
                 $model->setKeyName($primaryKeys);
+                $model = $model->where($attrKeys)->first();
+
+                return $model?->delete();
             }
 
-            if (! empty($attrKeys)) {
-                if (is_string($primaryKeys)) {
-                    $model->setKeyName($primaryKeys);
-                    $model = $model->where($attrKeys)->first();
+            $r = $model->where($attrKeys)->delete();
 
-                    return $model?->delete();
-                }
-
-                $r = $model->where($attrKeys)->delete();
-
-                return $r;
-            }
-
-            return false;
+            return $r;
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -225,6 +222,8 @@ trait ImportableExportable
 
     public function restoreModel($model_name, $attrKeys, $primaryKeys, $tableName)
     {
+        // logger(__FILE__.':'.__LINE__.' deleteModel:: $model_name, $attrKeys, $primaryKeys, $tableName ', [$model_name, $attrKeys, $primaryKeys, $tableName]);
+
         try {
             session(['z-table' => $tableName]);
             $model = new $model_name();
@@ -404,11 +403,12 @@ trait ImportableExportable
 
         foreach ($headersInCsv as $header) {
             if (isset($headersValid[$header])) {
-                $value = trim($data[$header]);
+                $d = $data[$header] ?? '';
+                $value = trim("$d");
                 $dataToSave[$headersValid[$header]] = $value;
 
                 if ($value === '') {
-                    $dataToSave[$headersValid[$header]] = null;
+                    unset($dataToSave[$headersValid[$header]]);
                 }
             }
         }
@@ -421,15 +421,13 @@ trait ImportableExportable
         $dataToSave = [];
 
         foreach ($headers as $header) {
-            $dataToSave[$header] = null;
-
             if (isset($data[$header])) {
-                $value = trim($data[$header]);
-
+                $d = $data[$header] ?? '';
+                $value = trim("$d");
                 $dataToSave[$header] = $value;
 
                 if ($value === '') {
-                    $dataToSave[$header] = null;
+                    unset($dataToSave[$header]);
                 }
             }
         }
