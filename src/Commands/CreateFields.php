@@ -13,14 +13,17 @@ class CreateFields extends Command
      *
      * @var string
      */
-    protected $signature = 'base-cms:fields {--country=} {--f|updateFile} {--t|updateTable}';
+    protected $signature = 'base-cms:fields {--country=} {--f|saveFields_file2table} {--t|saveFields_table2file}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = '(-f): update labels file, (-t): update table';
+    protected $description = '(-f): add/update fields  from "z_base_cms_menus_permissions"
+                              (-t): create fields file to   "z_base_cms_menus_permissions"
+                              (--country):
+                              ';
 
     private $responseList;
 
@@ -44,25 +47,25 @@ class CreateFields extends Command
     public function handle()
     {
         $country = $this->option('country');
-        $updateFile = $this->option('updateFile');
-        $updateTable = $this->option('updateTable');
+        $saveFields_file2table = $this->option('saveFields_file2table');
+        $saveFields_table2file = $this->option('saveFields_table2file');
 
         if ($country) {
             config()->set('database.default', config('base-cms.default_prefix').$country);
         }
 
-        if ($updateTable) {
-            $this->createFields();
+        if ($saveFields_table2file) {
+            $this->updateLabelsFile();
         }
 
-        if ($updateFile) {
-            $this->updateLabelsFile();
+        if ($saveFields_file2table) {
+            $this->saveFields();
         }
 
         return 1;
     }
 
-    public function createFields()
+    public function saveFields()
     {
         $q = database_path('data/auth/z_base_cms_fields.json');
         $qq = File::exists($q);

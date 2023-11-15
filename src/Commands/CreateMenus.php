@@ -29,7 +29,8 @@ class CreateMenus extends Command
                               (-a): add permissions to roles   from "z_base_cms_menus_roles"
                               (-s): add/update sub-permissions from "z_base_cms_menus_sub_permissions"
                               (-p): add/update permissions     from "z_base_cms_menus_permissions"
-                              (-j): create premissions file    to   "z_base_cms_menus_permissions";
+                              (-j): create permissions file    to   "z_base_cms_menus_permissions"
+                              (--country):
                               ';
 
     /**
