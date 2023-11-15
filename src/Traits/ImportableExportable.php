@@ -4,6 +4,7 @@ namespace Juanfv2\BaseCms\Traits;
 
 use App\Models\Misc\VisorLogError;
 use App\Models\Misc\XFile;
+use ForceUTF8\Encoding;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -84,13 +85,13 @@ trait ImportableExportable
         $created = 0;
         $line = 0;
         $data1 = [];
-        $xHeadersTemp = fgetcsv($handle, 0, $delimiter);
-        $xHeadersTemp = \ForceUTF8\Encoding::fixUTF8($xHeadersTemp);
+        $keys = self::assoc2lower($keys);
+        $xHeadersTemp = self::array2lower(fgetcsv($handle, 0, $delimiter));
 
         while (($data = fgetcsv($handle, 0, $delimiter)) !== false) {
             $line++;
             try {
-                $data1 = \ForceUTF8\Encoding::fixUTF8($data);
+                $data1 = Encoding::fixUTF8($data);
                 $dataCombine = _array_combine($xHeadersTemp, $data1);
 
                 if ($dataCombine) {
@@ -105,9 +106,7 @@ trait ImportableExportable
 
                     if (is_string($primaryKeys)) {
                         $kName = $primaryKeys;
-                        if (isset($data[$primaryKeys])) {
-                            $attrKeys[$primaryKeys] = $data[$primaryKeys];
-                        }
+                        $attrKeys = $this->getDataToKeys([$primaryKeys], $data);
                     }
 
                     if (is_array($primaryKeys)) {
@@ -118,7 +117,7 @@ trait ImportableExportable
                         $recover = config('base-cms.recover');
                         if (isset($data[$recover]) && $data[$recover]) {
                             $r = $this->restoreModel($model_name, $attrKeys, $primaryKeys, $table);
-                            unset($data['RECUPERAR']);
+                            unset($data[$recover]);
                         }
 
                         $r = $this->saveModel($model_name, $attrKeys, $data, $primaryKeys, $table);
@@ -148,41 +147,6 @@ trait ImportableExportable
         return $created;
     }
 
-    public function getDataToSave($headers, $data, $keys)
-    {
-        $dataToSave = [];
-
-        foreach ($headers as $k) {
-            if (isset($keys[$k])) {
-                $d = $data[$k] ?? '';
-                $dataToSave[$keys[$k]] = trim("$d");
-
-                if ($data[$k] === '') {
-                    unset($dataToSave[$keys[$k]]);
-                }
-            }
-        }
-
-        return $dataToSave;
-    }
-
-    public function getDataToKeys($headers, $data)
-    {
-        $dataToSave = [];
-
-        foreach ($headers as $k) {
-
-            $d = $data[$k] ?? '';
-            $dataToSave[$k] = trim("$d");
-
-            if ($dataToSave[$k] === '') {
-                unset($dataToSave[$k]);
-            }
-        }
-
-        return $dataToSave;
-    }
-
     public function saveArray($table, $attrKeys, $data, $kName)
     {
         try {
@@ -198,10 +162,11 @@ trait ImportableExportable
 
     public function saveModel($model_name, $attrKeys, $data, $primaryKeys, $tableName = '')
     {
-        // logger(__FILE__ . ':' . __LINE__ . ' $model_name, $attrKeys, $data, $primaryKeys, $tableName ', [$model_name, $attrKeys, $data, $primaryKeys, $tableName]);
+        // logger(__FILE__.':'.__LINE__.' saveModel:: $model_name, $attrKeys, $data, $primaryKeys, $tableName ', [$model_name, $attrKeys, $data, $primaryKeys, $tableName]);
 
         try {
-            $res = $attrKeys + $data;
+            $res = array_merge($attrKeys, $data);
+            $nId = 0;
 
             session(['z-table' => $tableName]);
             $model = new $model_name();
@@ -210,27 +175,26 @@ trait ImportableExportable
                 $model->setTable($tableName);
             }
 
+            if (is_array($primaryKeys) && ! empty($attrKeys)) {
+                $saved = $model->updateOrInsert($attrKeys, $res);
+                if ($saved) {
+                    return $model->where($attrKeys)->first();
+                }
+            }
+
             if (! empty($attrKeys)) {
                 $model = $model->where($attrKeys)->firstOrNew();
             }
 
-            if (! $model) {
-                return false;
-            }
-
             if (is_string($primaryKeys)) {
                 $model->setKeyName($primaryKeys);
+                $model->fill($res);
+                $model->save();
 
-                if (isset($data[$primaryKeys])) {
-                    $model->$primaryKeys = $data[$primaryKeys];
-                }
+                return $model->$primaryKeys;
             }
 
-            $model->fill($res);
-            $model->save();
-            $k = $model->getKeyName();
-
-            return $model->$k;
+            return $nId;
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -241,42 +205,37 @@ trait ImportableExportable
     /* -------------------------------------------------------------------------- */
     public function deleting($handle, $table, $primaryKeys, $keys, $delimiter, $model_name = '')
     {
-
-        $primaryKeys = json_decode((string) $primaryKeys, true, 512, JSON_ERROR_NONE) ?? $primaryKeys;
-        $keys = json_decode((string) $keys, true, 512, JSON_ERROR_NONE) ?? $keys;
+        $primaryKeys = is_array($primaryKeys) ? $primaryKeys : (json_decode((string) $primaryKeys, true, 512, JSON_ERROR_NONE) ?? $primaryKeys);
+        $keys = is_array($keys) ? $keys : (json_decode((string) $keys, true, 512, JSON_ERROR_NONE) ?? $keys);
         $created = 0;
         $line = 0;
         $data1 = [];
-        $xHeadersTemp = fgetcsv($handle, 0, $delimiter);
-        $xHeadersTemp = \ForceUTF8\Encoding::fixUTF8($xHeadersTemp);
+        $keys = self::assoc2lower($keys);
+        $xHeadersTemp = self::array2lower(fgetcsv($handle, 0, $delimiter));
 
         while (($data = fgetcsv($handle, 0, $delimiter)) !== false) {
             $line++;
             try {
-                $data1 = \ForceUTF8\Encoding::fixUTF8($data);
+                $data1 = Encoding::fixUTF8($data);
                 $dataCombine = _array_combine($xHeadersTemp, $data1);
 
                 if ($dataCombine) {
                     $data = $this->getDataToSave($xHeadersTemp, $dataCombine, $keys);
 
                     $attrKeys = [];
-                    $kName = '';
 
                     if (is_string($primaryKeys)) {
-                        $kName = $primaryKeys;
-                        if (isset($data[$primaryKeys])) {
-                            $attrKeys[$primaryKeys] = $data[$primaryKeys];
-                        }
+                        $attrKeys = $this->getDataToKeys([$primaryKeys], $data);
                     }
 
                     if (is_array($primaryKeys)) {
-                        $attrKeys = $this->getDataToSave($primaryKeys, $dataCombine, $keys);
+                        $attrKeys = $this->getDataToKeys($primaryKeys, $data);
                     }
 
                     if ($model_name) {
                         $r = $this->deleteModel($model_name, $attrKeys, $primaryKeys, $table);
                     } else {
-                        $r = $this->deleteArray($table, $attrKeys, $kName);
+                        $r = $this->deleteArray($table, $attrKeys);
                     }
 
                     $created++;
@@ -297,7 +256,6 @@ trait ImportableExportable
     public function deleteArray($table, $attrKeys)
     {
         try {
-
             if (empty($attrKeys)) {
                 throw new \Juanfv2\BaseCms\Exceptions\NoReportException('No tiene [PK]');
             }
@@ -310,10 +268,10 @@ trait ImportableExportable
 
     public function deleteModel($model_name, $attrKeys, $primaryKeys, $tableName)
     {
+        // logger(__FILE__.':'.__LINE__.' deleteModel:: $model_name, $attrKeys, $primaryKeys, $tableName ', [$model_name, $attrKeys, $primaryKeys, $tableName]);
 
         try {
-
-            if (empty($attrKeys) || empty($primaryKeys)) {
+            if (empty($attrKeys)) {
                 throw new \Juanfv2\BaseCms\Exceptions\NoReportException('No tiene [PK]');
             }
 
@@ -324,13 +282,16 @@ trait ImportableExportable
                 $model->setTable($tableName);
             }
 
-            $model = $model->where($attrKeys)->first();
-
             if (is_string($primaryKeys)) {
                 $model->setKeyName($primaryKeys);
+                $model = $model->where($attrKeys)->first();
+
+                return $model?->delete();
             }
 
-            return $model->delete();
+            $r = $model->where($attrKeys)->delete();
+
+            return $r;
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -338,6 +299,8 @@ trait ImportableExportable
 
     public function restoreModel($model_name, $attrKeys, $primaryKeys, $tableName)
     {
+        // logger(__FILE__.':'.__LINE__.' restoreModel:: $model_name, $attrKeys, $primaryKeys, $tableName ', [$model_name, $attrKeys, $primaryKeys, $tableName]);
+
         try {
             session(['z-table' => $tableName]);
             $model = new $model_name();
@@ -346,17 +309,13 @@ trait ImportableExportable
                 $model->setTable($tableName);
             }
 
-            $model = $model->withTrashed()->where($attrKeys)->first();
-
-            if (! $model) {
-                return false;
-            }
-
             if (is_string($primaryKeys)) {
                 $model->setKeyName($primaryKeys);
             }
 
-            return $model->restore();
+            $model = $model->withTrashed()->where($attrKeys)->first();
+
+            return $model?->restore();
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -370,8 +329,9 @@ trait ImportableExportable
      * @param $primaryKeyName
      * @param $massiveQueryFileName
      * @param $keys
+     * @return array|\Illuminate\Http\JsonResponse
      */
-    public function importCsv(Request $request): array|\Illuminate\Http\JsonResponse
+    public function importCsv(Request $request)
     {
         $rCountry = $request->header('r-country', '');
         $tableName = $request->get('table');
@@ -471,7 +431,7 @@ trait ImportableExportable
 
     protected function export($title, $extension, $headers, $model)
     {
-        $labels = \ForceUTF8\Encoding::fixUTF8($headers);
+        $labels = Encoding::fixUTF8($headers);
         $fNames = array_keys($headers);
         $exporter = new BaseCmsExportCSV($title, $extension);
 
@@ -523,5 +483,73 @@ trait ImportableExportable
         }
 
         return $exporter->finalize();
+    }
+
+    public function getDataToSave($headersInCsv, $data, $headersValid)
+    {
+        $dataToSave = [];
+
+        foreach ($headersInCsv as $header) {
+            if (isset($headersValid[$header])) {
+                $d = $data[$header] ?? '';
+                $value = trim("$d");
+                $dataToSave[$headersValid[$header]] = $value;
+
+                if ($value === '') {
+                    unset($dataToSave[$headersValid[$header]]);
+                }
+            }
+        }
+
+        return $dataToSave;
+    }
+
+    public function getDataToKeys($headers, $data)
+    {
+        $dataToSave = [];
+
+        foreach ($headers as $header) {
+            if (isset($data[$header])) {
+                $d = $data[$header] ?? '';
+                $value = trim("$d");
+                $dataToSave[$header] = $value;
+
+                if ($value === '') {
+                    unset($dataToSave[$header]);
+                }
+            }
+        }
+
+        return $dataToSave;
+    }
+
+    public static function array2lower(array $array)
+    {
+        return Encoding::fixUTF8(array_map('Str::lower', $array));
+    }
+
+    public static function assoc2lower(array $array, $lowerValues = false)
+    {
+        // get keys $arrays
+        $keys = array_keys($array);
+
+        // get values $arrays
+        $values = array_values($array);
+
+        // lower keys
+        $keys = Encoding::fixUTF8(array_map('Str::lower', $keys));
+
+        // lower values
+        if ($lowerValues) {
+            $values = array_map('Str::lower', $values);
+        }
+
+        // return array
+        return array_combine($keys, $values);
+    }
+
+    public static function array2upper(array $array)
+    {
+        return array_map('Str::upper', $array);
     }
 }
