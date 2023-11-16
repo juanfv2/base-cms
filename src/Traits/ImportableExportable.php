@@ -329,9 +329,8 @@ trait ImportableExportable
      * @param $primaryKeyName
      * @param $massiveQueryFileName
      * @param $keys
-     * @return array|\Illuminate\Http\JsonResponse
      */
-    public function importCsv(Request $request)
+    public function importCsv(Request $request): array|\Illuminate\Http\JsonResponse
     {
         $rCountry = $request->header('r-country', '');
         $tableName = $request->get('table');

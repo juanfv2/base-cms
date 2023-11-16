@@ -91,6 +91,7 @@ class CreateMenus extends Command
 
     public function createPermissions()
     {
+        $results = [];
         $this->truncatePermissions();
 
         $strLocationAndFileNamePrefix = database_path('data/_.menus/p.*.json');
