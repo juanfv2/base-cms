@@ -33,6 +33,8 @@ class CreateMenus extends Command
                               (--country):
                               ';
 
+    protected $rCountry;
+
     /**
      * Create a new command instance.
      *
@@ -50,8 +52,30 @@ class CreateMenus extends Command
      */
     public function handle()
     {
-        $results = [];
-        $country = $this->option('country');
+        $this->rCountry = $this->option('country');
+
+        if ($this->rCountry == 'all') {
+            $this->execAll();
+
+            return 1;
+        }
+
+        $this->execOne();
+
+        return 1;
+    }
+
+    public function execAll()
+    {
+        $countries = config('countries');
+        foreach ($countries as $key => $country) {
+            $this->rCountry = $country['code'];
+            $this->execOne();
+        }
+    }
+
+    public function execOne()
+    {
         $truncate = $this->option('truncate');
         $paths = $this->option('create');
         $permissons = $this->option('permissions');
@@ -59,8 +83,8 @@ class CreateMenus extends Command
         $admin = $this->option('admin');
         $json = $this->option('json');
 
-        if ($country) {
-            config()->set('database.default', config('base-cms.default_prefix').$country);
+        if ($this->rCountry) {
+            config()->set('database.default', config('base-cms.default_prefix').$this->rCountry);
         }
 
         if ($truncate) {
@@ -86,7 +110,7 @@ class CreateMenus extends Command
             $this->createPermissionsFile();
         }
 
-        return count($results);
+        $this->info("{$this->rCountry} finished.");
     }
 
     public function createPermissions()

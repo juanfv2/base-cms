@@ -29,6 +29,8 @@ class CreateFields extends Command
 
     private $labelsFile;
 
+    protected $rCountry;
+
     /**
      * Create a new command instance.
      *
@@ -46,12 +48,35 @@ class CreateFields extends Command
      */
     public function handle()
     {
-        $country = $this->option('country');
+        $this->rCountry = $this->option('country');
+
+        if ($this->rCountry == 'all') {
+            $this->execAll();
+
+            return 1;
+        }
+
+        $this->execOne();
+
+        return 1;
+    }
+
+    public function execAll()
+    {
+        $countries = config('countries');
+        foreach ($countries as $key => $country) {
+            $this->rCountry = $country['code'];
+            $this->execOne();
+        }
+    }
+
+    public function execOne()
+    {
         $saveFields_file2table = $this->option('saveFields_file2table');
         $saveFields_table2file = $this->option('saveFields_table2file');
 
-        if ($country) {
-            config()->set('database.default', config('base-cms.default_prefix').$country);
+        if ($this->rCountry) {
+            config()->set('database.default', config('base-cms.default_prefix').$this->rCountry);
         }
 
         if ($saveFields_table2file) {
@@ -62,7 +87,7 @@ class CreateFields extends Command
             $this->saveFields();
         }
 
-        return 1;
+        $this->info("{$this->rCountry} finished.");
     }
 
     public function saveFields()
@@ -177,7 +202,7 @@ class CreateFields extends Command
               }
 
               // console.log('labels', JSON.stringify(getLabels(l)))
-";
+            ";
 
             File::put($path, $l_ts);
         }
