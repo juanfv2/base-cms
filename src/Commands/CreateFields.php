@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\File;
 
 class CreateFields extends Command
 {
+    public string $separator = '# ---------------------------------------------------------------------------- #';
+
     /**
      * The name and signature of the console command.
      *
@@ -112,11 +114,16 @@ class CreateFields extends Command
                 $result += $r;
 
                 if ($r) {
-                    $this->info("{$pc->field}");
+                    $this->info("{$pc->model} '{$pc->field}' {$pc->name}");
+                } else {
+                    $this->warn($this->separator);
+                    $this->warn("{$pc->field}");
+                    $this->warn($this->separator);
                 }
             }
-
-            $this->info("Fields : $result");
+            $count = ItemField::count();
+            $this->info("Fields modified: $result");
+            $this->info("Fields total: $count");
         } else {
             $this->error("File not found: $q");
         }
