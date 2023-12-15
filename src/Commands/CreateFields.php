@@ -173,7 +173,7 @@ class CreateFields extends Command
 
                 if (isset($this->labelsFile->{$modelName})) {
 
-                    if (property_exists($f, 'model')) {
+                    if ($f->model) {
                         unset($f->model);
                     }
 
