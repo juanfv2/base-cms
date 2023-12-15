@@ -182,33 +182,7 @@ class CreateFields extends Command
     {
         if (File::exists($path)) {
             $lString = json_encode($this->labelsFile, JSON_ERROR_NONE);
-            $l_ts = "export const l: any = {$lString}
-
-            function getLabels(values: any) {
-                function isObject(value: any) {
-                  return typeof value === 'object' && value !== null && !Array.isArray(value)
-                }
-
-                const labels = []
-
-                for (let key1 in values) {
-                  const l1 = values[key1]
-
-                  if (isObject(l1)) {
-                    for (let key2 in l1) {
-                      const l2 = l1[key2]
-
-                      if (isObject(l2)) {
-                        labels.push(l2)
-                      }
-                    }
-                  }
-                }
-
-                return labels
-              }
-
-              // console.log('labels', JSON.stringify(getLabels(l)))
+            $l_ts = "export const l: any = {$lString};\n\nfunction getLabels(values: any) { function isObject(value: any) { return typeof value === 'object' && value !== null && !Array.isArray(value) } const labels = []; for (let key1 in values) { const model = values[key1]; if (isObject(model)) { let _index = 0; for (let key2 in model) { const field = model[key2]; if (isObject(field)) { field.index = _index; labels.push(field); _index++; } } } } return labels };\n\n// console.log('labels', JSON.stringify(getLabels(l)))
             ";
 
             File::put($path, $l_ts);
