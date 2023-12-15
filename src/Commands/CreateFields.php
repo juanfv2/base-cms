@@ -23,7 +23,7 @@ class CreateFields extends Command
      * @var string
      */
     protected $description = '(-f): add/update fields  from "z_base_cms_fields"
-                              (-t): create fields file to   "z_base_cms_fields"
+                              (-t): create fields file to   "l.ts"
                               (--country):
                               ';
 
