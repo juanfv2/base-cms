@@ -18,6 +18,10 @@ class UserAPIController extends AppBaseController
 
     public $modelNameCamel = 'User';
 
+    public $rules;
+
+    const _account_role_id = 3;
+
     public function __construct(User $model)
     {
         $this->model = $model;
@@ -44,7 +48,12 @@ class UserAPIController extends AppBaseController
 
         $input = $this->validate($request, $this->rules);
 
-        $model = $this->model->withAdditionalInfo('create', $input);
+        $mType = match ($withEntity) {
+            'auth_people' => \App\Models\Auth\Person::class,
+            default => \App\Models\Auth\Account::class,
+        };
+
+        $model = $this->model->createAuthUser($input, $mType);
 
         if ($request->hasFile('photo')) {
             return $this->fileUpload($request, 'auth_users', 'photo', $model->id, 0);
@@ -81,7 +90,13 @@ class UserAPIController extends AppBaseController
         if (empty($model)) {
             return $this->sendError(__('validation.model.not.found', ['model' => __("models.{$this->modelNameCamel}.name")]));
         }
-        $updated = $model->withAdditionalInfo('update', $input);
+
+        $mType = match ($model->role_id) {
+            self::_account_role_id => 'account',
+            default => 'person',
+        };
+
+        $updated = $model->updateAuthUser($input, $mType);
 
         return $this->sendResponse(['id' => $model->id], __('validation.model.updated', ['model' => __("models.{$this->modelNameCamel}.name")]), $updated);
     }
@@ -106,7 +121,12 @@ class UserAPIController extends AppBaseController
             return $this->sendError(__('validation.model.not.found', ['model' => __("models.{$this->modelNameCamel}.name")]));
         }
 
-        $resp = $model->deleteAuthUser();
+        $mType = match ($model->role_id) {
+            self::_account_role_id => 'account',
+            default => 'person',
+        };
+
+        $resp = $model->deleteAuthUser($mType);
 
         return $this->sendResponse(['id' => $id, 'success' => $resp], __('validation.model.deleted', ['model' => __("models.{$this->modelNameCamel}.name")]));
     }

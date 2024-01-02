@@ -156,7 +156,7 @@ class ZRegisterAPIController extends AppBaseController
         // -- // 3224       ss
         // -- // 2317133    ss
 
-        $model = $this->model->auth_accounts_create_with($input);
+        $model = $this->model->createAuthUser($input, \App\Models\Auth\Account::class);
 
         $this->model = $model;
 

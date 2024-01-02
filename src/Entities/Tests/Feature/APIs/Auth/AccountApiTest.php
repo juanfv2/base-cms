@@ -20,6 +20,8 @@ class AccountApiTest extends TestCase
     use WithoutMiddleware;
     // use RefreshDatabase;
 
+    const _account_role_id = 3;
+
     /** @test */
     public function api_index_accounts()
     {
@@ -42,7 +44,7 @@ class AccountApiTest extends TestCase
     {
         // $this->withoutExceptionHandling();
 
-        $role = Role::factory()->create();
+        $role = Role::factory()->create(['id' => self::_account_role_id]);
         $user = User::factory()->make()->toArray();
         $model = Account::factory()->make()->toArray();
         $required = [
@@ -66,7 +68,7 @@ class AccountApiTest extends TestCase
     {
         // $this->withoutExceptionHandling();
 
-        $role = Role::factory()->create(['id' => 3]);
+        $role = Role::factory()->create(['id' => self::_account_role_id]);
         $user = User::factory()->make()->toArray();
         $account = Account::factory()->make()->toArray();
 
@@ -114,7 +116,7 @@ class AccountApiTest extends TestCase
     {
         // $this->withoutExceptionHandling();
 
-        $role = Role::factory()->create(['id' => 3]);
+        $role = Role::factory()->create(['id' => self::_account_role_id]);
         $model = Account::factory()->create();
         $modelEdited = [
             // table
@@ -148,7 +150,10 @@ class AccountApiTest extends TestCase
     /** @test */
     public function api_delete_account()
     {
+        $role = Role::factory()->create(['id' => self::_account_role_id]);
         $model = Account::factory()->create();
+        $model->user->role_id = $role->id;
+        $model->user->save();
 
         $this->response = $this->actingAsAdmin()->json('DELETE', route('api.users.destroy', ['user' => $model->user_id]));
 
