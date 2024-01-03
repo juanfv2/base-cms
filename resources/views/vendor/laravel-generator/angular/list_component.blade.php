@@ -48,8 +48,9 @@ this.kConditions = kConditions
 this.mApi = new JfApiRoute(kRoute)
 this.responseList = new JfResponseList<{{ $config->modelNames->name }} | any>(0, 0, []);
 
-this.fieldsSearchable = [ {!! $searchable_1 !!} ];
-this.fieldsInList = [ {!! $searchable_1 !!} ,  {!! $searchable_2 !!}  ];
+this.fieldsInList = l.getDBFields(this.itemLabels).filter((_f) => !_f.hidden)
+this.fieldsSearchable = this.fieldsInList.filter((_f) => _f.allowSearch)
+
 this.hasPermission2show = JfRequestOption.isAuthorized(`/${kRoute}/show`)
 this.hasPermission2new = JfRequestOption.isAuthorized(`/${kRoute}/new`)
 this.hasPermission2delete = JfRequestOption.isAuthorized(`/${kRoute}/delete`)

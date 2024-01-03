@@ -387,6 +387,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
             {$fieldCamel}2go($fieldCamel: $field): void {
                 this.router.navigate([k.routes.$fieldCamelPlural, $fieldCamel.id]);
             }
+
             EOF;
             $relations1[] = $relationText;
             $relations2[] = "this.{$fieldCamelPlural}2update();";
