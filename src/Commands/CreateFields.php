@@ -187,8 +187,52 @@ class CreateFields extends Command
     {
         if (File::exists($path)) {
             $lString = json_encode($this->labelsFile, JSON_ERROR_NONE);
-            $l_ts = "export const l: any = {$lString};\n\nfunction getLabels(values: any) { function isObject(value: any) { return typeof value === 'object' && value !== null && !Array.isArray(value) } const labels = []; for (let key1 in values) { const model = values[key1]; if (isObject(model)) { let _index = 0; for (let key2 in model) { const field = model[key2]; if (isObject(field)) { field.model = key1; field.index = _index; labels.push(field); _index++; } } } } return labels };\n\n// console.log('labels', JSON.stringify(getLabels(l)))
+            $l_ts = "import {DBType} from 'base-cms' // from '@juanfv2/base-cms';
+            \n\nexport const l = {$lString};
+            \n\n// console.log('labels', JSON.stringify(l.getLabels(l)))
             ";
+
+            $pattern = '/("fixed":false}|"fixed":true})/';
+            $replacement = '$1 as DBType';
+            $l_ts = preg_replace($pattern, $replacement, $l_ts);
+
+            $pattern = '/"k":{},/';
+            $replacement = "  k: {} as any,
+
+            isObject: (value: any) => typeof value === 'object' && value !== null && !Array.isArray(value),
+          
+            getDBFields: (values: any): DBType[] => {
+              const labels = []
+              for (let key1 in values) {
+                const model = values[key1]
+                if (l.isObject(model)) {
+                  labels.push(model)
+                }
+              }
+              return labels
+            },
+          
+            getLabels: (values: any) => {
+              const labels = []
+              for (let key1 in values) {
+                const model = values[key1]
+                if (l.isObject(model)) {
+                  let _index = 0
+                  for (let key2 in model) {
+                    const field = model[key2]
+                    if (l.isObject(field)) {
+                      field.model = key1
+                      field.index = _index
+                      labels.push(field)
+                      _index++
+                    }
+                  }
+                }
+              }
+              return labels
+            },";
+
+            $l_ts = preg_replace($pattern, $replacement, $l_ts);
 
             File::put($path, $l_ts);
         }
