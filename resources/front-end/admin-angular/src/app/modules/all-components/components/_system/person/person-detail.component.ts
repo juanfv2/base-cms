@@ -1,10 +1,10 @@
 import {Component, OnInit, Input} from '@angular/core'
 import {FormGroup, FormGroupDirective, FormBuilder, Validators, ControlContainer} from '@angular/forms'
 
-import {k} from 'src/environments/k'
-import {l} from 'src/environments/l'
+import {k} from '../../../../../../environments/k'
+import {l} from '../../../../../../environments/l'
 
-import {Person} from 'src/app/models/_models'
+import {Person} from '../../../../../models/_models'
 
 const kRoute = k.routes.people
 
@@ -25,7 +25,7 @@ export class PersonDetailComponent implements OnInit {
   ngOnInit(): void {
     this.mFormGroup = this.parent.form
 
-    console.log('PersonDetailComponent.person', this.person);
+    console.log('PersonDetailComponent.person', this.person)
 
     this.mFormGroup.addControl(
       this.mFormGroupName,

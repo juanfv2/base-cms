@@ -1,4 +1,4 @@
-import { Role } from 'src/app/models/_models'
+import {Role} from '../app/models/_models'
 
 export const rolesAdmins = [
   {

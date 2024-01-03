@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core'
 import {FormBuilder, FormGroup, Validators} from '@angular/forms'
 import {ActivatedRoute, Router} from '@angular/router'
+import {NgbDateParserFormatter} from '@ng-bootstrap/ng-bootstrap'
 
 import {
   JfResponse,
@@ -11,16 +12,12 @@ import {
   JfCondition,
   JfAuthService,
 } from 'base-cms' // from '@juanfv2/base-cms'
-import {k} from 'src/environments/k'
-import {l} from 'src/environments/l'
+import {k} from '../../../../../../environments/k'
+import {l} from '../../../../../../environments/l'
 
-import {User, Account, Person, Role, XFile} from 'src/app/models/_models'
-import {NgbDateParserFormatter} from '@ng-bootstrap/ng-bootstrap'
-import {
-  createPasswordStrengthValidator,
-  fieldConditionallyRequiredValidator,
-  validateRequiredIf,
-} from 'src/app/shared/validators'
+import {User, Account, Person, Role, XFile} from '../../../../../models/_models'
+
+import {validateRequiredIf, createPasswordStrengthValidator} from '../../../../../shared/validators'
 
 const kRoute = k.routes.users
 

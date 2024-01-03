@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core'
 import {Title} from '@angular/platform-browser'
 import {SwUpdate} from '@angular/service-worker'
 import {JfMessageService, JfUtils} from 'base-cms' // from '@juanfv2/base-cms'
-import {k} from 'src/environments/k'
+import {k} from '../environments/k'
 
 @Component({
   selector: 'app-root',

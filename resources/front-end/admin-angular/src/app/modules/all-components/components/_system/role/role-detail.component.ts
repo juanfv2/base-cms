@@ -12,10 +12,10 @@ import {
   JfCondition,
   JfSort,
 } from 'base-cms' // from '@juanfv2/base-cms'
-import {k} from 'src/environments/k'
-import {l} from 'src/environments/l'
+import {k} from '../../../../../../environments/k'
+import {l} from '../../../../../../environments/l'
 
-import {Role, User, Permission} from 'src/app/models/_models'
+import {Permission, Role, User} from '../../../../../models/_models'
 
 const kRoute = k.routes.roles
 

@@ -5,10 +5,10 @@ import {Router, ActivatedRoute} from '@angular/router'
 
 import {JfAuthService, JfMessageService, JfResponse, JfUtils} from 'base-cms' // from '@juanfv2/base-cms'
 
-import {k} from 'src/environments/k'
-import {l} from 'src/environments/l'
-import {User} from 'src/app/models/_models'
-import {Development} from 'src/environments/resources'
+import {l} from '../../../../../environments/l'
+import {k} from '../../../../../environments/k'
+import {User} from '../../../../models/_models'
+import {Development} from '../../../../../environments/resources'
 
 @Component({
   selector: 'app-login',

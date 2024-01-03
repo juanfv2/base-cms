@@ -1,9 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core'
 import {ControlContainer, FormBuilder, FormGroup, FormGroupDirective, NgModelGroup, Validators} from '@angular/forms'
-
-import {l} from 'src/environments/l'
-
-import {Account} from 'src/app/models/_models'
+import {Account} from '../../../../../models/_models'
+import {l} from '../../../../../../environments/l'
 
 @Component({
   selector: 'app-account-detail',

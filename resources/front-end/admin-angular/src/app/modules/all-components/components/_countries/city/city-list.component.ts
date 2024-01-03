@@ -16,10 +16,10 @@ import {
   JfSearchCondition,
   BaseCmsListComponent,
 } from 'base-cms' // from '@juanfv2/base-cms'
-import {k} from 'src/environments/k'
-import {l} from 'src/environments/l'
+import {k} from '../../../../../../environments/k'
+import {l} from '../../../../../../environments/l'
 
-import {City, Country, Region} from 'src/app/models/_models'
+import {City, Country, Region} from '../../../../../models/_models'
 
 const kRoute = k.routes.cities
 const kConditions = `${k.suggestions}${kRoute}`
