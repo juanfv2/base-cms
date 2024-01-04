@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\Auth;
 
 use App\Models\Auth\Account;
+use App\Models\Auth\Role;
 use App\Models\Auth\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
@@ -25,7 +26,7 @@ class ZRegisterAPIController extends AppBaseController
 
     public function register(Request $request)
     {
-        $rules = User::$rules + Account::$rules;
+        $rules = array_merge(User::$rules, Account::$rules);
         $rules['firstName'] = 'nullable';
         $rules['lastName'] = 'nullable';
         $rules['role_id'] = 'nullable';
@@ -56,7 +57,7 @@ class ZRegisterAPIController extends AppBaseController
         $r = null;
         $message = '';
         switch (intval($input['role_id'])) {
-            case 3:
+            case Role::_3_ACCOUNT:
                 $r = $this->createAccount($input);
                 $message = __('messages.mail.verify', ['email' => $this->model->email]);
                 break;
@@ -136,7 +137,7 @@ class ZRegisterAPIController extends AppBaseController
 
     public function createAccount($input)
     {
-        $roleId = 3;
+        $roleId = Role::_3_ACCOUNT;
         $accountGroupId = 1;
 
         // user
