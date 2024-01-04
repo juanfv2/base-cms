@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\Auth;
 
 use App\Models\Auth\Account;
 use App\Models\Auth\Person;
+use App\Models\Auth\Role;
 use App\Models\Auth\User;
 use Illuminate\Http\Request;
 use Juanfv2\BaseCms\Controllers\AppBaseController;
@@ -19,8 +20,6 @@ class UserAPIController extends AppBaseController
     public $modelNameCamel = 'User';
 
     public $rules;
-
-    const _account_role_id = 3;
 
     public function __construct(User $model)
     {
@@ -92,7 +91,7 @@ class UserAPIController extends AppBaseController
         }
 
         $mType = match ($model->role_id) {
-            self::_account_role_id => 'account',
+            Role::_3_ACCOUNT => 'account',
             default => 'person',
         };
 
@@ -122,7 +121,7 @@ class UserAPIController extends AppBaseController
         }
 
         $mType = match ($model->role_id) {
-            self::_account_role_id => 'account',
+            Role::_3_ACCOUNT => 'account',
             default => 'person',
         };
 

@@ -17,6 +17,12 @@ class Role extends Model
 
     private ?\Illuminate\Database\Eloquent\Collection $menus = null;
 
+    const _1_ADMIN = 1;
+
+    const _2_SUB_ADMIN = 2;
+
+    const _3_ACCOUNT = 3;
+
     public $table = 'auth_roles';
 
     public $fillable = [
@@ -71,7 +77,7 @@ class Role extends Model
          */
         $this->idsPermissions = $this->menus->pluck('id')->sort()->toArray();
         $this->urlPermissions = $this->menus->pluck('urlFrontEnd')->sort()->toArray();
-        $this->_urlBackEnd_ = implode(',', $this->menus->pluck('urlBackEnd')->sort()->toArray());
+        $this->_urlBackEnd_ = $this->menus->pluck('urlBackEnd')->sort()->toArray();
 
         $menus = $this->menus
             ->where('isVisible', 1)
