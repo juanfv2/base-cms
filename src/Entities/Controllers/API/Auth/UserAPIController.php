@@ -41,8 +41,8 @@ class UserAPIController extends AppBaseController
         $withEntity = $request->get('withEntity', '-');
 
         $this->rules = match ($withEntity) {
-            'auth_people' => $this->model::$rules + Person::$rules,
-            default => $this->model::$rules + Account::$rules,
+            'auth_people' => array_merge($this->model::$rules, Person::$rules),
+            default => array_merge($this->model::$rules, Account::$rules),
         };
 
         $input = $this->validate($request, $this->rules);
@@ -73,8 +73,8 @@ class UserAPIController extends AppBaseController
         $withEntity = $request->get('withEntity', '-');
 
         $this->rules = match ($withEntity) {
-            'auth_people' => $this->model::$rules + Person::$rules,
-            default => $this->model::$rules + Account::$rules,
+            'auth_people' => array_merge($this->model::$rules, Person::$rules),
+            default => array_merge($this->model::$rules, Account::$rules),
         };
 
         $this->rules['email'] = 'required|string|max:191|unique:auth_users,email,'.$id;
