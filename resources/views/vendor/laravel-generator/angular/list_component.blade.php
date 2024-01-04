@@ -3,6 +3,7 @@ import {ActivatedRoute, Router} from '@angular/router'
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap'
 
 import {
+DBType,
 JfSort,
 JfUtils,
 JfApiRoute,
@@ -16,10 +17,10 @@ JfMessageService,
 JfSearchCondition,
 BaseCmsListComponent,
 } from 'base-cms' // from '@juanfv2/base-cms'
-import {k} from 'src/environments/k'
-import {l} from 'src/environments/l'
+import {k} from '../../../../../../environments/k'
+import {l} from '../../../../../../environments/l'
 
-import { {{ $relation_model_names }} } from 'src/app/models/_models';
+import { {{ $relation_model_names }} } from '../../../../../models/_models';
 
 const kRoute = k.routes.{{ $config->modelNames->camelPlural }};
 const kConditions = `${k.suggestions}${kRoute}`;
@@ -54,6 +55,7 @@ this.fieldsSearchable = this.fieldsInList.filter((_f) => _f.allowSearch)
 this.hasPermission2show = JfRequestOption.isAuthorized(`/${kRoute}/show`)
 this.hasPermission2new = JfRequestOption.isAuthorized(`/${kRoute}/new`)
 this.hasPermission2delete = JfRequestOption.isAuthorized(`/${kRoute}/delete`)
+
 this.storageSession = true
 }
 
@@ -72,13 +74,18 @@ this.onLazyLoad();
 initSearchModel(): any {
 const search = !this.isSubComponent ? JfUtils.mStorage.getItem(this.kConditions, this.storageSession) : null;
 const mSearch = {
-lazyLoadEvent: new JfLazyLoadEvent(10, 1, [new JfSort(this.itemLabels.id.field!, JfSort.desc)]) {!! $relations_fields_init_search_model !!}
+lazyLoadEvent: new JfLazyLoadEvent(10, 1, [new JfSort(this.itemLabels.id.field, JfSort.desc)]) {!! $relations_fields_init_search_model !!}
 ,cModel: '-App-Models-{{ $config->modelNames->name }}',
+fields: this.fieldsInList,
+fieldsSelected: this.fieldsInList.filter((_f: DBType) => _f.allowInList),
 };
-this.currentFields(mSearch)
 
 const r = search ? (JSON.parse(search) || mSearch) : mSearch;
+
+this.currentFields(r)
+
 // console.log('r', r);
+
 return r;
 }
 
@@ -101,18 +108,27 @@ override onLazyLoad(strAction = ''): void {
 if (this.loading) {
 return;
 }
+
 // console.log('onLazyLoad this.loading', this.loading);
 // console.log('onLazyLoad this.loading', this.modelSearch);
+
 this.loading = true;
 // prepare
 let nextOperator = 'AND';
 const conditions: any[] = [];
-{!! $relations_fields_on_lazy_load_1 !!}
+const conditionsAC: any[] = []
+const conditionsGeneric: any[] = []
+
+this.filtersFromAutocomplete(conditionsAC)
+
 if (this.modelSearch?.conditions?.length) {
 for (const c of this.modelSearch.conditions) {
-nextOperator = JfUtils.addCondition(c, nextOperator, conditions)
+nextOperator = JfUtils.addCondition(c, nextOperator, conditionsGeneric)
 }
 }
+
+conditions.push(conditionsAC)
+conditions.push(conditionsGeneric)
 
 this.modelSearch.lazyLoadEvent.joins = [
 {{ $relations_fields_on_lazy_load_2 }}
@@ -120,7 +136,9 @@ this.modelSearch.lazyLoadEvent.joins = [
 this.modelSearch.lazyLoadEvent.conditions = conditions;
 this.modelSearch.lazyLoadEvent.additional = [new JfCondition('to_index', '.')]
 // this.modelSearch.lazyLoadEvent.includes = ['relation-1tm', 'relation-mt1', 'relation-1t1', ...];
+
 const mSearch = JSON.stringify(this.modelSearch);
+
 switch (strAction) {
 case 'export':
 this.onLazyLoadExport(strAction)
@@ -135,4 +153,10 @@ override onAddNew(m: any): void {
 this.itemCurrent = { {{ $relations_fields_add_new }} } as unknown as {{ $config->modelNames->name }};
 super.onAddNew(m)
 }
+
+private filtersFromAutocomplete(conditions: any[]) {
+let nextOperator = 'AND'
+{!! $relations_fields_on_lazy_load_1 !!}
+}
+
 }
