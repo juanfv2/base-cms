@@ -13,7 +13,7 @@ export class AccountDetailComponent implements OnInit {
   @Input() account!: Account
   mFormGroup!: FormGroup
   labels = l
-  mFormGroupName = l.user.accountName.name
+  mFormGroupName = l.user.account.name
 
   constructor(private parent: FormGroupDirective, private fb: FormBuilder) {}
 

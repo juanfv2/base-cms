@@ -2,29 +2,35 @@ import {HttpClientTestingModule} from '@angular/common/http/testing'
 import {ComponentFixture, TestBed} from '@angular/core/testing'
 import {RouterTestingModule} from '@angular/router/testing'
 import {FormsModule} from '@angular/forms'
-import {BaseCmsModule, JfResponseList} from 'base-cms' // @juanfv2/base-cms
-import {City} from 'src/app/models/_models'
-import {DOMHelper, Helpers} from 'src/testing/helpers'
+import {of} from 'rxjs/internal/observable/of'
+
+import {BaseCmsModule, JfCrudService} from 'base-cms' // @juanfv2/base-cms
+
+import {DOMHelper, Helpers} from '../../../../../../testing/helpers'
 
 import {CityListComponent} from './city-list.component'
-import {AllComponentsModule} from '../../../all-components.module'
 
 describe('CityListComponent', () => {
   let component: CityListComponent
   let domHelper: DOMHelper<CityListComponent>
   let fixture: ComponentFixture<CityListComponent>
+  const crudServiceStub: jasmine.SpyObj<JfCrudService> = jasmine.createSpyObj('crudService', ['getPage'])
 
   beforeEach(async () => {
+    crudServiceStub.getPage.calls.reset()
+
     await TestBed.configureTestingModule({
       declarations: [CityListComponent],
-      imports: [HttpClientTestingModule, RouterTestingModule, FormsModule, BaseCmsModule, AllComponentsModule],
+      imports: [HttpClientTestingModule, RouterTestingModule, FormsModule, BaseCmsModule],
+      providers: [{provide: JfCrudService, useValue: crudServiceStub}],
     }).compileComponents()
 
     fixture = TestBed.createComponent(CityListComponent)
     component = fixture.componentInstance
-    const items = Helpers.generateObjectsMock(component.itemLabels, 3)
-    component.responseList = {content: items} as JfResponseList<City>
     component.hasPermission2delete = true
+
+    const resp = {data: {content: Helpers.generateModelsMock(component.fieldsInList, 3)}}
+    crudServiceStub.getPage.and.returnValue(of(resp))
 
     domHelper = new DOMHelper(fixture)
     fixture.detectChanges()
@@ -35,10 +41,15 @@ describe('CityListComponent', () => {
   })
 
   it('should have [3] headers', () => {
-    expect(domHelper.count('table.table thead th')).toBe(component.fieldsInList.length + 1)
+    expect(domHelper.count('table.table thead th')).toBe(component.fieldsInList.filter((f) => f.allowInList).length + 1)
   })
 
   it('should render [3] items', () => {
     expect(domHelper.count('table.table tbody tr')).toBe(3)
+  })
+
+  it('should render [3] items, invoke crud-service getPage', () => {
+    component.onLazyLoad()
+    expect(crudServiceStub.getPage).toHaveBeenCalledTimes(2)
   })
 })

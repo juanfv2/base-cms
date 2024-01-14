@@ -18,7 +18,7 @@ export class PersonDetailComponent implements OnInit {
   @Input() person!: Person
   mFormGroup!: FormGroup
   labels = l
-  mFormGroupName = l.user.personName.name
+  mFormGroupName = l.user.person.name
 
   constructor(private parent: FormGroupDirective, private fb: FormBuilder) {}
 

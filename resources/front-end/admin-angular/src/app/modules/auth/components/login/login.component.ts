@@ -76,6 +76,7 @@ export class LoginComponent implements OnInit {
           user.role.urlPermissions.push('/dashboard')
           user.role.urlPermissions.push('/not-authorized')
           user.role.urlPermissions.push('/not-found')
+          user.role.urlPermissions.push('/visor-log-errors')
 
           // const cDev = JfUtils.mStorage.getItem(k.dev)
           // const entityGlobalId = `${JfUtils.mStorage.getItem(k.entityGlobalId)}`

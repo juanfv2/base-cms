@@ -15,7 +15,7 @@ k.rolesClients = rolesClients
 k.role_id_1_admin = 1
 k.role_id_2_sub_admin = 2
 k.role_id_3_customer = 3
-k.versionV = 'd-2023_09_28T21_38_19_007Z'
+k.versionV = 'd-2024_01_14T23_37_48_155Z'
 k.expireTimeOut = 5
 k.expireTime = 60
 

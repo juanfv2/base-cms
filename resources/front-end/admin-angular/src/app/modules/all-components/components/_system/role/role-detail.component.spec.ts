@@ -4,12 +4,13 @@ import {ReactiveFormsModule} from '@angular/forms'
 import {ActivatedRoute, Router} from '@angular/router'
 import {RouterTestingModule} from '@angular/router/testing'
 import {Location} from '@angular/common'
+import {of} from 'rxjs/internal/observable/of'
 import {NgbNavModule} from '@ng-bootstrap/ng-bootstrap'
-import {BaseCmsModule, JfCrudService} from 'base-cms' // @juanfv2/base-cms
-import {of} from 'rxjs'
 
-import {k} from 'src/environments/k'
-import {DOMHelper, Helpers} from 'src/testing/helpers'
+import {BaseCmsModule, JfCrudService} from 'base-cms' // @juanfv2/base-cms
+
+import {k} from '../../../../../../environments/k'
+import {DOMHelper, Helpers} from '../../../../../../testing/helpers'
 
 import {RoleDetailComponent} from './role-detail.component'
 
@@ -29,7 +30,7 @@ describe('RoleDetailComponent', () => {
     activeRouteStub.params = of({id: 'new'})
     await TestBed.configureTestingModule({
       declarations: [RoleDetailComponent],
-      imports: [HttpClientTestingModule, RouterTestingModule, ReactiveFormsModule, NgbNavModule, BaseCmsModule],
+      imports: [HttpClientTestingModule, RouterTestingModule, ReactiveFormsModule, BaseCmsModule, NgbNavModule],
       providers: [
         {provide: JfCrudService, useValue: crudServiceStub},
         {provide: ActivatedRoute, useValue: activeRouteStub},
@@ -60,9 +61,14 @@ describe('RoleDetailComponent', () => {
     fixture.detectChanges()
     expect(domHelper.count('.new-role')).toEqual(1)
     component.addNew()
-    expect(router.navigateByUrl).toHaveBeenCalledWith(router.createUrlTree([k.routes.roles, 'new']), {
-      skipLocationChange: false,
+
+    expect(router.navigateByUrl).toHaveBeenCalledWith(router.createUrlTree([k.routes.transition]), {
+      replaceUrl: true,
     })
+
+    // expect(router.navigateByUrl).toHaveBeenCalledWith(router.createUrlTree([k.routes.roles, 'new']), {
+    // replaceUrl: true,
+    // })
   })
 
   it('should render "role-name" validation message when formControl mark as dirty and empty', () => {

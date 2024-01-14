@@ -19,12 +19,13 @@ export class RegionDetailComponent implements OnInit, OnDestroy {
   @Output() saveClicked = new EventEmitter<Region>()
   @Output() cancelClicked = new EventEmitter()
 
-  @Input() region: Region
+  @Input() region!: Region
   @Input() isSubComponentFrom = '-'
   @Input() isSubComponent = false
 
   mFormGroup!: FormGroup
   labels = l
+  itemLabels: any = l.region
   includes = ['user', 'country', 'city']
   mApi = new JfApiRoute(kRoute)
   private mSubscription: any
@@ -51,16 +52,12 @@ export class RegionDetailComponent implements OnInit, OnDestroy {
       const id = this.isSubComponent ? this.region?.id : params['id']
       // console.log('params', params, `\nthis.region`, this.region);
       this.newRegion(this.region)
-      if (id !== 'new') {
-        this.getRegion(id)
-      }
+      this.getRegion(id)
     })
   }
 
   ngOnDestroy(): void {
-    if (!this.isSubComponent && this.mSubscription) {
-      this.mSubscription.unsubscribe()
-    }
+    this.mSubscription?.unsubscribe()
   }
 
   newRegion(tempRegion?: Region): void {
@@ -71,8 +68,11 @@ export class RegionDetailComponent implements OnInit, OnDestroy {
   }
 
   getRegion(id: any): void {
+    if (id === 'new') return
+
     const mId = `${id}?includes=${JSON.stringify(this.includes)}`
     this.sending = true
+
     this.crudService.getEntity(kRoute, mId).subscribe({
       next: (resp: JfResponse) => {
         this.sending = false
@@ -82,7 +82,7 @@ export class RegionDetailComponent implements OnInit, OnDestroy {
       },
       error: (error: any) => {
         this.sending = false
-        this.messageService.danger(k.project_name, error, this.labels.region.ownName)
+        this.messageService.danger(k.project_name, error, this.itemLabels.ownName)
       },
     })
   }
@@ -116,14 +116,17 @@ export class RegionDetailComponent implements OnInit, OnDestroy {
       },
       error: (error: any) => {
         this.sending = false
-        this.messageService.danger(k.project_name, error, this.labels.region.ownName)
+        this.messageService.danger(k.project_name, error, this.itemLabels.ownName)
       },
     })
   }
 
   addNew(): void {
-    this.newRegion()
-    this.router.navigate([kRoute, 'new'])
+    this.router.navigate([k.routes.transition], {replaceUrl: true})
+
+    setTimeout(() => {
+      this.router.navigate([kRoute, 'new'], {replaceUrl: true})
+    }, 5)
   }
 
   onBack(): void {

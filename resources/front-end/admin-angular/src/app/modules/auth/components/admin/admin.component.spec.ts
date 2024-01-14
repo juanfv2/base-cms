@@ -5,10 +5,11 @@ import {NgIdleModule} from '@ng-idle/core'
 import {BaseCmsModule, JfUtils} from 'base-cms'
 
 import {AdminComponent} from './admin.component'
-import {k} from 'src/environments/k'
-import {user} from 'src/testing/resources.testing.spec'
 import {By} from '@angular/platform-browser'
 import {DebugElement} from '@angular/core'
+
+import {k} from '../../../../../environments/k'
+import {user} from '../../../../../testing/resources.testing.spec'
 
 describe('AdminComponent', () => {
   let component: AdminComponent

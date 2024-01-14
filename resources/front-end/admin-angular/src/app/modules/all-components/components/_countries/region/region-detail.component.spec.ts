@@ -4,13 +4,15 @@ import {ReactiveFormsModule} from '@angular/forms'
 import {ActivatedRoute, Router} from '@angular/router'
 import {RouterTestingModule} from '@angular/router/testing'
 import {Location} from '@angular/common'
+import {of} from 'rxjs/internal/observable/of'
+
 import {BaseCmsModule, JfCrudService} from 'base-cms' // @juanfv2/base-cms
-import {of} from 'rxjs'
-import {k} from 'src/environments/k'
-import {DOMHelper, Helpers} from 'src/testing/helpers'
+
+import {k} from '../../../../../../environments/k'
+import {DOMHelper, Helpers} from '../../../../../../testing/helpers'
 
 import {RegionDetailComponent} from './region-detail.component'
-import {CountriesModule} from 'src/app/modules/countries/countries.module'
+import {CountriesModule} from '../../../../countries/countries.module'
 
 describe('RegionDetailComponent', () => {
   let router: Router
@@ -59,9 +61,14 @@ describe('RegionDetailComponent', () => {
     fixture.detectChanges()
     expect(domHelper.count('.new-region')).toEqual(1)
     component.addNew()
-    expect(router.navigateByUrl).toHaveBeenCalledWith(router.createUrlTree([k.routes.regions, 'new']), {
-      skipLocationChange: false,
+
+    expect(router.navigateByUrl).toHaveBeenCalledWith(router.createUrlTree([k.routes.transition]), {
+      replaceUrl: true,
     })
+
+    // expect(router.navigateByUrl).toHaveBeenCalledWith(router.createUrlTree([k.routes.regions, 'new']), {
+    // replaceUrl: true,
+    // })
   })
 
   it('should render "region-name" validation message when formControl mark as dirty and empty', () => {
@@ -109,6 +116,9 @@ describe('RegionDetailComponent', () => {
     crudServiceStub.updateEntity.and.returnValue(of())
     component.hasPermission2edit = true
     fixture.detectChanges()
+
+    // todo: if not call updateEntity, maybe there is a invalid input, to resolve
+    // console.log('invalid', Helpers.findInvalidControls(component.mFormGroup))
 
     expect(domHelper.count('.save-region')).toEqual(1)
 
