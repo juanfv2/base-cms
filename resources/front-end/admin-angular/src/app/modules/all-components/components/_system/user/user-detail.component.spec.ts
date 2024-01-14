@@ -174,17 +174,17 @@ describe('UserDetailComponent', () => {
       fixture.detectChanges()
     })
 
-    it('should render "account-firstName" validation message when formControl mark as dirty and empty', () => {
-      const _tag = '.firstName-error-required'
+    it('should render "account-first_name" validation message when formControl mark as dirty and empty', () => {
+      const _tag = '.first_name-error-required'
       expect(domHelper.count(_tag)).toEqual(0)
 
       // elements.querySelector('button').click();
-      const firstName = component.mFormGroup.get('account')?.get('firstName')
-      firstName?.setValue('')
-      firstName?.markAsDirty()
+      const first_name = component.mFormGroup.get('account')?.get('first_name')
+      first_name?.setValue('')
+      first_name?.markAsDirty()
 
       fixture.detectChanges()
-      expect(firstName).toBeTruthy()
+      expect(first_name).toBeTruthy()
       expect(domHelper.count('.card-account')).toEqual(1)
       expect(domHelper.count(_tag)).toEqual(1)
       expect(domHelper.singleText(_tag)).toContain('Nombre es requerido')
@@ -199,7 +199,7 @@ describe('UserDetailComponent', () => {
         'email_verified_at',
         'uid',
       ])
-      modelTemp.account = Helpers.generateObjectMock(component.labels.account, 1, ['id', 'userName', 'birthDate'])
+      modelTemp.account = Helpers.generateObjectMock(component.labels.account, 1, ['id', 'userName', 'birth_date'])
       modelTemp.country = {id: 1}
       modelTemp.country_id = modelTemp.country.id
       modelTemp.region = {id: 1}
@@ -209,7 +209,7 @@ describe('UserDetailComponent', () => {
       modelTemp.role = {id: 1}
       modelTemp.role_id = modelTemp.role.id
       modelTemp.roles = [{id: 1, name: 'names'}]
-      modelTemp.account.birthDate = {year: 2000, month: 2, day: 1}
+      modelTemp.account.birth_date = {year: 2000, month: 2, day: 1}
       modelTemp.email = 'email@valid.com'
       modelTemp.password = 'Pa55w0rd3'
       modelTemp.photo_id = 1
@@ -233,7 +233,7 @@ describe('UserDetailComponent', () => {
       delete modelTemp.person
       delete modelTemp.photo
       modelTemp.roles = [1]
-      modelTemp.birthDate = '2000-2-1'
+      modelTemp.birth_date = '2000-2-1'
       modelTemp.password_confirmation = modelTemp.password
       modelTemp.withEntity = 'auth_accounts'
 
@@ -268,15 +268,15 @@ describe('UserDetailComponent', () => {
       fixture.detectChanges()
     })
 
-    it('should render "person-firstName" validation message when formControl mark as dirty and empty', () => {
-      const _tag = '.firstName-error-required'
+    it('should render "person-first_name" validation message when formControl mark as dirty and empty', () => {
+      const _tag = '.first_name-error-required'
       expect(domHelper.count(_tag)).toEqual(0)
       // elements.querySelector('button').click();
-      const firstName = component.mFormGroup.get('person')?.get('firstName')
-      firstName?.setValue('')
-      firstName?.markAsDirty()
+      const first_name = component.mFormGroup.get('person')?.get('first_name')
+      first_name?.setValue('')
+      first_name?.markAsDirty()
       fixture.detectChanges()
-      expect(firstName).toBeTruthy()
+      expect(first_name).toBeTruthy()
       expect(domHelper.count('.card-account')).toEqual(1)
       expect(domHelper.count(_tag)).toEqual(1)
       expect(domHelper.singleText(_tag)).toContain('Nombre es requerido')
@@ -291,7 +291,7 @@ describe('UserDetailComponent', () => {
         'email_verified_at',
         'uid',
       ])
-      modelTemp.person = Helpers.generateObjectMock(component.labels.person, 1, ['id', 'userName', 'birthDate'])
+      modelTemp.person = Helpers.generateObjectMock(component.labels.person, 1, ['id', 'userName', 'birth_date'])
       modelTemp.country = {id: 1}
       modelTemp.country_id = modelTemp.country.id
       modelTemp.region = {id: 1}
@@ -301,7 +301,7 @@ describe('UserDetailComponent', () => {
       modelTemp.role = {id: 1}
       modelTemp.role_id = modelTemp.role.id
       modelTemp.roles = [{id: 1, name: 'names'}]
-      modelTemp.person.birthDate = {year: 2000, month: 2, day: 1}
+      modelTemp.person.birth_date = {year: 2000, month: 2, day: 1}
       modelTemp.email = 'email@valid.com'
       modelTemp.password = 'Pa55w0rd3'
       modelTemp.photo_id = 1
@@ -324,7 +324,7 @@ describe('UserDetailComponent', () => {
       delete modelTemp.person
       delete modelTemp.photo
       modelTemp.roles = [1]
-      modelTemp.birthDate = '2000-2-1'
+      modelTemp.birth_date = '2000-2-1'
       modelTemp.password_confirmation = modelTemp.password
       modelTemp.withEntity = 'auth_people'
 

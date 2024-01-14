@@ -151,10 +151,10 @@ export class UserDetailComponent implements OnInit, OnDestroy {
           this.user.email_verified_at = this.parserFormatter.parse(this.user.email_verified_at)
 
           if (this.user.account) {
-            this.user.account.birthDate = this.parserFormatter.parse(this.user.account.birthDate)
+            this.user.account.birth_date = this.parserFormatter.parse(this.user.account.birth_date)
           }
           if (this.user.person) {
-            this.user.person.birthDate = this.parserFormatter.parse(this.user.person.birthDate)
+            this.user.person.birth_date = this.parserFormatter.parse(this.user.person.birth_date)
           }
 
           this.validateFormGroup()
@@ -240,9 +240,9 @@ export class UserDetailComponent implements OnInit, OnDestroy {
       modelTemp.email_verified_at = `${_date.year}-${_date.month}-${_date.day}`
     }
 
-    if (modelTemp.birthDate) {
-      _date = modelTemp.birthDate
-      modelTemp.birthDate = `${_date.year}-${_date.month}-${_date.day}`
+    if (modelTemp.birth_date) {
+      _date = modelTemp.birth_date
+      modelTemp.birth_date = `${_date.year}-${_date.month}-${_date.day}`
     }
 
     delete modelTemp.account

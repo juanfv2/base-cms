@@ -32,7 +32,7 @@ class ZRegisterAccountApiTest extends TestCase
             'name' => 'juanfv2',
             'password' => $p,
             'password_confirmation' => $p,
-            'cellPhone' => $p,
+            'cell_phone' => $p,
             'imei' => $p,
             'role_id' => $role->id,
         ];

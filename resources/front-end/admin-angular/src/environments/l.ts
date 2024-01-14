@@ -426,10 +426,10 @@ export const l: any = {
       fixed: false,
       model: 'person',
     },
-    firstName: {
-      name: 'firstName',
+    first_name: {
+      name: 'first_name',
       label: 'Nombre',
-      field: 'auth_people.firstName',
+      field: 'auth_people.first_name',
       type: 'string',
       allowSearch: true,
       allowExport: true,
@@ -439,10 +439,10 @@ export const l: any = {
       fixed: false,
       model: 'person',
     },
-    lastName: {
-      name: 'lastName',
+    last_name: {
+      name: 'last_name',
       label: 'Apellido',
-      field: 'auth_people.lastName',
+      field: 'auth_people.last_name',
       type: 'string',
       allowSearch: true,
       allowExport: true,
@@ -452,10 +452,10 @@ export const l: any = {
       fixed: false,
       model: 'person',
     },
-    cellPhone: {
-      name: 'cellPhone',
+    cell_phone: {
+      name: 'cell_phone',
       label: 'Tel\u00e9fono',
-      field: 'auth_people.cellPhone',
+      field: 'auth_people.cell_phone',
       type: 'string',
       allowSearch: true,
       allowExport: true,
@@ -465,10 +465,10 @@ export const l: any = {
       fixed: false,
       model: 'person',
     },
-    birthDate: {
-      name: 'birthDate',
+    birth_date: {
+      name: 'birth_date',
       label: 'Fecha de nacimiento',
-      field: 'auth_people.birthDate',
+      field: 'auth_people.birth_date',
       type: 'date',
       allowSearch: true,
       allowExport: true,
@@ -536,10 +536,10 @@ export const l: any = {
       fixed: false,
       model: 'account',
     },
-    firstName: {
-      name: 'firstName',
+    first_name: {
+      name: 'first_name',
       label: 'Nombre',
-      field: 'auth_accounts.firstName',
+      field: 'auth_accounts.first_name',
       type: 'string',
       allowSearch: true,
       allowExport: true,
@@ -549,10 +549,10 @@ export const l: any = {
       fixed: false,
       model: 'account',
     },
-    lastName: {
-      name: 'lastName',
+    last_name: {
+      name: 'last_name',
       label: 'Apellido',
-      field: 'auth_accounts.lastName',
+      field: 'auth_accounts.last_name',
       type: 'string',
       allowSearch: true,
       allowExport: true,
@@ -562,10 +562,10 @@ export const l: any = {
       fixed: false,
       model: 'account',
     },
-    cellPhone: {
-      name: 'cellPhone',
+    cell_phone: {
+      name: 'cell_phone',
       label: 'Tel\u00e9fono',
-      field: 'auth_accounts.cellPhone',
+      field: 'auth_accounts.cell_phone',
       type: 'string',
       allowSearch: true,
       allowExport: true,
@@ -575,10 +575,10 @@ export const l: any = {
       fixed: false,
       model: 'account',
     },
-    birthDate: {
-      name: 'birthDate',
+    birth_date: {
+      name: 'birth_date',
       label: 'Cumplea\u00f1os',
-      field: 'auth_accounts.birthDate',
+      field: 'auth_accounts.birth_date',
       type: 'date',
       allowSearch: true,
       allowExport: true,

@@ -23,10 +23,10 @@ export class AccountDetailComponent implements OnInit {
     this.mFormGroup.addControl(
       this.mFormGroupName,
       this.fb.group({
-        firstName: [this.account.firstName, Validators.required],
-        lastName: [this.account.lastName, Validators.required],
-        cellPhone: [this.account.cellPhone],
-        birthDate: [this.account.birthDate],
+        first_name: [this.account.first_name, Validators.required],
+        last_name: [this.account.last_name, Validators.required],
+        cell_phone: [this.account.cell_phone],
+        birth_date: [this.account.birth_date],
         address: [this.account.address],
         neighborhood: [this.account.neighborhood],
       })
