@@ -1,0 +1,475 @@
+{
+  "success": true,
+  "message": "Lista de [models.Role.plural]",
+  "data": {
+    "totalPages": 3,
+    "totalElements": 3,
+    "content": [
+      {
+        "id": 1,
+        "name": "Administrador",
+        "description": "Administrador",
+        "menus": [
+          {
+            "id": 2,
+            "icon": "tools",
+            "name": "Sistema",
+            "urlBackEnd": "api.#system#.index",
+            "urlFrontEnd": "/#system#",
+            "isSection": true,
+            "isVisible": true,
+            "orderInMenu": 1,
+            "permission_id": 0,
+            "created_by": null,
+            "updated_by": null,
+            "subMenus": [
+              {
+                "id": 7,
+                "icon": "address-book",
+                "name": "Usuarios",
+                "urlBackEnd": "api.users.index",
+                "urlFrontEnd": "/users",
+                "isSection": false,
+                "isVisible": true,
+                "orderInMenu": 0,
+                "permission_id": 2,
+                "created_by": null,
+                "updated_by": null,
+                "subMenus": [],
+                "pivot": {
+                  "role_id": 1,
+                  "permission_id": 7
+                }
+              },
+              {
+                "id": 12,
+                "icon": "fingerprint",
+                "name": "Roles",
+                "urlBackEnd": "api.roles.index",
+                "urlFrontEnd": "/roles",
+                "isSection": false,
+                "isVisible": true,
+                "orderInMenu": 1,
+                "permission_id": 2,
+                "created_by": null,
+                "updated_by": null,
+                "subMenus": [],
+                "pivot": {
+                  "role_id": 1,
+                  "permission_id": 12
+                }
+              },
+              {
+                "id": 22,
+                "icon": "bomb",
+                "name": "Fallos",
+                "urlBackEnd": "api.visor-log-errors.index",
+                "urlFrontEnd": "/visor-log-errors",
+                "isSection": false,
+                "isVisible": true,
+                "orderInMenu": 2,
+                "permission_id": 2,
+                "created_by": null,
+                "updated_by": null,
+                "subMenus": [],
+                "pivot": {
+                  "role_id": 1,
+                  "permission_id": 22
+                }
+              }
+            ],
+            "pivot": {
+              "role_id": 1,
+              "permission_id": 2
+            }
+          },
+          {
+            "id": 3,
+            "icon": "users-cog",
+            "name": "Clientes",
+            "urlBackEnd": "api.#accounts#.index",
+            "urlFrontEnd": "/#accounts#",
+            "isSection": true,
+            "isVisible": true,
+            "orderInMenu": 2,
+            "permission_id": 0,
+            "created_by": null,
+            "updated_by": null,
+            "subMenus": [
+              {
+                "id": 27,
+                "icon": "address-book",
+                "name": "Cuentas",
+                "urlBackEnd": "api.accounts.index",
+                "urlFrontEnd": "/accounts",
+                "isSection": false,
+                "isVisible": true,
+                "orderInMenu": 0,
+                "permission_id": 3,
+                "created_by": null,
+                "updated_by": null,
+                "subMenus": [],
+                "pivot": {
+                  "role_id": 1,
+                  "permission_id": 27
+                }
+              }
+            ],
+            "pivot": {
+              "role_id": 1,
+              "permission_id": 3
+            }
+          },
+          {
+            "id": 4,
+            "icon": "globe",
+            "name": "Pa\u00edses",
+            "urlBackEnd": "api.#countries#.index",
+            "urlFrontEnd": "/#countries#",
+            "isSection": true,
+            "isVisible": true,
+            "orderInMenu": 3,
+            "permission_id": 0,
+            "created_by": null,
+            "updated_by": null,
+            "subMenus": [
+              {
+                "id": 32,
+                "icon": "flag",
+                "name": "Pa\u00edses",
+                "urlBackEnd": "api.countries.index",
+                "urlFrontEnd": "/countries",
+                "isSection": false,
+                "isVisible": true,
+                "orderInMenu": 0,
+                "permission_id": 4,
+                "created_by": null,
+                "updated_by": null,
+                "subMenus": [],
+                "pivot": {
+                  "role_id": 1,
+                  "permission_id": 32
+                }
+              },
+              {
+                "id": 37,
+                "icon": "globe-americas",
+                "name": "Regiones",
+                "urlBackEnd": "api.regions.index",
+                "urlFrontEnd": "/regions",
+                "isSection": false,
+                "isVisible": true,
+                "orderInMenu": 1,
+                "permission_id": 4,
+                "created_by": null,
+                "updated_by": null,
+                "subMenus": [],
+                "pivot": {
+                  "role_id": 1,
+                  "permission_id": 37
+                }
+              },
+              {
+                "id": 42,
+                "icon": "city",
+                "name": "Ciudades",
+                "urlBackEnd": "api.cities.index",
+                "urlFrontEnd": "/cities",
+                "isSection": false,
+                "isVisible": true,
+                "orderInMenu": 2,
+                "permission_id": 4,
+                "created_by": null,
+                "updated_by": null,
+                "subMenus": [],
+                "pivot": {
+                  "role_id": 1,
+                  "permission_id": 42
+                }
+              }
+            ],
+            "pivot": {
+              "role_id": 1,
+              "permission_id": 4
+            }
+          }
+        ],
+        "_urlBackEnd_": [
+          "api.#accounts#.index",
+          "api.#countries#.index",
+          "api.#misc-hide#.index",
+          "api.#system#.index",
+          "api.accounts.destroy",
+          "api.accounts.index",
+          "api.accounts.show",
+          "api.accounts.store",
+          "api.accounts.update",
+          "api.cities.destroy",
+          "api.cities.index",
+          "api.cities.show",
+          "api.cities.store",
+          "api.cities.update",
+          "api.countries.destroy",
+          "api.countries.index",
+          "api.countries.show",
+          "api.countries.store",
+          "api.countries.update",
+          "api.regions.destroy",
+          "api.regions.index",
+          "api.regions.show",
+          "api.regions.store",
+          "api.regions.update",
+          "api.roles.destroy",
+          "api.roles.index",
+          "api.roles.permissions",
+          "api.roles.show",
+          "api.roles.store",
+          "api.roles.update",
+          "api.users.destroy",
+          "api.users.index",
+          "api.users.show",
+          "api.users.store",
+          "api.users.update",
+          "api.visor-log-errors.destroy",
+          "api.visor-log-errors.index",
+          "api.visor-log-errors.show",
+          "api.visor-log-errors.store",
+          "api.visor-log-errors.update",
+          "api.x_files.upload"
+        ]
+      },
+      {
+        "id": 2,
+        "name": "Sub Administrador",
+        "description": "Sub Administrador",
+        "menus": [
+          {
+            "id": 2,
+            "icon": "tools",
+            "name": "Sistema",
+            "urlBackEnd": "api.#system#.index",
+            "urlFrontEnd": "/#system#",
+            "isSection": true,
+            "isVisible": true,
+            "orderInMenu": 1,
+            "permission_id": 0,
+            "created_by": null,
+            "updated_by": null,
+            "subMenus": [
+              {
+                "id": 7,
+                "icon": "address-book",
+                "name": "Usuarios",
+                "urlBackEnd": "api.users.index",
+                "urlFrontEnd": "/users",
+                "isSection": false,
+                "isVisible": true,
+                "orderInMenu": 0,
+                "permission_id": 2,
+                "created_by": null,
+                "updated_by": null,
+                "subMenus": [],
+                "pivot": {
+                  "role_id": 2,
+                  "permission_id": 7
+                }
+              },
+              {
+                "id": 12,
+                "icon": "fingerprint",
+                "name": "Roles",
+                "urlBackEnd": "api.roles.index",
+                "urlFrontEnd": "/roles",
+                "isSection": false,
+                "isVisible": true,
+                "orderInMenu": 1,
+                "permission_id": 2,
+                "created_by": null,
+                "updated_by": null,
+                "subMenus": [],
+                "pivot": {
+                  "role_id": 2,
+                  "permission_id": 12
+                }
+              },
+
+              {
+                "id": 22,
+                "icon": "bomb",
+                "name": "Fallos",
+                "urlBackEnd": "api.visor-log-errors.index",
+                "urlFrontEnd": "/visor-log-errors",
+                "isSection": false,
+                "isVisible": true,
+                "orderInMenu": 2,
+                "permission_id": 2,
+                "created_by": null,
+                "updated_by": null,
+                "subMenus": [],
+                "pivot": {
+                  "role_id": 2,
+                  "permission_id": 22
+                }
+              }
+            ],
+            "pivot": {
+              "role_id": 2,
+              "permission_id": 2
+            }
+          },
+          {
+            "id": 3,
+            "icon": "users-cog",
+            "name": "Clientes",
+            "urlBackEnd": "api.#accounts#.index",
+            "urlFrontEnd": "/#accounts#",
+            "isSection": true,
+            "isVisible": true,
+            "orderInMenu": 2,
+            "permission_id": 0,
+            "created_by": null,
+            "updated_by": null,
+            "subMenus": [
+              {
+                "id": 27,
+                "icon": "address-book",
+                "name": "Cuentas",
+                "urlBackEnd": "api.accounts.index",
+                "urlFrontEnd": "/accounts",
+                "isSection": false,
+                "isVisible": true,
+                "orderInMenu": 0,
+                "permission_id": 3,
+                "created_by": null,
+                "updated_by": null,
+                "subMenus": [],
+                "pivot": {
+                  "role_id": 2,
+                  "permission_id": 27
+                }
+              }
+            ],
+            "pivot": {
+              "role_id": 2,
+              "permission_id": 3
+            }
+          },
+          {
+            "id": 4,
+            "icon": "globe",
+            "name": "Pa\u00edses",
+            "urlBackEnd": "api.#countries#.index",
+            "urlFrontEnd": "/#countries#",
+            "isSection": true,
+            "isVisible": true,
+            "orderInMenu": 3,
+            "permission_id": 0,
+            "created_by": null,
+            "updated_by": null,
+            "subMenus": [
+              {
+                "id": 32,
+                "icon": "flag",
+                "name": "Pa\u00edses",
+                "urlBackEnd": "api.countries.index",
+                "urlFrontEnd": "/countries",
+                "isSection": false,
+                "isVisible": true,
+                "orderInMenu": 0,
+                "permission_id": 4,
+                "created_by": null,
+                "updated_by": null,
+                "subMenus": [],
+                "pivot": {
+                  "role_id": 2,
+                  "permission_id": 32
+                }
+              },
+              {
+                "id": 37,
+                "icon": "globe-americas",
+                "name": "Regiones",
+                "urlBackEnd": "api.regions.index",
+                "urlFrontEnd": "/regions",
+                "isSection": false,
+                "isVisible": true,
+                "orderInMenu": 1,
+                "permission_id": 4,
+                "created_by": null,
+                "updated_by": null,
+                "subMenus": [],
+                "pivot": {
+                  "role_id": 2,
+                  "permission_id": 37
+                }
+              },
+              {
+                "id": 42,
+                "icon": "city",
+                "name": "Ciudades",
+                "urlBackEnd": "api.cities.index",
+                "urlFrontEnd": "/cities",
+                "isSection": false,
+                "isVisible": true,
+                "orderInMenu": 2,
+                "permission_id": 4,
+                "created_by": null,
+                "updated_by": null,
+                "subMenus": [],
+                "pivot": {
+                  "role_id": 2,
+                  "permission_id": 42
+                }
+              }
+            ],
+            "pivot": {
+              "role_id": 2,
+              "permission_id": 4
+            }
+          }
+        ],
+        "_urlBackEnd_": [
+          "api.#accounts#.index",
+          "api.#countries#.index",
+          "api.#misc-hide#.index",
+          "api.#system#.index",
+          "api.accounts.index",
+          "api.accounts.show",
+          "api.accounts.store",
+          "api.accounts.update",
+          "api.cities.show",
+          "api.cities.store",
+          "api.cities.update",
+          "api.countries.index",
+          "api.countries.show",
+          "api.countries.store",
+          "api.countries.update",
+          "api.regions.index",
+          "api.regions.show",
+          "api.regions.store",
+          "api.regions.update",
+          "api.roles.index",
+          "api.roles.permissions",
+          "api.roles.show",
+          "api.roles.store",
+          "api.roles.update",
+          "api.users.index",
+          "api.users.show",
+          "api.users.store",
+          "api.users.update",
+          "api.visor-log-errors.index",
+          "api.visor-log-errors.show",
+          "api.visor-log-errors.store",
+          "api.visor-log-errors.update",
+          "api.x_files.upload"
+        ]
+      },
+      {
+        "id": 3,
+        "name": "Cuentas",
+        "description": "Cuentas",
+        "menus": []
+      }
+    ]
+  }
+}

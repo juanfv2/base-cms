@@ -1,0 +1,371 @@
+[
+    {
+        "icon": "users-cog",
+        "name": "Clientes",
+        "urlBackEnd": "api.#accounts#.index",
+        "urlFrontEnd": "\/#accounts#",
+        "isSection": true,
+        "isVisible": true,
+        "orderInMenu": 2
+    },
+    {
+        "icon": "globe",
+        "name": "Pa\u00edses",
+        "urlBackEnd": "api.#countries#.index",
+        "urlFrontEnd": "\/#countries#",
+        "isSection": true,
+        "isVisible": true,
+        "orderInMenu": 3
+    },
+    {
+        "icon": "---",
+        "name": "Misc. (oculto)",
+        "urlBackEnd": "api.#misc-hide#.index",
+        "urlFrontEnd": "\/#misc-hide#",
+        "isSection": true,
+        "isVisible": false,
+        "orderInMenu": 0
+    },
+    {
+        "icon": "tools",
+        "name": "Sistema",
+        "urlBackEnd": "api.#system#.index",
+        "urlFrontEnd": "\/#system#",
+        "isSection": true,
+        "isVisible": true,
+        "orderInMenu": 1
+    },
+    {
+        "icon": "address-book",
+        "name": "Borrar Cuenta",
+        "urlBackEnd": "api.accounts.destroy",
+        "urlFrontEnd": "\/accounts\/delete",
+        "isSection": false,
+        "isVisible": false,
+        "orderInMenu": 3
+    },
+    {
+        "icon": "address-book",
+        "name": "Cuentas",
+        "urlBackEnd": "api.accounts.index",
+        "urlFrontEnd": "\/accounts",
+        "isSection": false,
+        "isVisible": true,
+        "orderInMenu": 0
+    },
+    {
+        "icon": "address-book",
+        "name": "Mostrar Cuenta",
+        "urlBackEnd": "api.accounts.show",
+        "urlFrontEnd": "\/accounts\/show",
+        "isSection": false,
+        "isVisible": false,
+        "orderInMenu": 0
+    },
+    {
+        "icon": "address-book",
+        "name": "Crear Cuenta",
+        "urlBackEnd": "api.accounts.store",
+        "urlFrontEnd": "\/accounts\/new",
+        "isSection": false,
+        "isVisible": false,
+        "orderInMenu": 1
+    },
+    {
+        "icon": "address-book",
+        "name": "Actualizar Cuenta",
+        "urlBackEnd": "api.accounts.update",
+        "urlFrontEnd": "\/accounts\/edit",
+        "isSection": false,
+        "isVisible": false,
+        "orderInMenu": 2
+    },
+    {
+        "icon": "city",
+        "name": "Borrar Ciudad",
+        "urlBackEnd": "api.cities.destroy",
+        "urlFrontEnd": "\/cities\/delete",
+        "isSection": false,
+        "isVisible": false,
+        "orderInMenu": 3
+    },
+    {
+        "icon": "city",
+        "name": "Ciudades",
+        "urlBackEnd": "api.cities.index",
+        "urlFrontEnd": "\/cities",
+        "isSection": false,
+        "isVisible": true,
+        "orderInMenu": 2
+    },
+    {
+        "icon": "city",
+        "name": "Mostrar Ciudad",
+        "urlBackEnd": "api.cities.show",
+        "urlFrontEnd": "\/cities\/show",
+        "isSection": false,
+        "isVisible": false,
+        "orderInMenu": 0
+    },
+    {
+        "icon": "city",
+        "name": "Crear Ciudad",
+        "urlBackEnd": "api.cities.store",
+        "urlFrontEnd": "\/cities\/new",
+        "isSection": false,
+        "isVisible": false,
+        "orderInMenu": 1
+    },
+    {
+        "icon": "city",
+        "name": "Actualizar Ciudad",
+        "urlBackEnd": "api.cities.update",
+        "urlFrontEnd": "\/cities\/edit",
+        "isSection": false,
+        "isVisible": false,
+        "orderInMenu": 2
+    },
+    {
+        "icon": "flag",
+        "name": "Borrar Pa\u00eds",
+        "urlBackEnd": "api.countries.destroy",
+        "urlFrontEnd": "\/countries\/delete",
+        "isSection": false,
+        "isVisible": false,
+        "orderInMenu": 3
+    },
+    {
+        "icon": "flag",
+        "name": "Pa\u00edses",
+        "urlBackEnd": "api.countries.index",
+        "urlFrontEnd": "\/countries",
+        "isSection": false,
+        "isVisible": true,
+        "orderInMenu": 0
+    },
+    {
+        "icon": "flag",
+        "name": "Mostrar Pa\u00eds",
+        "urlBackEnd": "api.countries.show",
+        "urlFrontEnd": "\/countries\/show",
+        "isSection": false,
+        "isVisible": false,
+        "orderInMenu": 0
+    },
+    {
+        "icon": "flag",
+        "name": "Crear Pa\u00eds",
+        "urlBackEnd": "api.countries.store",
+        "urlFrontEnd": "\/countries\/new",
+        "isSection": false,
+        "isVisible": false,
+        "orderInMenu": 1
+    },
+    {
+        "icon": "flag",
+        "name": "Actualizar Pa\u00eds",
+        "urlBackEnd": "api.countries.update",
+        "urlFrontEnd": "\/countries\/edit",
+        "isSection": false,
+        "isVisible": false,
+        "orderInMenu": 2
+    },
+    {
+        "icon": "globe-americas",
+        "name": "Borrar Regi\u00f3n",
+        "urlBackEnd": "api.regions.destroy",
+        "urlFrontEnd": "\/regions\/delete",
+        "isSection": false,
+        "isVisible": false,
+        "orderInMenu": 3
+    },
+    {
+        "icon": "globe-americas",
+        "name": "Regiones",
+        "urlBackEnd": "api.regions.index",
+        "urlFrontEnd": "\/regions",
+        "isSection": false,
+        "isVisible": true,
+        "orderInMenu": 1
+    },
+    {
+        "icon": "globe-americas",
+        "name": "Mostrar Regi\u00f3n",
+        "urlBackEnd": "api.regions.show",
+        "urlFrontEnd": "\/regions\/show",
+        "isSection": false,
+        "isVisible": false,
+        "orderInMenu": 0
+    },
+    {
+        "icon": "globe-americas",
+        "name": "Crear Regi\u00f3n",
+        "urlBackEnd": "api.regions.store",
+        "urlFrontEnd": "\/regions\/new",
+        "isSection": false,
+        "isVisible": false,
+        "orderInMenu": 1
+    },
+    {
+        "icon": "globe-americas",
+        "name": "Actualizar Regi\u00f3n",
+        "urlBackEnd": "api.regions.update",
+        "urlFrontEnd": "\/regions\/edit",
+        "isSection": false,
+        "isVisible": false,
+        "orderInMenu": 2
+    },
+    {
+        "icon": "fingerprint",
+        "name": "Borrar Rol",
+        "urlBackEnd": "api.roles.destroy",
+        "urlFrontEnd": "\/roles\/delete",
+        "isSection": false,
+        "isVisible": false,
+        "orderInMenu": 3
+    },
+    {
+        "icon": "fingerprint",
+        "name": "Roles",
+        "urlBackEnd": "api.roles.index",
+        "urlFrontEnd": "\/roles",
+        "isSection": false,
+        "isVisible": true,
+        "orderInMenu": 1
+    },
+    {
+        "icon": "-",
+        "name": "Permisos",
+        "urlBackEnd": "api.roles.permissions",
+        "urlFrontEnd": "roles.permissions",
+        "isSection": false,
+        "isVisible": true,
+        "orderInMenu": 0
+    },
+    {
+        "icon": "fingerprint",
+        "name": "Mostrar Rol",
+        "urlBackEnd": "api.roles.show",
+        "urlFrontEnd": "\/roles\/show",
+        "isSection": false,
+        "isVisible": false,
+        "orderInMenu": 0
+    },
+    {
+        "icon": "fingerprint",
+        "name": "Crear Rol",
+        "urlBackEnd": "api.roles.store",
+        "urlFrontEnd": "\/roles\/new",
+        "isSection": false,
+        "isVisible": false,
+        "orderInMenu": 1
+    },
+    {
+        "icon": "fingerprint",
+        "name": "Actualizar Rol",
+        "urlBackEnd": "api.roles.update",
+        "urlFrontEnd": "\/roles\/edit",
+        "isSection": false,
+        "isVisible": false,
+        "orderInMenu": 2
+    },
+    {
+        "icon": "address-book",
+        "name": "Borrar Usuario",
+        "urlBackEnd": "api.users.destroy",
+        "urlFrontEnd": "\/users\/delete",
+        "isSection": false,
+        "isVisible": false,
+        "orderInMenu": 3
+    },
+    {
+        "icon": "address-book",
+        "name": "Usuarios",
+        "urlBackEnd": "api.users.index",
+        "urlFrontEnd": "\/users",
+        "isSection": false,
+        "isVisible": true,
+        "orderInMenu": 0
+    },
+    {
+        "icon": "address-book",
+        "name": "Mostrar Usuario",
+        "urlBackEnd": "api.users.show",
+        "urlFrontEnd": "\/users\/show",
+        "isSection": false,
+        "isVisible": false,
+        "orderInMenu": 0
+    },
+    {
+        "icon": "address-book",
+        "name": "Crear Usuario",
+        "urlBackEnd": "api.users.store",
+        "urlFrontEnd": "\/users\/new",
+        "isSection": false,
+        "isVisible": false,
+        "orderInMenu": 1
+    },
+    {
+        "icon": "address-book",
+        "name": "Actualizar Usuario",
+        "urlBackEnd": "api.users.update",
+        "urlFrontEnd": "\/users\/edit",
+        "isSection": false,
+        "isVisible": false,
+        "orderInMenu": 2
+    },
+    {
+        "icon": "bomb",
+        "name": "Borrar Fallo",
+        "urlBackEnd": "api.visor-log-errors.destroy",
+        "urlFrontEnd": "\/visor-log-errors\/delete",
+        "isSection": false,
+        "isVisible": false,
+        "orderInMenu": 3
+    },
+    {
+        "icon": "bomb",
+        "name": "Fallos",
+        "urlBackEnd": "api.visor-log-errors.index",
+        "urlFrontEnd": "\/visor-log-errors",
+        "isSection": false,
+        "isVisible": true,
+        "orderInMenu": 2
+    },
+    {
+        "icon": "bomb",
+        "name": "Mostrar Fallo",
+        "urlBackEnd": "api.visor-log-errors.show",
+        "urlFrontEnd": "\/visor-log-errors\/show",
+        "isSection": false,
+        "isVisible": false,
+        "orderInMenu": 0
+    },
+    {
+        "icon": "bomb",
+        "name": "Crear Fallo",
+        "urlBackEnd": "api.visor-log-errors.store",
+        "urlFrontEnd": "\/visor-log-errors\/new",
+        "isSection": false,
+        "isVisible": false,
+        "orderInMenu": 1
+    },
+    {
+        "icon": "bomb",
+        "name": "Actualizar Fallo",
+        "urlBackEnd": "api.visor-log-errors.update",
+        "urlFrontEnd": "\/visor-log-errors\/edit",
+        "isSection": false,
+        "isVisible": false,
+        "orderInMenu": 2
+    },
+    {
+        "icon": "-",
+        "name": "Subir Archivos",
+        "urlBackEnd": "api.x_files.upload",
+        "urlFrontEnd": "x_files.upload",
+        "isSection": false,
+        "isVisible": true,
+        "orderInMenu": 0
+    }
+]
