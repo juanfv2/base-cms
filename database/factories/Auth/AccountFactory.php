@@ -26,8 +26,8 @@ class AccountFactory extends Factory
         return [
             'id' => $user->id,
             'user_id' => $user->id,
-            'first_name' => $this->faker->first_name,
-            'last_name' => $this->faker->last_name,
+            'first_name' => $this->faker->firstName,
+            'last_name' => $this->faker->lastName,
             'cell_phone' => $this->faker->numerify('0##########'),
             'birth_date' => $this->faker->date('Y-m-d'),
             'address' => $this->faker->word,
