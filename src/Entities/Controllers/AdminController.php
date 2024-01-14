@@ -10,7 +10,7 @@ class AdminController extends Controller
     {
         debugbar()->disable();
 
-        $index = public_path('_.admin/index.html');
+        $index = public_path('_.admin/browser/index.html');
 
         if (File::exists($index)) {
             return File::get($index);
@@ -23,7 +23,7 @@ class AdminController extends Controller
     {
         debugbar()->enable();
 
-        $index = public_path('_.admin/index.html');
+        $index = public_path('_.admin/browser/index.html');
 
         if (File::exists($index)) {
             return File::get($index);
@@ -35,7 +35,7 @@ class AdminController extends Controller
     public function artisan($key1, $key2 = null)
     {
         // ? artisan:
-        $k = $key1.($key2 ? ':'.$key2 : '');
+        $k = $key1 . ($key2 ? ':' . $key2 : '');
 
         try {
             // echo '<br>php artisan view:clear...';
@@ -45,7 +45,7 @@ class AdminController extends Controller
 
             \Illuminate\Support\Facades\Artisan::call($k, $params);
 
-            $params['cmd'] = '<br>php artisan '.$k.' '.$parameters;
+            $params['cmd'] = '<br>php artisan ' . $k . ' ' . $parameters;
 
             // $params['msg'] = '<br>php artisan ' . $k . ' completed';
             return $params;
