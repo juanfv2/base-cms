@@ -33,10 +33,10 @@ class AnyTableSeeder extends Seeder
             'auth/auth_accounts',
             'auth/auth_x_files',
 
-            // 'auth/auth_permissions',
-            // 'auth/auth_role_user',
-            // 'auth/auth_permission_role',
-            // 'auth/auth_permission_permission',
+            'auth/auth_permissions',
+            'auth/auth_role_user',
+            'auth/auth_permission_role',
+            'auth/auth_permission_permission',
 
             // entities
 
