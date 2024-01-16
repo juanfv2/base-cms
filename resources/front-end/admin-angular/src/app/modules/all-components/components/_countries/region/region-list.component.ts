@@ -3,6 +3,7 @@ import {ActivatedRoute, Router} from '@angular/router'
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap'
 
 import {
+  DBType,
   JfSort,
   JfUtils,
   JfApiRoute,
@@ -56,17 +57,13 @@ export class RegionListComponent extends BaseCmsListComponent implements OnInit,
     this.mApi = new JfApiRoute(kRoute)
     this.responseList = new JfResponseList<Region | any>(0, 0, [])
 
-    this.fieldsSearchable = [this.itemLabels.id, this.itemLabels.name, this.itemLabels.code, this.itemLabels.country_id]
-    this.fieldsInList = [
-      this.itemLabels.id,
-      this.itemLabels.name,
-      this.itemLabels.code,
-      this.itemLabels.country_id,
-      this.itemLabels.countryName,
-    ]
+    this.fieldsInList = l.getDBFields(this.itemLabels).filter((_f) => !_f.hidden)
+    this.fieldsSearchable = this.fieldsInList.filter((_f) => _f.allowSearch)
+
     this.hasPermission2show = JfRequestOption.isAuthorized(`/${kRoute}/show`)
     this.hasPermission2new = JfRequestOption.isAuthorized(`/${kRoute}/new`)
     this.hasPermission2delete = JfRequestOption.isAuthorized(`/${kRoute}/delete`)
+
     this.storageSession = true
   }
 
@@ -85,14 +82,19 @@ export class RegionListComponent extends BaseCmsListComponent implements OnInit,
   initSearchModel(): any {
     const search = !this.isSubComponent ? JfUtils.mStorage.getItem(this.kConditions, this.storageSession) : null
     const mSearch = {
-      lazyLoadEvent: new JfLazyLoadEvent(10, 1, [new JfSort(this.itemLabels.id.field!, JfSort.desc)]),
+      lazyLoadEvent: new JfLazyLoadEvent(10, 1, [new JfSort(this.itemLabels.id.field, JfSort.desc)]),
       conditionCountry: new JfSearchCondition(),
-      cModel: '-App-Models-Region',
+      cModel: '-App-Models-Country-Region',
+      fields: this.fieldsInList,
+      fieldsSelected: this.fieldsInList.filter((_f: DBType) => _f.allowInList),
     }
-    this.currentFields(mSearch)
 
     const r = search ? JSON.parse(search) || mSearch : mSearch
+
+    this.currentFields(r)
+
     // console.log('r', r);
+
     return r
   }
 
@@ -115,25 +117,27 @@ export class RegionListComponent extends BaseCmsListComponent implements OnInit,
     if (this.loading) {
       return
     }
+
     // console.log('onLazyLoad this.loading', this.loading);
     // console.log('onLazyLoad this.loading', this.modelSearch);
+
     this.loading = true
     // prepare
     let nextOperator = 'AND'
     const conditions: any[] = []
+    const conditionsAC: any[] = []
+    const conditionsGeneric: any[] = []
 
-    nextOperator = JfUtils.x2one({
-      conditions,
-      conditionModel: this.modelSearch.conditionCountry,
-      foreignKName: this.itemLabels.country_id.field,
-      primaryKName: this.labels.country.id.name,
-      nextOperator,
-    })
+    this.filtersFromAutocomplete(conditionsAC)
+
     if (this.modelSearch?.conditions?.length) {
       for (const c of this.modelSearch.conditions) {
-        nextOperator = JfUtils.addCondition(c, nextOperator, conditions)
+        nextOperator = JfUtils.addCondition(c, nextOperator, conditionsGeneric)
       }
     }
+
+    conditions.push(conditionsAC)
+    conditions.push(conditionsGeneric)
 
     this.modelSearch.lazyLoadEvent.joins = [
       new JfCondition(`${this.labels.country.tableName}.id.country_id`, [
@@ -144,7 +148,9 @@ export class RegionListComponent extends BaseCmsListComponent implements OnInit,
     this.modelSearch.lazyLoadEvent.conditions = conditions
     this.modelSearch.lazyLoadEvent.additional = [new JfCondition('to_index', '.')]
     // this.modelSearch.lazyLoadEvent.includes = ['relation-1tm', 'relation-mt1', 'relation-1t1', ...];
+
     const mSearch = JSON.stringify(this.modelSearch)
+
     switch (strAction) {
       case 'export':
         this.onLazyLoadExport(strAction)
@@ -158,5 +164,17 @@ export class RegionListComponent extends BaseCmsListComponent implements OnInit,
   override onAddNew(m: any): void {
     this.itemCurrent = {country: this.mCountry} as unknown as Region
     super.onAddNew(m)
+  }
+
+  private filtersFromAutocomplete(conditions: any[]) {
+    let nextOperator = 'AND'
+
+    nextOperator = JfUtils.x2one({
+      conditions,
+      conditionModel: this.modelSearch.conditionCountry,
+      foreignKName: this.itemLabels.country_id.field,
+      primaryKName: this.labels.country.id.name,
+      nextOperator,
+    })
   }
 }

@@ -18,7 +18,7 @@ export class PersonDetailComponent implements OnInit {
   @Input() person!: Person
   mFormGroup!: FormGroup
   labels = l
-  mFormGroupName = l.user.personName.name
+  mFormGroupName = l.user.person.name
 
   constructor(private parent: FormGroupDirective, private fb: FormBuilder) {}
 
@@ -30,10 +30,10 @@ export class PersonDetailComponent implements OnInit {
     this.mFormGroup.addControl(
       this.mFormGroupName,
       this.fb.group({
-        firstName: [this.person.firstName, Validators.required],
-        lastName: [this.person.lastName, Validators.required],
-        cellPhone: [this.person.cellPhone],
-        birthDate: [this.person.birthDate],
+        first_name: [this.person.first_name, Validators.required],
+        last_name: [this.person.last_name, Validators.required],
+        cell_phone: [this.person.cell_phone],
+        birth_date: [this.person.birth_date],
         address: [this.person.address],
         neighborhood: [this.person.neighborhood],
       })

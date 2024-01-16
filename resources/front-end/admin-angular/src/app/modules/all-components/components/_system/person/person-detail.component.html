@@ -4,74 +4,74 @@
     <small class="ps-1 d-inline-block ms-2">Información general (Personal)</small>
   </div>
   <div class="card-body">
-    <!-- firstName . init -->
+    <!-- first_name . init -->
     <div class="form-group">
-      <label for="person-firstName">{{ labels.person.firstName.label }} *</label>
+      <label for="person-first_name">{{ labels.person.first_name.label }} *</label>
       <input
-        id="person-firstName"
+        id="person-first_name"
         class="form-control"
         type="text"
         placeholder="Requerido"
-        formControlName="firstName"
+        formControlName="first_name"
       />
       <div
-        *ngIf="!mFormGroup.get(mFormGroupName)?.get('firstName')?.valid && mFormGroup.get(mFormGroupName)?.get('firstName')?.dirty && mFormGroup.get(mFormGroupName)?.get('firstName')?.errors?.['required']"
-        class="alert alert-danger form-text firstName-error-required"
+        *ngIf="!mFormGroup.get(mFormGroupName)?.get('first_name')?.valid && mFormGroup.get(mFormGroupName)?.get('first_name')?.dirty && mFormGroup.get(mFormGroupName)?.get('first_name')?.errors?.['required']"
+        class="alert alert-danger form-text first_name-error-required"
         role="alert"
       >
-        {{ labels.person.firstName.label }} es requerido
+        {{ labels.person.first_name.label }} es requerido
       </div>
     </div>
-    <!-- firstName . end -->
-    <!-- lastName . init -->
+    <!-- first_name . end -->
+    <!-- last_name . init -->
     <div class="form-group">
-      <label for="person-lastName">{{ labels.person.lastName.label }} *</label>
-      <input id="person-lastName" class="form-control" type="text" placeholder="Requerido" formControlName="lastName" />
+      <label for="person-last_name">{{ labels.person.last_name.label }} *</label>
+      <input id="person-last_name" class="form-control" type="text" placeholder="Requerido" formControlName="last_name" />
       <div
-        *ngIf="!mFormGroup.get(mFormGroupName)?.get('lastName')?.valid && mFormGroup.get(mFormGroupName)?.get('lastName')?.dirty && mFormGroup.get(mFormGroupName)?.get('lastName')?.errors?.['required']"
-        class="alert alert-danger form-text lastName-error-required"
+        *ngIf="!mFormGroup.get(mFormGroupName)?.get('last_name')?.valid && mFormGroup.get(mFormGroupName)?.get('last_name')?.dirty && mFormGroup.get(mFormGroupName)?.get('last_name')?.errors?.['required']"
+        class="alert alert-danger form-text last_name-error-required"
         role="alert"
       >
-        {{ labels.person.lastName.label }} es requerido
+        {{ labels.person.last_name.label }} es requerido
       </div>
     </div>
-    <!-- lastName . end -->
-    <!-- cellPhone . init -->
+    <!-- last_name . end -->
+    <!-- cell_phone . init -->
     <div class="form-group">
-      <label for="person-cellPhone">{{ labels.person.cellPhone.label }} </label>
-      <input id="person-cellPhone" class="form-control" type="text" formControlName="cellPhone" />
+      <label for="person-cell_phone">{{ labels.person.cell_phone.label }} </label>
+      <input id="person-cell_phone" class="form-control" type="text" formControlName="cell_phone" />
     </div>
-    <!-- cellPhone . end -->
-    <!-- birthDate . init -->
+    <!-- cell_phone . end -->
+    <!-- birth_date . init -->
     <div class="form-group">
-      <label for="person-birthDate">{{ labels.person.birthDate.label }} </label>
+      <label for="person-birth_date">{{ labels.person.birth_date.label }} </label>
       <div class="input-group">
         <input
-          id="person-birthDate"
-          #person_birthDate_date="ngbDatepicker"
+          id="person-birth_date"
+          #person_birth_date_date="ngbDatepicker"
           class="form-control"
           placeholder="yyyy-mm-dd"
           ngbDatepicker
-          formControlName="birthDate"
+          formControlName="birth_date"
         />
         <button
           title="calendario"
           class="btn btn-outline-secondary m-0"
-          (click)="person_birthDate_date.toggle()"
+          (click)="person_birth_date_date.toggle()"
           type="button"
         >
           <i class="fa fa-calendar text-info"></i>
         </button>
       </div>
       <div
-        *ngIf="!mFormGroup.get(mFormGroupName)?.get('birthDate')?.valid && mFormGroup.get(mFormGroupName)?.get('birthDate')?.dirty && mFormGroup.get(mFormGroupName)?.get('birthDate')?.errors?.['ngbDate']?.invalid"
+        *ngIf="!mFormGroup.get(mFormGroupName)?.get('birth_date')?.valid && mFormGroup.get(mFormGroupName)?.get('birth_date')?.dirty && mFormGroup.get(mFormGroupName)?.get('birth_date')?.errors?.['ngbDate']?.invalid"
         class="alert alert-danger form-text"
         role="alert"
       >
-        {{ labels.person.birthDate.label }} fecha invalida
+        {{ labels.person.birth_date.label }} fecha invalida
       </div>
     </div>
-    <!-- birthDate . end -->
+    <!-- birth_date . end -->
     <!-- address . init -->
     <div class="form-group">
       <label for="person-address">{{ labels.person.address.label }} </label>

@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('auth_people', function (Blueprint $table) {
             $table->unsignedBigInteger('id');
-            $table->string('firstName');
-            $table->string('lastName');
-            $table->string('cellPhone')->nullable();
-            $table->date('birthDate')->nullable();
+            $table->string('first_name');
+            $table->string('last_name');
+            $table->string('cell_phone')->nullable();
+            $table->date('birth_date')->nullable();
             $table->string('address')->nullable();
             $table->string('neighborhood')->nullable();
 

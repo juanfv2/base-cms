@@ -2,9 +2,11 @@ import {NgModule} from '@angular/core'
 import {CommonModule} from '@angular/common'
 import {DashboardComponent} from './components/dashboard/dashboard.component'
 import {RouterModule, Routes} from '@angular/router'
+import {TransitionComponent} from 'base-cms'
 
 export const MainRoutes: Routes = [
   {path: 'dashboard', component: DashboardComponent},
+  {path: 'transition', component: TransitionComponent},
 
   {
     path: '',

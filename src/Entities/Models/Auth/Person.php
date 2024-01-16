@@ -36,7 +36,7 @@ class Person extends Model
     protected $casts = [
         'first_name' => 'string',
         'last_name' => 'string',
-        'cell_hone' => 'string',
+        'cell_phone' => 'string',
         'birth_date' => 'date',
         'address' => 'string',
         'neighborhood' => 'string',

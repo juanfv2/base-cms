@@ -2,7 +2,7 @@ import {ComponentFixture, TestBed} from '@angular/core/testing'
 import {RouterTestingModule} from '@angular/router/testing'
 import {ServiceWorkerModule} from '@angular/service-worker'
 import {BaseCmsModule, JfUtils} from 'base-cms'
-import {k} from 'src/environments/k'
+import {k} from '../environments/k'
 import {AppComponent} from './app.component'
 
 describe('AppComponent', () => {

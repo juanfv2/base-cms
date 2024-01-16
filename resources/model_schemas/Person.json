@@ -12,7 +12,7 @@
         "inView": false
     },
     {
-        "name": "firstName",
+        "name": "first_name",
         "dbType": "string,191",
         "htmlType": "text",
         "validations": "required|string|max:191|string|max:191",
@@ -24,7 +24,7 @@
         "inView": true
     },
     {
-        "name": "lastName",
+        "name": "last_name",
         "dbType": "string,191",
         "htmlType": "text",
         "validations": "required|string|max:191|string|max:191",
@@ -36,7 +36,7 @@
         "inView": true
     },
     {
-        "name": "cellPhone",
+        "name": "cell_phone",
         "dbType": "string,191:nullable",
         "htmlType": "text",
         "validations": "nullable|string|max:191|nullable|string|max:191",
@@ -48,7 +48,7 @@
         "inView": true
     },
     {
-        "name": "birthDate",
+        "name": "birth_date",
         "dbType": "date:nullable",
         "htmlType": "date",
         "validations": "nullable|nullable",

@@ -146,7 +146,7 @@
           url2public: /assets/adm/{tableName}/{fieldName}/{imageNameOriginal?}
           -->
           <base-cms-file-upload
-            *ngIf="photo"
+            #fileUploadPhoto
             [labels]="labels"
             [label]="labels.user.photo.label"
             [name]="labels.user.photo.field"
@@ -160,7 +160,7 @@
             (finish)="onFinishUploadFile($event)"
             (uploaderQueue)="uploaderQueue($event)"
             [allowedTypes]="['image/gif', 'image/png', 'image/jpeg', 'image/bmp', 'image/webp']"
-            [value]="photo"
+            [value]="user.photo"
           >
           </base-cms-file-upload>
           <input type="hidden" formControlName="photo_id" />

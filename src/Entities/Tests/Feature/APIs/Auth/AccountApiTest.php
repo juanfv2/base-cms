@@ -128,11 +128,11 @@ class AccountApiTest extends TestCase
             'role_id' => $role->id,
 
             // account
-            'firstName' => 'est',
-            'lastName' => 'ut',
+            'first_name' => 'est',
+            'last_name' => 'ut',
             // 'imei' => $model->imei,
-            'cellPhone' => '1-873-322-7732 x9420',
-            'birthDate' => '2011-09-21',
+            'cell_phone' => '1-873-322-7732 x9420',
+            'birth_date' => '2011-09-21',
             'address' => '3331 Torre Valleys Suite 807 Abigail, FL 78513',
             'neighborhood' => 'esse',
 

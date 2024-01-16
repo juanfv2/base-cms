@@ -127,10 +127,10 @@ class PersonApiTest extends TestCase
             'role_id' => $role->id,
 
             // person
-            'firstName' => 'est',
-            'lastName' => 'ut',
-            'cellPhone' => '1-873-322-7732 x9420',
-            'birthDate' => '2011-09-21',
+            'first_name' => 'est',
+            'last_name' => 'ut',
+            'cell_phone' => '1-873-322-7732 x9420',
+            'birth_date' => '2011-09-21',
             'address' => '3331 Torre Valleys Suite 807 Abigail, FL 78513',
             'neighborhood' => 'esse',
 

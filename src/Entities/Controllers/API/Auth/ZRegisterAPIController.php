@@ -27,8 +27,8 @@ class ZRegisterAPIController extends AppBaseController
     public function register(Request $request)
     {
         $rules = array_merge(User::$rules, Account::$rules);
-        $rules['firstName'] = 'nullable';
-        $rules['lastName'] = 'nullable';
+        $rules['first_name'] = 'nullable';
+        $rules['last_name'] = 'nullable';
         $rules['role_id'] = 'nullable';
         $rules['disabled'] = 'nullable|boolean';
 
@@ -146,8 +146,8 @@ class ZRegisterAPIController extends AppBaseController
         $input['role_id'] = $roleId;
         $input['disabled'] = ! isset($input['uid']);
         // $input['account_group_id'] = $accountGroupId;
-        $input['firstName'] = $input['name'];
-        $input['lastName'] = '';
+        $input['first_name'] = $input['name'];
+        $input['last_name'] = '';
 
         // $input['country_id']   = 194;
         // $input['region_id']    = 3224;
@@ -175,8 +175,8 @@ class ZRegisterAPIController extends AppBaseController
         $input['role_id'] = $roleId;
         $input['disabled'] = ! isset($input['uid']);
         // $input['account_group_id'] = $accountGroupId;
-        $input['firstName'] = $input['name'];
-        $input['lastName'] = '';
+        $input['first_name'] = $input['name'];
+        $input['last_name'] = '';
 
         // $input['country_id']   = 194;
         // $input['region_id']    = 3224;
