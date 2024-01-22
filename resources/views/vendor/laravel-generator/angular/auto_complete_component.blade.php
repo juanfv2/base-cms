@@ -12,11 +12,11 @@ import {
   jfTemplateAutoComplete,
   BaseCmsAutoCompleteComponent,
 } from 'base-cms' // from '@juanfv2/base-cms'
-import {k} from 'src/environments/k'
-import {l} from 'src/environments/l'
+import {k} from '../../../../../../environments/k'
+import {l} from '../../../../../../environments/l'
 
 
-import { {{ $config->modelNames->name }}, {{ $relation_model_names }} } from 'src/app/models/_models';
+import { {{ $config->modelNames->name }}, {{ $relation_model_names }} } from '../../../../../models/_models';
 
 // Resource: http://almerosteyn.com/2016/04/linkup-custom-control-to-ngcontrol-ngmodel
 
