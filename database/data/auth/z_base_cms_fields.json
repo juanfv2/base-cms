@@ -105,9 +105,9 @@
     "index": 5
   },
   {
-    "name": "phoneNumber",
+    "name": "phone_number",
     "label": "Teléfono",
-    "field": "auth_users.phoneNumber",
+    "field": "auth_users.phone_number",
     "type": "string",
     "allowSearch": true,
     "allowExport": true,

@@ -9,7 +9,7 @@ export interface User {
   password: string
   email_verified_at: any
   disabled: boolean
-  phoneNumber: string
+  phone_number: string
   uid: string
   role_id: number
   country_id: number

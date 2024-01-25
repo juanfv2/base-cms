@@ -157,10 +157,10 @@ export const l = {
       sorting: true,
       fixed: false,
     } as DBType,
-    phoneNumber: {
-      name: 'phoneNumber',
+    phone_number: {
+      name: 'phone_number',
       label: 'Tel\u00e9fono',
-      field: 'auth_users.phoneNumber',
+      field: 'auth_users.phone_number',
       type: 'string',
       allowSearch: true,
       allowExport: true,

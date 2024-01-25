@@ -325,7 +325,7 @@ export class UserDetailComponent implements OnInit, OnDestroy {
         this.user.password,
         [validateRequiredIf(!this.user.id), Validators.minLength(8), createPasswordStrengthValidator],
       ],
-      phoneNumber: [this.user.phoneNumber],
+      phone_number: [this.user.phone_number],
       disabled: [this.user.disabled, Validators.required],
       country: [this.user.country, Validators.required],
       region: [this.user.region, Validators.required],

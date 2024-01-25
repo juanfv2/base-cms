@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('password');
             $table->timestamp('email_verified_at')->nullable();
             $table->boolean('disabled')->default(0);
-            $table->string('phoneNumber')->nullable();
+            $table->string('phone_number')->nullable();
 
             $table->string('uid')->nullable();
 

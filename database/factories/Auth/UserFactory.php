@@ -37,7 +37,7 @@ class UserFactory extends Factory
             'password' => '$2y$10$Hh8ASBG2oQFWTJb.uNTKeex8Z2WjYigFfPJf5uBh0IAAgBujZWg3i', // 123456
             'email_verified_at' => $this->faker->date('Y-m-d H:i:s'),
             'disabled' => 0,
-            'phoneNumber' => $this->faker->numerify('0##########'),
+            'phone_number' => $this->faker->numerify('0##########'),
             'uid' => $this->faker->word,
             'role_id' => $role->id,
             'country_id' => $country->id,

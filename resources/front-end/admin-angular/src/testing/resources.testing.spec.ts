@@ -4,7 +4,7 @@ export const user = {
   email: 'admin@admin.com',
   email_verified_at: null,
   disabled: false,
-  phoneNumber: null,
+  phone_number: null,
   uid: null,
   role_id: 1,
   country_id: 194,
