@@ -435,9 +435,9 @@
     "index": 0
   },
   {
-    "name": "firstName",
+    "name": "first_name",
     "label": "Nombre",
-    "field": "auth_people.firstName",
+    "field": "auth_people.first_name",
     "type": "string",
     "allowSearch": true,
     "allowExport": true,
@@ -450,9 +450,9 @@
     "index": 1
   },
   {
-    "name": "lastName",
+    "name": "last_name",
     "label": "Apellido",
-    "field": "auth_people.lastName",
+    "field": "auth_people.last_name",
     "type": "string",
     "allowSearch": true,
     "allowExport": true,
@@ -465,9 +465,9 @@
     "index": 2
   },
   {
-    "name": "cellPhone",
+    "name": "cell_phone",
     "label": "Teléfono",
-    "field": "auth_people.cellPhone",
+    "field": "auth_people.cell_phone",
     "type": "string",
     "allowSearch": true,
     "allowExport": true,
@@ -480,9 +480,9 @@
     "index": 3
   },
   {
-    "name": "birthDate",
+    "name": "birth_date",
     "label": "Fecha de nacimiento",
-    "field": "auth_people.birthDate",
+    "field": "auth_people.birth_date",
     "type": "date",
     "allowSearch": true,
     "allowExport": true,
@@ -555,9 +555,9 @@
     "index": 0
   },
   {
-    "name": "firstName",
+    "name": "first_name",
     "label": "Nombre",
-    "field": "auth_accounts.firstName",
+    "field": "auth_accounts.first_name",
     "type": "string",
     "allowSearch": true,
     "allowExport": true,
@@ -570,9 +570,9 @@
     "index": 1
   },
   {
-    "name": "lastName",
+    "name": "last_name",
     "label": "Apellido",
-    "field": "auth_accounts.lastName",
+    "field": "auth_accounts.last_name",
     "type": "string",
     "allowSearch": true,
     "allowExport": true,
@@ -585,9 +585,9 @@
     "index": 2
   },
   {
-    "name": "cellPhone",
+    "name": "cell_phone",
     "label": "Teléfono",
-    "field": "auth_accounts.cellPhone",
+    "field": "auth_accounts.cell_phone",
     "type": "string",
     "allowSearch": true,
     "allowExport": true,
@@ -600,9 +600,9 @@
     "index": 3
   },
   {
-    "name": "birthDate",
+    "name": "birth_date",
     "label": "Cumpleaños",
-    "field": "auth_accounts.birthDate",
+    "field": "auth_accounts.birth_date",
     "type": "date",
     "allowSearch": true,
     "allowExport": true,
