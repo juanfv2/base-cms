@@ -34,9 +34,9 @@ trait BaseCmsModelUser
             $mType = new $type;
             $mType->mSave($input);
 
-            if (! isset($input['uid'])) {
-                $r->verifyUser();
-            }
+            // if (! isset($input['uid'])) {
+            //     $r->verifyUser();
+            // }
 
             return $r;
         });
