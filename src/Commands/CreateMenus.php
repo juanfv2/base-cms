@@ -96,6 +96,7 @@ class CreateMenus extends Command
         if ($paths) {
             $this->createPermissions();
         }
+
         if ($permissons) {
             $this->savePermissions();
         }
