@@ -29,7 +29,7 @@ import {AuthModule} from './modules/auth/auth.module'
   ],
   providers: [
     {provide: APP_BASE_HREF, useFactory: JfUtils.getBaseLocation},
-    /* catch-errors / // for-build
+    /* catch-errors */ // for-build
     {provide: ErrorHandler, useClass: JfErrorHandlerService},
     /* */
     JfAuthGuard,

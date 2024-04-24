@@ -12,8 +12,8 @@ import {
   jfTemplateAutoComplete,
   BaseCmsAutoCompleteComponent,
 } from 'base-cms' // from '@juanfv2/base-cms'
-import {k} from 'src/environments/k'
-import {l} from 'src/environments/l'
+import {k} from '../../../../../../environments/k'
+import {l} from '../../../../../../environments/l'
 
 // Resource: http://almerosteyn.com/2016/04/linkup-custom-control-to-ngcontrol-ngmodel
 
@@ -51,10 +51,10 @@ export class AccountAutoCompleteComponent extends BaseCmsAutoCompleteComponent i
     if (term) {
       const g: any[] = []
       g.push(new JfCondition(`OR ${this.labels.account.id.field} like`, term))
-      g.push(new JfCondition(`OR ${this.labels.account.firstName.field} like`, term))
-      g.push(new JfCondition(`OR ${this.labels.account.lastName.field} like`, term))
-      g.push(new JfCondition(`OR ${this.labels.account.cellPhone.field} like`, term))
-      g.push(new JfCondition(`OR ${this.labels.account.birthDate.field} like`, term))
+      g.push(new JfCondition(`OR ${this.labels.account.first_name.field} like`, term))
+      g.push(new JfCondition(`OR ${this.labels.account.last_name.field} like`, term))
+      g.push(new JfCondition(`OR ${this.labels.account.cell_phone.field} like`, term))
+      g.push(new JfCondition(`OR ${this.labels.account.birth_date.field} like`, term))
       g.push(new JfCondition(`OR ${this.labels.account.address.field} like`, term))
       g.push(new JfCondition(`OR ${this.labels.account.neighborhood.field} like`, term))
       conditions.push(g)
@@ -62,10 +62,10 @@ export class AccountAutoCompleteComponent extends BaseCmsAutoCompleteComponent i
     const mEvent = new JfLazyLoadEvent()
     mEvent.select = [
       this.labels.account.id.field,
-      this.labels.account.firstName.field,
-      this.labels.account.lastName.field,
-      this.labels.account.cellPhone.field,
-      this.labels.account.birthDate.field,
+      this.labels.account.first_name.field,
+      this.labels.account.last_name.field,
+      this.labels.account.cell_phone.field,
+      this.labels.account.birth_date.field,
       this.labels.account.address.field,
       this.labels.account.neighborhood.field,
     ]

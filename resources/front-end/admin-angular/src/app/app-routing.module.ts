@@ -3,7 +3,7 @@ import {RouterModule, Routes} from '@angular/router'
 
 import {JfAuthGuard, NotFoundComponent} from 'base-cms' // from '@juanfv2/base-cms'
 
-import {k} from 'src/environments/k'
+import {k} from '../environments/k'
 import {AdminComponent} from './modules/auth/components/admin/admin.component'
 import {LoginComponent} from './modules/auth/components/login/login.component'
 

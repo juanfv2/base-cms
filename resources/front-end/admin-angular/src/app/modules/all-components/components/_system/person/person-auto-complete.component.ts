@@ -12,8 +12,8 @@ import {
   jfTemplateAutoComplete,
   BaseCmsAutoCompleteComponent,
 } from 'base-cms' // from '@juanfv2/base-cms'
-import {k} from 'src/environments/k'
-import {l} from 'src/environments/l'
+import {k} from '../../../../../../environments/k'
+import {l} from '../../../../../../environments/l'
 
 // Resource: http://almerosteyn.com/2016/04/linkup-custom-control-to-ngcontrol-ngmodel
 
@@ -50,10 +50,10 @@ export class PersonAutoCompleteComponent extends BaseCmsAutoCompleteComponent im
     if (term) {
       const g: any[] = []
       g.push(new JfCondition(`OR ${this.labels.person.id.field} like`, term))
-      g.push(new JfCondition(`OR ${this.labels.person.firstName.field} like`, term))
-      g.push(new JfCondition(`OR ${this.labels.person.lastName.field} like`, term))
-      g.push(new JfCondition(`OR ${this.labels.person.cellPhone.field} like`, term))
-      g.push(new JfCondition(`OR ${this.labels.person.birthDate.field} like`, term))
+      g.push(new JfCondition(`OR ${this.labels.person.first_name.field} like`, term))
+      g.push(new JfCondition(`OR ${this.labels.person.last_name.field} like`, term))
+      g.push(new JfCondition(`OR ${this.labels.person.cell_phone.field} like`, term))
+      g.push(new JfCondition(`OR ${this.labels.person.birth_date.field} like`, term))
       g.push(new JfCondition(`OR ${this.labels.person.address.field} like`, term))
       g.push(new JfCondition(`OR ${this.labels.person.neighborhood.field} like`, term))
       conditions.push(g)
@@ -61,10 +61,10 @@ export class PersonAutoCompleteComponent extends BaseCmsAutoCompleteComponent im
     const mEvent = new JfLazyLoadEvent()
     mEvent.select = [
       this.labels.person.id.field,
-      this.labels.person.firstName.field,
-      this.labels.person.lastName.field,
-      this.labels.person.cellPhone.field,
-      this.labels.person.birthDate.field,
+      this.labels.person.first_name.field,
+      this.labels.person.last_name.field,
+      this.labels.person.cell_phone.field,
+      this.labels.person.birth_date.field,
       this.labels.person.address.field,
       this.labels.person.neighborhood.field,
     ]

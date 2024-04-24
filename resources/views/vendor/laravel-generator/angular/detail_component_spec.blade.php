@@ -4,10 +4,12 @@ import {ReactiveFormsModule} from '@angular/forms'
 import {ActivatedRoute, Router} from '@angular/router'
 import {RouterTestingModule} from '@angular/router/testing'
 import {Location} from '@angular/common'
+import { of } from 'rxjs/internal/observable/of'
+
 import {BaseCmsModule, JfCrudService} from 'base-cms' // @juanfv2/base-cms
-import {of} from 'rxjs'
-import {k} from 'src/environments/k'
-import {DOMHelper, Helpers} from 'src/testing/helpers'
+
+import {k} from '../../../../../../environments/k'
+import {DOMHelper, Helpers} from '../../../../../../testing/helpers'
 
 import { {{ $config->modelNames->name }}DetailComponent } from './{{ $config->modelNames->dashed }}-detail.component';
 
@@ -59,10 +61,15 @@ component.hasPermission2new = true
 fixture.detectChanges()
 expect(domHelper.count('.new-{{ $config->modelNames->camel }}')).toEqual(1)
 component.addNew()
-expect(router.navigateByUrl).toHaveBeenCalledWith(
-router.createUrlTree([k.routes.{{ $config->modelNames->camelPlural }}, 'new']),
-{skipLocationChange: false}
-)
+
+expect(router.navigateByUrl).toHaveBeenCalledWith(router.createUrlTree([k.routes.transition]), {
+      replaceUrl: true,
+})
+
+// expect(router.navigateByUrl).toHaveBeenCalledWith(router.createUrlTree([k.routes.{{ $config->modelNames->camelPlural }}, 'new']), {
+// replaceUrl: true,
+// })
+
 })
 {!! $spec_validate_fields !!}
 
@@ -81,6 +88,9 @@ expect(domHelper.count('.save-{{ $config->modelNames->camel }}')).toEqual(0)
 crudServiceStub.updateEntity.and.returnValue(of())
 component.hasPermission2edit = true
 fixture.detectChanges()
+
+// todo: if not call updateEntity, maybe there is a invalid input, to resolve
+// console.log('invalid', Helpers.findInvalidControls(component.mFormGroup))
 
 expect(domHelper.count('.save-{{ $config->modelNames->camel }}')).toEqual(1)
 

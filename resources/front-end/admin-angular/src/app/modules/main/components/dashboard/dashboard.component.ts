@@ -1,7 +1,7 @@
 import {Component} from '@angular/core'
 import {JfUtils} from 'base-cms'
-import {k} from 'src/environments/k'
-import {l} from 'src/environments/l'
+import {k} from '../../../../../environments/k'
+import {l} from '../../../../../environments/l'
 
 @Component({
   selector: 'app-dashboard',

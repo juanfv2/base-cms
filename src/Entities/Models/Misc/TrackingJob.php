@@ -11,7 +11,8 @@ use Juanfv2\BaseCms\Traits\BaseCmsModel;
 class TrackingJob extends Model
 {
     use BaseCmsModel;
-    use ConvertTZ;
+
+    // use ConvertTZ;
     use HasFactory;
 
     public $table = 'tracking_jobs';
@@ -72,8 +73,8 @@ class TrackingJob extends Model
             $title = __("messages.notification.tracking.status.{$this->status}", ['job' => $queueName]);
             $to = "{$country}_tracking_job_{$this->user_id}";
             $type = 'topics';
-            $firebase = new FirebaseCloudMessaging();
-            $firebase->to([$to], $this->toArray(), $title, $body, $type);
+            // $firebase = new FirebaseCloudMessaging();
+            // $firebase->to([$to], $this->toArray(), $title, $body, $type);
         }
     }
 

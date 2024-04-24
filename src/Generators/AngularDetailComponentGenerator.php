@@ -387,6 +387,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
             {$fieldCamel}2go($fieldCamel: $field): void {
                 this.router.navigate([k.routes.$fieldCamelPlural, $fieldCamel.id]);
             }
+
             EOF;
             $relations1[] = $relationText;
             $relations2[] = "this.{$fieldCamelPlural}2update();";
@@ -504,7 +505,7 @@ class AngularDetailComponentGenerator extends BaseGenerator
             $converted = Str::title($field->name);
             $fieldText = '"'.$field->name.'":    ';
             $fieldText .= '{';
-            $fieldText .= '"label": "'.$converted.'", "name": "'.$field->name.'", "field": "'.$this->config->tableName.'.'.$field->name.'", ';
+            $fieldText .= '"name": "'.$field->name.'", "label": "'.$converted.'", "field": "'.$this->config->tableName.'.'.$field->name.'", ';
             $fdbType = explode(',', $field->dbType)[0];
 
             if ($field->isPrimary) {
@@ -516,9 +517,9 @@ class AngularDetailComponentGenerator extends BaseGenerator
                 'boolean' => $fieldText .= '"type": "boolean",',
                 default => $fieldText .= '"type": "string",',
             };
-            $fieldText .= '"model": "'.$this->config->modelNames->camel.'",';
-            $fieldText .= '"allowSearch": true, "allowExport": true, "allowImport": true, "allowInList": true, "fixed": false, "sorting": true';
-            $fieldText .= '},';
+            // $fieldText .= '"model": "'.$this->config->modelNames->camel.'",';
+            $fieldText .= '"allowSearch": true, "allowExport": true, "allowImport": true, "allowInList": true, "hidden":false, "sorting": true, "fixed": false';
+            $fieldText .= '} as DBType,';
             $fields[] = $fieldText;
         }
 
@@ -529,8 +530,8 @@ class AngularDetailComponentGenerator extends BaseGenerator
             $title = Str::title($field);
             $fieldCamel = Str::camel($field);
 
-            $fields[] = "// {$fieldFk}:        new DBType({label: '$title #', name: '$fieldFk',          field: '$fieldCamel.id',    type: 'number'} as DBType),";
-            $fields[] = "// {$fieldCamel}Name: new DBType({label: '$title',   name: '{$fieldCamel}Name', field: '{$fieldCamel}Name', type: 'string', allowExport: true, allowImport:false} as DBType),";
+            $fields[] = "// {$fieldFk}:        {name: '$fieldFk',          label: '$title #', field: '$fieldCamel.id',    type: 'number', allowSearch: true, allowExport: true, allowImport: true, allowInList: true, hidden: false, sorting: true, fixed: false,} as DBType,";
+            $fields[] = "// {$fieldCamel}Name: {name: '{$fieldCamel}Name', label: '$title',   field: '{$fieldCamel}Name', type: 'string', allowSearch: true, allowExport: true, allowImport: true, allowInList: true, hidden: false, sorting: true, fixed: false,} as DBType,";
         }
 
         $fields[] = '},';

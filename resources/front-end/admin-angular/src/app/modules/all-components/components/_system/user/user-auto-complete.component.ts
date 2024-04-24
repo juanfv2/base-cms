@@ -12,10 +12,10 @@ import {
   jfTemplateAutoComplete,
   BaseCmsAutoCompleteComponent,
 } from 'base-cms' // from '@juanfv2/base-cms'
-import {k} from 'src/environments/k'
-import {l} from 'src/environments/l'
+import {k} from '../../../../../../environments/k'
+import {l} from '../../../../../../environments/l'
 
-import {User, Country, Region, City, Role} from 'src/app/models/_models'
+import {User, Country, Region, City, Role} from '../../../../../models/_models'
 
 // Resource: http://almerosteyn.com/2016/04/linkup-custom-control-to-ngcontrol-ngmodel
 
@@ -71,25 +71,11 @@ export class UserAutoCompleteComponent extends BaseCmsAutoCompleteComponent impl
       g.push(new JfCondition(`OR ${this.labels.user.id.field} like`, term))
       g.push(new JfCondition(`OR ${this.labels.user.name.field} like`, term))
       g.push(new JfCondition(`OR ${this.labels.user.email.field} like`, term))
-      g.push(new JfCondition(`OR ${this.labels.user.password.field} like`, term))
-      g.push(new JfCondition(`OR ${this.labels.user.email_verified_at.field} like`, term))
-      g.push(new JfCondition(`OR ${this.labels.user.disabled.field} like`, term))
-      g.push(new JfCondition(`OR ${this.labels.user.phoneNumber.field} like`, term))
-      g.push(new JfCondition(`OR ${this.labels.user.uid.field} like`, term))
       conditions.push(g)
     }
     const mEvent = new JfLazyLoadEvent()
-    mEvent.select = [
-      this.labels.user.id.field,
-      this.labels.user.name.field,
-      this.labels.user.email.field,
-      this.labels.user.password.field,
-      this.labels.user.email_verified_at.field,
-      this.labels.user.disabled.field,
-      this.labels.user.phoneNumber.field,
-      this.labels.user.uid.field,
-    ]
-    mEvent.sorts = [new JfSort(`${this.labels.user.id.field}`, JfSort.asc)]
+    mEvent.select = [this.labels.user.id.field, this.labels.user.name.field, this.labels.user.email.field]
+    mEvent.sorts = [new JfSort(this.labels.user.id.field, JfSort.asc)]
     mEvent.additional = [new JfCondition('cp', this.currentPage)]
     mEvent.conditions = conditions
     // mEvent.rows = 10;

@@ -3,10 +3,10 @@ import {ActivatedRoute, Router} from '@angular/router'
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap'
 
 import {
+  DBType,
   JfSort,
   JfUtils,
   JfApiRoute,
-  JfResponse,
   JfCondition,
   JfCrudService,
   JfResponseList,
@@ -14,13 +14,12 @@ import {
   JfRequestOption,
   JfMessageService,
   JfSearchCondition,
-  JfStorageManagement,
   BaseCmsListComponent,
 } from 'base-cms' // from '@juanfv2/base-cms'
-import {k} from 'src/environments/k'
-import {l} from 'src/environments/l'
+import {k} from '../../../../../../environments/k'
+import {l} from '../../../../../../environments/l'
 
-import {User, Country, Region, City, Role} from 'src/app/models/_models'
+import {User, Country, Region, City, Role} from '../../../../../models/_models'
 
 const kRoute = k.routes.users
 const kConditions = `${k.suggestions}${kRoute}`
@@ -67,12 +66,6 @@ export class UserListComponent extends BaseCmsListComponent implements OnInit, O
     }
   }
   override itemCurrent?: User
-  override itemLabels = l.user
-  override labels = l
-  override kRoute = kRoute
-  override kConditions = kConditions
-  override mApi = new JfApiRoute(kRoute)
-  override responseList: JfResponseList<User | any> = new JfResponseList<User | any>(0, 0, [])
 
   isPathPeople = false
 
@@ -84,28 +77,17 @@ export class UserListComponent extends BaseCmsListComponent implements OnInit, O
     private route: ActivatedRoute
   ) {
     super()
-    this.fieldsSearchable = [
-      this.itemLabels.id,
-      this.itemLabels.name,
-      this.itemLabels.email,
-      this.itemLabels.disabled,
-      this.itemLabels.phoneNumber,
-      this.itemLabels.uid,
-    ]
-    this.fieldsInList = [
-      this.itemLabels.id,
-      this.itemLabels.name,
-      this.itemLabels.email,
-      this.itemLabels.photo,
-      this.itemLabels.disabled,
-      this.itemLabels.phoneNumber,
-      this.itemLabels.uid,
-      this.itemLabels.countryName,
-      this.itemLabels.regionName,
-      this.itemLabels.cityName,
-      // this.itemLabels.roleName,
-      this.itemLabels.roles,
-    ]
+
+    this.itemLabels = l.user
+    this.labels = l
+    this.kRoute = kRoute
+    this.kConditions = kConditions
+    this.mApi = new JfApiRoute(kRoute)
+    this.responseList = new JfResponseList<User | any>(0, 0, [])
+
+    this.fieldsInList = l.getDBFields(this.itemLabels).filter((_f) => !_f.hidden)
+    this.fieldsSearchable = this.fieldsInList.filter((_f) => _f.allowSearch)
+
     this.hasPermission2show = JfRequestOption.isAuthorized(`/${kRoute}/show`)
     this.hasPermission2new = JfRequestOption.isAuthorized(`/${kRoute}/new`)
     this.hasPermission2delete = JfRequestOption.isAuthorized(`/${kRoute}/delete`)
@@ -136,11 +118,16 @@ export class UserListComponent extends BaseCmsListComponent implements OnInit, O
       conditionCity: new JfSearchCondition(),
       conditionRole: new JfSearchCondition(),
       cModel: '-App-Models-Auth-User',
+      fields: this.fieldsInList,
+      fieldsSelected: this.fieldsInList.filter((_f: DBType) => _f.allowInList),
     }
-    this.currentFields(mSearch)
 
     const r = search ? JSON.parse(search) || mSearch : mSearch
+
+    this.currentFields(r)
+
     // console.log('r', r);
+
     return r
   }
 
@@ -152,14 +139,12 @@ export class UserListComponent extends BaseCmsListComponent implements OnInit, O
       this.modelSearch.conditionCity.value = this.mCity
       this.modelSearch.conditionRole.value = this.mRole
     } else {
-      if (this.modelSearch) {
-        if (this.modelSearch?.conditions?.length) {
-          Promise.resolve(this.searchField).then(() => {
-            for (const condition of this.modelSearch.conditions) {
-              this.addFilter(condition)
-            }
-          })
-        }
+      if (this.modelSearch?.conditions?.length) {
+        Promise.resolve(this.searchField).then(() => {
+          for (const condition of this.modelSearch.conditions) {
+            this.addFilter(condition)
+          }
+        })
       }
     }
   }
@@ -174,7 +159,8 @@ export class UserListComponent extends BaseCmsListComponent implements OnInit, O
     // prepare
     let nextOperator = 'AND'
     const conditions: any[] = []
-    const g: any[] = []
+    const conditionsAC: any[] = []
+    const conditionsGeneric: any[] = []
 
     const inCondition = this.isPathPeople ? 'not-in' : 'in'
 
@@ -185,50 +171,17 @@ export class UserListComponent extends BaseCmsListComponent implements OnInit, O
       )
     )
 
-    conditions.push(g)
-
-    nextOperator = JfUtils.x2one({
-      conditions: g,
-      conditionModel: this.modelSearch.conditionCountry,
-      foreignKName: this.itemLabels.country_id.field,
-      primaryKName: this.labels.country.id.name,
-      nextOperator,
-    })
-
-    nextOperator = JfUtils.x2one({
-      conditions: g,
-      conditionModel: this.modelSearch.conditionRegion,
-      foreignKName: this.itemLabels.region_id.field,
-      primaryKName: this.labels.region.id.name,
-      nextOperator,
-    })
-
-    nextOperator = JfUtils.x2one({
-      conditions: g,
-      conditionModel: this.modelSearch.conditionCity,
-      foreignKName: this.itemLabels.city_id.field,
-      primaryKName: this.labels.city.id.name,
-      nextOperator,
-    })
-
-    nextOperator = JfUtils.x2one({
-      conditions: g,
-      conditionModel: this.modelSearch.conditionRole,
-      foreignKName: this.itemLabels.role_id.field,
-      primaryKName: this.labels.role.id.name,
-      nextOperator,
-    })
+    this.filtersFromAutocomplete(conditionsAC)
 
     if (this.modelSearch?.conditions?.length) {
       for (const c of this.modelSearch.conditions) {
-        nextOperator = JfUtils.addCondition(c, nextOperator, g)
+        nextOperator = JfUtils.addCondition(c, nextOperator, conditionsGeneric)
       }
     }
-    // joinType === '<' leftJoin, '>' rightJoin
-    // 'joinTable.joinTablePK.ownTableFK'
-    // 'joinTable.joinTablePK.ownTableFK.joinType'
-    // 'joinTable.joinTablePK.ownTable.ownTableFK'
-    // 'joinTable.joinTablePK.ownTable.ownTableFK.joinType'
+
+    conditions.push(conditionsAC)
+    conditions.push(conditionsGeneric)
+
     this.modelSearch.lazyLoadEvent.joins = [
       new JfCondition(`${this.labels.country.tableName}.id.country_id`, [
         // `${this.labels.country.tableName}.id as country_id`,
@@ -251,7 +204,9 @@ export class UserListComponent extends BaseCmsListComponent implements OnInit, O
     this.modelSearch.lazyLoadEvent.additional = [new JfCondition('to_index', '.')]
     this.modelSearch.lazyLoadEvent.cWith = ['roles', 'photo']
     // this.modelSearch.lazyLoadEvent.includes = ['relation-1tm', 'relation-mt1', 'relation-1t1', ...];
+
     const mSearch = JSON.stringify(this.modelSearch)
+
     switch (strAction) {
       case 'export':
         this.onLazyLoadExport(strAction)
@@ -285,5 +240,41 @@ export class UserListComponent extends BaseCmsListComponent implements OnInit, O
       const withEntity = this.isPathPeople ? kRoute : k.routes.accounts
       this.router.navigate([withEntity, 'new'])
     }
+  }
+
+  private filtersFromAutocomplete(conditions: any[]) {
+    let nextOperator = 'AND'
+
+    nextOperator = JfUtils.x2one({
+      conditions,
+      conditionModel: this.modelSearch.conditionCountry,
+      foreignKName: this.itemLabels.country_id.field,
+      primaryKName: this.labels.country.id.name,
+      nextOperator,
+    })
+
+    nextOperator = JfUtils.x2one({
+      conditions,
+      conditionModel: this.modelSearch.conditionRegion,
+      foreignKName: this.itemLabels.region_id.field,
+      primaryKName: this.labels.region.id.name,
+      nextOperator,
+    })
+
+    nextOperator = JfUtils.x2one({
+      conditions,
+      conditionModel: this.modelSearch.conditionCity,
+      foreignKName: this.itemLabels.city_id.field,
+      primaryKName: this.labels.city.id.name,
+      nextOperator,
+    })
+
+    nextOperator = JfUtils.x2one({
+      conditions,
+      conditionModel: this.modelSearch.conditionRole,
+      foreignKName: this.itemLabels.role_id.field,
+      primaryKName: this.labels.role.id.name,
+      nextOperator,
+    })
   }
 }

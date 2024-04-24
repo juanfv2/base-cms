@@ -9,7 +9,7 @@ export interface User {
   password: string
   email_verified_at: any
   disabled: boolean
-  phoneNumber: string
+  phone_number: string
   uid: string
   role_id: number
   country_id: number
@@ -89,10 +89,10 @@ export interface XFile {
 
 export interface Person {
   id?: number
-  firstName: string
-  lastName: string
-  cellPhone: string
-  birthDate: any
+  first_name: string
+  last_name: string
+  cell_phone: string
+  birth_date: any
   address: string
   neighborhood: string
   user_id: number
@@ -107,10 +107,10 @@ export interface Person {
 
 export interface Account {
   id?: number
-  firstName: string
-  lastName: string
-  cellPhone: string
-  birthDate: any
+  first_name: string
+  last_name: string
+  cell_phone: string
+  birth_date: any
   address: string
   neighborhood: string
   user_id: number

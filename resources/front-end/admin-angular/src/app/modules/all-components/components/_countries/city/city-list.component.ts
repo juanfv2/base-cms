@@ -3,6 +3,7 @@ import {ActivatedRoute, Router} from '@angular/router'
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap'
 
 import {
+  DBType,
   JfSort,
   JfUtils,
   JfApiRoute,
@@ -16,10 +17,10 @@ import {
   JfSearchCondition,
   BaseCmsListComponent,
 } from 'base-cms' // from '@juanfv2/base-cms'
-import {k} from 'src/environments/k'
-import {l} from 'src/environments/l'
+import {k} from '../../../../../../environments/k'
+import {l} from '../../../../../../environments/l'
 
-import {City, Country, Region} from 'src/app/models/_models'
+import {City, Country, Region} from '../../../../../models/_models'
 
 const kRoute = k.routes.cities
 const kConditions = `${k.suggestions}${kRoute}`
@@ -65,23 +66,13 @@ export class CityListComponent extends BaseCmsListComponent implements OnInit, O
     this.mApi = new JfApiRoute(kRoute)
     this.responseList = new JfResponseList<City | any>(0, 0, [])
 
-    this.fieldsSearchable = [
-      this.itemLabels.id,
-      this.itemLabels.name,
-      this.itemLabels.latitude,
-      this.itemLabels.longitude,
-    ]
-    this.fieldsInList = [
-      this.itemLabels.id,
-      this.itemLabels.name,
-      this.itemLabels.latitude,
-      this.itemLabels.longitude,
-      this.itemLabels.countryName,
-      this.itemLabels.regionName,
-    ]
+    this.fieldsInList = l.getDBFields(this.itemLabels).filter((_f) => !_f.hidden)
+    this.fieldsSearchable = this.fieldsInList.filter((_f) => _f.allowSearch)
+
     this.hasPermission2show = JfRequestOption.isAuthorized(`/${kRoute}/show`)
     this.hasPermission2new = JfRequestOption.isAuthorized(`/${kRoute}/new`)
     this.hasPermission2delete = JfRequestOption.isAuthorized(`/${kRoute}/delete`)
+
     this.storageSession = true
   }
 
@@ -100,15 +91,20 @@ export class CityListComponent extends BaseCmsListComponent implements OnInit, O
   initSearchModel(): any {
     const search = !this.isSubComponent ? JfUtils.mStorage.getItem(this.kConditions, this.storageSession) : null
     const mSearch = {
-      lazyLoadEvent: new JfLazyLoadEvent(10, 1, [new JfSort(this.itemLabels.id.field!, JfSort.desc)]),
+      lazyLoadEvent: new JfLazyLoadEvent(10, 1, [new JfSort(this.itemLabels.id.field, JfSort.desc)]),
       conditionCountry: new JfSearchCondition(),
       conditionRegion: new JfSearchCondition(),
       cModel: '-App-Models-City',
+      fields: this.fieldsInList,
+      fieldsSelected: this.fieldsInList.filter((_f: DBType) => _f.allowInList),
     }
-    this.currentFields(mSearch)
 
     const r = search ? JSON.parse(search) || mSearch : mSearch
+
+    this.currentFields(r)
+
     // console.log('r', r);
+
     return r
   }
 
@@ -132,12 +128,62 @@ export class CityListComponent extends BaseCmsListComponent implements OnInit, O
     if (this.loading) {
       return
     }
+
     // console.log('onLazyLoad this.loading', this.loading);
     // console.log('onLazyLoad this.loading', this.modelSearch);
+
     this.loading = true
     // prepare
     let nextOperator = 'AND'
     const conditions: any[] = []
+    const conditionsAC: any[] = []
+    const conditionsGeneric: any[] = []
+
+    this.filtersFromAutocomplete(conditionsAC)
+
+    if (this.modelSearch?.conditions?.length) {
+      for (const c of this.modelSearch.conditions) {
+        nextOperator = JfUtils.addCondition(c, nextOperator, conditionsGeneric)
+      }
+    }
+
+    conditions.push(conditionsAC)
+    conditions.push(conditionsGeneric)
+
+    this.modelSearch.lazyLoadEvent.joins = [
+      new JfCondition(`${this.labels.country.tableName}.id.country_id`, [
+        // `${this.labels.country.tableName}.id as country_id`,
+        `${this.labels.country.tableName}.name as countryName`,
+      ]),
+      new JfCondition(`${this.labels.region.tableName}.id.region_id`, [
+        // `${this.labels.region.tableName}.id as region_id`,
+        `${this.labels.region.tableName}.name as regionName`,
+      ]),
+    ]
+    this.modelSearch.lazyLoadEvent.conditions = conditions
+    this.modelSearch.lazyLoadEvent.additional = [new JfCondition('to_index', '.')]
+    // this.modelSearch.lazyLoadEvent.includes = ['relation-1tm', 'relation-mt1', 'relation-1t1', ...];
+
+    const mSearch = JSON.stringify(this.modelSearch)
+
+    switch (strAction) {
+      case 'export':
+        this.onLazyLoadExport(strAction)
+        break
+      default:
+        this.onLazyLoadList(mSearch)
+        break
+    }
+  }
+
+  override onAddNew(m: any): void {
+    const c = this.mRegion?.country || this.mCountry
+    this.itemCurrent = {country: c, region: this.mRegion} as unknown as City
+    super.onAddNew(m)
+  }
+
+  private filtersFromAutocomplete(conditions: any[]) {
+    let nextOperator = 'AND'
 
     nextOperator = JfUtils.x2one({
       conditions,
@@ -154,39 +200,5 @@ export class CityListComponent extends BaseCmsListComponent implements OnInit, O
       primaryKName: this.labels.region.id.name,
       nextOperator,
     })
-    if (this.modelSearch?.conditions?.length) {
-      for (const c of this.modelSearch.conditions) {
-        nextOperator = JfUtils.addCondition(c, nextOperator, conditions)
-      }
-    }
-
-    this.modelSearch.lazyLoadEvent.joins = [
-      new JfCondition(`${this.labels.country.tableName}.id.country_id`, [
-        // `${this.labels.country.tableName}.id as country_id`,
-        `${this.labels.country.tableName}.name as countryName`,
-      ]),
-      new JfCondition(`${this.labels.region.tableName}.id.region_id`, [
-        // `${this.labels.region.tableName}.id as region_id`,
-        `${this.labels.region.tableName}.name as regionName`,
-      ]),
-    ]
-    this.modelSearch.lazyLoadEvent.conditions = conditions
-    this.modelSearch.lazyLoadEvent.additional = [new JfCondition('to_index', '.')]
-    // this.modelSearch.lazyLoadEvent.includes = ['relation-1tm', 'relation-mt1', 'relation-1t1', ...];
-    const mSearch = JSON.stringify(this.modelSearch)
-    switch (strAction) {
-      case 'export':
-        this.onLazyLoadExport(strAction)
-        break
-      default:
-        this.onLazyLoadList(mSearch)
-        break
-    }
-  }
-
-  override onAddNew(m: any): void {
-    const c = this.mRegion?.country || this.mCountry
-    this.itemCurrent = {country: c, region: this.mRegion} as unknown as City
-    super.onAddNew(m)
   }
 }

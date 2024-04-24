@@ -87,42 +87,35 @@ class AngularListComponentGenerator extends BaseGenerator
         $this->config->commandInfo($this->fileNameHtml);
     }
 
-    private function getSearchables()
-    {
-        $searchables = [];
+    // private function getSearchables()
+    // {
+    //     $searchables = [];
+    //     $searchables[] = "this.itemLabels.{$this->config->primaryName}";
+    //     foreach ($this->config->fields as $field) {
+    //         if ($field->name == '' || $field->name == 'created_by' || $field->name == 'updated_by') {
+    //             continue;
+    //         }
+    //         if ($field->isSearchable) {
+    //             $searchables[] = "this.itemLabels.{$field->name}";
+    //         }
+    //     }
+    //     return $searchables;
+    // }
 
-        $searchables[] = "this.itemLabels.{$this->config->primaryName}";
-
-        foreach ($this->config->fields as $field) {
-            if ($field->name == '' || $field->name == 'created_by' || $field->name == 'updated_by') {
-                continue;
-            }
-            if ($field->isSearchable) {
-                $searchables[] = "this.itemLabels.{$field->name}";
-            }
-        }
-
-        return $searchables;
-    }
-
-    private function getSearchablesRelations()
-    {
-        $relations = [];
-        foreach ($this->config->relations as $relation) {
-            $type = $relation->type ?? null;
-            $field = $relation->inputs[0] ?? null;
-
-            if ($type != 'mt1') {
-                continue;
-            }
-
-            $fieldCamel = Str::camel($field);
-
-            $relations[] = "this.itemLabels.{$fieldCamel}Name";
-        }
-
-        return $relations;
-    }
+    // private function getSearchablesRelations()
+    // {
+    //     $relations = [];
+    //     foreach ($this->config->relations as $relation) {
+    //         $type = $relation->type ?? null;
+    //         $field = $relation->inputs[0] ?? null;
+    //         if ($type != 'mt1') {
+    //             continue;
+    //         }
+    //         $fieldCamel = Str::camel($field);
+    //         $relations[] = "this.itemLabels.{$fieldCamel}Name";
+    //     }
+    //     return $relations;
+    // }
 
     private function generateRelationModelNames()
     {
@@ -464,11 +457,11 @@ class AngularListComponentGenerator extends BaseGenerator
     protected function docsVariables(): array
     {
         $variables = [];
-        $searchables1 = $this->getSearchables();
-        $searchables2 = $this->getSearchablesRelations();
+        // $searchables1 = $this->getSearchables();
+        // $searchables2 = $this->getSearchablesRelations();
+        // $variables['searchable_1'] = implode(infy_nl_tab() . ',', $searchables1);
+        // $variables['searchable_2'] = implode(infy_nl_tab() . ',', $searchables2);
 
-        $variables['searchable_1'] = implode(infy_nl_tab().',', $searchables1);
-        $variables['searchable_2'] = implode(infy_nl_tab().',', $searchables2);
         $variables['relation_model_names'] = implode(',', $this->generateRelationModelNames());
         $variables['relations_fields'] = implode(infy_nl_tab(), $this->generateRelationsFields());
         $variables['relations_fields_init_search_model'] = implode(infy_nl_tab(), $this->generateRelationsInitSearchModel());

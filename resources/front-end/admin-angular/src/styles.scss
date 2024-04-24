@@ -2,12 +2,17 @@
 @import url('//fonts.googleapis.com/css?family=Montserrat:400,700,200');
 // $primary-color: #9c27b0;
 $fa-font-path: '/assets/fonts';
-@import 'dist/base-cms/scss/now-ui-dashboard';
+
+@import '../node_modules/ng-pick-datetime-ex/assets/style/picker.min';
+@import '../node_modules/bootstrap/scss/bootstrap';
+@import '../dist/base-cms/scss/now-ui-dashboard';
+
 // @import 'node_modules/@juanfv2/base-cms/scss/now-ui-dashboard';
 
 .map-container {
   width: 100% !important;
 }
+
 .card label {
   color: #342727;
 }

@@ -201,7 +201,7 @@ class UserCriteriaApiIndexTest extends TestCase
         $user->hidden[] = 'email_verified_at';
         $user->hidden[] = 'disabled';
         $user->hidden[] = 'userCanDownload';
-        $user->hidden[] = 'phoneNumber';
+        $user->hidden[] = 'phone_number';
         $user->hidden[] = 'disabled';
         $user->hidden[] = 'group_id';
         $user->hidden[] = 'role_id';

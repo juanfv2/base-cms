@@ -22,10 +22,10 @@ class Account extends Model
 
     public $fillable = [
         'id',
-        'firstName',
-        'lastName',
-        'cellPhone',
-        'birthDate',
+        'first_name',
+        'last_name',
+        'cell_phone',
+        'birth_date',
         'address',
         'neighborhood',
         'user_id',
@@ -34,19 +34,19 @@ class Account extends Model
     ];
 
     protected $casts = [
-        'firstName' => 'string',
-        'lastName' => 'string',
-        'cellPhone' => 'string',
-        'birthDate' => 'date',
+        'first_name' => 'string',
+        'last_name' => 'string',
+        'cell_phone' => 'string',
+        'birth_date' => 'date',
         'address' => 'string',
         'neighborhood' => 'string',
     ];
 
     public static $rules = [
-        'firstName' => 'required|string',
-        'lastName' => 'required|string',
-        'cellPhone' => 'nullable|string',
-        'birthDate' => 'nullable',
+        'first_name' => 'required|string',
+        'last_name' => 'required|string',
+        'cell_phone' => 'nullable|string',
+        'birth_date' => 'nullable',
         'address' => 'nullable|string',
         'neighborhood' => 'nullable|string',
         'user_id' => 'nullable',
@@ -64,7 +64,7 @@ class Account extends Model
     protected function fullName(): Attribute
     {
         return Attribute::make(
-            get: fn (mixed $value, array $attributes) => ($attributes['firstName'].' '.$attributes['lastName']),
+            get: fn (mixed $value, array $attributes) => ($attributes['first_name'].' '.$attributes['last_name']),
         );
     }
 

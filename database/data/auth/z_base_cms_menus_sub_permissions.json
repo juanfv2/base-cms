@@ -1,0 +1,10 @@
+[
+  {"_urlChild": "api.countries.index", "_urlParent": "api.users.index"},
+  {"_urlChild": "api.regions.index", "_urlParent": "api.users.index"},
+  {"_urlChild": "api.cities.index", "_urlParent": "api.users.index"},
+  {"_urlChild": "api.roles.index", "_urlParent": "api.users.index"},
+  {"_urlChild": "api.countries.index", "_urlParent": "api.cities.index"},
+  {"_urlChild": "api.regions.index", "_urlParent": "api.cities.index"},
+  {"_urlChild": "api.regions.index", "_urlParent": "api.cities.index"},
+  {"_urlChild": "api.countries.index", "_urlParent": "api.regions.index"}
+]

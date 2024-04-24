@@ -42,7 +42,7 @@ class AccountApiTest extends TestCase
     {
         // $this->withoutExceptionHandling();
 
-        $role = Role::factory()->create();
+        $role = Role::factory()->create(['id' => Role::_3_ACCOUNT]);
         $user = User::factory()->make()->toArray();
         $model = Account::factory()->make()->toArray();
         $required = [
@@ -66,7 +66,7 @@ class AccountApiTest extends TestCase
     {
         // $this->withoutExceptionHandling();
 
-        $role = Role::factory()->create(['id' => 3]);
+        $role = Role::factory()->create(['id' => Role::_3_ACCOUNT]);
         $user = User::factory()->make()->toArray();
         $account = Account::factory()->make()->toArray();
 
@@ -114,7 +114,7 @@ class AccountApiTest extends TestCase
     {
         // $this->withoutExceptionHandling();
 
-        $role = Role::factory()->create(['id' => 3]);
+        $role = Role::factory()->create(['id' => Role::_3_ACCOUNT]);
         $model = Account::factory()->create();
         $modelEdited = [
             // table
@@ -128,11 +128,11 @@ class AccountApiTest extends TestCase
             'role_id' => $role->id,
 
             // account
-            'firstName' => 'est',
-            'lastName' => 'ut',
+            'first_name' => 'est',
+            'last_name' => 'ut',
             // 'imei' => $model->imei,
-            'cellPhone' => '1-873-322-7732 x9420',
-            'birthDate' => '2011-09-21',
+            'cell_phone' => '1-873-322-7732 x9420',
+            'birth_date' => '2011-09-21',
             'address' => '3331 Torre Valleys Suite 807 Abigail, FL 78513',
             'neighborhood' => 'esse',
 
@@ -148,7 +148,10 @@ class AccountApiTest extends TestCase
     /** @test */
     public function api_delete_account()
     {
+        $role = Role::factory()->create(['id' => Role::_3_ACCOUNT]);
         $model = Account::factory()->create();
+        $model->user->role_id = $role->id;
+        $model->user->save();
 
         $this->response = $this->actingAsAdmin()->json('DELETE', route('api.users.destroy', ['user' => $model->user_id]));
 

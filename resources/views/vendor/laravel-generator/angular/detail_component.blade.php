@@ -9,10 +9,10 @@ JfCrudService,
 JfRequestOption,
 JfMessageService,
 } from 'base-cms' // from '@juanfv2/base-cms'
-import {k} from 'src/environments/k'
-import {l} from 'src/environments/l'
+import {k} from '../../../../../../environments/k'
+import {l} from '../../../../../../environments/l'
 
-import { {{ $relation_model_names_1 }} } from 'src/app/models/_models';
+import { {{ $relation_model_names_1 }} } from '../../../../../models/_models';
 
 const kRoute = k.routes.{{ $config->modelNames->camelPlural }};
 
@@ -26,12 +26,13 @@ export class {{ $config->modelNames->name }}DetailComponent implements OnInit, O
 @Output() saveClicked = new EventEmitter<{{ $config->modelNames->name }}>();
 @Output() cancelClicked = new EventEmitter();
 
-@Input() {{ $config->modelNames->camel }}: {{ $config->modelNames->name }};
+@Input() {{ $config->modelNames->camel }}!: {{ $config->modelNames->name }};
 @Input() isSubComponentFrom = '-';
 @Input() isSubComponent = false;
 
 mFormGroup!: FormGroup
 labels = l;
+itemLabels: any = l.{{ $config->modelNames->camel }}
 includes = [{!! $relation_model_names_2 !!}];
 mApi = new JfApiRoute(kRoute);
 private mSubscription: any;
@@ -58,16 +59,12 @@ this.mSubscription = this.route.params.subscribe(params => {
 const id = this.isSubComponent ? this.{{ $config->modelNames->camel }}?.id : params['id'];
 // console.log('params', params, `\nthis.{{ $config->modelNames->camel }}`, this.{{ $config->modelNames->camel }});
 this.new{{ $config->modelNames->name }}(this.{{ $config->modelNames->camel }});
-if (id !== 'new') {
 this.get{{ $config->modelNames->name }}(id);
-}
 });
 }
 
 ngOnDestroy(): void {
-if (!this.isSubComponent && this.mSubscription) {
-this.mSubscription.unsubscribe();
-}
+this.mSubscription?.unsubscribe();
 }
 
 new{{ $config->modelNames->name }}(temp{{ $config->modelNames->name }}?: {{ $config->modelNames->name }}):void {
@@ -79,8 +76,11 @@ this.validateFormGroup()
 }
 
 get{{ $config->modelNames->name }}(id: any): void {
+if (id === 'new') return
+
 const mId = `${id}?includes=${JSON.stringify(this.includes)}`
 this.sending = true;
+
 this.crudService.getEntity(kRoute, mId)
 .subscribe(
 {next: (resp: JfResponse) => {
@@ -92,7 +92,7 @@ this.validateFormGroup()
 },
 error: (error: any) => {
 this.sending = false;
-this.messageService.danger(k.project_name, error, this.labels.{{ $config->modelNames->camel }}.ownName);
+this.messageService.danger(k.project_name, error, this.itemLabels.ownName)
 }
 });
 }
@@ -123,15 +123,18 @@ this.router.navigate([kRoute, this.{{ $config->modelNames->camel }}.id]);
 },
 error: (error: any) => {
 this.sending = false;
-this.messageService.danger(k.project_name, error, this.labels.{{ $config->modelNames->camel }}.ownName);
+this.messageService.danger(k.project_name, error, this.itemLabels.ownName)
 }
 }
 );
 }
 
 addNew(): void {
-this.new{{ $config->modelNames->name }}();
-this.router.navigate([kRoute, 'new']);
+this.router.navigate([k.routes.transition], {replaceUrl: true})
+
+setTimeout(() => {
+this.router.navigate([kRoute, 'new'], {replaceUrl: true})
+}, 5)
 }
 
 onBack(): void {

@@ -3,11 +3,12 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms'
 import {ActivatedRoute, Router} from '@angular/router'
 
 import {JfResponse, JfApiRoute, JfCrudService, JfRequestOption, JfMessageService} from 'base-cms' // from '@juanfv2/base-cms'
-import {k} from 'src/environments/k'
-import {l} from 'src/environments/l'
-import {isValidLatitude, isValidLongitude} from 'src/app/shared/validators'
+import {k} from '../../../../../../environments/k'
+import {l} from '../../../../../../environments/l'
 
-import {City} from 'src/app/models/_models'
+import {City} from '../../../../../models/_models'
+
+import {isValidLatitude, isValidLongitude} from '../../../../../shared/validators'
 
 const kRoute = k.routes.cities
 
@@ -20,12 +21,13 @@ export class CityDetailComponent implements OnInit, OnDestroy {
   @Output() saveClicked = new EventEmitter<City>()
   @Output() cancelClicked = new EventEmitter()
 
-  @Input() city: City
+  @Input() city!: City
   @Input() isSubComponentFrom = '-'
   @Input() isSubComponent = false
 
   mFormGroup!: FormGroup
   labels = l
+  itemLabels: any = l.city
   includes = ['user', 'country', 'region']
   mApi = new JfApiRoute(kRoute)
   private mSubscription: any
@@ -52,16 +54,12 @@ export class CityDetailComponent implements OnInit, OnDestroy {
       const id = this.isSubComponent ? this.city?.id : params['id']
       // console.log('params', params, `\nthis.city`, this.city);
       this.newCity(this.city)
-      if (id !== 'new') {
-        this.getCity(id)
-      }
+      this.getCity(id)
     })
   }
 
   ngOnDestroy(): void {
-    if (!this.isSubComponent && this.mSubscription) {
-      this.mSubscription.unsubscribe()
-    }
+    this.mSubscription?.unsubscribe()
   }
 
   newCity(tempCity?: City): void {
@@ -72,8 +70,11 @@ export class CityDetailComponent implements OnInit, OnDestroy {
   }
 
   getCity(id: any): void {
+    if (id === 'new') return
+
     const mId = `${id}?includes=${JSON.stringify(this.includes)}`
     this.sending = true
+
     this.crudService.getEntity(kRoute, mId).subscribe({
       next: (resp: JfResponse) => {
         this.sending = false
@@ -83,7 +84,7 @@ export class CityDetailComponent implements OnInit, OnDestroy {
       },
       error: (error: any) => {
         this.sending = false
-        this.messageService.danger(k.project_name, error, this.labels.city.ownName)
+        this.messageService.danger(k.project_name, error, this.itemLabels.ownName)
       },
     })
   }
@@ -122,14 +123,17 @@ export class CityDetailComponent implements OnInit, OnDestroy {
       },
       error: (error: any) => {
         this.sending = false
-        this.messageService.danger(k.project_name, error, this.labels.city.ownName)
+        this.messageService.danger(k.project_name, error, this.itemLabels.ownName)
       },
     })
   }
 
   addNew(): void {
-    this.newCity()
-    this.router.navigate([kRoute, 'new'])
+    this.router.navigate([k.routes.transition], {replaceUrl: true})
+
+    setTimeout(() => {
+      this.router.navigate([kRoute, 'new'], {replaceUrl: true})
+    }, 5)
   }
 
   onBack(): void {

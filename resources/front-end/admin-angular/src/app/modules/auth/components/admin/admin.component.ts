@@ -2,9 +2,10 @@ import {Component, isDevMode, OnInit} from '@angular/core'
 import {Router} from '@angular/router'
 import {DEFAULT_INTERRUPTSOURCES, Idle} from '@ng-idle/core'
 import {JfAuthService, JfMessageService} from 'base-cms' // from '@juanfv2/base-cms'
-import {User} from 'src/app/models/_models'
-import {k} from 'src/environments/k'
-import {l} from 'src/environments/l'
+
+import {User} from '../../../../models/_models'
+import {l} from '../../../../../environments/l'
+import {k} from '../../../../../environments/k'
 
 @Component({
   selector: 'app-admin',
@@ -48,6 +49,7 @@ export class AdminComponent {
       const payload = {notification: {title: k.project_name, body: 'Ya no está inactivo.'}}
       this.messageService.currentMessage.next(payload)
     })
+
     this.idle.onTimeout.subscribe(() => {
       // console.log('time: onTimeout', time);
 
@@ -58,12 +60,14 @@ export class AdminComponent {
       this.messageService.currentMessage.next(payload)
       // this.messageService.success(k.project_name, 'Desconectado por inactividad');
     })
+
     this.idle.onIdleStart.subscribe(() => {
       // console.log('time: onIdleStart', time);
 
       const payload = {notification: {title: k.project_name, body: '¡Te has quedado inactivo!'}}
       this.messageService.currentMessage.next(payload)
     })
+
     this.idle.onTimeoutWarning.subscribe((countdown) => {
       const minutes = Math.floor(countdown / 60)
       const seconds = countdown % 60

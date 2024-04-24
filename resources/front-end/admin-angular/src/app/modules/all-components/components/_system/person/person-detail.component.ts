@@ -1,10 +1,10 @@
 import {Component, OnInit, Input} from '@angular/core'
 import {FormGroup, FormGroupDirective, FormBuilder, Validators, ControlContainer} from '@angular/forms'
 
-import {k} from 'src/environments/k'
-import {l} from 'src/environments/l'
+import {k} from '../../../../../../environments/k'
+import {l} from '../../../../../../environments/l'
 
-import {Person} from 'src/app/models/_models'
+import {Person} from '../../../../../models/_models'
 
 const kRoute = k.routes.people
 
@@ -18,22 +18,22 @@ export class PersonDetailComponent implements OnInit {
   @Input() person!: Person
   mFormGroup!: FormGroup
   labels = l
-  mFormGroupName = l.user.personName.name
+  mFormGroupName = l.user.person.name
 
   constructor(private parent: FormGroupDirective, private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.mFormGroup = this.parent.form
 
-    console.log('PersonDetailComponent.person', this.person);
+    console.log('PersonDetailComponent.person', this.person)
 
     this.mFormGroup.addControl(
       this.mFormGroupName,
       this.fb.group({
-        firstName: [this.person.firstName, Validators.required],
-        lastName: [this.person.lastName, Validators.required],
-        cellPhone: [this.person.cellPhone],
-        birthDate: [this.person.birthDate],
+        first_name: [this.person.first_name, Validators.required],
+        last_name: [this.person.last_name, Validators.required],
+        cell_phone: [this.person.cell_phone],
+        birth_date: [this.person.birth_date],
         address: [this.person.address],
         neighborhood: [this.person.neighborhood],
       })

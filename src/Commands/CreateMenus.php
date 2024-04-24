@@ -17,7 +17,7 @@ class CreateMenus extends Command
      *
      * @var string
      */
-    protected $signature = 'base-cms:menus {--country=} {--c|create} {--t|truncate} {--p|permissions} {--s|sub_permissions} {--a|admin} {--j|json}';
+    protected $signature = 'base-cms:menus {--country=} {--c|create} {--t|truncate} {--p|permissions} {--s|sub_permissions} {--a|admin} {--r|reset} {--j|json}';
 
     /**
      * The console command description.
@@ -26,6 +26,7 @@ class CreateMenus extends Command
      */
     protected $description = '(-c): create permissions from json files "data/_.menus/p.*.json"
                               (-t): truncate permissions table
+                              (-r): reset admin permissions
                               (-a): add permissions to roles   from "z_base_cms_menus_roles"
                               (-s): add/update sub-permissions from "z_base_cms_menus_sub_permissions"
                               (-p): add/update permissions     from "z_base_cms_menus_permissions"
@@ -81,6 +82,7 @@ class CreateMenus extends Command
         $permissons = $this->option('permissions');
         $sub_permissons = $this->option('sub_permissions');
         $admin = $this->option('admin');
+        $reset = $this->option('reset');
         $json = $this->option('json');
 
         if ($this->rCountry) {
@@ -94,6 +96,7 @@ class CreateMenus extends Command
         if ($paths) {
             $this->createPermissions();
         }
+
         if ($permissons) {
             $this->savePermissions();
         }
@@ -104,6 +107,10 @@ class CreateMenus extends Command
 
         if ($admin) {
             $this->addPermissions2Roles();
+        }
+
+        if ($reset) {
+            $this->addPermissions2Admin();
         }
 
         if ($json) {
@@ -223,9 +230,11 @@ class CreateMenus extends Command
             foreach ($json->data->content as $role) {
 
                 $result = 0;
-                foreach ($role->_urlBackEnd_ as $key) {
-                    $r1 = Permission::savePermission2Role($key, $role->id);
-                    $result += $r1;
+                if (isset($role->_urlBackEnd_)) {
+                    foreach ($role->_urlBackEnd_ as $key) {
+                        $r1 = Permission::savePermission2Role($key, $role->id);
+                        $result += $r1;
+                    }
                 }
 
                 $this->info($this->separator);
@@ -235,6 +244,29 @@ class CreateMenus extends Command
         } else {
             $this->error("File not found: $q");
         }
+    }
+
+    public function addPermissions2Admin()
+    {
+        Schema::disableForeignKeyConstraints();
+        DB::table('auth_permission_role')->truncate();
+
+        $permissions = Permission::all();
+
+        foreach ($permissions as $p) {
+
+            DB::table('auth_permission_role')
+                ->updateOrInsert(
+                    ['role_id' => 1, 'permission_id' => $p->id],
+                    ['role_id' => 1, 'permission_id' => $p->id]
+                );
+        }
+
+        Schema::enableForeignKeyConstraints();
+
+        $this->info($this->separator);
+        $this->info('RESET');
+        $this->info($this->separator);
     }
 
     public function createPermissionsFile()

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\Auth;
 
 use App\Models\Auth\Account;
 use App\Models\Auth\Person;
+use App\Models\Auth\Role;
 use App\Models\Auth\User;
 use Illuminate\Http\Request;
 use Juanfv2\BaseCms\Controllers\AppBaseController;
@@ -17,6 +18,8 @@ class UserAPIController extends AppBaseController
     public $model;
 
     public $modelNameCamel = 'User';
+
+    public $rules;
 
     public function __construct(User $model)
     {
@@ -38,13 +41,18 @@ class UserAPIController extends AppBaseController
         $withEntity = $request->get('withEntity', '-');
 
         $this->rules = match ($withEntity) {
-            'auth_people' => $this->model::$rules + Person::$rules,
-            default => $this->model::$rules + Account::$rules,
+            'auth_people' => array_merge($this->model::$rules, Person::$rules),
+            default => array_merge($this->model::$rules, Account::$rules),
         };
 
         $input = $this->validate($request, $this->rules);
 
-        $model = $this->model->withAdditionalInfo('create', $input);
+        $mType = match ($withEntity) {
+            'auth_people' => \App\Models\Auth\Person::class,
+            default => \App\Models\Auth\Account::class,
+        };
+
+        $model = $this->model->createAuthUser($input, $mType);
 
         if ($request->hasFile('photo')) {
             return $this->fileUpload($request, 'auth_users', 'photo', $model->id, 0);
@@ -65,8 +73,8 @@ class UserAPIController extends AppBaseController
         $withEntity = $request->get('withEntity', '-');
 
         $this->rules = match ($withEntity) {
-            'auth_people' => $this->model::$rules + Person::$rules,
-            default => $this->model::$rules + Account::$rules,
+            'auth_people' => array_merge($this->model::$rules, Person::$rules),
+            default => array_merge($this->model::$rules, Account::$rules),
         };
 
         $this->rules['email'] = 'required|string|max:191|unique:auth_users,email,'.$id;
@@ -81,7 +89,13 @@ class UserAPIController extends AppBaseController
         if (empty($model)) {
             return $this->sendError(__('validation.model.not.found', ['model' => __("models.{$this->modelNameCamel}.name")]));
         }
-        $updated = $model->withAdditionalInfo('update', $input);
+
+        $mType = match ($model->role_id) {
+            Role::_3_ACCOUNT => 'account',
+            default => 'person',
+        };
+
+        $updated = $model->updateAuthUser($input, $mType);
 
         return $this->sendResponse(['id' => $model->id], __('validation.model.updated', ['model' => __("models.{$this->modelNameCamel}.name")]), $updated);
     }
@@ -106,7 +120,12 @@ class UserAPIController extends AppBaseController
             return $this->sendError(__('validation.model.not.found', ['model' => __("models.{$this->modelNameCamel}.name")]));
         }
 
-        $resp = $model->deleteAuthUser();
+        $mType = match ($model->role_id) {
+            Role::_3_ACCOUNT => 'account',
+            default => 'person',
+        };
+
+        $resp = $model->deleteAuthUser($mType);
 
         return $this->sendResponse(['id' => $id, 'success' => $resp], __('validation.model.deleted', ['model' => __("models.{$this->modelNameCamel}.name")]));
     }

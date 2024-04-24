@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core'
 import {RouterModule, Routes} from '@angular/router'
 
-import {k} from 'src/environments/k'
+import {k} from '../../../environments/k'
 
 import {AllComponentsModule} from '../all-components/all-components.module'
 
