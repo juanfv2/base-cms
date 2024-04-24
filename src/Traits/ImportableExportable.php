@@ -86,7 +86,9 @@ trait ImportableExportable
         $line = 0;
         $data1 = [];
         $keys = self::assoc2lower($keys);
-        $xHeadersTemp = self::array2lower(fgetcsv($handle, 0, $delimiter));
+        $xHeadersTemp = fgetcsv($handle, 0, $delimiter);
+        $xHeadersTemp = self::array2remove_utf8_bom($xHeadersTemp);
+        $xHeadersTemp = self::array2lower($xHeadersTemp);
 
         while (($data = fgetcsv($handle, 0, $delimiter)) !== false) {
             $line++;
@@ -121,7 +123,7 @@ trait ImportableExportable
                         }
 
                         $r = $this->saveModel($model_name, $attrKeys, $data, $primaryKeys, $table);
-                        // logger(__FILE__ . ':' . __LINE__ . ' $r ', [$r]);
+                    // logger(__FILE__ . ':' . __LINE__ . ' $r ', [$r]);
                     } else {
                         $r = $this->saveArray($table, $attrKeys, $data, $kName);
                     }
@@ -550,5 +552,17 @@ trait ImportableExportable
     public static function array2upper(array $array)
     {
         return array_map('Str::upper', $array);
+    }
+
+    public static function array2remove_utf8_bom(array $array)
+    {
+        return array_map('self::remove_utf8_bom', $array);
+    }
+
+    public static function remove_utf8_bom($text)
+    {
+        $bom = pack('H*', 'EFBBBF');
+        $text = preg_replace("/^$bom/", '', $text);
+        return $text;
     }
 }
