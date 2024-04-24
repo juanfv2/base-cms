@@ -213,7 +213,9 @@ trait ImportableExportable
         $line = 0;
         $data1 = [];
         $keys = self::assoc2lower($keys);
-        $xHeadersTemp = self::array2lower(fgetcsv($handle, 0, $delimiter));
+        $xHeadersTemp = fgetcsv($handle, 0, $delimiter);
+        $xHeadersTemp = self::array2remove_utf8_bom($xHeadersTemp);
+        $xHeadersTemp = self::array2lower($xHeadersTemp);
 
         while (($data = fgetcsv($handle, 0, $delimiter)) !== false) {
             $line++;
