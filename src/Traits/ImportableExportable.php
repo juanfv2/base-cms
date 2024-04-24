@@ -565,6 +565,7 @@ trait ImportableExportable
     {
         $bom = pack('H*', 'EFBBBF');
         $text = preg_replace("/^$bom/", '', $text);
+        $text = preg_replace('/^\"|\"$/', '', $text);
         return $text;
     }
 }
