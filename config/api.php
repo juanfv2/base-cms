@@ -11,7 +11,7 @@ Route::post('password/email', (new App\Http\Controllers\API\Auth\ZForgotPassword
 Route::post('password/reset', (new App\Http\Controllers\API\Auth\ZResetPasswordController())->reset(...))->name('password.reset');
 Route::post('visor-log-errors-index', [App\Http\Controllers\API\Misc\VisorLogErrorAPIController::class, 'store'])->name('errors.index');
 
-Route::get('file/{tableName}/{fieldName}/{id}/{w?}/{h?}/{n?}', [App\Http\Controllers\API\Misc\XFileAPIController::class, 'fileDown'])->name('x_files.down');
+Route::get('file/{tableName}/{fieldName}/{id}/{w?}/{h?}/{c?}/{n?}', [App\Http\Controllers\API\Misc\XFileAPIController::class, 'fileDown'])->name('x_files.down');
 
 // ADMIN ----------------------------------- //
 Route::middleware(['auth:sanctum', 'role', 'sentry.context'])->group(function () {
