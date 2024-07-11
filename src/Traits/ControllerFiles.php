@@ -263,12 +263,11 @@ trait ControllerFiles
      *
      * examples:
      * /api/file/banner_images/strPathImage/1
-     * /api/file/banner_images/strPathImage/1/500/0
-     * /api/file/banner_images/strPathImage/1/0/500
+     * /api/file/banner_images/strPathImage/1/500/0/sv
+     * /api/file/banner_images/strPathImage/1/0/500/sv
      */
-    public function fileDown($tableName, $fieldName, $id, $w = 0, $h = 0, $imageName = '')
+    public function fileDown($tableName, $fieldName, $id, $w = 0, $h = 0, $rCountry = 'sv', $imageName = '')
     {
-        $rCountry = request()->get('rCountry', 'sv');
         if (! $imageName) {
             if ($rCountry) {
                 config()->set('database.default', config('base-cms.default_prefix').$rCountry);
