@@ -28,7 +28,7 @@ trait ControllerFiles
             return $this->sendResponse([$fieldName => ['updated' => $created]], __('validation.model.list', ['model' => $tableName]));
         } catch (\Throwable $th) {
             // throw $th;
-            return $this->sendError([$fieldName => ['code' => $th->getCode(), 'message' => $th->getMessage(), 'updated' => $created]], 'Error en la linea ' . $created, 500);
+            return $this->sendError([$fieldName => ['code' => $th->getCode(), 'message' => $th->getMessage(), 'updated' => $created]], 'Error en la linea '.$created, 500);
         }
     }
 
@@ -47,7 +47,7 @@ trait ControllerFiles
             return $this->sendResponse([$fieldName => ['updated' => $created]], __('validation.model.list', ['model' => $tableName]));
         } catch (\Throwable $th) {
             // throw $th;
-            return $this->sendError([$fieldName => ['code' => $th->getCode(), 'message' => $th->getMessage(), 'updated' => $created]], 'Error en la linea ' . $created, 500);
+            return $this->sendError([$fieldName => ['code' => $th->getCode(), 'message' => $th->getMessage(), 'updated' => $created]], 'Error en la linea '.$created, 500);
         }
     }
 
@@ -140,16 +140,16 @@ trait ControllerFiles
         $rCountry = $request->header('r-country', 'sv');
 
         if ($rCountry) {
-            $baseAssets .= $rCountry . '/';
+            $baseAssets .= $rCountry.'/';
         }
 
         $time = now()->format('Y_m_d_H_i_s_u');
         $strLocation = "$baseAssets$tableName/$fieldName";
         $originalName = $request->$fieldName->getClientOriginalName();
         $fileExtension = strtolower($request->$fieldName->getClientOriginalExtension());
-        $fileNamePrefix = $tableName . '-' . $id;
+        $fileNamePrefix = $tableName.'-'.$id;
         $newName = "$fileNamePrefix-$time";
-        $newNameWithExtension = $newName . '.' . $fileExtension;
+        $newNameWithExtension = $newName.'.'.$fileExtension;
 
         /**
          * Si el nombre del archivo trae la palabra "massive"
@@ -223,7 +223,7 @@ trait ControllerFiles
                 $xFile = XFile::firstOrNew(['entity_id' => $id, 'entity' => $tableName, 'field' => $fieldName]);
 
                 if ($xFile->id) {
-                    $temp = static::getPathFileName('public/' . $strLocation, $xFile->name);
+                    $temp = static::getPathFileName('public/'.$strLocation, $xFile->name);
 
                     static::deleteFileWithGlob("{$temp}*");
                 }
@@ -270,7 +270,7 @@ trait ControllerFiles
     {
         if (! $imageName) {
             if ($rCountry) {
-                config()->set('database.default', config('base-cms.default_prefix') . $rCountry);
+                config()->set('database.default', config('base-cms.default_prefix').$rCountry);
             }
 
             $imageName = '-';
@@ -290,7 +290,7 @@ trait ControllerFiles
         $baseAssets = 'public/assets/adm';
 
         if ($rCountry) {
-            $baseAssets = $baseAssets . '/' . $rCountry;
+            $baseAssets = $baseAssets.'/'.$rCountry;
         }
 
         $strLocationImageNotFound = 'assets/images/image-not-found.png';
