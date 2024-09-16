@@ -17,11 +17,12 @@ trait ControllerResponses
     }
 
     /**
+     * @param  object|array|string  $data
      * @param  string  $message
      * @param  int  $responseCode
      * @return \Illuminate\Http\JsonResponse
      */
-    public function sendError(array|string $data, $message = '', $responseCode = 404)
+    public function sendError($data, $message = '', $responseCode = 404)
     {
         $d = $data;
         $m = $message;
@@ -51,8 +52,8 @@ trait ControllerResponses
     }
 
     /**
-     * @param  string  $message
      * @param  mixed|string  $data
+     * @param  string  $message
      * @return array
      */
     private function makeResponse($data, $message, $isSuccess = true)
